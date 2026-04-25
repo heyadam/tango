@@ -5,10 +5,7 @@ import dynamic from 'next/dynamic';
 import type { ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types';
 import { sketchStore } from '@/lib/sketchStore';
 import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
-import { writeSnapshot } from '@/lib/designSnapshot';
-import { terminalBus } from '@/lib/terminalBus';
 import type { DesignerHandles } from './DesignerCanvas';
-import AgentTrigger from './AgentTrigger';
 
 const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
   ssr: false,
@@ -36,12 +33,13 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export default function SketchPanel() {
+type Props = {
+  onCanvasReady?: (handles: DesignerHandles) => void;
+};
+
+export default function SketchPanel({ onCanvasReady }: Props) {
   const handlesRef = useRef<DesignerHandles | null>(null);
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
-  const [busy, setBusy] = useState(false);
-  const [lastPath, setLastPath] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const raw = sketchStore.getCurrent();
@@ -65,13 +63,17 @@ export default function SketchPanel() {
 
   const wsRef = useRef<WebSocket | null>(null);
 
-  const onReady = useCallback((handles: DesignerHandles) => {
-    handlesRef.current = handles;
-  }, []);
-
   const onPersist = useCallback((json: string) => {
     sketchStore.setCurrent(json);
   }, []);
+
+  const handleReady = useCallback(
+    (handles: DesignerHandles) => {
+      handlesRef.current = handles;
+      onCanvasReady?.(handles);
+    },
+    [onCanvasReady],
+  );
 
   // Open the canvas WS bridge. Locally-debounced snapshots from the canvas
   // (forwarded via canvasBus) ship up to the server cache; server frames apply
@@ -166,57 +168,15 @@ export default function SketchPanel() {
     };
   }, []);
 
-  const handleSend = useCallback(async () => {
-    if (!handlesRef.current || busy) return;
-    setBusy(true);
-    setError(null);
-    try {
-      const blob = await handlesRef.current.getPng();
-      const { relPath } = await writeSnapshot(blob);
-      terminalBus.sendToTerminal(`# review design at ${relPath}\n`);
-      setLastPath(relPath);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setBusy(false);
-    }
-  }, [busy]);
-
   return (
-    <div className="flex h-full flex-col bg-neutral-900">
-      <div className="flex shrink-0 items-center justify-between border-b border-neutral-800 px-4 py-2">
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-sm font-medium text-neutral-200">Sketch</h1>
-          {lastPath && !error && (
-            <span className="font-mono text-[11px] text-neutral-500">
-              sent {lastPath}
-            </span>
-          )}
-          {error && (
-            <span className="font-mono text-[11px] text-red-400">{error}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <AgentTrigger />
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={busy || load.status !== 'ready'}
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-100 transition-colors hover:border-neutral-500 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {busy ? 'Sending…' : 'Send to Claude'}
-          </button>
-        </div>
-      </div>
-      <div className="min-h-0 flex-1">
-        {load.status === 'ready' && (
-          <DesignerCanvas
-            initialData={load.initialData}
-            onPersist={onPersist}
-            onReady={onReady}
-          />
-        )}
-      </div>
+    <div className="h-full w-full bg-neutral-900">
+      {load.status === 'ready' && (
+        <DesignerCanvas
+          initialData={load.initialData}
+          onPersist={onPersist}
+          onReady={handleReady}
+        />
+      )}
     </div>
   );
 }
