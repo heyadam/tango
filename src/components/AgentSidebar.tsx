@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import {
   ImageUp,
   PanelLeftClose,
@@ -44,7 +45,13 @@ export default function AgentSidebar({
   onSendSketch,
   sendBusy,
 }: Props) {
-  const { messages, sendMessage, status, stop } = useChat();
+  // Talk to the UI-controller agent (cursor_move / cursor_click / terminal_type
+  // / dom_inspect MCP tools). The agent doesn't draft content itself — it
+  // delegates to terminal-Claude via terminal_type and visibly moves the
+  // shared cursor through AgentCursorOverlay so the user can watch.
+  const { messages, sendMessage, status, stop } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/agent' }),
+  });
   const [sketchPath, setSketchPath] = useState<string | null>(null);
   const [sketchError, setSketchError] = useState<string | null>(null);
 
@@ -121,11 +128,48 @@ export default function AgentSidebar({
                   messages.map((m) => (
                     <Message from={m.role} key={m.id}>
                       <MessageContent>
-                        {m.parts.map((part, i) =>
-                          part.type === 'text' ? (
-                            <MessageResponse key={i}>{part.text}</MessageResponse>
-                          ) : null,
-                        )}
+                        {m.parts.map((part, i) => {
+                          if (part.type === 'text') {
+                            return (
+                              <MessageResponse key={i}>
+                                {part.text}
+                              </MessageResponse>
+                            );
+                          }
+                          if (
+                            typeof part.type === 'string' &&
+                            part.type.startsWith('tool-')
+                          ) {
+                            const name = part.type.slice('tool-'.length);
+                            const p = part as unknown as {
+                              state?: string;
+                              input?: unknown;
+                              output?: unknown;
+                            };
+                            return (
+                              <div
+                                key={i}
+                                className="rounded border border-neutral-800 bg-neutral-900 px-2 py-1 font-mono text-[10px] text-neutral-300"
+                              >
+                                <div className="text-sky-300">
+                                  {name}
+                                  {p.state ? ` · ${p.state}` : ''}
+                                </div>
+                                {p.input !== undefined && (
+                                  <pre className="mt-0.5 whitespace-pre-wrap text-neutral-400">
+                                    {JSON.stringify(p.input, null, 2)}
+                                  </pre>
+                                )}
+                                {p.output !== undefined && (
+                                  <pre className="mt-0.5 whitespace-pre-wrap text-neutral-500">
+                                    → {JSON.stringify(p.output, null, 2)}
+                                  </pre>
+                                )}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })}
                       </MessageContent>
                     </Message>
                   ))
