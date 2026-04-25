@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import type { ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types';
 import { sketchStore } from '@/lib/sketchStore';
 import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
+import { workspaceBus } from '@/lib/workspaceBus';
 import type { DesignerHandles } from './DesignerCanvas';
 
 const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
@@ -40,6 +41,29 @@ type Props = {
 export default function SketchPanel({ onCanvasReady }: Props) {
   const handlesRef = useRef<DesignerHandles | null>(null);
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
+  // Bumping this counter remounts DesignerCanvas (and re-runs the WS effect)
+  // so a workspace switch starts from a clean slate.
+  const [generation, setGeneration] = useState(0);
+
+  // On workspace switch: drop the local cache so the new workspace's canvas
+  // starts empty (the server's canvasBridge has already been cleared by
+  // setWorkspace), then bump generation to remount.
+  useEffect(() => {
+    return workspaceBus.subscribe(() => {
+      sketchStore.setCurrent(
+        JSON.stringify({
+          type: 'excalidraw',
+          version: 2,
+          source: 'tango',
+          elements: [],
+          appState: {},
+          files: {},
+        }),
+      );
+      setLoad({ status: 'loading' });
+      setGeneration((g) => g + 1);
+    });
+  }, []);
 
   useEffect(() => {
     const raw = sketchStore.getCurrent();
@@ -59,7 +83,7 @@ export default function SketchPanel({ onCanvasReady }: Props) {
       }
     }
     setLoad({ status: 'ready', initialData: parsed });
-  }, []);
+  }, [generation]);
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -166,12 +190,13 @@ export default function SketchPanel({ onCanvasReady }: Props) {
       }
       wsRef.current = null;
     };
-  }, []);
+  }, [generation]);
 
   return (
     <div className="h-full w-full bg-neutral-900">
       {load.status === 'ready' && (
         <DesignerCanvas
+          key={generation}
           initialData={load.initialData}
           onPersist={onPersist}
           onReady={handleReady}

@@ -1,22 +1,29 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { WORKSPACE_DIR } from '@/server/workspace';
-
-const DIR = path.join(WORKSPACE_DIR, 'design-scratch');
+import { getWorkspaceOrNull } from '@/server/workspace';
 
 export async function POST(request: Request) {
+  const workspace = getWorkspaceOrNull();
+  if (!workspace) {
+    return Response.json(
+      { error: 'no workspace selected' },
+      { status: 409 },
+    );
+  }
+
   const buf = Buffer.from(await request.arrayBuffer());
   if (buf.byteLength === 0) {
     return Response.json({ error: 'empty body' }, { status: 400 });
   }
 
-  await fs.mkdir(DIR, { recursive: true });
+  const dir = path.join(workspace, 'design-scratch');
+  await fs.mkdir(dir, { recursive: true });
 
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const suffix = randomBytes(2).toString('hex');
   const filename = `${stamp}-${suffix}.png`;
-  const absPath = path.join(DIR, filename);
+  const absPath = path.join(dir, filename);
   await fs.writeFile(absPath, buf);
 
   // relPath is resolved from the workspace dir, which is also where the

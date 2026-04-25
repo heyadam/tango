@@ -6,7 +6,7 @@ Split-pane web app: arbitrary content on the left, an interactive xterm.js termi
 
 Stack: **Next.js 16 (App Router) + React 19 + Tailwind v4**, custom Node server, WebSocket bridge to `node-pty`, Excalidraw on the left for designer mode, in-process MCP server giving Claude tools to drive the canvas, plus a **gpt-5.5 "controller agent"** (Vercel AI SDK v6 + `@ai-sdk/mcp`) that drives the visible UI cursor and delegates intelligence to the terminal-Claude session. Will eventually be packaged as an Electron app — keep that path open (no Vercel-only assumptions, no edge runtime).
 
-The repo and the workspace Claude operates in are **separate directories** by design. This repo is for tango itself; Claude lands in `~/dev/tangotest` (override via `TANGO_WORKSPACE`). See **Workspace** below.
+The repo and the workspace Claude operates in are **separate directories** by design. This repo is for tango itself; the workspace is whatever folder the user picks in the in-app picker (or the path pinned by `TANGO_WORKSPACE`). See **Workspace** below.
 
 ## Run / build
 
@@ -18,7 +18,7 @@ npm start        # production server
 
 The dev script runs the **custom server**, not `next dev`. Do not change to `next dev` — it will break the WebSocket bridge.
 
-On boot the server provisions the workspace dir (creates `~/dev/tangotest`, writes `.mcp.json` and `CLAUDE.md`, merges `.claude/settings.json`, ensures `design-scratch/`). Wipe the dir and the next `npm run dev` recreates it.
+On boot the server resolves the active workspace (env var → persisted `~/.tango/state.json` → null). When a workspace is set, it's ensured non-destructively: `.claude/tango.md` (overwrite), `CLAUDE.md` (sentinel block only — preserves user content byte-for-byte outside the block), `.mcp.json` (merge under `mcpServers['tango-canvas']` — refuses on malformed JSON), `.claude/settings.json` (merge `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), and `design-scratch/`. If no workspace is set, the browser shows a blocking picker and PTY/snapshot routes return 409 until one is chosen.
 
 ## Architecture (non-obvious bits)
 
@@ -76,14 +76,25 @@ browser ──WS────►  /ws/agent-cursor  → attachAgentCursor        
 
 ## Workspace
 
-`WORKSPACE_DIR` ([src/server/workspace.ts](src/server/workspace.ts)) defaults to `~/dev/tangotest`; override with `TANGO_WORKSPACE`. Four things land there:
+The active workspace is resolved at boot and on every picker selection. Resolution order (in [src/server/workspace.ts](src/server/workspace.ts):`resolveWorkspaceAtBoot`):
 
-- **`.mcp.json`** — generated config; **overwritten** on every server boot to point at `http://localhost:<PORT>/mcp`. Hand-edits will not survive.
-- **`CLAUDE.md`** — generated docs telling Claude about the `tango-canvas` MCP tools; **overwritten** on every server boot. Hand-edits will not survive.
-- **`.claude/settings.json`** — **merged** on every server boot. We add `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` and preserve any other keys (hooks, theme, model, …).
-- **`design-scratch/`** — PNGs from "Send to Claude" land here.
+1. `process.env.TANGO_WORKSPACE` — pinned, picker is read-only, source `'env'`.
+2. `~/.tango/state.json#lastWorkspace` — last-picked, if it still exists. Source `'persisted'`.
+3. `null` — picker shows blocking; PTY refuses to spawn (`/ws/terminal` returns code 4001) and `/api/design/snapshot` returns 409. Source `'unset'`.
 
-The PTY's `cwd` and the snapshot route both read `WORKSPACE_DIR`, so all the file-paths Claude is told about resolve from its own cwd.
+The picker UI lives in [src/components/WorkspaceDialog.tsx](src/components/WorkspaceDialog.tsx) + [src/components/WorkspaceGate.tsx](src/components/WorkspaceGate.tsx). The user can click the workspace pill in [src/components/AppTopBar.tsx](src/components/AppTopBar.tsx) to switch mid-session. Mid-session switches: `setWorkspace` clears the canvasBridge cache, broadcasts `{type:'workspace_changed'}` over every open `/ws/terminal`, and emits on the in-browser `workspaceBus` so [src/components/Terminal.tsx](src/components/Terminal.tsx) and [src/components/SketchPanel.tsx](src/components/SketchPanel.tsx) tear down their WSes and reopen against the new cwd.
+
+Five things land in the chosen workspace, all non-destructive:
+
+- **`.claude/tango.md`** — generated docs telling Claude about the `tango-canvas` MCP tools; **overwritten** every ensure. Wholly ours.
+- **`CLAUDE.md`** — only a 3-line sentinel block (`<!-- tango:start … -->\n@.claude/tango.md\n<!-- tango:end -->`) is managed. Everything outside the block is preserved byte-for-byte. If the file doesn't exist we create it with just the block; if it exists without sentinels we append at the end with a leading blank line; if it exists with sentinels we replace the **first** match in place.
+- **`.mcp.json`** — **merged** under `mcpServers['tango-canvas']` to point at `http://localhost:<PORT>/mcp`. Other server entries preserved. Malformed JSON or wrong shape → ensureWorkspace **refuses** to write, surfaces an error to the picker UI, and the workspace is still usable but the canvas MCP won't be available until the user fixes the file.
+- **`.claude/settings.json`** — **merged** to add `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. Preserves any other keys (hooks, theme, model, …). Malformed JSON → refuse + surface, same as `.mcp.json`.
+- **`design-scratch/`** — `mkdir -p`. PNGs from "Send to Claude" land here.
+
+The PTY's `cwd` and the snapshot route both call `getWorkspaceOrNull()` (or `getWorkspace()` for the throwing variant), so all the file-paths Claude is told about resolve from its own cwd.
+
+User-level state lives at `~/.tango/state.json` ([src/server/workspaceState.ts](src/server/workspaceState.ts)) — single key `lastWorkspace`. Electron will swap `os.homedir()` for `app.getPath('userData')` here; don't introduce other paths to that file.
 
 ## Layout
 
@@ -111,8 +122,10 @@ Sizes accept strings with units (`"35%"`, `"400px"`) or bare numbers (percent).
 - **Sanitize `appState` at every JSON boundary** via [`sanitizeAppState`](src/lib/canvasBus.ts). Excalidraw's appState contains `Map`/`Set` fields (`collaborators`, `pointers`, `followedBy`) that JSON.stringify silently flattens to `{}`; if that round-trips back into the canvas, Excalidraw crashes on `.forEach`. Anywhere we serialize, store, or transit appState, run it through the sanitizer.
 - **Bridge to the terminal via comment lines, not bare paths.** `terminalBus.sendToTerminal` writes whatever you hand it directly into the PTY. A bare path gets executed on the next Return; prefix with `#` so it parks in scrollback as an editable prompt seed. (The agent's `terminal_type` MCP tool is the exception — it's *meant* to submit; it sends text and `\r` as two writes so Claude Code's TUI sees the Enter as a real keystroke, not part of a paste.)
 - **`dom_inspect` before `cursor_click`.** Hand-rolled CSS selectors miss; the model has no view of the page. The system prompt enforces this for the controller agent; if you add new agent flows or new UI controls that the agent should reach, expose accessible names (`aria-label`, visible text on `<button>`s) so `dom_inspect` can find them by `query` string.
-- **`design-scratch/` is workspace scratch.** Lives at `${WORKSPACE_DIR}/design-scratch/`, gitignored. Resolved via [src/server/workspace.ts](src/server/workspace.ts) — never hardcode the path elsewhere. Electron will swap the path for `app.getPath('userData')` in one place.
-- **Workspace files `.mcp.json`, `CLAUDE.md`, and `.claude/settings.json` are managed.** `ensureWorkspace()` overwrites `.mcp.json` and `CLAUDE.md` and merges `.claude/settings.json` on every server boot. Add new managed keys to [src/server/workspace.ts](src/server/workspace.ts), not by hand-editing the workspace.
+- **`design-scratch/` is workspace scratch.** Lives at `<workspace>/design-scratch/`, gitignored. The active workspace is read via `getWorkspaceOrNull()` (route handlers must handle the `null` case — return 409, not crash) — never hardcode the path elsewhere. Electron will swap the path for `app.getPath('userData')` in one place.
+- **Workspace files are merged, not overwritten.** `ensureWorkspace()` writes `.claude/tango.md` (overwrite, ours), merges a 3-line sentinel block into `CLAUDE.md` (preserves user content outside the block), merges `.mcp.json` under `mcpServers['tango-canvas']` (preserves other servers; refuses on malformed JSON), and merges `.claude/settings.json` (preserves hooks/theme/model; adds `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`). The merge logic is exposed as pure helpers (`mergeClaudeMd`, `mergeMcpJson`, `mergeClaudeSettings`) — extend those, don't pile new effects into `ensureWorkspace`.
+- **The workspace can be unset.** Don't reach for `getWorkspace()` (which throws) from a route handler or top-level module — use `getWorkspaceOrNull()` and handle null. The picker mounts on `/` for any user with no env-pinned workspace, so first-launch is *always* through the picker.
+- **Don't mutate `currentWorkspace` directly.** `setWorkspace` in [src/server/workspaceState.ts](src/server/workspaceState.ts) is the only writer outside boot resolution — it validates the path, ensures the workspace files, persists to `~/.tango/state.json`, clears the canvas cache, and broadcasts `workspace_changed`. Skipping any of those steps will leave the app inconsistent.
 - **No `next dev`, no Vercel adapters, no edge runtime.** Custom Node server is load-bearing because the WSes and the MCP transport live in-process, and Electron will swap them for IPC against the same `attachPty` / `attachCanvas` / `mountMcp` surfaces.
 - **Strict Mode is on.** Terminal effect runs twice in dev → one harmless "WebSocket is closed before the connection is established" warning per mount, plus `claude` boots twice on first load (the first PTY is killed by the Strict-Mode cleanup). Don't "fix" by disabling Strict Mode.
 
@@ -124,11 +137,18 @@ Sizes accept strings with units (`"35%"`, `"400px"`) or bare numbers (percent).
 
 ## Files that matter
 
-- [server.ts](server.ts) — Next + WS upgrade routing + MCP mount
-- [src/server/pty.ts](src/server/pty.ts) — node-pty ↔ WS bridge; auto-launches `claude` in `WORKSPACE_DIR`
+- [server.ts](server.ts) — Next + WS upgrade routing + MCP mount + boot-time workspace resolution
+- [src/server/pty.ts](src/server/pty.ts) — node-pty ↔ WS bridge; auto-launches `claude` in the active workspace; broadcasts `workspace_changed` to all open terminal WSes
 - [src/server/canvasBridge.ts](src/server/canvasBridge.ts) — server-side scene cache + `/ws/canvas` hub
 - [src/server/mcp.ts](src/server/mcp.ts) — `McpServer` + Streamable HTTP transport at `/mcp`; tool registrations
-- [src/server/workspace.ts](src/server/workspace.ts) — `WORKSPACE_DIR` + `ensureWorkspace()` (managed `.mcp.json` / `CLAUDE.md` / `.claude/settings.json`)
+- [src/server/workspace.ts](src/server/workspace.ts) — workspace getter/setter + pure-function merges + `ensureWorkspace()` (managed `.claude/tango.md` / `CLAUDE.md` sentinel / `.mcp.json` / `.claude/settings.json` / `design-scratch/`)
+- [src/server/workspaceState.ts](src/server/workspaceState.ts) — `~/.tango/state.json` reader/writer + `setWorkspace` (validates path, ensures workspace, persists, broadcasts switch)
+- [src/app/api/workspace/current/route.ts](src/app/api/workspace/current/route.ts) — GET active path + source
+- [src/app/api/workspace/select/route.ts](src/app/api/workspace/select/route.ts) — POST set + ensure (or `dryRun:true` to validate-only)
+- [src/components/WorkspaceGate.tsx](src/components/WorkspaceGate.tsx) — context provider + dialog portal; first-launch blocking picker
+- [src/components/WorkspaceDialog.tsx](src/components/WorkspaceDialog.tsx) — picker dialog (recents, path input, soft-warning surface, env-locked read-only mode)
+- [src/lib/recentProjects.ts](src/lib/recentProjects.ts) — localStorage-backed recents list (`tango.workspace.recent`, capped 8)
+- [src/lib/workspaceBus.ts](src/lib/workspaceBus.ts) — in-browser pubsub for `workspaceChanged` (subscribed by Terminal + SketchPanel + WorkspaceGate)
 - [src/components/Terminal.tsx](src/components/Terminal.tsx) — xterm + FitAddon + WS + bus wiring
 - [src/lib/terminalBus.ts](src/lib/terminalBus.ts) — in-app pubsub seam (terminal)
 - [src/lib/canvasBus.ts](src/lib/canvasBus.ts) — in-app pubsub seam (canvas) + `sanitizeAppState`

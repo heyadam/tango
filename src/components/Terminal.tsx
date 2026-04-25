@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Terminal as Xterm } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
@@ -8,6 +8,13 @@ import { terminalBus } from '@/lib/terminalBus';
 
 export default function Terminal() {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // Bumping this counter forces the effect below to re-run, which tears down
+  // the existing xterm + WS and creates a fresh pair. Driven by the
+  // server-sent `workspace_changed` JSON frame on the same WS — that's the
+  // canonical signal so it works for every connected tab, not just the one
+  // that triggered the switch. (Don't add a workspaceBus subscription here —
+  // it would double-bump and re-kill the freshly-spawned `claude`.)
+  const [generation, setGeneration] = useState(0);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -68,7 +75,31 @@ export default function Terminal() {
         const bytes = new Uint8Array(data);
         term.write(bytes);
         terminalBus._emitOutput(decoder.decode(bytes));
-      } else if (typeof data === 'string') {
+        return;
+      }
+      if (typeof data === 'string') {
+        // Server-sent JSON control frame on the same WS — currently only
+        // workspace_changed. Detected by trying to parse; everything else
+        // is treated as terminal text.
+        let parsed: unknown;
+        try {
+          parsed = JSON.parse(data);
+        } catch {
+          term.write(data);
+          terminalBus._emitOutput(data);
+          return;
+        }
+        if (
+          parsed != null &&
+          typeof parsed === 'object' &&
+          'type' in (parsed as Record<string, unknown>) &&
+          (parsed as { type: unknown }).type === 'workspace_changed'
+        ) {
+          // Trigger a generation bump so this effect tears down and
+          // re-runs, opening a fresh PTY in the new cwd.
+          setGeneration((g) => g + 1);
+          return;
+        }
         term.write(data);
         terminalBus._emitOutput(data);
       }
@@ -112,7 +143,7 @@ export default function Terminal() {
       }
       term.dispose();
     };
-  }, []);
+  }, [generation]);
 
   return <div ref={containerRef} className="h-full w-full bg-[#0a0a0a] p-2" />;
 }
