@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 
 type Props = {
   open: boolean;
-  onSendSketch: () => Promise<string | null>;
+  onSendSketch: (caption?: string) => Promise<string | null>;
   sendBusy: boolean;
   canSendSketch?: boolean;
 };
@@ -49,6 +49,7 @@ export default function AgentSidebar({
   });
   const [sketchPath, setSketchPath] = useState<string | null>(null);
   const [sketchError, setSketchError] = useState<string | null>(null);
+  const [sketchCaption, setSketchCaption] = useState('');
 
   const handleSubmit = (msg: PromptInputMessage) => {
     const text = msg.text.trim();
@@ -59,8 +60,12 @@ export default function AgentSidebar({
   const handleSendSketch = async () => {
     setSketchError(null);
     try {
-      const rel = await onSendSketch();
-      if (rel) setSketchPath(rel);
+      const captionTrimmed = sketchCaption.trim();
+      const rel = await onSendSketch(captionTrimmed || undefined);
+      if (rel) {
+        setSketchPath(rel);
+        setSketchCaption('');
+      }
     } catch (e) {
       setSketchError(e instanceof Error ? e.message : String(e));
     }
@@ -97,6 +102,26 @@ export default function AgentSidebar({
           </>
         )}
       </div>
+
+      {open && canSendSketch && (
+        <div className="shrink-0 border-b border-neutral-800 px-2 py-1.5">
+          <input
+            type="text"
+            value={sketchCaption}
+            onChange={(e) => setSketchCaption(e.target.value)}
+            placeholder="Note (optional) — appears in tango-memory.md"
+            disabled={sendBusy}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!sendBusy) void handleSendSketch();
+              }
+            }}
+            maxLength={240}
+            className="w-full rounded border border-neutral-800 bg-neutral-900 px-2 py-1 text-xs text-neutral-200 placeholder:text-neutral-600 focus:border-neutral-600 focus:outline-none disabled:opacity-50"
+          />
+        </div>
+      )}
 
       {open && (
         <>

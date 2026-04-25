@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { ensureMemory } from './memory';
 
 // The directory Claude operates in: where the in-app terminal lands, where
 // `.mcp.json` and `.claude/tango.md` are managed so the `claude` CLI auto-
@@ -94,6 +95,10 @@ Reach for these whenever the user asks for visual work — wireframes, diagrams,
 Edits via these tools appear on the user's canvas immediately. The user can \`Cmd+Z\` your changes, and their edits flow back so \`get_canvas_state\` always reflects what's on their screen right now.
 
 For visual context, prefer \`screenshot_canvas\` — it's the live channel. The user may also drop a PNG into \`design-scratch/\` and ping you with a \`# review design at design-scratch/...png\` comment line; that's the deliberate-handoff channel — read the file when they point you at it.
+
+## Workspace memory
+
+A live memory file lives at \`./tango-memory.md\` — read it now for prior context (snapshots taken, agent runs, recorded design decisions). When the user states a design decision, constraint, or context worth keeping for future sessions, call the \`remember_note\` MCP tool with the appropriate \`category\` (\`'decision'\`, \`'context'\`, or \`'todo'\`). Don't edit the Summary or Recent sections of \`tango-memory.md\` directly — those are managed by tango. Your own working notes go in the \`Notes (yours)\` block at the bottom, which tango never touches. Note: snapshot captions and recorded notes are summarized via the same OpenAI key as the controller agent.
 
 ---
 
@@ -234,6 +239,18 @@ export async function ensureWorkspace(
     await writeIfChanged(settingsPath, settingsResult.next);
   } else {
     errors.push({ file: '.claude/settings.json', reason: settingsResult.reason });
+  }
+
+  // tango-memory.md — create-if-absent; never overwrite. Pass the workspace
+  // explicitly because in setWorkspace's flow this runs before the slot is
+  // set, and ensureMemory() should never write into the *previous* workspace.
+  try {
+    await ensureMemory(workspace);
+  } catch (err) {
+    errors.push({
+      file: 'tango-memory.md',
+      reason: err instanceof Error ? err.message : String(err),
+    });
   }
 
   return errors.length === 0 ? { ok: true } : { ok: false, errors };

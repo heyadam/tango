@@ -8,8 +8,15 @@ export type WrittenSnapshot = {
   absPath: string;
 };
 
-export async function writeSnapshot(blob: Blob): Promise<WrittenSnapshot> {
-  const res = await fetch('/api/design/snapshot', {
+export async function writeSnapshot(
+  blob: Blob,
+  options?: { caption?: string },
+): Promise<WrittenSnapshot> {
+  const url =
+    options?.caption && options.caption.trim()
+      ? `/api/design/snapshot?caption=${encodeURIComponent(options.caption.trim())}`
+      : '/api/design/snapshot';
+  const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'image/png' },
     body: blob,

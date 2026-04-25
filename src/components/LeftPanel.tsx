@@ -23,18 +23,22 @@ export default function LeftPanel({ agentSidebarOpen, mode }: Props) {
     handlesRef.current = handles;
   }, []);
 
-  const sendSketch = useCallback(async () => {
-    if (!handlesRef.current || sendBusy) return null;
-    setSendBusy(true);
-    try {
-      const blob = await handlesRef.current.getPng();
-      const { relPath } = await writeSnapshot(blob);
-      terminalBus.sendToTerminal(`# review design at ${relPath}\n`);
-      return relPath;
-    } finally {
-      setSendBusy(false);
-    }
-  }, [sendBusy]);
+  const sendSketch = useCallback(
+    async (caption?: string) => {
+      if (!handlesRef.current || sendBusy) return null;
+      setSendBusy(true);
+      try {
+        const blob = await handlesRef.current.getPng();
+        const { relPath } = await writeSnapshot(blob, { caption });
+        const note = caption && caption.trim() ? ` — ${caption.trim()}` : '';
+        terminalBus.sendToTerminal(`# review design at ${relPath}${note}\n`);
+        return relPath;
+      } finally {
+        setSendBusy(false);
+      }
+    },
+    [sendBusy],
+  );
 
   return (
     <div className="flex h-full w-full">

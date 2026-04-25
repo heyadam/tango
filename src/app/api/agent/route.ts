@@ -6,6 +6,7 @@ import {
 } from 'ai';
 import { createMCPClient } from '@ai-sdk/mcp';
 import { openai, VISION_MODEL } from '@/lib/ai';
+import { appendEvent } from '@/server/memory';
 
 export const runtime = 'nodejs';
 
@@ -54,6 +55,23 @@ function mcpUrl(req: Request): string {
   return `${url.protocol}//${url.host}/mcp`;
 }
 
+// Pull the most recent user-authored text out of the UI message list. Each
+// UIMessage's `parts` is an array of typed parts; we want the first text part
+// of the last user message.
+function lastUserGoal(messages: UIMessage[]): string {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (m.role !== 'user') continue;
+    const text = (m.parts ?? [])
+      .map((p) => (p && (p as { type?: string }).type === 'text' ? (p as { text?: string }).text ?? '' : ''))
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    if (text) return text;
+  }
+  return '';
+}
+
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
@@ -81,6 +99,8 @@ export async function POST(req: Request) {
       Object.entries(allTools).filter(([name]) => ALLOWED_TOOLS.has(name)),
     );
 
+    const goal = lastUserGoal(messages);
+
     const result = streamText({
       model: openai(VISION_MODEL),
       system: SYSTEM_PROMPT,
@@ -92,7 +112,34 @@ export async function POST(req: Request) {
           reasoningEffort: 'low',
         },
       },
-      onFinish: () => {
+      onFinish: (event) => {
+        try {
+          // Collapse the tool sequence across all steps into "name1→name2→…".
+          // Empty if the model never called a tool — that's still worth
+          // recording (the user pinged the agent and got pure narration).
+          const toolNames: string[] = [];
+          for (const step of event.steps ?? []) {
+            for (const call of step.toolCalls ?? []) {
+              if (call?.toolName) toolNames.push(call.toolName);
+            }
+          }
+          const toolsLine = toolNames.join('→');
+
+          const finalText = (event.text ?? '').trim();
+          const outcome = `${finalText.slice(0, 80)}${finalText.length > 80 ? '…' : ''} [${event.finishReason}]`;
+
+          if (goal) {
+            appendEvent({
+              type: 'agent_run',
+              goal,
+              tools: toolsLine,
+              outcome,
+            });
+          }
+        } catch (err) {
+          // Memory recording must never break the agent response.
+          console.error('[agent] memory append failed:', err);
+        }
         void closeOnce();
       },
       onError: () => {

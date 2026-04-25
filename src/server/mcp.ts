@@ -22,6 +22,7 @@ import {
   type CanvasElement,
 } from './canvasBridge';
 import { pushCursorCommand, requestInspect } from './agentCursorBridge';
+import { recordNote } from './memory';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
 // Permissive Zod shape — we don't reproduce Excalidraw's element schema here.
@@ -285,6 +286,30 @@ function buildServer(): McpServer {
           {
             type: 'text',
             text: `cursor_type dispatched ${text.length} char(s) to ${delivered} client(s).`,
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    'remember_note',
+    {
+      title: 'Record a workspace memory note',
+      description:
+        'Append a one-line note to ./tango-memory.md so future sessions in this workspace pick it up. Use this when the user states a design decision, constraint, or piece of context worth remembering — e.g. "auth uses magic links, no passwords", "primary brand color is #4F46E5", "TODO: revisit empty-state copy after launch". `category` is one of: `decision` (a settled choice that should not be re-litigated), `context` (background fact about the project), `todo` (something to come back to). Keep `text` short and self-contained — the user will read these as bullet points later.',
+      inputSchema: {
+        category: z.enum(['decision', 'context', 'todo']),
+        text: z.string().min(1).max(500),
+      },
+    },
+    async ({ category, text }) => {
+      recordNote(category, text);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Recorded ${category} note in tango-memory.md.`,
           },
         ],
       };

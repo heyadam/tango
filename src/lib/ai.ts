@@ -1,6 +1,7 @@
 import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
 
-export { openai };
+export { openai, generateText };
 
 export const VISION_MODEL = 'gpt-5.5' as const;
 
