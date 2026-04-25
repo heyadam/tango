@@ -3,6 +3,7 @@ import next from 'next';
 import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
 import { attachCanvas } from './src/server/canvasBridge';
+import { attachAgentCursor } from './src/server/agentCursorBridge';
 import { mountMcp } from './src/server/mcp';
 import { WORKSPACE_DIR, ensureWorkspace } from './src/server/workspace';
 
@@ -14,6 +15,7 @@ const app = next({ dev, hostname, port });
 
 const TERMINAL_PATH = '/ws/terminal';
 const CANVAS_PATH = '/ws/canvas';
+const AGENT_CURSOR_PATH = '/ws/agent-cursor';
 
 app.prepare().then(async () => {
   await ensureWorkspace(port);
@@ -42,6 +44,11 @@ app.prepare().then(async () => {
     attachCanvas(ws);
   });
 
+  const wssAgentCursor = new WebSocketServer({ noServer: true });
+  wssAgentCursor.on('connection', (ws) => {
+    attachAgentCursor(ws);
+  });
+
   server.on('upgrade', (req, socket, head) => {
     const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
     if (url.pathname === TERMINAL_PATH) {
@@ -53,6 +60,12 @@ app.prepare().then(async () => {
     if (url.pathname === CANVAS_PATH) {
       wssCanvas.handleUpgrade(req, socket, head, (ws) => {
         wssCanvas.emit('connection', ws, req);
+      });
+      return;
+    }
+    if (url.pathname === AGENT_CURSOR_PATH) {
+      wssAgentCursor.handleUpgrade(req, socket, head, (ws) => {
+        wssAgentCursor.emit('connection', ws, req);
       });
       return;
     }

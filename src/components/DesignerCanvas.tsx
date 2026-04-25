@@ -16,6 +16,11 @@ import { canvasBus, sanitizeAppState } from '@/lib/canvasBus';
 
 export type DesignerHandles = {
   getPng: () => Promise<Blob>;
+  getImage: (opts?: {
+    mime?: string;
+    quality?: number;
+    maxDim?: number;
+  }) => Promise<{ mime: string; bytes: Uint8Array }>;
   getSerialized: () => string;
   applyScene: (
     elements: unknown[],
@@ -83,6 +88,20 @@ export default function DesignerCanvas({ initialData, onPersist, onReady }: Prop
               });
               if (!blob) throw new Error('exportToBlob returned null');
               return blob;
+            },
+            getImage: async (opts) => {
+              const mime = opts?.mime ?? 'image/jpeg';
+              const blob = await exportToBlob({
+                elements: api.getSceneElements(),
+                appState: api.getAppState(),
+                files: api.getFiles(),
+                mimeType: mime,
+                quality: opts?.quality ?? 0.85,
+                maxWidthOrHeight: opts?.maxDim ?? 1024,
+              });
+              if (!blob) throw new Error('exportToBlob returned null');
+              const bytes = new Uint8Array(await blob.arrayBuffer());
+              return { mime, bytes };
             },
             getSerialized: () =>
               serializeAsJSON(

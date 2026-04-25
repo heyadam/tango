@@ -17,9 +17,11 @@ import {
   appendElementsFromServer,
   clearCanvasFromServer,
   getCanvasState,
+  requestScreenshot,
   setCanvasFromServer,
   type CanvasElement,
 } from './canvasBridge';
+import { pushCursorCommand, requestInspect } from './agentCursorBridge';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
 // Permissive Zod shape — we don't reproduce Excalidraw's element schema here.
@@ -111,6 +113,213 @@ function buildServer(): McpServer {
     },
   );
 
+  server.registerTool(
+    'screenshot_canvas',
+    {
+      title: 'See the canvas',
+      description:
+        "Returns the current Excalidraw canvas as a rendered image (vs. `get_canvas_state`'s scene JSON), so you can actually see what the user has drawn — including embedded screenshots whose bytes `get_canvas_state` strips. Reflects the live browser canvas at call time, with no debounce window. Safe to call in a loop. Defaults to a JPEG ~1024px on the longest side, which is plenty for vision and keeps round-trips fast; pass `maxDim` (up to 4096) for more detail or a smaller value for faster polling, and `quality` (0.1–1) to tune JPEG compression.",
+      inputSchema: {
+        maxDim: z.number().int().positive().max(4096).optional(),
+        quality: z.number().min(0.1).max(1).optional(),
+      },
+    },
+    async ({ maxDim, quality }) => {
+      try {
+        const { mime, data } = await requestScreenshot({ maxDim, quality });
+        return {
+          content: [{ type: 'image', data, mimeType: mime }],
+        };
+      } catch (err) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: `screenshot_canvas failed: ${err instanceof Error ? err.message : String(err)}`,
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  // Agent UI-control tools. These push commands over /ws/agent-cursor to the
+  // browser; AgentCursorOverlay animates the cursor sprite and dispatches the
+  // matching DOM events. `delivered: 0` means no browser is listening — the
+  // model should surface that to the user rather than retry blindly.
+
+  server.registerTool(
+    'dom_inspect',
+    {
+      title: 'List interactive UI elements with their bounding rects',
+      description:
+        'ALWAYS call this before cursor_move/cursor_click when you do not have an exact CSS selector. Returns the visible interactive elements on the page (buttons, links, inputs, things with role=button, etc.) with their accessible names, visible text, roles, and pixel rects. The returned `center: {x,y}` of the chosen element is what you pass to cursor_click — that hits the target precisely instead of guessing coordinates.\n\nPass `query` to fuzzy-match against accessible name / text / role (e.g. `query: "send to claude"`). Pass `selector` to scope the search to a region (defaults to document.body). `limit` caps the result count (default 30, max 100). Elements are ranked: exact name match > startsWith > contains; without a query, in-viewport elements come first.',
+      inputSchema: {
+        query: z.string().optional(),
+        selector: z.string().optional(),
+        limit: z.number().int().positive().max(100).optional(),
+      },
+    },
+    async ({ query, selector, limit }) => {
+      try {
+        const result = await requestInspect({ query, selector, limit });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (err) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: `dom_inspect failed: ${err instanceof Error ? err.message : String(err)}`,
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  server.registerTool(
+    'cursor_move',
+    {
+      title: 'Move the agent cursor',
+      description:
+        'Smoothly moves the on-screen agent cursor to a target. Pass `selector` (CSS selector — preferred) OR a `x`/`y` viewport coordinate pair. `durationMs` controls the animation length (default 350ms). Use this to draw the user\'s eye before clicking, or just to inspect a region.',
+      inputSchema: {
+        selector: z.string().optional(),
+        x: z.number().optional(),
+        y: z.number().optional(),
+        durationMs: z.number().int().positive().max(5000).optional(),
+      },
+    },
+    async ({ selector, x, y, durationMs }) => {
+      if (!selector && (typeof x !== 'number' || typeof y !== 'number')) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: 'cursor_move requires either `selector` or both `x` and `y`.',
+            },
+          ],
+        };
+      }
+      const { delivered } = pushCursorCommand({
+        type: 'move',
+        selector,
+        x,
+        y,
+        durationMs,
+      });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `cursor_move dispatched to ${delivered} client(s).`,
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    'cursor_click',
+    {
+      title: 'Click at the agent cursor target',
+      description:
+        'Moves the agent cursor to the target and dispatches a real DOM click (`mousedown`/`mouseup`/`click`). Pass `selector` (CSS selector — preferred) OR `x`/`y`. `button` defaults to "left". The click fires on whatever element is at that point, so React handlers fire normally.',
+      inputSchema: {
+        selector: z.string().optional(),
+        x: z.number().optional(),
+        y: z.number().optional(),
+        button: z.enum(['left', 'right']).optional(),
+      },
+    },
+    async ({ selector, x, y, button }) => {
+      if (!selector && (typeof x !== 'number' || typeof y !== 'number')) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: 'cursor_click requires either `selector` or both `x` and `y`.',
+            },
+          ],
+        };
+      }
+      const { delivered } = pushCursorCommand({
+        type: 'click',
+        selector,
+        x,
+        y,
+        button,
+      });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `cursor_click dispatched to ${delivered} client(s).`,
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    'cursor_type',
+    {
+      title: 'Type into a focusable element',
+      description:
+        'Types text into a target element. If `selector` is given the element is focused first; otherwise the currently-focused element receives the input. Best for HTML inputs and textareas. For typing into the in-app terminal, use `terminal_type` instead — it speaks directly to the PTY.',
+      inputSchema: {
+        text: z.string(),
+        selector: z.string().optional(),
+      },
+    },
+    async ({ text, selector }) => {
+      const { delivered } = pushCursorCommand({ type: 'type', text, selector });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `cursor_type dispatched ${text.length} char(s) to ${delivered} client(s).`,
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    'terminal_type',
+    {
+      title: 'Send a message to the terminal Claude session',
+      description:
+        'Types text into the in-app xterm terminal AND presses Return to submit it. The terminal is running `claude --dangerously-skip-permissions` in the workspace, so this is the way you ask the terminal-Claude session to do something — it is your delegation channel. The Return is automatic; only set `submit: false` if you specifically want to seed the prompt buffer without sending it (rare).',
+      inputSchema: {
+        text: z.string(),
+        submit: z.boolean().optional().describe('Defaults to true. Set false only to seed the buffer without submitting.'),
+      },
+    },
+    async ({ text, submit }) => {
+      const willSubmit = submit !== false;
+      const { delivered } = pushCursorCommand({
+        type: 'terminal_type',
+        text,
+        submit: willSubmit,
+      });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `terminal_type dispatched ${text.length} char(s) (submit=${willSubmit}) to ${delivered} client(s).`,
+          },
+        ],
+      };
+    },
+  );
+
   return server;
 }
 
@@ -164,12 +373,15 @@ export function mountMcp(server: http.Server, mcpPath = '/mcp'): void {
               transports[newSid] = { transport, mcpServer };
             },
           });
+          // Do NOT call mcpServer.close() here. The server's close() calls
+          // transport.close(), which fires this onclose again — infinite
+          // recursion. Dropping the session entry is enough; the McpServer
+          // will be GC'd once nothing else references it.
           transport.onclose = () => {
             const closedSid = transport.sessionId;
             if (closedSid && transports[closedSid]) {
               delete transports[closedSid];
             }
-            void mcpServer.close();
           };
           await mcpServer.connect(transport);
           await transport.handleRequest(req, res, body);

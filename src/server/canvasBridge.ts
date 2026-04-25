@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type { WebSocket } from 'ws';
 
 // Authoritative server-side cache of the Excalidraw scene. The browser is the
@@ -24,6 +25,13 @@ type SnapshotMsg = {
   appState?: CanvasAppState;
   files?: CanvasFiles;
 };
+type ScreenshotResultMsg = {
+  type: 'screenshot_result';
+  requestId: string;
+  mime?: string;
+  data?: string;
+  error?: string;
+};
 type ServerSetMsg = {
   type: 'set';
   elements: CanvasElement[];
@@ -35,8 +43,27 @@ type ServerPatchMsg = {
   mode: 'append';
   elements: CanvasElement[];
 };
-type ClientMsg = SnapshotMsg;
-type ServerMsg = ServerSetMsg | ServerPatchMsg;
+type ScreenshotRequestMsg = {
+  type: 'screenshot_request';
+  requestId: string;
+  opts?: ScreenshotOpts;
+};
+type ClientMsg = SnapshotMsg | ScreenshotResultMsg;
+type ServerMsg = ServerSetMsg | ServerPatchMsg | ScreenshotRequestMsg;
+
+export type ScreenshotOpts = {
+  mime?: string;
+  quality?: number;
+  maxDim?: number;
+};
+export type ScreenshotResult = { mime: string; data: string };
+
+type Pending = {
+  resolve: (value: ScreenshotResult) => void;
+  reject: (err: Error) => void;
+  timer: NodeJS.Timeout;
+};
+const pending = new Map<string, Pending>();
 
 function broadcast(msg: ServerMsg): void {
   const payload = JSON.stringify(msg);
@@ -83,6 +110,22 @@ export function attachCanvas(ws: WebSocket): void {
         appState: parsed.appState ?? {},
         files: parsed.files ?? {},
       };
+      return;
+    }
+    if (parsed.type === 'screenshot_result') {
+      const slot = pending.get(parsed.requestId);
+      if (!slot) return;
+      pending.delete(parsed.requestId);
+      clearTimeout(slot.timer);
+      if (parsed.error) {
+        slot.reject(new Error(parsed.error));
+        return;
+      }
+      if (!parsed.mime || !parsed.data) {
+        slot.reject(new Error('screenshot_result missing mime/data'));
+        return;
+      }
+      slot.resolve({ mime: parsed.mime, data: parsed.data });
     }
   });
 
@@ -122,4 +165,49 @@ export function appendElementsFromServer(elements: CanvasElement[]): void {
 
 export function clearCanvasFromServer(): void {
   setCanvasFromServer([], cache.appState, cache.files);
+}
+
+function pickSocket(): WebSocket | null {
+  for (const ws of sockets) {
+    // ws.OPEN === 1; readyState may not always type the constants correctly.
+    if (ws.readyState === 1) return ws;
+  }
+  return null;
+}
+
+export async function requestScreenshot(opts?: ScreenshotOpts & { timeoutMs?: number }): Promise<ScreenshotResult> {
+  const ws = pickSocket();
+  if (!ws) {
+    throw new Error(
+      'No browser connected to /ws/canvas — open the app in a tab and retry.',
+    );
+  }
+  const requestId = randomUUID();
+  const timeoutMs = opts?.timeoutMs ?? 3000;
+  const renderOpts: ScreenshotOpts = {
+    mime: opts?.mime,
+    quality: opts?.quality,
+    maxDim: opts?.maxDim,
+  };
+
+  return new Promise<ScreenshotResult>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      pending.delete(requestId);
+      reject(new Error(`screenshot_canvas timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+    pending.set(requestId, { resolve, reject, timer });
+    try {
+      ws.send(
+        JSON.stringify({
+          type: 'screenshot_request',
+          requestId,
+          opts: renderOpts,
+        } satisfies ScreenshotRequestMsg),
+      );
+    } catch (err) {
+      pending.delete(requestId);
+      clearTimeout(timer);
+      reject(err as Error);
+    }
+  });
 }

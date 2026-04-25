@@ -8,6 +8,7 @@ import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
 import { writeSnapshot } from '@/lib/designSnapshot';
 import { terminalBus } from '@/lib/terminalBus';
 import type { DesignerHandles } from './DesignerCanvas';
+import AgentTrigger from './AgentTrigger';
 
 const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
   ssr: false,
@@ -17,6 +18,23 @@ const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
 type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; initialData: ExcalidrawInitialDataState | null };
+
+type ScreenshotRequestMsg = {
+  type: 'screenshot_request';
+  requestId: string;
+  opts?: { mime?: string; quality?: number; maxDim?: number };
+};
+
+// Chunked Uint8Array → base64 — String.fromCharCode(...bigArray) overflows the
+// argument stack on large images.
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
 
 export default function SketchPanel() {
   const handlesRef = useRef<DesignerHandles | null>(null);
@@ -73,11 +91,49 @@ export default function SketchPanel() {
       }
     });
 
-    ws.addEventListener('message', (ev) => {
-      let parsed: ApplyMsg;
+    const respondToScreenshot = async (req: ScreenshotRequestMsg) => {
+      const reply = (
+        body: { mime: string; data: string } | { error: string },
+      ) => {
+        if (ws.readyState !== WebSocket.OPEN) return;
+        try {
+          ws.send(
+            JSON.stringify({
+              type: 'screenshot_result',
+              requestId: req.requestId,
+              ...body,
+            }),
+          );
+        } catch {
+          // socket dying
+        }
+      };
+      const handles = handlesRef.current;
+      if (!handles) {
+        reply({ error: 'Canvas not ready yet — try again in a moment.' });
+        return;
+      }
       try {
-        parsed = JSON.parse(typeof ev.data === 'string' ? ev.data : '') as ApplyMsg;
+        const { mime, bytes } = await handles.getImage(req.opts);
+        reply({ mime, data: bytesToBase64(bytes) });
+      } catch (err) {
+        reply({
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    };
+
+    ws.addEventListener('message', (ev) => {
+      let parsed: ApplyMsg | ScreenshotRequestMsg;
+      try {
+        parsed = JSON.parse(typeof ev.data === 'string' ? ev.data : '') as
+          | ApplyMsg
+          | ScreenshotRequestMsg;
       } catch {
+        return;
+      }
+      if (parsed.type === 'screenshot_request') {
+        void respondToScreenshot(parsed);
         return;
       }
       canvasBus._emitApply(parsed);
@@ -140,14 +196,17 @@ export default function SketchPanel() {
             <span className="font-mono text-[11px] text-red-400">{error}</span>
           )}
         </div>
-        <button
-          type="button"
-          onClick={handleSend}
-          disabled={busy || load.status !== 'ready'}
-          className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-100 transition-colors hover:border-neutral-500 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {busy ? 'Sending…' : 'Send to Claude'}
-        </button>
+        <div className="flex items-center gap-3">
+          <AgentTrigger />
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={busy || load.status !== 'ready'}
+            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-100 transition-colors hover:border-neutral-500 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {busy ? 'Sending…' : 'Send to Claude'}
+          </button>
+        </div>
       </div>
       <div className="min-h-0 flex-1">
         {load.status === 'ready' && (
