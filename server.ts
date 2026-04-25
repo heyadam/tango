@@ -2,6 +2,9 @@ import http from 'node:http';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
+import { attachCanvas } from './src/server/canvasBridge';
+import { mountMcp } from './src/server/mcp';
+import { WORKSPACE_DIR, ensureWorkspace } from './src/server/workspace';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOST ?? 'localhost';
@@ -10,8 +13,10 @@ const port = Number(process.env.PORT ?? 3000);
 const app = next({ dev, hostname, port });
 
 const TERMINAL_PATH = '/ws/terminal';
+const CANVAS_PATH = '/ws/canvas';
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
+  await ensureWorkspace(port);
   const handle = app.getRequestHandler();
   const upgradeHandle = app.getUpgradeHandler();
 
@@ -23,16 +28,31 @@ app.prepare().then(() => {
     });
   });
 
-  const wss = new WebSocketServer({ noServer: true });
-  wss.on('connection', (ws) => {
+  // mountMcp shims the 'request' listener: /mcp goes to MCP, everything else
+  // falls through to the Next handler above.
+  mountMcp(server);
+
+  const wssTerminal = new WebSocketServer({ noServer: true });
+  wssTerminal.on('connection', (ws) => {
     attachPty(ws);
+  });
+
+  const wssCanvas = new WebSocketServer({ noServer: true });
+  wssCanvas.on('connection', (ws) => {
+    attachCanvas(ws);
   });
 
   server.on('upgrade', (req, socket, head) => {
     const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
     if (url.pathname === TERMINAL_PATH) {
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit('connection', ws, req);
+      wssTerminal.handleUpgrade(req, socket, head, (ws) => {
+        wssTerminal.emit('connection', ws, req);
+      });
+      return;
+    }
+    if (url.pathname === CANVAS_PATH) {
+      wssCanvas.handleUpgrade(req, socket, head, (ws) => {
+        wssCanvas.emit('connection', ws, req);
       });
       return;
     }
@@ -41,5 +61,6 @@ app.prepare().then(() => {
 
   server.listen(port, () => {
     console.log(`▲ tango ready on http://${hostname}:${port}`);
+    console.log(`  workspace: ${WORKSPACE_DIR}`);
   });
 });

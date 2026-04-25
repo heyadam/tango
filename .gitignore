@@ -40,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# designer-mode scratchpad (PNG snapshots written by /api/design/snapshot)
+/design-scratch/
+
+# local Claude Code state
+/.claude/settings.local.json
+/.claude/worktrees/

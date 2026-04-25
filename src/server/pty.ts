@@ -1,6 +1,6 @@
-import os from 'node:os';
 import * as pty from 'node-pty';
 import type { WebSocket } from 'ws';
+import { WORKSPACE_DIR } from './workspace';
 
 type ResizeMessage = { type: 'resize'; cols: number; rows: number };
 type ControlMessage = ResizeMessage;
@@ -17,7 +17,7 @@ export function attachPty(ws: WebSocket): void {
     name: 'xterm-256color',
     cols: 80,
     rows: 24,
-    cwd: os.homedir(),
+    cwd: WORKSPACE_DIR,
     env: {
       ...process.env,
       TERM: 'xterm-256color',
@@ -26,6 +26,11 @@ export function attachPty(ws: WebSocket): void {
   });
 
   let alive = true;
+
+  // Auto-launch claude on every fresh PTY. The shell still runs first (so
+  // .zshrc / login messages still apply), then this command queues into its
+  // stdin and executes once the prompt appears. \r is the TTY "Enter."
+  ptyProcess.write('claude --dangerously-skip-permissions\r');
 
   const onDataDisposable = ptyProcess.onData((data) => {
     if (!alive) return;
