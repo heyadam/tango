@@ -1,27 +1,44 @@
 'use client';
 
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Group, Panel, Separator } from 'react-resizable-panels';
+import AppTopBar from '@/components/AppTopBar';
 import LeftPanel from '@/components/LeftPanel';
+import { cn } from '@/lib/utils';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
 
+type WorkspaceMode = 'sketch' | 'moodboard' | 'brand';
+
 export default function Home() {
+  const [agentOpen, setAgentOpen] = useState(true);
+  const [claudeOpen, setClaudeOpen] = useState(true);
+  const [mode, setMode] = useState<WorkspaceMode>('sketch');
+
   return (
-    <Group orientation="horizontal" className="flex h-screen w-screen">
-      <Panel
-        defaultSize="65%"
-        minSize="25%"
-        className="bg-neutral-900 text-neutral-100"
-      >
-        <LeftPanel />
-      </Panel>
-      <Separator className="group relative w-px shrink-0 bg-neutral-800 transition-colors hover:bg-neutral-600 data-[resize-handle-active]:bg-neutral-500">
-        <div className="absolute inset-y-0 -left-1 w-3" />
-      </Separator>
-      <Panel defaultSize="35%" minSize="20%" className="bg-[#0a0a0a]">
-        <Terminal />
-      </Panel>
-    </Group>
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-neutral-950 text-neutral-100">
+      <AppTopBar
+        agentOpen={agentOpen}
+        claudeOpen={claudeOpen}
+        mode={mode}
+        onToggleAgent={() => setAgentOpen((v) => !v)}
+        onToggleClaude={() => setClaudeOpen((v) => !v)}
+        onModeChange={setMode}
+      />
+      <main className="flex min-h-0 flex-1">
+        <section className="min-w-0 flex-1 bg-neutral-900">
+          <LeftPanel agentSidebarOpen={agentOpen} />
+        </section>
+        <aside
+          aria-hidden={!claudeOpen}
+          className={cn(
+            'h-full shrink-0 overflow-hidden bg-[#0a0a0a] transition-[width] duration-200 ease-out',
+            claudeOpen ? 'w-[35vw] min-w-[320px] border-l border-neutral-800' : 'w-0',
+          )}
+        >
+          <Terminal />
+        </aside>
+      </main>
+    </div>
   );
 }
