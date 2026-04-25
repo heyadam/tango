@@ -18,8 +18,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import type { WorkspaceMode } from '@/lib/workspaceMode';
 
-type WorkspaceMode = 'sketch' | 'moodboard' | 'brand';
 type WorkspaceSource = 'env' | 'persisted' | 'unset';
 
 type Props = {

@@ -2,6 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { terminalBus } from '@/lib/terminalBus';
+import type {
+  AgentCursorServerMsg,
+  InteractiveElement,
+} from '@/lib/agentCursorProtocol';
+import { openWS } from '@/lib/wsClient';
 
 // Visible "fake mouse" overlay driven by the /ws/agent-cursor channel.
 // Server-side MCP tools push commands; this component renders a cursor sprite
@@ -9,41 +14,8 @@ import { terminalBus } from '@/lib/terminalBus';
 // terminal_type command short-circuits into terminalBus.sendToTerminal so the
 // existing PTY pipeline handles it — the overlay is just the messenger.
 
-type MoveCmd = {
-  type: 'move';
-  selector?: string;
-  x?: number;
-  y?: number;
-  durationMs?: number;
-};
-type ClickCmd = {
-  type: 'click';
-  selector?: string;
-  x?: number;
-  y?: number;
-  button?: 'left' | 'right';
-};
-type TypeCmd = { type: 'type'; text: string; selector?: string };
-type TerminalTypeCmd = { type: 'terminal_type'; text: string; submit?: boolean };
-type InspectCmd = {
-  type: 'inspect';
-  requestId: string;
-  query?: string;
-  selector?: string;
-  limit?: number;
-};
-type Cmd = MoveCmd | ClickCmd | TypeCmd | TerminalTypeCmd | InspectCmd;
-
-type InteractiveInfo = {
-  role: string;
-  name: string;
-  text: string;
-  rect: { x: number; y: number; width: number; height: number };
-  center: { x: number; y: number };
-  selector?: string;
-  inViewport: boolean;
-  disabled: boolean;
-};
+type Cmd = AgentCursorServerMsg;
+type InteractiveInfo = InteractiveElement;
 
 const INTERACTIVE_SELECTOR = [
   'button',
@@ -263,8 +235,7 @@ export default function AgentCursorOverlay() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${proto}//${window.location.host}/ws/agent-cursor`);
+    const ws = openWS('/ws/agent-cursor');
 
     ws.addEventListener('open', () => setConnected(true));
     ws.addEventListener('close', () => setConnected(false));

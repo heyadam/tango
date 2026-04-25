@@ -5,7 +5,9 @@ import dynamic from 'next/dynamic';
 import type { ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types';
 import { sketchStore } from '@/lib/sketchStore';
 import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
+import type { ScreenshotRequestMsg } from '@/lib/canvasProtocol';
 import { workspaceBus } from '@/lib/workspaceBus';
+import { openWS } from '@/lib/wsClient';
 import type { DesignerHandles } from './DesignerCanvas';
 
 const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
@@ -16,12 +18,6 @@ const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
 type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; initialData: ExcalidrawInitialDataState | null };
-
-type ScreenshotRequestMsg = {
-  type: 'screenshot_request';
-  requestId: string;
-  opts?: { mime?: string; quality?: number; maxDim?: number };
-};
 
 // Chunked Uint8Array → base64 — String.fromCharCode(...bigArray) overflows the
 // argument stack on large images.
@@ -104,8 +100,7 @@ export default function SketchPanel({ onCanvasReady }: Props) {
   // back into Excalidraw via canvasBus._emitApply, which DesignerCanvas owns.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${proto}//${window.location.host}/ws/canvas`);
+    const ws = openWS('/ws/canvas');
     wsRef.current = ws;
 
     const offSnapshot = canvasBus._onSnapshot((snap) => {

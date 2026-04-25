@@ -7,8 +7,7 @@ import SketchPanel from './SketchPanel';
 import type { DesignerHandles } from './DesignerCanvas';
 import { writeSnapshot } from '@/lib/designSnapshot';
 import { terminalBus } from '@/lib/terminalBus';
-
-type WorkspaceMode = 'sketch' | 'moodboard' | 'brand';
+import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 type Props = {
   agentSidebarOpen: boolean;
