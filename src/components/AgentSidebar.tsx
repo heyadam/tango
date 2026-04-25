@@ -31,12 +31,14 @@ type Props = {
   open: boolean;
   onSendSketch: () => Promise<string | null>;
   sendBusy: boolean;
+  canSendSketch?: boolean;
 };
 
 export default function AgentSidebar({
   open,
   onSendSketch,
   sendBusy,
+  canSendSketch = true,
 }: Props) {
   // Talk to the UI-controller agent (cursor_move / cursor_click / terminal_type
   // / dom_inspect MCP tools). The agent doesn't draft content itself — it
@@ -79,17 +81,19 @@ export default function AgentSidebar({
               <Sparkles className="size-3.5 text-neutral-400" />
               <span>Agent</span>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSendSketch}
-              disabled={sendBusy}
-              title="Send the canvas as a PNG to Claude in the terminal"
-              className="h-8 gap-1.5 px-2 text-xs text-neutral-300 hover:text-neutral-100"
-            >
-              <ImageUp className="size-3.5" />
-              {sendBusy ? 'Sending…' : 'Send sketch'}
-            </Button>
+            {canSendSketch && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSendSketch}
+                disabled={sendBusy}
+                title="Send the canvas as a PNG to Claude in the terminal"
+                className="h-8 gap-1.5 px-2 text-xs text-neutral-300 hover:text-neutral-100"
+              >
+                <ImageUp className="size-3.5" />
+                {sendBusy ? 'Sending…' : 'Send sketch'}
+              </Button>
+            )}
           </>
         )}
       </div>
@@ -102,7 +106,11 @@ export default function AgentSidebar({
                 {messages.length === 0 ? (
                   <ConversationEmptyState
                     title="Talk to the agent"
-                    description="Ask about the canvas, brainstorm, or hit Send sketch to share it with Claude in the terminal."
+                    description={
+                      canSendSketch
+                        ? 'Ask about the canvas, brainstorm, or hit Send sketch to share it with Claude in the terminal.'
+                        : 'Ask the agent to delegate work to Claude in the terminal.'
+                    }
                     icon={<Sparkles className="size-6" />}
                   />
                 ) : (

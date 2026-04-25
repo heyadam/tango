@@ -27,7 +27,7 @@ export default function Home() {
       />
       <main className="flex min-h-0 flex-1">
         <section className="min-w-0 flex-1 bg-neutral-900">
-          <LeftPanel agentSidebarOpen={agentOpen} />
+          <LeftPanel agentSidebarOpen={agentOpen} mode={mode} />
         </section>
         <aside
           aria-hidden={!claudeOpen}

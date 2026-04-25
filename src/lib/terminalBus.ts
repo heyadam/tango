@@ -11,6 +11,13 @@ export const terminalBus = {
     for (const fn of sendListeners) fn(text);
   },
 
+  submitToTerminal(text: string): void {
+    for (const fn of sendListeners) fn(text);
+    window.setTimeout(() => {
+      for (const fn of sendListeners) fn('\r');
+    }, 120);
+  },
+
   onTerminalOutput(cb: OutputListener): () => void {
     outputListeners.add(cb);
     return () => outputListeners.delete(cb);
