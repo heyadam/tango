@@ -11,5 +11,8 @@ export async function POST(req: Request) {
     messages: await convertToModelMessages(messages),
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toUIMessageStreamResponse({
+    onError: (error) =>
+      error instanceof Error ? error.message : String(error),
+  });
 }
