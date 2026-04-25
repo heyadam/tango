@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import {
-  ImageUp,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Sparkles,
-} from 'lucide-react';
+import { ImageUp, Sparkles } from 'lucide-react';
 import {
   Conversation,
   ConversationContent,
@@ -34,14 +29,12 @@ import { cn } from '@/lib/utils';
 
 type Props = {
   open: boolean;
-  onToggle: () => void;
   onSendSketch: () => Promise<string | null>;
   sendBusy: boolean;
 };
 
 export default function AgentSidebar({
   open,
-  onToggle,
   onSendSketch,
   sendBusy,
 }: Props) {
@@ -73,25 +66,13 @@ export default function AgentSidebar({
 
   return (
     <aside
+      aria-hidden={!open}
       className={cn(
-        'flex h-full shrink-0 flex-col overflow-hidden border-r border-neutral-800 bg-neutral-950 transition-[width] duration-200 ease-out',
-        open ? 'w-[380px]' : 'w-12',
+        'flex h-full shrink-0 flex-col overflow-hidden bg-neutral-950 transition-[width] duration-200 ease-out',
+        open ? 'w-[380px] border-r border-neutral-800' : 'w-0',
       )}
     >
       <div className="flex h-12 shrink-0 items-center justify-between border-b border-neutral-800 px-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggle}
-          aria-label={open ? 'Collapse agent sidebar' : 'Expand agent sidebar'}
-          className="size-8 text-neutral-400 hover:text-neutral-100"
-        >
-          {open ? (
-            <PanelLeftClose className="size-4" />
-          ) : (
-            <PanelLeftOpen className="size-4" />
-          )}
-        </Button>
         {open && (
           <>
             <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-300">

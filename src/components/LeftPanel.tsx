@@ -7,9 +7,12 @@ import type { DesignerHandles } from './DesignerCanvas';
 import { writeSnapshot } from '@/lib/designSnapshot';
 import { terminalBus } from '@/lib/terminalBus';
 
-export default function LeftPanel() {
+type Props = {
+  agentSidebarOpen: boolean;
+};
+
+export default function LeftPanel({ agentSidebarOpen }: Props) {
   const handlesRef = useRef<DesignerHandles | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sendBusy, setSendBusy] = useState(false);
 
   const onCanvasReady = useCallback((handles: DesignerHandles) => {
@@ -32,8 +35,7 @@ export default function LeftPanel() {
   return (
     <div className="flex h-full w-full">
       <AgentSidebar
-        open={sidebarOpen}
-        onToggle={() => setSidebarOpen((v) => !v)}
+        open={agentSidebarOpen}
         onSendSketch={sendSketch}
         sendBusy={sendBusy}
       />
