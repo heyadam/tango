@@ -2,16 +2,20 @@
 
 import { useCallback, useRef, useState } from 'react';
 import AgentSidebar from './AgentSidebar';
+import MoodboardPanel from './MoodboardPanel';
 import SketchPanel from './SketchPanel';
 import type { DesignerHandles } from './DesignerCanvas';
 import { writeSnapshot } from '@/lib/designSnapshot';
 import { terminalBus } from '@/lib/terminalBus';
 
+type WorkspaceMode = 'sketch' | 'moodboard' | 'brand';
+
 type Props = {
   agentSidebarOpen: boolean;
+  mode: WorkspaceMode;
 };
 
-export default function LeftPanel({ agentSidebarOpen }: Props) {
+export default function LeftPanel({ agentSidebarOpen, mode }: Props) {
   const handlesRef = useRef<DesignerHandles | null>(null);
   const [sendBusy, setSendBusy] = useState(false);
 
@@ -38,9 +42,14 @@ export default function LeftPanel({ agentSidebarOpen }: Props) {
         open={agentSidebarOpen}
         onSendSketch={sendSketch}
         sendBusy={sendBusy}
+        canSendSketch={mode !== 'moodboard'}
       />
       <div className="min-w-0 flex-1">
-        <SketchPanel onCanvasReady={onCanvasReady} />
+        {mode === 'moodboard' ? (
+          <MoodboardPanel />
+        ) : (
+          <SketchPanel onCanvasReady={onCanvasReady} />
+        )}
       </div>
     </div>
   );
