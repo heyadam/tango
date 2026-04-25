@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { WebSocket } from 'ws';
+import { registerHook } from './serverHooks';
 
 // Authoritative server-side cache of the Excalidraw scene. The browser is the
 // source of truth for human edits (it ships snapshots up the WS); MCP tools
@@ -18,6 +19,26 @@ type Cache = {
 
 let cache: Cache = { elements: [], appState: {}, files: {} };
 const sockets = new Set<WebSocket>();
+
+// Register the reset hook once on module load so the route-handler graph
+// (where setWorkspace runs) can clear the canvas and broadcast an empty
+// scene to all open canvas WSes via the cross-context registry.
+registerHook('resetCanvas', () => {
+  cache = { elements: [], appState: {}, files: {} };
+  const payload = JSON.stringify({
+    type: 'set',
+    elements: [],
+    appState: {},
+    files: {},
+  });
+  for (const ws of sockets) {
+    try {
+      ws.send(payload);
+    } catch {
+      // socket dying; cleanup will run
+    }
+  }
+});
 
 type SnapshotMsg = {
   type: 'snapshot';

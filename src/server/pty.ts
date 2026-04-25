@@ -1,9 +1,27 @@
 import * as pty from 'node-pty';
 import type { WebSocket } from 'ws';
-import { WORKSPACE_DIR } from './workspace';
+import { getWorkspaceOrNull } from './workspace';
+import { registerHook } from './serverHooks';
 
 type ResizeMessage = { type: 'resize'; cols: number; rows: number };
 type ControlMessage = ResizeMessage;
+
+// Active terminal sockets — tracked so workspace switches can broadcast a
+// JSON control frame to every browser-side terminal so they can reconnect.
+const activeSockets = new Set<WebSocket>();
+
+// Register the broadcast hook once on module load so the route-handler graph
+// can reach this Set via the cross-context registry. See serverHooks.ts.
+registerHook('broadcastWorkspaceChanged', () => {
+  const payload = JSON.stringify({ type: 'workspace_changed' });
+  for (const ws of activeSockets) {
+    try {
+      ws.send(payload);
+    } catch {
+      // socket dying; cleanup will run on close/error
+    }
+  }
+});
 
 const defaultShell = (): string => {
   if (process.env.SHELL) return process.env.SHELL;
@@ -12,12 +30,35 @@ const defaultShell = (): string => {
 };
 
 export function attachPty(ws: WebSocket): void {
+  const workspace = getWorkspaceOrNull();
+  if (workspace == null) {
+    // No workspace selected — refuse to spawn a shell into "nowhere." We send
+    // a textual ANSI banner so the user sees something in xterm, and close
+    // with a custom code carrying the reason.
+    try {
+      ws.send(
+        Buffer.from(
+          '\r\n\x1b[33m[no workspace selected — pick a project folder]\x1b[0m\r\n',
+          'utf8',
+        ),
+        { binary: true },
+      );
+    } catch {
+      // socket already gone
+    }
+    try {
+      ws.close(4001, 'no workspace selected');
+    } catch {
+      // already closed
+    }
+    return;
+  }
   const shell = defaultShell();
   const ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-256color',
     cols: 80,
     rows: 24,
-    cwd: WORKSPACE_DIR,
+    cwd: workspace,
     env: {
       ...process.env,
       TERM: 'xterm-256color',
@@ -26,6 +67,7 @@ export function attachPty(ws: WebSocket): void {
   });
 
   let alive = true;
+  activeSockets.add(ws);
 
   // Auto-launch claude on every fresh PTY. The shell still runs first (so
   // .zshrc / login messages still apply), then this command queues into its
@@ -75,6 +117,7 @@ export function attachPty(ws: WebSocket): void {
   });
 
   const cleanup = () => {
+    activeSockets.delete(ws);
     if (!alive) return;
     alive = false;
     onDataDisposable.dispose();

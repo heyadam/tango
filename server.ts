@@ -5,11 +5,17 @@ import { attachPty } from './src/server/pty';
 import { attachCanvas } from './src/server/canvasBridge';
 import { attachAgentCursor } from './src/server/agentCursorBridge';
 import { mountMcp } from './src/server/mcp';
-import { WORKSPACE_DIR, ensureWorkspace } from './src/server/workspace';
+import { ensureWorkspace, resolveWorkspaceAtBoot } from './src/server/workspace';
+import { loadPersistedWorkspace } from './src/server/workspaceState';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOST ?? 'localhost';
 const port = Number(process.env.PORT ?? 3000);
+
+// Expose port to API routes that need to write the right URL into managed
+// .mcp.json on workspace selection. Set as early as possible — before we
+// import setWorkspace / ensureWorkspace via the API routes.
+process.env.TANGO_PORT = String(port);
 
 const app = next({ dev, hostname, port });
 
@@ -18,7 +24,21 @@ const CANVAS_PATH = '/ws/canvas';
 const AGENT_CURSOR_PATH = '/ws/agent-cursor';
 
 app.prepare().then(async () => {
-  await ensureWorkspace(port);
+  // Resolve the active workspace before anything else. Order:
+  //   1. TANGO_WORKSPACE env var (pinned, picker locked)
+  //   2. ~/.tango/state.json#lastWorkspace if it still exists
+  //   3. null — picker will appear in the browser
+  const resolved = await resolveWorkspaceAtBoot(loadPersistedWorkspace);
+  if (resolved.path) {
+    const ensure = await ensureWorkspace(port, resolved.path);
+    if (!ensure.ok) {
+      console.warn(
+        `tango: workspace ${resolved.path} ensured with warnings:`,
+        ensure.errors,
+      );
+    }
+  }
+
   const handle = app.getRequestHandler();
   const upgradeHandle = app.getUpgradeHandler();
 
@@ -74,6 +94,10 @@ app.prepare().then(async () => {
 
   server.listen(port, () => {
     console.log(`▲ tango ready on http://${hostname}:${port}`);
-    console.log(`  workspace: ${WORKSPACE_DIR}`);
+    if (resolved.path) {
+      console.log(`  workspace: ${resolved.path} (${resolved.source})`);
+    } else {
+      console.log('  workspace: unset — open the app in a browser to pick one');
+    }
   });
 });
