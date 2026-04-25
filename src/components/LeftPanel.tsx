@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Send, TerminalSquare } from 'lucide-react';
 import { terminalBus } from '@/lib/terminalBus';
+import { Button } from '@/components/ui/button';
 
 const MAX_LINES = 12;
 
@@ -38,7 +40,10 @@ export default function LeftPanel() {
   return (
     <div className="flex h-full flex-col gap-6 overflow-auto p-8">
       <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">tango</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
+          <TerminalSquare className="size-6 text-neutral-400" />
+          tango
+        </h1>
         <p className="text-sm text-neutral-500">
           Left panel placeholder. The right sidebar is a real shell connected
           via WebSocket. The two are wired through{' '}
@@ -77,12 +82,14 @@ export default function LeftPanel() {
 
 function SendButton({ command }: { command: string }) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="sm"
       onClick={() => terminalBus.sendToTerminal(`${command}\r`)}
-      className="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-1.5 font-mono text-xs text-neutral-200 transition-colors hover:border-neutral-500 hover:bg-neutral-800"
+      className="font-mono"
     >
+      <Send />
       {command}
-    </button>
+    </Button>
   );
 }
