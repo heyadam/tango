@@ -10,6 +10,9 @@ import { cn } from '@/lib/utils';
 import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
+const TransmitOverlay = dynamic(() => import('@/components/TransmitOverlay'), {
+  ssr: false,
+});
 
 function HomeBody() {
   const { current, openDialog } = useWorkspace();
@@ -52,6 +55,7 @@ function HomeBody() {
         </aside>
       </main>
       {agentOpen ? <AgentCursorOverlay /> : null}
+      <TransmitOverlay />
     </div>
   );
 }
