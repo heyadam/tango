@@ -12,6 +12,12 @@
 // its defaults instead.
 const NON_JSON_APPSTATE_KEYS = new Set(['collaborators', 'pointers', 'followedBy']);
 
+// Canvas viewport dimensions. Excalidraw recomputes these via ResizeObserver,
+// but if a stale value is in initialData.appState the canvas can render at the
+// old size — visible as a narrow canvas after the parent container has grown.
+// Strip them so Excalidraw measures fresh from its container on mount.
+const STALE_LAYOUT_KEYS = new Set(['width', 'height', 'offsetLeft', 'offsetTop']);
+
 export function sanitizeAppState<T extends Record<string, unknown> | undefined | null>(
   appState: T,
 ): T {
@@ -19,6 +25,7 @@ export function sanitizeAppState<T extends Record<string, unknown> | undefined |
   const cleaned: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(appState)) {
     if (NON_JSON_APPSTATE_KEYS.has(k)) continue;
+    if (STALE_LAYOUT_KEYS.has(k)) continue;
     if (v instanceof Map || v instanceof Set) continue;
     cleaned[k] = v;
   }

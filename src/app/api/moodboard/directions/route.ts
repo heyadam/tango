@@ -1,5 +1,8 @@
 import * as z from 'zod/v4';
 import { IMAGE_MODEL, VISION_MODEL } from '@/lib/ai';
+import { appendEvent } from '@/server/memory';
+import { saveMoodboardPng } from '@/server/moodboard';
+import { getWorkspaceOrNull } from '@/server/workspace';
 
 export const runtime = 'nodejs';
 
@@ -11,7 +14,6 @@ type MoodboardQuality = (typeof qualities)[number];
 
 type Body = {
   brief: string;
-  count?: number;
   size?: MoodboardSize;
   quality?: MoodboardQuality;
 };
@@ -31,7 +33,6 @@ const directionsSchema = z.object({
 
 const bodySchema = z.object({
   brief: z.string().trim().min(3).max(4000),
-  count: z.number().int().min(1).max(6).optional(),
   size: z.enum(sizes).optional(),
   quality: z.enum(qualities).optional(),
 });
@@ -59,19 +60,15 @@ async function readBody(req: Request): Promise<Body> {
   }
 }
 
-function systemPrompt(count: number): string {
-  return `You create divergent creative direction specs for product branding and UI moodboards.
+const SYSTEM_PROMPT = `You create one creative direction spec for a product branding and UI moodboard.
 
-Return exactly ${count} directions. Make them meaningfully different from one another in audience, visual language, brand personality, typography attitude, palette, and interface treatment.
+The direction must be practical for a designer or engineer to turn into a brand/UI exploration. Avoid generic style labels unless you make them specific. Do not mention that you are an AI.`;
 
-Each direction must be practical for a designer or engineer to turn into a brand/UI exploration. Avoid generic style labels unless you make them specific. Do not mention that you are an AI.`;
-}
-
-function userPrompt(brief: string, count: number): string {
+function userPrompt(brief: string): string {
   return `Creative brief:
 ${brief}
 
-Create ${count} distinct moodboard directions. For each imagePrompt, describe a single polished landscape moodboard image that includes brand identity, product UI fragments, typography samples, color/material swatches, and interaction/style cues. The image should contain useful design artifacts, not just atmosphere.
+Create one moodboard direction. The imagePrompt should describe a single polished landscape moodboard image that includes brand identity, product UI fragments, typography samples, color/material swatches, and interaction/style cues. The image should contain useful design artifacts, not just atmosphere.
 
 Return only valid JSON in this exact shape:
 {
@@ -118,7 +115,7 @@ function outputText(response: unknown): string {
   return parts.join('\n').trim();
 }
 
-async function planDirections(brief: string, count: number) {
+async function planDirections(brief: string) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY is not configured.');
@@ -135,11 +132,11 @@ async function planDirections(brief: string, count: number) {
       input: [
         {
           role: 'system',
-          content: [{ type: 'input_text', text: systemPrompt(count) }],
+          content: [{ type: 'input_text', text: SYSTEM_PROMPT }],
         },
         {
           role: 'user',
-          content: [{ type: 'input_text', text: userPrompt(brief, count) }],
+          content: [{ type: 'input_text', text: userPrompt(brief) }],
         },
       ],
       reasoning: { effort: 'low' },
@@ -220,41 +217,60 @@ export async function POST(req: Request) {
     return Response.json({ error: message }, { status: 400 });
   }
 
-  const count = body.count ?? 3;
   const size = body.size ?? '1536x1024';
   const quality = body.quality ?? 'medium';
 
   try {
-    const planned = await planDirections(body.brief, count);
-    const specs = planned.directions.slice(0, count);
-
-    if (specs.length !== count) {
-      throw new Error(`Expected ${count} directions, received ${specs.length}.`);
+    const planned = await planDirections(body.brief);
+    const spec = planned.directions[0];
+    if (!spec) {
+      throw new Error('Planner returned no directions.');
     }
 
-    const directions = [];
-    for (let index = 0; index < specs.length; index += 1) {
-      const spec = specs[index];
-      const image = await generateMoodboardImage(
-        spec.imagePrompt,
-        size,
-        quality,
-      );
+    const image = await generateMoodboardImage(
+      spec.imagePrompt,
+      size,
+      quality,
+    );
 
-      directions.push({
-        id: crypto.randomUUID(),
-        title: spec.title,
-        rationale: spec.rationale,
-        palette: spec.palette,
-        brandNotes: spec.brandNotes,
-        uiNotes: spec.uiNotes,
-        imagePrompt: spec.imagePrompt,
-        base64: image.base64,
-        mediaType: image.mediaType,
-      });
+    const workspace = getWorkspaceOrNull();
+    let relPath: string | undefined;
+    if (workspace) {
+      try {
+        relPath = await saveMoodboardPng(workspace, image.base64);
+        // Fire-and-forget: appendEvent enqueues internally and never throws.
+        appendEvent({
+          type: 'snapshot',
+          relPath,
+          caption: `moodboard · ${spec.title}`,
+        });
+      } catch (err) {
+        // Disk write failed — surface to logs but don't fail the whole
+        // generation. The UI still has the base64 to render and the user
+        // can retry/regenerate.
+        console.error(
+          '[moodboard] failed to persist generated image:',
+          err instanceof Error ? err.message : String(err),
+        );
+      }
     }
 
-    return Response.json({ directions });
+    const direction = {
+      id: crypto.randomUUID(),
+      title: spec.title,
+      rationale: spec.rationale,
+      palette: spec.palette,
+      brandNotes: spec.brandNotes,
+      uiNotes: spec.uiNotes,
+      imagePrompt: spec.imagePrompt,
+      base64: image.base64,
+      mediaType: image.mediaType,
+      relPath,
+    };
+
+    // Always one direction; kept as an array so the response shape matches
+    // the seed endpoint and lets the client treat both uniformly.
+    return Response.json({ directions: [direction] });
   } catch (err) {
     const message =
       err instanceof Error ? err.message : 'Failed to generate directions.';

@@ -81,6 +81,17 @@ export default function SketchPanel({ onCanvasReady }: Props) {
     setLoad({ status: 'ready', initialData: parsed });
   }, [generation]);
 
+  // After a (re)mount — e.g. switching back from Moodboard mode — kick
+  // Excalidraw's ResizeObserver so the canvas re-measures against its current
+  // container instead of keeping a stale width.
+  useEffect(() => {
+    if (load.status !== 'ready') return;
+    const id = requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [load.status]);
+
   const wsRef = useRef<WebSocket | null>(null);
 
   const onPersist = useCallback((json: string) => {
