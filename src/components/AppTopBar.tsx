@@ -55,7 +55,7 @@ export default function AppTopBar({
   onModeChange,
 }: Props) {
   return (
-    <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-neutral-800 bg-neutral-950 px-2">
+    <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-background px-2">
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
@@ -63,7 +63,7 @@ export default function AppTopBar({
           onClick={onToggleAgent}
           aria-label={agentOpen ? 'Hide agent sidebar' : 'Show agent sidebar'}
           aria-pressed={agentOpen}
-          className="text-neutral-400 hover:text-neutral-100"
+          className="text-muted-foreground hover:text-foreground"
         >
           {agentOpen ? (
             <PanelLeftClose className="size-4" />
@@ -71,11 +71,11 @@ export default function AppTopBar({
             <PanelLeftOpen className="size-4" />
           )}
         </Button>
-        <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-300">
-          <LayoutDashboard className="size-3.5 text-neutral-500" />
+        <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+          <LayoutDashboard className="size-3.5 text-muted-foreground" />
           <span>Tango</span>
         </div>
-        <span className="text-neutral-700">/</span>
+        <span className="text-muted-foreground/60">/</span>
         <WorkspacePill
           name={workspaceName}
           path={workspacePath}
@@ -87,7 +87,7 @@ export default function AppTopBar({
       <div
         role="tablist"
         aria-label="Workspace mode"
-        className="flex h-8 items-center rounded-md border border-neutral-800 bg-neutral-900 p-0.5"
+        className="flex h-8 items-center rounded-md border border-border bg-muted p-0.5"
       >
         {modes.map((item) => (
           <button
@@ -97,9 +97,9 @@ export default function AppTopBar({
             aria-selected={mode === item.value}
             onClick={() => onModeChange(item.value)}
             className={cn(
-              'h-7 min-w-20 rounded px-2 text-xs font-medium text-neutral-400 transition-colors hover:text-neutral-100 sm:min-w-24 sm:px-3',
+              'h-7 min-w-20 rounded px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:min-w-24 sm:px-3',
               mode === item.value &&
-                'bg-neutral-100 text-neutral-950 shadow-sm hover:text-neutral-950',
+                'bg-foreground text-background shadow-sm hover:text-background',
             )}
           >
             {item.label}
@@ -108,8 +108,8 @@ export default function AppTopBar({
       </div>
 
       <div className="flex items-center justify-end gap-2">
-        <div className="hidden items-center gap-1.5 text-xs font-medium text-neutral-300 sm:flex">
-          <Code2 className="size-3.5 text-neutral-500" />
+        <div className="hidden items-center gap-1.5 text-xs font-medium text-foreground sm:flex">
+          <Code2 className="size-3.5 text-muted-foreground" />
           <span>Claude Code</span>
         </div>
         <Button
@@ -120,7 +120,7 @@ export default function AppTopBar({
             claudeOpen ? 'Hide Claude Code sidebar' : 'Show Claude Code sidebar'
           }
           aria-pressed={claudeOpen}
-          className="text-neutral-400 hover:text-neutral-100"
+          className="text-muted-foreground hover:text-foreground"
         >
           {claudeOpen ? (
             <PanelRightClose className="size-4" />
@@ -165,16 +165,16 @@ function WorkspacePill({
             'flex h-7 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors',
             isUnset
               ? 'border-amber-700/40 bg-amber-900/20 text-amber-200 hover:border-amber-600/60 hover:bg-amber-900/30'
-              : 'border-neutral-800 bg-neutral-900 text-neutral-200 hover:border-neutral-700 hover:bg-neutral-800',
+              : 'border-border bg-muted text-foreground hover:border-foreground/30 hover:bg-accent',
           )}
         >
           {isUnset ? (
             <FolderOpen className="size-3.5 text-amber-300" />
           ) : (
-            <Folder className="size-3.5 text-neutral-400" />
+            <Folder className="size-3.5 text-muted-foreground" />
           )}
           <span className="max-w-[16ch] truncate sm:max-w-[24ch]">{label}</span>
-          {isEnvLocked && <Lock className="size-3 text-neutral-500" />}
+          {isEnvLocked && <Lock className="size-3 text-muted-foreground" />}
         </button>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[28rem] whitespace-pre-line break-all font-mono">

@@ -24,7 +24,7 @@ import { terminalBus } from '@/lib/terminalBus';
 
 const UIMockCanvas = dynamic(() => import('./UIMockCanvas'), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-neutral-950" />,
+  loading: () => <div className="h-full w-full bg-background" />,
 });
 
 type LoadState =
@@ -175,12 +175,12 @@ export default function UIPanel() {
   }, []);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-neutral-950 text-neutral-100">
-      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-neutral-900 bg-neutral-950 px-4">
+    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
         <div className="flex min-w-0 items-center gap-3">
-          <h1 className="text-sm font-semibold text-neutral-100">UI mock</h1>
+          <h1 className="text-sm font-semibold text-foreground">UI mock</h1>
           {load.status === 'ready' && screenCount > 0 && (
-            <span className="text-xs text-neutral-500">
+            <span className="text-xs text-muted-foreground">
               {screenCount} screen{screenCount === 1 ? '' : 's'}
             </span>
           )}
@@ -191,7 +191,6 @@ export default function UIPanel() {
             size="sm"
             onClick={clearMock}
             disabled={screenCount === 0}
-            className="h-8 text-neutral-400 hover:text-neutral-100"
           >
             <Trash2 className="size-3.5" />
             Clear
@@ -200,7 +199,6 @@ export default function UIPanel() {
             size="sm"
             onClick={sendToClaude}
             disabled={sendBusy || screenCount === 0}
-            className="h-8 bg-emerald-300 text-neutral-950 hover:bg-emerald-200 disabled:bg-neutral-800 disabled:text-neutral-500"
           >
             {sendBusy ? (
               <RefreshCw className="size-3.5 animate-spin" />
@@ -223,7 +221,7 @@ export default function UIPanel() {
       </div>
 
       {status && (
-        <div className="shrink-0 border-t border-neutral-900 bg-neutral-950 px-4 py-2 font-mono text-[11px] text-neutral-400">
+        <div className="shrink-0 border-t border-border bg-background px-4 py-2 font-mono text-[11px] text-muted-foreground">
           {status}
         </div>
       )}

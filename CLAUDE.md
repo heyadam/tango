@@ -111,6 +111,40 @@ User-level state lives at `~/.tango/state.json` ([src/server/workspaceState.ts](
 
 Sizes accept strings with units (`"35%"`, `"400px"`) or bare numbers (percent).
 
+## Design system
+
+The app uses a shadcn-style stack (Tailwind v4 + Radix + CVA + `cn()`). Two seams matter:
+
+- **Primitives** live in [src/components/ui/](src/components/ui/) — `button`, `input`, `dialog`, `dropdown-menu`, `select`, `tooltip`, `hover-card`, `command`, `accordion`, `badge`, `button-group`, `input-group`, `separator`, `spinner`, `textarea`. Higher-level chat composites live in [src/components/ai-elements/](src/components/ai-elements/). All of them use `cn()` from [src/lib/utils.ts](src/lib/utils.ts) for class merging and CVA for variant systems.
+- **Tokens** live in [src/app/globals.css](src/app/globals.css) — the `@theme inline` block exposes them as Tailwind utilities (`bg-background`, `text-muted-foreground`, `border-border`, etc.); the OKLCH values themselves sit in `:root` (light, currently dead) and `.dark` (the active palette, since [layout.tsx](src/app/layout.tsx) hardcodes `dark` on `<html>`). Adding a new themable color = three edits in this one file.
+
+**Rule for feature components: use semantic tokens, not raw Tailwind palette utilities.** No `bg-neutral-*` / `border-neutral-*` / `text-neutral-*` / hex literals in `src/components/*.tsx` or `src/app/*.tsx` outside the primitives. The semantic mapping is:
+
+| When you want… | Use |
+|---|---|
+| Page surface | `bg-background` |
+| Panel / card surface | `bg-card` |
+| Raised tab/pill background | `bg-muted` |
+| Selected/inverted button (light bg, dark text in dark mode) | `bg-foreground text-background` |
+| Hover background | `bg-accent` |
+| Hairlines | `border-border` |
+| Body text | `text-foreground` |
+| Slightly muted body text | `text-foreground/90` |
+| Captions / labels / placeholders | `text-muted-foreground` |
+| Very muted / decorative | `text-muted-foreground/60` |
+| Selection / focus rings | `ring-ring/50` |
+
+Status colors (amber for warnings, red for errors, sky for info) are kept as raw Tailwind utilities — they're intentional accents, not theme surfaces.
+
+**Known exceptions** (non-CSS rendering layers that can't consume CSS variables directly):
+
+- [src/components/Terminal.tsx](src/components/Terminal.tsx) — xterm theme + container background are hex literals. Re-skinning the terminal alongside the rest of the app needs a `getComputedStyle`-based color shim and is a deferred follow-up.
+- [src/components/AgentCursorOverlay.tsx](src/components/AgentCursorOverlay.tsx) — SVG cursor sprite uses literal `fill`/`stroke` for the same reason.
+
+Keep these the only exceptions. New non-CSS surfaces (canvas, WebGL, etc.) should mirror this pattern: pull values from CSS variables at init time so the rest of the system stays single-source.
+
+**Adding a new primitive:** copy from upstream shadcn ([ui.shadcn.com](https://ui.shadcn.com)) into `src/components/ui/`, change the `cn` import path to `@/lib/utils`, leave everything else untouched.
+
 ## node-pty caveat (will bite again)
 
 `npm install` extracts `node_modules/node-pty/prebuilds/<plat>/spawn-helper` **without** the executable bit, which makes `pty.spawn` crash with `posix_spawnp failed` at runtime — not at install time. There's a `postinstall` script ([scripts/fix-node-pty.js](scripts/fix-node-pty.js)) that re-applies `chmod +x`. If a fresh clone errors with `posix_spawnp failed`, run `node scripts/fix-node-pty.js` (or `npm rebuild`).
@@ -131,6 +165,7 @@ Sizes accept strings with units (`"35%"`, `"400px"`) or bare numbers (percent).
 - **No `next dev`, no Vercel adapters, no edge runtime.** Custom Node server is load-bearing because the WSes and the MCP transport live in-process, and Electron will swap them for IPC against the same `attachPty` / `attachCanvas` / `mountMcp` surfaces.
 - **Strict Mode is on.** Terminal effect runs twice in dev → one harmless "WebSocket is closed before the connection is established" warning per mount, plus `claude` boots twice on first load (the first PTY is killed by the Strict-Mode cleanup). Don't "fix" by disabling Strict Mode.
 - **Test pure logic with vitest.** `npm test` runs the suite via [vitest.config.ts](vitest.config.ts); tests are co-located as `*.test.ts` next to the source. Default env is node; use `// @vitest-environment happy-dom` as line 1 for browser-shaped modules (`localStorage` etc.). The Tier-1 covered surfaces — `mergeClaudeMd` / `mergeMcpJson` / `mergeClaudeSettings`, `sanitizeAppState`, `recentProjects`, the memory-file fence parser/formatters, the agent-route helpers (`lastUserGoal` / `mcpUrl` / `filterAllowedTools`), and `validatePath` via `dryRunSetWorkspace` — are load-bearing pure functions with explicit invariants; if you change them, update or add tests. New pure logic should land with tests; reach for the existing fixtures (e.g. the `wellFormed()` builder in [src/server/memory.test.ts](src/server/memory.test.ts)) before inventing new ones. Run `npm test` before claiming a change is done. The remaining test gaps and a tiered roadmap live in [docs/test-coverage-proposal.md](docs/test-coverage-proposal.md).
+- **Style with semantic tokens, not palette utilities.** See the **Design system** section above. Feature components use `bg-background` / `bg-card` / `text-foreground` / `text-muted-foreground` / `border-border` so a single edit in `globals.css` re-skins the app.
 
 ## Vision (so future changes don't paint into a corner)
 

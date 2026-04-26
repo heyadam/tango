@@ -447,7 +447,7 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   return (
     <div
-      className="relative h-full w-full overflow-auto bg-neutral-950"
+      className="relative h-full w-full overflow-auto bg-background"
       onPointerDown={(e) => {
         // Clicks landing on the canvas background (not on a node wrapper)
         // clear selection and exit text edit mode.
@@ -464,9 +464,9 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
       >
         {spec.screens.map((screen) => (
           <div key={screen.id} className="flex flex-col gap-2">
-            <div className="text-xs font-medium text-neutral-300">
+            <div className="text-xs font-medium text-foreground/90">
               {screen.title}
-              <span className="ml-2 font-mono text-[10px] text-neutral-500">
+              <span className="ml-2 font-mono text-[10px] text-muted-foreground">
                 {screen.frame.w}×{screen.frame.h}
               </span>
             </div>
@@ -635,7 +635,7 @@ function NodeWrapper({
       data-mock-id={node.id}
       className={cn(
         'box-border',
-        isSelected && 'ring-1 ring-blue-500/40',
+        isSelected && 'ring-1 ring-ring/50',
       )}
       style={style}
       onPointerDown={onPointerDown}
@@ -671,12 +671,12 @@ function isTextual(node: UINode): boolean {
 
 function EmptyState() {
   return (
-    <div className="flex h-full w-full items-center justify-center bg-neutral-950 p-8 text-center text-sm text-neutral-400">
+    <div className="flex h-full w-full items-center justify-center bg-background p-8 text-center text-sm text-muted-foreground">
       <div className="max-w-md space-y-2">
-        <p className="font-medium text-neutral-200">UI mock is empty.</p>
+        <p className="font-medium text-foreground">UI mock is empty.</p>
         <p>
           Ask Claude in the terminal to{' '}
-          <span className="rounded bg-neutral-900 px-1 font-mono text-neutral-300">
+          <span className="rounded bg-muted px-1 font-mono text-foreground/90">
             “mock my settings page as a UI”
           </span>{' '}
           (or any other screen / flow). Claude will read your codebase and write
