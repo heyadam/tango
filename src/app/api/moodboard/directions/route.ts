@@ -21,9 +21,9 @@ type Body = {
   mode?: MoodboardMode;
 };
 
-// Only title + imagePrompt are universally required. Palette / rationale /
-// brandNotes / uiNotes are only meaningful for the full-moodboard mode; the
-// per-mode user prompt asks for the subset that fits.
+// Loose shape for logo / ui-elements / random — only title + imagePrompt are
+// guaranteed; the rest are optional because the per-mode prompt doesn't ask
+// for them.
 const directionSchema = z.object({
   title: z.string().min(2),
   rationale: z.string().optional(),
@@ -33,8 +33,23 @@ const directionSchema = z.object({
   imagePrompt: z.string().min(40),
 });
 
+// Strict shape for `complete` mode — the full-moodboard contract. If the
+// model skips a palette or returns a one-line rationale, fail loudly here
+// rather than silently shipping a broken moodboard to the UI.
+const completeDirectionSchema = directionSchema.extend({
+  rationale: z.string().min(20),
+  palette: z.array(z.string().min(3)).min(4).max(7),
+  brandNotes: z.string().min(20),
+  uiNotes: z.string().min(20),
+  imagePrompt: z.string().min(80),
+});
+
 const directionsSchema = z.object({
   directions: z.array(directionSchema),
+});
+
+const completeDirectionsSchema = z.object({
+  directions: z.array(completeDirectionSchema),
 });
 
 const bodySchema = z.object({
@@ -228,7 +243,9 @@ async function planDirections(brief: string, mode: MoodboardMode) {
   if (!text) {
     throw new Error('OpenAI planning response did not include text.');
   }
-  return directionsSchema.parse(parseJsonObject(text));
+  const schema =
+    mode === 'complete' ? completeDirectionsSchema : directionsSchema;
+  return schema.parse(parseJsonObject(text));
 }
 
 async function generateMoodboardImage(
