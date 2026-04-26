@@ -63,6 +63,35 @@ function imageSrc(direction: MoodboardDirection): string {
   return `data:${direction.mediaType};base64,${direction.base64}`;
 }
 
+function ShimmerBlock({
+  className,
+  label,
+}: {
+  className?: string;
+  label?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden bg-muted',
+        className,
+      )}
+      role="status"
+      aria-label={label ?? 'Generating'}
+    >
+      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+      {label && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="flex items-center gap-2 rounded-md bg-card/80 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur">
+            <RefreshCw className="size-3.5 animate-spin" />
+            {label}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function base64ToBlob(base64: string, mediaType: string): Blob {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -151,7 +180,7 @@ export default function MoodboardPanel() {
   }, [session.directions, session.selectedId]);
 
   const sendSelected = useCallback(async () => {
-    if (!selected || handoffBusy) return;
+    if (!selected || selected.pending || handoffBusy) return;
     setHandoffBusy(true);
     setHandoffError(null);
     setHandoffStatus(null);
@@ -228,14 +257,18 @@ export default function MoodboardPanel() {
                     )}
                   >
                     <div className="aspect-square w-full bg-card">
-                      <img
-                        src={imageSrc(direction)}
-                        alt={direction.title}
-                        className={cn(
-                          'h-full w-full object-cover',
-                          active ? '' : 'opacity-70 group-hover:opacity-100',
-                        )}
-                      />
+                      {direction.pending ? (
+                        <ShimmerBlock className="h-full w-full" />
+                      ) : (
+                        <img
+                          src={imageSrc(direction)}
+                          alt={direction.title}
+                          className={cn(
+                            'h-full w-full object-cover',
+                            active ? '' : 'opacity-70 group-hover:opacity-100',
+                          )}
+                        />
+                      )}
                     </div>
                     <div className="absolute left-1 top-1 rounded bg-background/80 px-1 font-mono text-[9px] text-foreground">
                       {index + 1}
@@ -280,7 +313,7 @@ export default function MoodboardPanel() {
             <Button
               size="sm"
               onClick={sendSelected}
-              disabled={!selected || handoffBusy}
+              disabled={!selected || selected.pending || handoffBusy}
             >
               {handoffBusy ? (
                 <RefreshCw className="size-3.5 animate-spin" />
@@ -349,12 +382,19 @@ export default function MoodboardPanel() {
           {selected ? (
             <div className="flex h-full w-full flex-col items-center justify-center gap-3">
               <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
-                <img
-                  src={imageSrc(selected)}
-                  alt={selected.title}
-                  className="max-h-full max-w-full rounded-md object-contain shadow-xl"
-                />
-                {busy && (
+                {selected.pending ? (
+                  <ShimmerBlock
+                    className="aspect-[3/2] max-h-full w-full max-w-3xl rounded-md shadow-xl"
+                    label="Generating…"
+                  />
+                ) : (
+                  <img
+                    src={imageSrc(selected)}
+                    alt={selected.title}
+                    className="max-h-full max-w-full rounded-md object-contain shadow-xl"
+                  />
+                )}
+                {busy && !selected.pending && (
                   <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-2 rounded-md bg-card/90 px-3 py-1.5 text-xs text-foreground shadow">
                     <RefreshCw className="size-3.5 animate-spin" />
                     Generating…

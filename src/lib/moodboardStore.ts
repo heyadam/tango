@@ -23,6 +23,10 @@ export type MoodboardDirection = {
   base64: string;
   mediaType: string;
   relPath?: string;
+  // Placeholder rows live in the directions array while a generation is in
+  // flight so the rail thumbnail + main viewport can render a shimmer in the
+  // exact slot the resolved image will occupy. Stripped before persistence.
+  pending?: boolean;
 };
 
 export type MoodboardSession = {
@@ -137,7 +141,17 @@ function loadSession(): MoodboardSession {
 function persistSession(session: MoodboardSession): void {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    // Pending placeholders are an in-memory artifact of an in-flight fetch —
+    // never persist them, so a refresh mid-generation doesn't leave a dead
+    // shimmer hanging around forever.
+    const directions = session.directions.filter((d) => !d.pending);
+    const selectedId =
+      session.selectedId &&
+      directions.some((d) => d.id === session.selectedId)
+        ? session.selectedId
+        : (directions[directions.length - 1]?.id ?? null);
+    const cleaned: MoodboardSession = { ...session, directions, selectedId };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
   } catch {
     // quota / private browsing — fall back to in-memory only
   }
@@ -147,7 +161,30 @@ async function generate(brief: string): Promise<void> {
   const trimmed = brief.trim();
   if (!trimmed || state.busy) return;
   const { size, quality, mode } = state.session;
-  setState((s) => ({ ...s, busy: true, error: null, status: null }));
+  const placeholderId = `pending-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const placeholder: MoodboardDirection = {
+    id: placeholderId,
+    title: 'Generating…',
+    imagePrompt: trimmed,
+    base64: '',
+    mediaType: '',
+    pending: true,
+  };
+  setState((s) => {
+    const session: MoodboardSession = {
+      ...s.session,
+      directions: [...s.session.directions, placeholder],
+      selectedId: placeholderId,
+    };
+    persistSession(session);
+    return {
+      ...s,
+      busy: true,
+      error: null,
+      status: null,
+      session,
+    };
+  });
   try {
     const res = await fetch('/api/moodboard/directions', {
       method: 'POST',
@@ -169,19 +206,42 @@ async function generate(brief: string): Promise<void> {
       throw new Error('Generation response did not include a direction.');
     }
     setState((s) => {
+      // Swap the placeholder for the resolved direction in place so the rail
+      // ordering and selection stay stable.
+      const directions = s.session.directions.map((d) =>
+        d.id === placeholderId ? next : d,
+      );
       const session: MoodboardSession = {
         ...s.session,
-        directions: [...s.session.directions, next],
-        selectedId: next.id,
+        directions,
+        selectedId:
+          s.session.selectedId === placeholderId
+            ? next.id
+            : s.session.selectedId,
       };
       persistSession(session);
       return { ...s, session, status: `Added ${next.title}.` };
     });
   } catch (err) {
-    setState((s) => ({
-      ...s,
-      error: err instanceof Error ? err.message : String(err),
-    }));
+    setState((s) => {
+      const directions = s.session.directions.filter(
+        (d) => d.id !== placeholderId,
+      );
+      const session: MoodboardSession = {
+        ...s.session,
+        directions,
+        selectedId:
+          s.session.selectedId === placeholderId
+            ? (directions[directions.length - 1]?.id ?? null)
+            : s.session.selectedId,
+      };
+      persistSession(session);
+      return {
+        ...s,
+        session,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    });
   } finally {
     setState((s) => ({ ...s, busy: false }));
   }
