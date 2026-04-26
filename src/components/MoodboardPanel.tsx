@@ -38,14 +38,31 @@ import { cn } from '@/lib/utils';
 
 type MoodboardSize = '1024x1024' | '1536x1024' | '1024x1536';
 type MoodboardQuality = 'low' | 'medium' | 'high' | 'auto';
+type MoodboardMode = 'complete' | 'logo' | 'ui-elements' | 'random';
 
+const modeLabels: Record<MoodboardMode, string> = {
+  complete: 'Full moodboard',
+  logo: 'App logo',
+  'ui-elements': 'UI elements',
+  random: 'Random',
+};
+
+const modePlaceholders: Record<MoodboardMode, string> = {
+  complete: 'Describe the brand, product, audience, vibe, constraints…',
+  logo: 'Describe the app and the feel of the logo…',
+  'ui-elements': 'Describe the product and which UI elements to explore…',
+  random: 'Describe the rough territory you want inspiration from…',
+};
+
+// Only title + imagePrompt are universally present. The rest are mode-dependent
+// — full moodboards include all of them; logo / random typically include none.
 type MoodboardDirection = {
   id: string;
   title: string;
-  rationale: string;
-  palette: string[];
-  brandNotes: string;
-  uiNotes: string;
+  rationale?: string;
+  palette?: string[];
+  brandNotes?: string;
+  uiNotes?: string;
   imagePrompt: string;
   base64: string;
   mediaType: string;
@@ -58,6 +75,7 @@ type MoodboardDirection = {
 type Session = {
   size: MoodboardSize;
   quality: MoodboardQuality;
+  mode: MoodboardMode;
   selectedId: string | null;
   directions: MoodboardDirection[];
 };
@@ -67,9 +85,19 @@ const STORAGE_KEY = 'tango:moodboard-session:v1';
 const defaultSession: Session = {
   size: '1536x1024',
   quality: 'medium',
+  mode: 'complete',
   selectedId: null,
   directions: [],
 };
+
+function isMode(value: unknown): value is MoodboardMode {
+  return (
+    value === 'complete' ||
+    value === 'logo' ||
+    value === 'ui-elements' ||
+    value === 'random'
+  );
+}
 
 function isDirection(value: unknown): value is MoodboardDirection {
   if (!value || typeof value !== 'object') return false;
@@ -77,10 +105,10 @@ function isDirection(value: unknown): value is MoodboardDirection {
   return (
     typeof item.id === 'string' &&
     typeof item.title === 'string' &&
-    typeof item.rationale === 'string' &&
-    Array.isArray(item.palette) &&
-    typeof item.brandNotes === 'string' &&
-    typeof item.uiNotes === 'string' &&
+    (item.rationale === undefined || typeof item.rationale === 'string') &&
+    (item.palette === undefined || Array.isArray(item.palette)) &&
+    (item.brandNotes === undefined || typeof item.brandNotes === 'string') &&
+    (item.uiNotes === undefined || typeof item.uiNotes === 'string') &&
     typeof item.imagePrompt === 'string' &&
     typeof item.base64 === 'string' &&
     typeof item.mediaType === 'string' &&
@@ -111,6 +139,7 @@ function loadSession(): Session {
         raw.quality === 'auto'
           ? raw.quality
           : 'medium',
+      mode: isMode(raw.mode) ? raw.mode : 'complete',
       selectedId:
         typeof raw.selectedId === 'string'
           ? raw.selectedId
@@ -135,7 +164,8 @@ function base64ToBlob(base64: string, mediaType: string): Blob {
   return new Blob([bytes], { type: mediaType });
 }
 
-function paletteSwatches(palette: string[]): string[] {
+function paletteSwatches(palette: string[] | undefined): string[] {
+  if (!palette) return [];
   return palette
     .map((item) => item.match(/#[0-9a-f]{6}\b/i)?.[0])
     .filter((hex): hex is string => Boolean(hex))
@@ -146,29 +176,38 @@ function handoffPrompt(
   relPath: string,
   direction: MoodboardDirection,
 ): string {
-  return `Use this moodboard direction as the source of truth for the next branding/UI pass.
-
-Image: ${relPath}
-
-Direction:
-${direction.title}
-
-Rationale:
-${direction.rationale}
-
-Palette:
-${direction.palette.map((item) => `- ${item}`).join('\n')}
-
-Brand notes:
-${direction.brandNotes}
-
-UI notes:
-${direction.uiNotes}
-
-Generation prompt:
-${direction.imagePrompt}
-
-Please inspect the image file, then turn this direction into concrete branding and UI recommendations.`;
+  const sections: string[] = [
+    `Use this design as the source of truth for the next branding/UI pass.`,
+    ``,
+    `Image: ${relPath}`,
+    ``,
+    `Direction:`,
+    direction.title,
+  ];
+  if (direction.rationale) {
+    sections.push('', 'Rationale:', direction.rationale);
+  }
+  if (direction.palette && direction.palette.length > 0) {
+    sections.push(
+      '',
+      'Palette:',
+      direction.palette.map((item) => `- ${item}`).join('\n'),
+    );
+  }
+  if (direction.brandNotes) {
+    sections.push('', 'Brand notes:', direction.brandNotes);
+  }
+  if (direction.uiNotes) {
+    sections.push('', 'UI notes:', direction.uiNotes);
+  }
+  sections.push(
+    '',
+    'Generation prompt:',
+    direction.imagePrompt,
+    '',
+    'Please inspect the image file, then turn this into concrete branding and UI recommendations.',
+  );
+  return sections.join('\n');
 }
 
 export default function MoodboardPanel() {
@@ -218,6 +257,7 @@ export default function MoodboardPanel() {
             brief: trimmed,
             size: session.size,
             quality: session.quality,
+            mode: session.mode,
           }),
         });
         const raw = await res.text();
@@ -246,7 +286,7 @@ export default function MoodboardPanel() {
         setBusy(false);
       }
     },
-    [busy, session.quality, session.size],
+    [busy, session.mode, session.quality, session.size],
   );
 
   const seedDummy = useCallback(async () => {
@@ -525,38 +565,46 @@ export default function MoodboardPanel() {
 
               {detailsOpen && (
                 <div className="grid w-full max-w-3xl shrink-0 gap-3 rounded-md border border-neutral-800 bg-neutral-900/60 p-3 text-xs text-neutral-300 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <div className="text-[10px] font-medium uppercase text-neutral-500">
-                      Rationale
+                  {selected.rationale && (
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                        Rationale
+                      </div>
+                      <p className="leading-5 text-neutral-300">
+                        {selected.rationale}
+                      </p>
                     </div>
-                    <p className="leading-5 text-neutral-300">
-                      {selected.rationale || '—'}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-[10px] font-medium uppercase text-neutral-500">
-                      Palette
+                  )}
+                  {selected.palette && selected.palette.length > 0 && (
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                        Palette
+                      </div>
+                      <p className="font-mono text-[11px] leading-5 text-neutral-300">
+                        {selected.palette.join(', ')}
+                      </p>
                     </div>
-                    <p className="font-mono text-[11px] leading-5 text-neutral-300">
-                      {selected.palette.join(', ') || '—'}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-[10px] font-medium uppercase text-neutral-500">
-                      Brand notes
+                  )}
+                  {selected.brandNotes && (
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                        Brand notes
+                      </div>
+                      <p className="leading-5 text-neutral-300">
+                        {selected.brandNotes}
+                      </p>
                     </div>
-                    <p className="leading-5 text-neutral-300">
-                      {selected.brandNotes || '—'}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-[10px] font-medium uppercase text-neutral-500">
-                      UI notes
+                  )}
+                  {selected.uiNotes && (
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                        UI notes
+                      </div>
+                      <p className="leading-5 text-neutral-300">
+                        {selected.uiNotes}
+                      </p>
                     </div>
-                    <p className="leading-5 text-neutral-300">
-                      {selected.uiNotes || '—'}
-                    </p>
-                  </div>
+                  )}
                   <div className="sm:col-span-2 space-y-1">
                     <div className="text-[10px] font-medium uppercase text-neutral-500">
                       Image prompt
@@ -601,6 +649,29 @@ export default function MoodboardPanel() {
 
         <div className="shrink-0 border-t border-neutral-900 bg-neutral-950 px-4 py-3">
           <div className="flex items-end gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2">
+            <Select
+              value={session.mode}
+              onValueChange={(value) =>
+                setSession((current) => ({
+                  ...current,
+                  mode: value as MoodboardMode,
+                }))
+              }
+            >
+              <SelectTrigger
+                aria-label="Generation mode"
+                className="h-9 w-36 shrink-0 border-neutral-800 bg-neutral-950 text-neutral-100"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(modeLabels) as MoodboardMode[]).map((mode) => (
+                  <SelectItem key={mode} value={mode}>
+                    {modeLabels[mode]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Textarea
               ref={inputRef}
               value={draft}
@@ -609,7 +680,7 @@ export default function MoodboardPanel() {
               placeholder={
                 hasDirections
                   ? 'Describe another direction…'
-                  : 'Describe the brand, product, audience, vibe, constraints…'
+                  : modePlaceholders[session.mode]
               }
               className="min-h-9 resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-neutral-100 shadow-none focus-visible:ring-0 placeholder:text-neutral-500"
               rows={1}

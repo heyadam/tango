@@ -8,23 +8,29 @@ export const runtime = 'nodejs';
 
 const sizes = ['1024x1024', '1536x1024', '1024x1536'] as const;
 const qualities = ['low', 'medium', 'high', 'auto'] as const;
+const modes = ['complete', 'logo', 'ui-elements', 'random'] as const;
 
 type MoodboardSize = (typeof sizes)[number];
 type MoodboardQuality = (typeof qualities)[number];
+type MoodboardMode = (typeof modes)[number];
 
 type Body = {
   brief: string;
   size?: MoodboardSize;
   quality?: MoodboardQuality;
+  mode?: MoodboardMode;
 };
 
+// Only title + imagePrompt are universally required. Palette / rationale /
+// brandNotes / uiNotes are only meaningful for the full-moodboard mode; the
+// per-mode user prompt asks for the subset that fits.
 const directionSchema = z.object({
   title: z.string().min(2),
-  rationale: z.string().min(20),
-  palette: z.array(z.string().min(3)).min(4).max(7),
-  brandNotes: z.string().min(20),
-  uiNotes: z.string().min(20),
-  imagePrompt: z.string().min(80),
+  rationale: z.string().optional(),
+  palette: z.array(z.string().min(3)).max(7).optional(),
+  brandNotes: z.string().optional(),
+  uiNotes: z.string().optional(),
+  imagePrompt: z.string().min(40),
 });
 
 const directionsSchema = z.object({
@@ -35,6 +41,7 @@ const bodySchema = z.object({
   brief: z.string().trim().min(3).max(4000),
   size: z.enum(sizes).optional(),
   quality: z.enum(qualities).optional(),
+  mode: z.enum(modes).optional(),
 });
 
 function parseBody(raw: unknown): Body {
@@ -60,12 +67,73 @@ async function readBody(req: Request): Promise<Body> {
   }
 }
 
-const SYSTEM_PROMPT = `You create one creative direction spec for a product branding and UI moodboard.
+function systemPrompt(mode: MoodboardMode): string {
+  switch (mode) {
+    case 'logo':
+      return `You design one app logo concept. Return a single-image generation prompt for a polished logo composition. Avoid generic style labels unless you make them specific. Do not mention that you are an AI.`;
+    case 'ui-elements':
+      return `You design one UI elements exploration. Return a single-image generation prompt that shows realistic UI fragments — buttons, inputs, cards, navigation, list rows — laid out cleanly in a coherent style. Do not mention that you are an AI.`;
+    case 'random':
+      return `You produce one piece of random design inspiration loosely related to the brief. Return a single evocative image generation prompt. The result should spark ideas, not commit to a brand system. Do not mention that you are an AI.`;
+    case 'complete':
+    default:
+      return `You create one creative direction spec for a product branding and UI moodboard.
 
 The direction must be practical for a designer or engineer to turn into a brand/UI exploration. Avoid generic style labels unless you make them specific. Do not mention that you are an AI.`;
+  }
+}
 
-function userPrompt(brief: string): string {
-  return `Creative brief:
+function userPrompt(brief: string, mode: MoodboardMode): string {
+  switch (mode) {
+    case 'logo':
+      return `Creative brief:
+${brief}
+
+Design one app logo concept. The imagePrompt should describe a single polished image: the logo as a hero composition, possibly with a wordmark and a small set of mark variants (mono / inverse) on a clean background. No moodboard collage, no UI fragments.
+
+Return only valid JSON in this exact shape (omit fields you don't need):
+{
+  "directions": [
+    {
+      "title": "short concept name",
+      "imagePrompt": "detailed prompt for one polished logo image"
+    }
+  ]
+}`;
+    case 'ui-elements':
+      return `Creative brief:
+${brief}
+
+Design one UI elements exploration. The imagePrompt should describe a single polished image showing realistic UI fragments — buttons, form fields, cards, nav, list rows — laid out cleanly with consistent spacing and typography.
+
+Return only valid JSON in this exact shape (omit fields you don't need):
+{
+  "directions": [
+    {
+      "title": "short concept name",
+      "uiNotes": "what these UI fragments imply about the system",
+      "imagePrompt": "detailed prompt for one polished UI elements image"
+    }
+  ]
+}`;
+    case 'random':
+      return `Creative brief:
+${brief}
+
+Surprise the user with one piece of random design inspiration loosely related to the brief. The imagePrompt should describe a single evocative image — photography, illustration, texture, scene, or abstract — anything that sparks ideas.
+
+Return only valid JSON in this exact shape (omit fields you don't need):
+{
+  "directions": [
+    {
+      "title": "short evocative name",
+      "imagePrompt": "detailed prompt for one evocative inspiration image"
+    }
+  ]
+}`;
+    case 'complete':
+    default:
+      return `Creative brief:
 ${brief}
 
 Create one moodboard direction. The imagePrompt should describe a single polished landscape moodboard image that includes brand identity, product UI fragments, typography samples, color/material swatches, and interaction/style cues. The image should contain useful design artifacts, not just atmosphere.
@@ -83,6 +151,7 @@ Return only valid JSON in this exact shape:
     }
   ]
 }`;
+  }
 }
 
 function parseJsonObject(text: string): unknown {
@@ -115,7 +184,7 @@ function outputText(response: unknown): string {
   return parts.join('\n').trim();
 }
 
-async function planDirections(brief: string) {
+async function planDirections(brief: string, mode: MoodboardMode) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY is not configured.');
@@ -132,11 +201,11 @@ async function planDirections(brief: string) {
       input: [
         {
           role: 'system',
-          content: [{ type: 'input_text', text: SYSTEM_PROMPT }],
+          content: [{ type: 'input_text', text: systemPrompt(mode) }],
         },
         {
           role: 'user',
-          content: [{ type: 'input_text', text: userPrompt(brief) }],
+          content: [{ type: 'input_text', text: userPrompt(brief, mode) }],
         },
       ],
       reasoning: { effort: 'low' },
@@ -217,11 +286,12 @@ export async function POST(req: Request) {
     return Response.json({ error: message }, { status: 400 });
   }
 
+  const mode = body.mode ?? 'complete';
   const size = body.size ?? '1536x1024';
   const quality = body.quality ?? 'medium';
 
   try {
-    const planned = await planDirections(body.brief);
+    const planned = await planDirections(body.brief, mode);
     const spec = planned.directions[0];
     if (!spec) {
       throw new Error('Planner returned no directions.');
