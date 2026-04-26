@@ -14,6 +14,8 @@ The repo and the workspace Claude operates in are **separate directories** by de
 npm run dev      # tsx server.ts on :3000
 npm run build    # next build (server stays the same)
 npm start        # production server
+npm test         # vitest run
+npm run test:watch
 ```
 
 The dev script runs the **custom server**, not `next dev`. Do not change to `next dev` — it will break the WebSocket bridge.
@@ -128,6 +130,7 @@ Sizes accept strings with units (`"35%"`, `"400px"`) or bare numbers (percent).
 - **Don't mutate `currentWorkspace` directly.** `setWorkspace` in [src/server/workspaceState.ts](src/server/workspaceState.ts) is the only writer outside boot resolution — it validates the path, ensures the workspace files, persists to `~/.tango/state.json`, clears the canvas cache, and broadcasts `workspace_changed`. Skipping any of those steps will leave the app inconsistent.
 - **No `next dev`, no Vercel adapters, no edge runtime.** Custom Node server is load-bearing because the WSes and the MCP transport live in-process, and Electron will swap them for IPC against the same `attachPty` / `attachCanvas` / `mountMcp` surfaces.
 - **Strict Mode is on.** Terminal effect runs twice in dev → one harmless "WebSocket is closed before the connection is established" warning per mount, plus `claude` boots twice on first load (the first PTY is killed by the Strict-Mode cleanup). Don't "fix" by disabling Strict Mode.
+- **Test pure logic with vitest.** `npm test` runs the suite via [vitest.config.ts](vitest.config.ts); tests are co-located as `*.test.ts` next to the source. Default env is node; use `// @vitest-environment happy-dom` as line 1 for browser-shaped modules (`localStorage` etc.). The Tier-1 covered surfaces — `mergeClaudeMd` / `mergeMcpJson` / `mergeClaudeSettings`, `sanitizeAppState`, `recentProjects`, the memory-file fence parser/formatters, the agent-route helpers (`lastUserGoal` / `mcpUrl` / `filterAllowedTools`), and `validatePath` via `dryRunSetWorkspace` — are load-bearing pure functions with explicit invariants; if you change them, update or add tests. New pure logic should land with tests; reach for the existing fixtures (e.g. the `wellFormed()` builder in [src/server/memory.test.ts](src/server/memory.test.ts)) before inventing new ones. Run `npm test` before claiming a change is done. The remaining test gaps and a tiered roadmap live in [docs/test-coverage-proposal.md](docs/test-coverage-proposal.md).
 
 ## Vision (so future changes don't paint into a corner)
 
