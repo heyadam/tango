@@ -645,7 +645,7 @@ export default function MoodboardPanel() {
         </div>
 
         <div className="shrink-0 border-t border-border bg-background px-4 py-3">
-          <div className="flex items-end gap-2 rounded-xl border border-border bg-card p-2">
+          <div className="flex items-center gap-2 rounded-xl border border-border bg-card p-1.5">
             <Select
               value={session.mode}
               onValueChange={(value) =>
@@ -657,7 +657,7 @@ export default function MoodboardPanel() {
             >
               <SelectTrigger
                 aria-label="Generation mode"
-                className="h-9 w-36 shrink-0"
+                className="h-9 w-44 shrink-0"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -679,11 +679,11 @@ export default function MoodboardPanel() {
                   ? 'Describe another direction…'
                   : modePlaceholders[session.mode]
               }
-              className="min-h-9 resize-none border-0 bg-transparent px-1 py-1.5 text-sm shadow-none focus-visible:ring-0"
+              className="min-h-9 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-sm leading-5 shadow-none focus-visible:ring-0"
               rows={1}
             />
             <Button
-              size="icon-sm"
+              size="icon"
               onClick={submit}
               disabled={busy || !draft.trim()}
               aria-label="Generate"
