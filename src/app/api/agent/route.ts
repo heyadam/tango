@@ -7,6 +7,7 @@ import {
 import { createMCPClient } from '@ai-sdk/mcp';
 import { openai, VISION_MODEL } from '@/lib/ai';
 import { appendEvent } from '@/server/memory';
+import { filterAllowedTools, lastUserGoal, mcpUrl } from './helpers';
 
 export const runtime = 'nodejs';
 
@@ -34,43 +35,7 @@ Targeting workflow when you DO need to click something:
 
 Reminder: if the user says "make a wireframe" or "design something", that work belongs to terminal-Claude. You compose the prompt and \`terminal_type\` it.`;
 
-// The agent is a UI controller, not the brain. It must only use the
-// UI/terminal tools. Canvas mutation tools belong to terminal-Claude — exposing
-// them here lets gpt-5.5 short-circuit the delegation and do the work itself.
-const ALLOWED_TOOLS = new Set([
-  'dom_inspect',
-  'cursor_move',
-  'cursor_click',
-  'cursor_type',
-  'terminal_type',
-]);
-
 const STEP_LIMIT = 12;
-
-function mcpUrl(req: Request): string {
-  // Same-origin: the MCP transport is mounted on this very server. Building
-  // off the request URL means it Just Works whether we're on :3000, behind a
-  // proxy, or in Electron's loopback.
-  const url = new URL(req.url);
-  return `${url.protocol}//${url.host}/mcp`;
-}
-
-// Pull the most recent user-authored text out of the UI message list. Each
-// UIMessage's `parts` is an array of typed parts; we want the first text part
-// of the last user message.
-function lastUserGoal(messages: UIMessage[]): string {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const m = messages[i];
-    if (m.role !== 'user') continue;
-    const text = (m.parts ?? [])
-      .map((p) => (p && (p as { type?: string }).type === 'text' ? (p as { text?: string }).text ?? '' : ''))
-      .filter(Boolean)
-      .join(' ')
-      .trim();
-    if (text) return text;
-  }
-  return '';
-}
 
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
@@ -95,9 +60,7 @@ export async function POST(req: Request) {
 
   try {
     const allTools = await client.tools();
-    const tools = Object.fromEntries(
-      Object.entries(allTools).filter(([name]) => ALLOWED_TOOLS.has(name)),
-    );
+    const tools = filterAllowedTools(allTools);
 
     const goal = lastUserGoal(messages);
 
