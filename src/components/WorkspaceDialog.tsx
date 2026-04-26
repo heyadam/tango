@@ -236,7 +236,7 @@ export default function WorkspaceDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="bg-neutral-950 text-neutral-100 sm:max-w-[560px]"
+        className="sm:max-w-[560px]"
         showCloseButton={!blocking}
         onEscapeKeyDown={(e) => {
           if (blocking) e.preventDefault();
@@ -270,7 +270,7 @@ export default function WorkspaceDialog({
           <>
             {recents.length > 0 && (
               <div className="space-y-1">
-                <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   <History className="size-3" />
                   Recent
                 </div>
@@ -281,12 +281,12 @@ export default function WorkspaceDialog({
                         type="button"
                         disabled={envLocked || isBusy}
                         onClick={() => onPickRecent(item)}
-                        className="flex flex-1 items-center gap-2 rounded-md border border-neutral-800 bg-neutral-900/60 px-3 py-2 text-left text-sm hover:border-neutral-700 hover:bg-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex flex-1 items-center gap-2 rounded-md border border-border bg-card/60 px-3 py-2 text-left text-sm hover:border-foreground/30 hover:bg-card disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        <Folder className="size-4 shrink-0 text-neutral-400" />
+                        <Folder className="size-4 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
                           <div className="truncate font-medium">{item.name}</div>
-                          <div className="truncate font-mono text-xs text-neutral-500">
+                          <div className="truncate font-mono text-xs text-muted-foreground">
                             {truncatePath(item.path)}
                           </div>
                         </div>
@@ -296,7 +296,7 @@ export default function WorkspaceDialog({
                         aria-label={`Forget ${item.name}`}
                         onClick={() => onForgetRecent(item)}
                         disabled={isBusy}
-                        className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 opacity-0 transition-opacity hover:bg-neutral-900 hover:text-neutral-300 group-hover:opacity-100 disabled:opacity-30"
+                        className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-accent hover:text-foreground group-hover:opacity-100 disabled:opacity-30"
                       >
                         <X className="size-3.5" />
                       </button>
@@ -311,7 +311,7 @@ export default function WorkspaceDialog({
               variant="outline"
               onClick={onBrowse}
               disabled={envLocked || isBusy}
-              className="w-full justify-center border-neutral-700 bg-neutral-900 text-neutral-100 hover:bg-neutral-800 hover:text-neutral-50"
+              className="w-full justify-center"
             >
               {state.kind === 'browsing' ? (
                 <>
@@ -326,10 +326,10 @@ export default function WorkspaceDialog({
               )}
             </Button>
 
-            <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider text-neutral-600">
-              <span className="h-px flex-1 bg-neutral-800" />
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider text-muted-foreground/60">
+              <span className="h-px flex-1 bg-border" />
               or paste a path
-              <span className="h-px flex-1 bg-neutral-800" />
+              <span className="h-px flex-1 bg-border" />
             </div>
 
             <form onSubmit={onSubmit} className="space-y-2">
@@ -368,7 +368,7 @@ export default function WorkspaceDialog({
                   )}
                 </Button>
               </div>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-muted-foreground">
                 Absolute path. <code className="font-mono">~</code> is expanded.
               </p>
 
@@ -379,31 +379,31 @@ export default function WorkspaceDialog({
               )}
             </form>
 
-            <details className="rounded-md border border-neutral-800 bg-neutral-900/40 p-3 text-xs text-neutral-400">
-              <summary className="cursor-pointer font-medium text-neutral-300">
+            <details className="rounded-md border border-border bg-card/40 p-3 text-xs text-muted-foreground">
+              <summary className="cursor-pointer font-medium text-foreground/90">
                 What tango will write
               </summary>
               <ul className="mt-2 space-y-1 font-mono">
                 <li>
-                  <span className="text-neutral-500">overwrite&nbsp;</span>
+                  <span className="text-muted-foreground">overwrite&nbsp;</span>
                   .claude/tango.md
                 </li>
                 <li>
-                  <span className="text-neutral-500">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   CLAUDE.md
-                  <span className="text-neutral-500"> (3-line sentinel block)</span>
+                  <span className="text-muted-foreground"> (3-line sentinel block)</span>
                 </li>
                 <li>
-                  <span className="text-neutral-500">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   .mcp.json
-                  <span className="text-neutral-500"> (under mcpServers.tango-canvas)</span>
+                  <span className="text-muted-foreground"> (under mcpServers.tango-canvas)</span>
                 </li>
                 <li>
-                  <span className="text-neutral-500">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   .claude/settings.json
                 </li>
                 <li>
-                  <span className="text-neutral-500">mkdir&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <span className="text-muted-foreground">mkdir&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   design-scratch/
                 </li>
               </ul>
@@ -450,10 +450,10 @@ function SoftWarningsView({
         {warnings.map((w) => (
           <li
             key={w.file}
-            className="rounded-md border border-neutral-800 bg-neutral-900/40 p-2"
+            className="rounded-md border border-border bg-card/40 p-2"
           >
-            <code className="font-mono text-neutral-300">{w.file}</code>
-            <div className="text-neutral-500">{w.reason}</div>
+            <code className="font-mono text-foreground/90">{w.file}</code>
+            <div className="text-muted-foreground">{w.reason}</div>
           </li>
         ))}
       </ul>

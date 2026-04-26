@@ -25,6 +25,7 @@ import {
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -75,15 +76,15 @@ export default function AgentSidebar({
     <aside
       aria-hidden={!open}
       className={cn(
-        'flex h-full shrink-0 flex-col overflow-hidden bg-neutral-950 transition-[width] duration-200 ease-out',
-        open ? 'w-[380px] border-r border-neutral-800' : 'w-0',
+        'flex h-full shrink-0 flex-col overflow-hidden bg-background transition-[width] duration-200 ease-out',
+        open ? 'w-[380px] border-r border-border' : 'w-0',
       )}
     >
-      <div className="flex h-12 shrink-0 items-center justify-between border-b border-neutral-800 px-2">
+      <div className="flex h-12 shrink-0 items-center justify-between border-b border-border px-2">
         {open && (
           <>
-            <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-300">
-              <Sparkles className="size-3.5 text-neutral-400" />
+            <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+              <Sparkles className="size-3.5 text-muted-foreground" />
               <span>Agent</span>
             </div>
             {canSendSketch && (
@@ -93,7 +94,7 @@ export default function AgentSidebar({
                 onClick={handleSendSketch}
                 disabled={sendBusy}
                 title="Send the canvas as a PNG to Claude in the terminal"
-                className="h-8 gap-1.5 px-2 text-xs text-neutral-300 hover:text-neutral-100"
+                className="h-8 gap-1.5 px-2 text-xs"
               >
                 <ImageUp className="size-3.5" />
                 {sendBusy ? 'Sending…' : 'Send sketch'}
@@ -104,8 +105,8 @@ export default function AgentSidebar({
       </div>
 
       {open && canSendSketch && (
-        <div className="shrink-0 border-b border-neutral-800 px-2 py-1.5">
-          <input
+        <div className="shrink-0 border-b border-border px-2 py-1.5">
+          <Input
             type="text"
             value={sketchCaption}
             onChange={(e) => setSketchCaption(e.target.value)}
@@ -118,7 +119,7 @@ export default function AgentSidebar({
               }
             }}
             maxLength={240}
-            className="w-full rounded border border-neutral-800 bg-neutral-900 px-2 py-1 text-xs text-neutral-200 placeholder:text-neutral-600 focus:border-neutral-600 focus:outline-none disabled:opacity-50"
+            className="h-7 text-xs"
           />
         </div>
       )}
@@ -163,19 +164,19 @@ export default function AgentSidebar({
                             return (
                               <div
                                 key={i}
-                                className="rounded border border-neutral-800 bg-neutral-900 px-2 py-1 font-mono text-[10px] text-neutral-300"
+                                className="rounded border border-border bg-muted px-2 py-1 font-mono text-[10px] text-foreground"
                               >
                                 <div className="text-sky-300">
                                   {name}
                                   {p.state ? ` · ${p.state}` : ''}
                                 </div>
                                 {p.input !== undefined && (
-                                  <pre className="mt-0.5 whitespace-pre-wrap text-neutral-400">
+                                  <pre className="mt-0.5 whitespace-pre-wrap text-muted-foreground">
                                     {JSON.stringify(p.input, null, 2)}
                                   </pre>
                                 )}
                                 {p.output !== undefined && (
-                                  <pre className="mt-0.5 whitespace-pre-wrap text-neutral-500">
+                                  <pre className="mt-0.5 whitespace-pre-wrap text-muted-foreground/70">
                                     → {JSON.stringify(p.output, null, 2)}
                                   </pre>
                                 )}
@@ -194,16 +195,16 @@ export default function AgentSidebar({
           </div>
 
           {(sketchPath || sketchError) && (
-            <div className="shrink-0 border-t border-neutral-800 px-3 py-1.5 font-mono text-[10px]">
+            <div className="shrink-0 border-t border-border px-3 py-1.5 font-mono text-[10px]">
               {sketchError ? (
                 <span className="text-red-400">{sketchError}</span>
               ) : (
-                <span className="text-neutral-500">sent {sketchPath}</span>
+                <span className="text-muted-foreground">sent {sketchPath}</span>
               )}
             </div>
           )}
 
-          <div className="shrink-0 border-t border-neutral-800 p-3">
+          <div className="shrink-0 border-t border-border p-3">
             <PromptInput onSubmit={handleSubmit}>
               <PromptInputBody>
                 <PromptInputTextarea placeholder="Message the agent…" />

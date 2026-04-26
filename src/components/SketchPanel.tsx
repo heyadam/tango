@@ -12,7 +12,7 @@ import type { DesignerHandles } from './DesignerCanvas';
 
 const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-neutral-950" />,
+  loading: () => <div className="h-full w-full bg-background" />,
 });
 
 type LoadState =
@@ -199,7 +199,7 @@ export default function SketchPanel({ onCanvasReady }: Props) {
   }, [generation]);
 
   return (
-    <div className="h-full w-full bg-neutral-900">
+    <div className="h-full w-full bg-card">
       {load.status === 'ready' && (
         <DesignerCanvas
           key={generation}
