@@ -1,16 +1,24 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Check,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react';
+import {
+  ArrowUp,
+  ChevronDown,
+  ChevronUp,
   ImagePlus,
   RefreshCw,
   Send,
+  Settings2,
   Sparkles,
-  WandSparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -19,6 +27,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { writeSnapshot } from '@/lib/designSnapshot';
 import { terminalBus } from '@/lib/terminalBus';
 import { cn } from '@/lib/utils';
@@ -36,25 +49,25 @@ type MoodboardDirection = {
   imagePrompt: string;
   base64: string;
   mediaType: string;
+  // Set when the server persisted the image into the workspace's
+  // design-scratch/moodboard/ folder. Undefined when no workspace was active
+  // at generation time.
+  relPath?: string;
 };
 
 type Session = {
-  brief: string;
-  count: number;
   size: MoodboardSize;
   quality: MoodboardQuality;
-  winnerId: string | null;
+  selectedId: string | null;
   directions: MoodboardDirection[];
 };
 
 const STORAGE_KEY = 'tango:moodboard-session:v1';
 
 const defaultSession: Session = {
-  brief: '',
-  count: 3,
   size: '1536x1024',
   quality: 'medium',
-  winnerId: null,
+  selectedId: null,
   directions: [],
 };
 
@@ -70,7 +83,8 @@ function isDirection(value: unknown): value is MoodboardDirection {
     typeof item.uiNotes === 'string' &&
     typeof item.imagePrompt === 'string' &&
     typeof item.base64 === 'string' &&
-    typeof item.mediaType === 'string'
+    typeof item.mediaType === 'string' &&
+    (item.relPath === undefined || typeof item.relPath === 'string')
   );
 }
 
@@ -80,15 +94,10 @@ function loadSession(): Session {
     const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '');
     if (!parsed || typeof parsed !== 'object') return defaultSession;
     const raw = parsed as Partial<Session>;
+    const directions = Array.isArray(raw.directions)
+      ? raw.directions.filter(isDirection)
+      : [];
     return {
-      brief: typeof raw.brief === 'string' ? raw.brief : '',
-      count:
-        raw.count === 1 ||
-        raw.count === 2 ||
-        raw.count === 3 ||
-        raw.count === 4
-          ? raw.count
-          : 3,
       size:
         raw.size === '1024x1024' ||
         raw.size === '1536x1024' ||
@@ -102,10 +111,11 @@ function loadSession(): Session {
         raw.quality === 'auto'
           ? raw.quality
           : 'medium',
-      winnerId: typeof raw.winnerId === 'string' ? raw.winnerId : null,
-      directions: Array.isArray(raw.directions)
-        ? raw.directions.filter(isDirection)
-        : [],
+      selectedId:
+        typeof raw.selectedId === 'string'
+          ? raw.selectedId
+          : (directions[directions.length - 1]?.id ?? null),
+      directions,
     };
   } catch {
     return defaultSession;
@@ -125,10 +135,6 @@ function base64ToBlob(base64: string, mediaType: string): Blob {
   return new Blob([bytes], { type: mediaType });
 }
 
-function paletteText(direction: MoodboardDirection): string {
-  return direction.palette.join('\n');
-}
-
 function paletteSwatches(palette: string[]): string[] {
   return palette
     .map((item) => item.match(/#[0-9a-f]{6}\b/i)?.[0])
@@ -137,18 +143,14 @@ function paletteSwatches(palette: string[]): string[] {
 }
 
 function handoffPrompt(
-  brief: string,
   relPath: string,
   direction: MoodboardDirection,
 ): string {
-  return `Use this winning moodboard direction as the source of truth for the next branding/UI pass.
+  return `Use this moodboard direction as the source of truth for the next branding/UI pass.
 
 Image: ${relPath}
 
-Original brief:
-${brief || '(No original brief was provided.)'}
-
-Winning direction:
+Direction:
 ${direction.title}
 
 Rationale:
@@ -172,10 +174,16 @@ Please inspect the image file, then turn this direction into concrete branding a
 export default function MoodboardPanel() {
   const [session, setSession] = useState<Session>(defaultSession);
   const [loaded, setLoaded] = useState(false);
-  const [busy, setBusy] = useState<'all' | string | null>(null);
+  // Single-flight: the API can only run one generation at a time anyway, and
+  // the UI needs to know whether to disable the input/buttons.
+  const [busy, setBusy] = useState(false);
   const [handoffBusy, setHandoffBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [draft, setDraft] = useState('');
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     setSession(loadSession());
@@ -187,170 +195,261 @@ export default function MoodboardPanel() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   }, [loaded, session]);
 
-  const winner = useMemo(
-    () =>
-      session.directions.find((direction) => direction.id === session.winnerId) ??
-      null,
-    [session.directions, session.winnerId],
-  );
+  const selected = useMemo(() => {
+    if (session.directions.length === 0) return null;
+    return (
+      session.directions.find((d) => d.id === session.selectedId) ??
+      session.directions[session.directions.length - 1]
+    );
+  }, [session.directions, session.selectedId]);
 
-  const updateDirection = useCallback(
-    (id: string, patch: Partial<MoodboardDirection>) => {
-      setSession((current) => ({
-        ...current,
-        directions: current.directions.map((direction) =>
-          direction.id === id ? { ...direction, ...patch } : direction,
-        ),
-      }));
+  const generate = useCallback(
+    async (brief: string) => {
+      const trimmed = brief.trim();
+      if (!trimmed || busy) return;
+      setBusy(true);
+      setError(null);
+      setStatus(null);
+      try {
+        const res = await fetch('/api/moodboard/directions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            brief: trimmed,
+            size: session.size,
+            quality: session.quality,
+          }),
+        });
+        const raw = await res.text();
+        let body: { directions?: MoodboardDirection[]; error?: string };
+        try {
+          body = JSON.parse(raw);
+        } catch {
+          throw new Error(raw || `Generation failed: ${res.status}`);
+        }
+        if (!res.ok) {
+          throw new Error(body.error ?? `Generation failed: ${res.status}`);
+        }
+        const next = body.directions?.[0];
+        if (!next) {
+          throw new Error('Generation response did not include a direction.');
+        }
+        setSession((current) => ({
+          ...current,
+          directions: [...current.directions, next],
+          selectedId: next.id,
+        }));
+        setStatus(`Added ${next.title}.`);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setBusy(false);
+      }
     },
-    [],
+    [busy, session.quality, session.size],
   );
 
-  const requestDirections = useCallback(
-    async (brief: string, count: number) => {
-      const res = await fetch('/api/moodboard/directions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          brief,
-          count,
-          size: session.size,
-          quality: session.quality,
-        }),
-      });
+  const seedDummy = useCallback(async () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    setStatus(null);
+    try {
+      const res = await fetch('/api/moodboard/seed', { method: 'POST' });
       const raw = await res.text();
       let body: { directions?: MoodboardDirection[]; error?: string };
       try {
         body = JSON.parse(raw);
       } catch {
-        throw new Error(raw || `Generation failed: ${res.status}`);
+        throw new Error(raw || `Seed failed: ${res.status}`);
       }
       if (!res.ok) {
-        throw new Error(body.error ?? `Generation failed: ${res.status}`);
+        throw new Error(body.error ?? `Seed failed: ${res.status}`);
       }
-      if (!body.directions) {
-        throw new Error('Generation response did not include directions.');
-      }
-      return body.directions;
-    },
-    [session.quality, session.size],
-  );
-
-  const generateAll = useCallback(async () => {
-    const brief = session.brief.trim();
-    if (!brief || busy) return;
-    setBusy('all');
-    setError(null);
-    setStatus(null);
-    try {
-      const directions = await requestDirections(brief, session.count);
+      const directions = body.directions ?? [];
+      // Append to the bank rather than replacing — seed is just a fast way to
+      // bulk-load some history without spending image-gen tokens.
       setSession((current) => ({
         ...current,
-        directions,
-        winnerId: directions[0]?.id ?? null,
+        directions: [...current.directions, ...directions],
+        selectedId:
+          directions[directions.length - 1]?.id ?? current.selectedId,
       }));
-      setStatus(`Generated ${directions.length} directions.`);
+      setStatus(`Seeded ${directions.length} dummy directions.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
-  }, [busy, requestDirections, session.brief, session.count]);
+  }, [busy]);
 
-  const regenerateOne = useCallback(
-    async (direction: MoodboardDirection) => {
-      if (busy) return;
-      setBusy(direction.id);
-      setError(null);
-      setStatus(null);
-      const brief = [
-        session.brief,
-        `Regenerate only this direction as a stronger visual concept: ${direction.title}.`,
-        `Rationale: ${direction.rationale}`,
-        `Palette: ${direction.palette.join(', ')}`,
-        `Brand notes: ${direction.brandNotes}`,
-        `UI notes: ${direction.uiNotes}`,
-        `Preferred image prompt: ${direction.imagePrompt}`,
-      ].join('\n\n');
-      try {
-        const [next] = await requestDirections(brief, 1);
-        if (!next) throw new Error('No replacement direction returned.');
-        updateDirection(direction.id, { ...next, id: direction.id });
-        setStatus(`Regenerated ${direction.title}.`);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setBusy(null);
-      }
-    },
-    [busy, requestDirections, session.brief, updateDirection],
-  );
-
-  const sendWinner = useCallback(async () => {
-    if (!winner || handoffBusy) return;
+  const sendSelected = useCallback(async () => {
+    if (!selected || handoffBusy) return;
     setHandoffBusy(true);
     setError(null);
     setStatus(null);
     try {
-      const blob = base64ToBlob(winner.base64, winner.mediaType);
-      const { relPath } = await writeSnapshot(blob);
-      terminalBus.submitToTerminal(handoffPrompt(session.brief, relPath, winner));
-      setStatus(`Sent ${winner.title} to Claude.`);
+      // Prefer the server-persisted file if generation captured one — avoids a
+      // duplicate copy in design-scratch/. Fall back to writing a snapshot for
+      // older sessions whose directions predate the persist change.
+      const relPath = selected.relPath
+        ? selected.relPath
+        : (
+            await writeSnapshot(
+              base64ToBlob(selected.base64, selected.mediaType),
+            )
+          ).relPath;
+      terminalBus.submitToTerminal(handoffPrompt(relPath, selected));
+      setStatus(`Sent ${selected.title} to Claude.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setHandoffBusy(false);
     }
-  }, [handoffBusy, session.brief, winner]);
+  }, [handoffBusy, selected]);
+
+  const submit = useCallback(() => {
+    const text = draft.trim();
+    if (!text || busy) return;
+    void generate(text);
+    setDraft('');
+  }, [busy, draft, generate]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        submit();
+      }
+    },
+    [submit],
+  );
+
+  const swatches = selected ? paletteSwatches(selected.palette) : [];
+  const hasDirections = session.directions.length > 0;
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-neutral-900 text-neutral-100">
-      <div className="shrink-0 border-b border-neutral-800 bg-neutral-950/70 px-4 py-3">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
-          <label className="min-w-0 flex-1">
-            <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-neutral-300">
-              <WandSparkles className="size-3.5 text-emerald-300" />
-              Creative brief
-            </span>
-            <Textarea
-              value={session.brief}
-              onChange={(event) =>
-                setSession((current) => ({
-                  ...current,
-                  brief: event.target.value,
-                }))
-              }
-              placeholder="Brand, product, audience, vibe, constraints, competitors..."
-              className="min-h-20 resize-none border-neutral-700 bg-neutral-900 text-sm text-neutral-100 placeholder:text-neutral-500 focus-visible:ring-emerald-500/30"
-            />
-          </label>
+    <div className="flex h-full min-h-0 bg-neutral-950 text-neutral-100">
+      <aside className="flex w-20 shrink-0 flex-col items-center gap-2 border-r border-neutral-900 bg-neutral-950 py-3">
+        <div className="flex w-full flex-1 flex-col items-center gap-2 overflow-y-auto px-2">
+          {session.directions.map((direction, index) => {
+            const active = direction.id === session.selectedId;
+            return (
+              <Tooltip key={direction.id}>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSession((current) => ({
+                        ...current,
+                        selectedId: direction.id,
+                      }))
+                    }
+                    aria-label={`Select ${direction.title}`}
+                    aria-pressed={active}
+                    className={cn(
+                      'group relative w-full overflow-hidden rounded-md border transition-colors',
+                      active
+                        ? 'border-neutral-100'
+                        : 'border-neutral-800 hover:border-neutral-600',
+                    )}
+                  >
+                    <div className="aspect-square w-full bg-neutral-900">
+                      <img
+                        src={imageSrc(direction)}
+                        alt={direction.title}
+                        className={cn(
+                          'h-full w-full object-cover',
+                          active ? '' : 'opacity-70 group-hover:opacity-100',
+                        )}
+                      />
+                    </div>
+                    <div className="absolute left-1 top-1 rounded bg-neutral-950/80 px-1 font-mono text-[9px] text-neutral-300">
+                      {index + 1}
+                    </div>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">{direction.title}</TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </div>
+      </aside>
 
-          <div className="grid shrink-0 grid-cols-3 gap-2 lg:w-[380px]">
-            <label className="space-y-1.5">
-              <span className="text-xs font-medium text-neutral-400">Count</span>
+      <div className="relative flex min-w-0 flex-1 flex-col">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-neutral-900 bg-neutral-950 px-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <h1 className="text-sm font-semibold text-neutral-100">Moodboard</h1>
+            {selected && (
+              <>
+                <span className="text-neutral-700">·</span>
+                <span className="truncate text-sm text-neutral-300">
+                  {selected.title}
+                </span>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setOptionsOpen((v) => !v)}
+                  aria-pressed={optionsOpen}
+                  aria-label="Options"
+                  className="text-neutral-400 hover:text-neutral-100"
+                >
+                  <Settings2 className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">Options</TooltipContent>
+            </Tooltip>
+            <Button
+              size="sm"
+              onClick={sendSelected}
+              disabled={!selected || handoffBusy}
+              className="h-8 bg-emerald-300 text-neutral-950 hover:bg-emerald-200 disabled:bg-neutral-800 disabled:text-neutral-500"
+            >
+              {handoffBusy ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Send className="size-3.5" />
+              )}
+              Send to Claude
+            </Button>
+          </div>
+        </header>
+
+        {optionsOpen && (
+          <div className="grid shrink-0 grid-cols-[auto_auto] items-end gap-3 border-b border-neutral-900 bg-neutral-950/80 px-4 py-3">
+            <label className="space-y-1">
+              <span className="text-[11px] font-medium uppercase text-neutral-500">
+                Size
+              </span>
               <Select
-                value={String(session.count)}
+                value={session.size}
                 onValueChange={(value) =>
                   setSession((current) => ({
                     ...current,
-                    count: Number(value),
+                    size: value as MoodboardSize,
                   }))
                 }
               >
-                <SelectTrigger className="h-9 w-full border-neutral-700 bg-neutral-900 text-neutral-100">
+                <SelectTrigger className="h-9 w-36 border-neutral-800 bg-neutral-900 text-neutral-100">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4].map((count) => (
-                    <SelectItem key={count} value={String(count)}>
-                      {count}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="1536x1024">1536 × 1024</SelectItem>
+                  <SelectItem value="1024x1024">1024 × 1024</SelectItem>
+                  <SelectItem value="1024x1536">1024 × 1536</SelectItem>
                 </SelectContent>
               </Select>
             </label>
-            <label className="space-y-1.5">
-              <span className="text-xs font-medium text-neutral-400">Quality</span>
+            <label className="space-y-1">
+              <span className="text-[11px] font-medium uppercase text-neutral-500">
+                Quality
+              </span>
               <Select
                 value={session.quality}
                 onValueChange={(value) =>
@@ -360,7 +459,7 @@ export default function MoodboardPanel() {
                   }))
                 }
               >
-                <SelectTrigger className="h-9 w-full border-neutral-700 bg-neutral-900 text-neutral-100">
+                <SelectTrigger className="h-9 w-28 border-neutral-800 bg-neutral-900 text-neutral-100">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -372,242 +471,176 @@ export default function MoodboardPanel() {
                 </SelectContent>
               </Select>
             </label>
+          </div>
+        )}
+
+        <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center bg-neutral-950 p-6">
+          {selected ? (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+              <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
+                <img
+                  src={imageSrc(selected)}
+                  alt={selected.title}
+                  className="max-h-full max-w-full rounded-md object-contain shadow-xl"
+                />
+                {busy && (
+                  <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-2 rounded-md bg-neutral-900/90 px-3 py-1.5 text-xs text-neutral-200 shadow">
+                    <RefreshCw className="size-3.5 animate-spin" />
+                    Generating…
+                  </div>
+                )}
+              </div>
+
+              <div className="flex w-full max-w-3xl items-center justify-between gap-3 px-1">
+                {swatches.length > 0 ? (
+                  <div className="flex items-center gap-1.5">
+                    {swatches.map((hex) => (
+                      <span
+                        key={hex}
+                        title={hex}
+                        className="size-4 rounded-full border border-white/15"
+                        style={{ backgroundColor: hex }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-xs text-neutral-600">No palette</span>
+                )}
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDetailsOpen((v) => !v)}
+                  aria-pressed={detailsOpen}
+                  className="h-8 text-neutral-400 hover:text-neutral-100"
+                >
+                  {detailsOpen ? (
+                    <ChevronUp className="size-3.5" />
+                  ) : (
+                    <ChevronDown className="size-3.5" />
+                  )}
+                  Details
+                </Button>
+              </div>
+
+              {detailsOpen && (
+                <div className="grid w-full max-w-3xl shrink-0 gap-3 rounded-md border border-neutral-800 bg-neutral-900/60 p-3 text-xs text-neutral-300 sm:grid-cols-2">
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      Rationale
+                    </div>
+                    <p className="leading-5 text-neutral-300">
+                      {selected.rationale || '—'}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      Palette
+                    </div>
+                    <p className="font-mono text-[11px] leading-5 text-neutral-300">
+                      {selected.palette.join(', ') || '—'}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      Brand notes
+                    </div>
+                    <p className="leading-5 text-neutral-300">
+                      {selected.brandNotes || '—'}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      UI notes
+                    </div>
+                    <p className="leading-5 text-neutral-300">
+                      {selected.uiNotes || '—'}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-2 space-y-1">
+                    <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      Image prompt
+                    </div>
+                    <p className="font-mono text-[11px] leading-5 text-neutral-400">
+                      {selected.imagePrompt || '—'}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex max-w-md flex-col items-center text-center">
+              <div className="mb-4 flex size-12 items-center justify-center rounded-md border border-neutral-800 bg-neutral-900">
+                <ImagePlus className="size-6 text-neutral-500" />
+              </div>
+              <h2 className="text-base font-semibold text-neutral-100">
+                Describe a creative direction to start
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-neutral-400">
+                Type a brief below. Tango generates one direction at a time and
+                keeps every result in the rail on the left so you can flip back
+                later.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={seedDummy}
+                disabled={busy}
+                className="mt-4 h-8 text-neutral-400 hover:text-neutral-100"
+              >
+                {busy ? (
+                  <RefreshCw className="size-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="size-3.5" />
+                )}
+                Seed dummy data
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div className="shrink-0 border-t border-neutral-900 bg-neutral-950 px-4 py-3">
+          <div className="flex items-end gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2">
+            <Textarea
+              ref={inputRef}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={
+                hasDirections
+                  ? 'Describe another direction…'
+                  : 'Describe the brand, product, audience, vibe, constraints…'
+              }
+              className="min-h-9 resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-neutral-100 shadow-none focus-visible:ring-0 placeholder:text-neutral-500"
+              rows={1}
+            />
             <Button
-              onClick={generateAll}
-              disabled={!session.brief.trim() || Boolean(busy)}
-              className="mt-6 h-9 bg-emerald-300 text-neutral-950 hover:bg-emerald-200"
+              size="icon-sm"
+              onClick={submit}
+              disabled={busy || !draft.trim()}
+              aria-label="Generate"
+              className="shrink-0 bg-neutral-100 text-neutral-950 hover:bg-white disabled:bg-neutral-800 disabled:text-neutral-500"
             >
-              {busy === 'all' ? (
+              {busy ? (
                 <RefreshCw className="size-4 animate-spin" />
+              ) : hasDirections ? (
+                <ArrowUp className="size-4" />
               ) : (
                 <Sparkles className="size-4" />
               )}
-              Generate
             </Button>
           </div>
-        </div>
 
-        {(status || error) && (
-          <div className="mt-2 font-mono text-[11px]">
-            {error ? (
-              <span className="text-red-300">{error}</span>
-            ) : (
-              <span className="text-emerald-300">{status}</span>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="min-h-0 flex-1 overflow-auto p-4">
-        {session.directions.length === 0 ? (
-          <div className="flex h-full min-h-[360px] items-center justify-center">
-            <div className="max-w-md text-center">
-              <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-md border border-neutral-700 bg-neutral-950">
-                <ImagePlus className="size-6 text-neutral-400" />
-              </div>
-              <h2 className="text-base font-semibold text-neutral-100">
-                Generate divergent creative directions
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-neutral-400">
-                Use Moodboard mode to explore competing brand and UI territories,
-                then pick the strongest one and hand it to Claude Code.
-              </p>
+          {(status || error) && (
+            <div className="mt-2 px-1 font-mono text-[11px]">
+              {error ? (
+                <span className="text-red-300">{error}</span>
+              ) : (
+                <span className="text-neutral-400">{status}</span>
+              )}
             </div>
-          </div>
-        ) : (
-          <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
-            {session.directions.map((direction, index) => {
-              const selected = direction.id === session.winnerId;
-              const swatches = paletteSwatches(direction.palette);
-              return (
-                <article
-                  key={direction.id}
-                  className={cn(
-                    'overflow-hidden rounded-md border bg-neutral-950 shadow-sm',
-                    selected ? 'border-emerald-300/70' : 'border-neutral-800',
-                  )}
-                >
-                  <div className="relative aspect-[3/2] bg-neutral-900">
-                    <img
-                      src={imageSrc(direction)}
-                      alt={direction.title}
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute left-2 top-2 rounded bg-neutral-950/85 px-2 py-1 font-mono text-[10px] text-neutral-300">
-                      Direction {index + 1}
-                    </div>
-                    {selected && (
-                      <div className="absolute right-2 top-2 flex items-center gap-1 rounded bg-emerald-300 px-2 py-1 text-[11px] font-medium text-neutral-950">
-                        <Check className="size-3" />
-                        Winner
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-3 p-3">
-                    <Input
-                      value={direction.title}
-                      onChange={(event) =>
-                        updateDirection(direction.id, {
-                          title: event.target.value,
-                        })
-                      }
-                      className="h-9 border-neutral-700 bg-neutral-900 text-sm font-semibold text-neutral-100"
-                    />
-
-                    {swatches.length > 0 && (
-                      <div className="flex gap-1.5">
-                        {swatches.map((hex) => (
-                          <span
-                            key={hex}
-                            title={hex}
-                            className="h-5 flex-1 rounded border border-white/15"
-                            style={{ backgroundColor: hex }}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    <label className="block space-y-1">
-                      <span className="text-[11px] font-medium uppercase text-neutral-500">
-                        Rationale
-                      </span>
-                      <Textarea
-                        value={direction.rationale}
-                        onChange={(event) =>
-                          updateDirection(direction.id, {
-                            rationale: event.target.value,
-                          })
-                        }
-                        className="min-h-24 resize-none border-neutral-700 bg-neutral-900 text-xs text-neutral-200"
-                      />
-                    </label>
-
-                    <label className="block space-y-1">
-                      <span className="text-[11px] font-medium uppercase text-neutral-500">
-                        Palette
-                      </span>
-                      <Textarea
-                        value={paletteText(direction)}
-                        onChange={(event) =>
-                          updateDirection(direction.id, {
-                            palette: event.target.value
-                              .split('\n')
-                              .map((item) => item.trim())
-                              .filter(Boolean),
-                          })
-                        }
-                        className="min-h-20 resize-none border-neutral-700 bg-neutral-900 font-mono text-xs text-neutral-200"
-                      />
-                    </label>
-
-                    <div className="grid gap-3 md:grid-cols-2">
-                      <label className="block space-y-1">
-                        <span className="text-[11px] font-medium uppercase text-neutral-500">
-                          Brand notes
-                        </span>
-                        <Textarea
-                          value={direction.brandNotes}
-                          onChange={(event) =>
-                            updateDirection(direction.id, {
-                              brandNotes: event.target.value,
-                            })
-                          }
-                          className="min-h-28 resize-none border-neutral-700 bg-neutral-900 text-xs text-neutral-200"
-                        />
-                      </label>
-                      <label className="block space-y-1">
-                        <span className="text-[11px] font-medium uppercase text-neutral-500">
-                          UI notes
-                        </span>
-                        <Textarea
-                          value={direction.uiNotes}
-                          onChange={(event) =>
-                            updateDirection(direction.id, {
-                              uiNotes: event.target.value,
-                            })
-                          }
-                          className="min-h-28 resize-none border-neutral-700 bg-neutral-900 text-xs text-neutral-200"
-                        />
-                      </label>
-                    </div>
-
-                    <label className="block space-y-1">
-                      <span className="text-[11px] font-medium uppercase text-neutral-500">
-                        Image prompt
-                      </span>
-                      <Textarea
-                        value={direction.imagePrompt}
-                        onChange={(event) =>
-                          updateDirection(direction.id, {
-                            imagePrompt: event.target.value,
-                          })
-                        }
-                        className="min-h-24 resize-none border-neutral-700 bg-neutral-900 font-mono text-[11px] text-neutral-300"
-                      />
-                    </label>
-
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        variant={selected ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() =>
-                          setSession((current) => ({
-                            ...current,
-                            winnerId: direction.id,
-                          }))
-                        }
-                        className={cn(
-                          selected &&
-                            'bg-emerald-300 text-neutral-950 hover:bg-emerald-200',
-                        )}
-                      >
-                        <Check className="size-4" />
-                        Pick winner
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => regenerateOne(direction)}
-                        disabled={Boolean(busy)}
-                        className="border-neutral-700 bg-neutral-900 text-neutral-200 hover:bg-neutral-800 hover:text-neutral-100"
-                      >
-                        {busy === direction.id ? (
-                          <RefreshCw className="size-4 animate-spin" />
-                        ) : (
-                          <RefreshCw className="size-4" />
-                        )}
-                        Regenerate
-                      </Button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="flex shrink-0 items-center justify-between gap-3 border-t border-neutral-800 bg-neutral-950 px-4 py-3">
-        <div className="min-w-0 text-xs text-neutral-400">
-          {winner ? (
-            <span className="truncate">Winner: {winner.title}</span>
-          ) : (
-            <span>Pick a winner to hand off a direction.</span>
           )}
         </div>
-        <Button
-          onClick={sendWinner}
-          disabled={!winner || handoffBusy}
-          className="h-9 bg-sky-300 text-neutral-950 hover:bg-sky-200"
-        >
-          {handoffBusy ? (
-            <RefreshCw className="size-4 animate-spin" />
-          ) : (
-            <Send className="size-4" />
-          )}
-          Send winner to Claude
-        </Button>
       </div>
     </div>
   );
