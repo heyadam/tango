@@ -42,6 +42,7 @@ import {
   type MoodboardSize,
 } from '@/lib/moodboardStore';
 import { terminalBus } from '@/lib/terminalBus';
+import { transmitBus } from '@/lib/transmitBus';
 import { cn } from '@/lib/utils';
 
 const modeLabels: Record<MoodboardMode, string> = {
@@ -165,6 +166,10 @@ export default function MoodboardPanel() {
               base64ToBlob(selected.base64, selected.mediaType),
             )
           ).relPath;
+      transmitBus.show({
+        src: imageSrc(selected),
+        label: selected.title,
+      });
       terminalBus.submitToTerminal(handoffPrompt(relPath, selected));
       setHandoffStatus(`Sent ${selected.title} to Claude.`);
     } catch (err) {
