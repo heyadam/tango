@@ -31,10 +31,14 @@ import type {
   OnDragEnd,
   OnDragGroup,
   OnDragGroupEnd,
+  OnDragGroupStart,
+  OnDragStart,
   OnResize,
   OnResizeEnd,
   OnResizeGroup,
   OnResizeGroupEnd,
+  OnResizeGroupStart,
+  OnResizeStart,
 } from 'react-moveable';
 import UIMockNode from './UIMockNode';
 import { uiMockBus } from '@/lib/uiMockBus';
@@ -63,6 +67,25 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
   // handlers that fire long after they were attached).
   const specRef = useRef(spec);
   specRef.current = spec;
+
+  // Origin geometry stashed at drag/resize start, keyed by node id. The end
+  // handlers commit `origin + delta` rather than reading the live spec —
+  // otherwise a server-driven `set` arriving mid-drag would shift the base
+  // and the user's commit would land in a wildly wrong spot.
+  const dragOrigin = useRef<
+    Map<string, { x: number; y: number; width: number; height: number }>
+  >(new Map());
+
+  const stashOrigin = useCallback((id: string) => {
+    const node = findNode(specRef.current, id);
+    if (!node) return;
+    dragOrigin.current.set(id, {
+      x: node.x,
+      y: node.y,
+      width: node.width,
+      height: node.height,
+    });
+  }, []);
 
   // Tracks whether the next spec render came from a server-driven apply.
   // We bump this when an apply lands and skip one snapshot effect run — the
@@ -242,26 +265,47 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   // ── Drag / resize handlers ────────────────────────────────────────────
   // During drag/resize we mutate the DOM directly for smoothness; on end we
-  // commit final geometry to spec and reset the inline transform.
+  // commit final geometry to spec (origin + delta) and reset the inline
+  // transform. The origin is captured on *Start so a server-driven `set`
+  // arriving mid-gesture can't shift the base.
+
+  const onDragStart = useCallback(
+    (e: OnDragStart) => {
+      const id = (e.target as HTMLElement).getAttribute('data-mock-id');
+      if (id) stashOrigin(id);
+    },
+    [stashOrigin],
+  );
+
   const onDrag = useCallback((e: OnDrag) => {
     e.target.style.transform = e.transform;
   }, []);
 
   const onDragEnd = useCallback(
     (e: OnDragEnd) => {
-      if (!e.isDrag) return;
       const id = (e.target as HTMLElement).getAttribute('data-mock-id');
       if (!id) return;
+      const origin = dragOrigin.current.get(id);
+      dragOrigin.current.delete(id);
+      (e.target as HTMLElement).style.transform = '';
+      if (!e.isDrag || !origin) return;
       const last = e.lastEvent?.beforeTranslate as
         | [number, number]
         | undefined;
       if (!last) return;
-      const node = findNode(specRef.current, id);
-      if (!node) return;
-      updateNode(id, { x: node.x + last[0], y: node.y + last[1] });
-      (e.target as HTMLElement).style.transform = '';
+      updateNode(id, { x: origin.x + last[0], y: origin.y + last[1] });
     },
     [updateNode],
+  );
+
+  const onDragGroupStart = useCallback(
+    (e: OnDragGroupStart) => {
+      for (const ev of e.events) {
+        const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
+        if (id) stashOrigin(id);
+      }
+    },
+    [stashOrigin],
   );
 
   const onDragGroup = useCallback((e: OnDragGroup) => {
@@ -272,23 +316,41 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onDragGroupEnd = useCallback(
     (e: OnDragGroupEnd) => {
-      if (!e.isDrag) return;
+      // Always reset inline transforms, even on a click-without-drag.
+      for (const ev of e.events) {
+        (ev.target as HTMLElement).style.transform = '';
+      }
+      if (!e.isDrag) {
+        for (const ev of e.events) {
+          const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
+          if (id) dragOrigin.current.delete(id);
+        }
+        return;
+      }
       const patches = new Map<string, Partial<UINode>>();
       for (const ev of e.events) {
         const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
         if (!id) continue;
+        const origin = dragOrigin.current.get(id);
+        dragOrigin.current.delete(id);
+        if (!origin) continue;
         const last = ev.lastEvent?.beforeTranslate as
           | [number, number]
           | undefined;
         if (!last) continue;
-        const node = findNode(specRef.current, id);
-        if (!node) continue;
-        patches.set(id, { x: node.x + last[0], y: node.y + last[1] });
-        (ev.target as HTMLElement).style.transform = '';
+        patches.set(id, { x: origin.x + last[0], y: origin.y + last[1] });
       }
       updateNodes(patches);
     },
     [updateNodes],
+  );
+
+  const onResizeStart = useCallback(
+    (e: OnResizeStart) => {
+      const id = (e.target as HTMLElement).getAttribute('data-mock-id');
+      if (id) stashOrigin(id);
+    },
+    [stashOrigin],
   );
 
   const onResize = useCallback((e: OnResize) => {
@@ -299,9 +361,15 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onResizeEnd = useCallback(
     (e: OnResizeEnd) => {
-      if (!e.lastEvent) return;
       const id = (e.target as HTMLElement).getAttribute('data-mock-id');
+      const target = e.target as HTMLElement;
+      target.style.transform = '';
+      target.style.width = '';
+      target.style.height = '';
       if (!id) return;
+      const origin = dragOrigin.current.get(id);
+      dragOrigin.current.delete(id);
+      if (!e.lastEvent || !origin) return;
       const last = e.lastEvent;
       const before = last.drag?.beforeTranslate as
         | [number, number]
@@ -309,19 +377,24 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
       const w = Number(last.width);
       const h = Number(last.height);
       if (!before || !Number.isFinite(w) || !Number.isFinite(h)) return;
-      const node = findNode(specRef.current, id);
-      if (!node) return;
       updateNode(id, {
-        x: node.x + before[0],
-        y: node.y + before[1],
+        x: origin.x + before[0],
+        y: origin.y + before[1],
         width: Math.max(8, Math.round(w)),
         height: Math.max(8, Math.round(h)),
       });
-      (e.target as HTMLElement).style.transform = '';
-      (e.target as HTMLElement).style.width = '';
-      (e.target as HTMLElement).style.height = '';
     },
     [updateNode],
+  );
+
+  const onResizeGroupStart = useCallback(
+    (e: OnResizeGroupStart) => {
+      for (const ev of e.events) {
+        const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
+        if (id) stashOrigin(id);
+      }
+    },
+    [stashOrigin],
   );
 
   const onResizeGroup = useCallback((e: OnResizeGroup) => {
@@ -334,11 +407,20 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onResizeGroupEnd = useCallback(
     (e: OnResizeGroupEnd) => {
+      // Always reset inline styles.
+      for (const ev of e.events) {
+        const target = ev.target as HTMLElement;
+        target.style.transform = '';
+        target.style.width = '';
+        target.style.height = '';
+      }
       const patches = new Map<string, Partial<UINode>>();
       for (const ev of e.events) {
-        if (!ev.lastEvent) continue;
         const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
         if (!id) continue;
+        const origin = dragOrigin.current.get(id);
+        dragOrigin.current.delete(id);
+        if (!ev.lastEvent || !origin) continue;
         const last = ev.lastEvent;
         const before = last.drag?.beforeTranslate as
           | [number, number]
@@ -346,17 +428,12 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
         const w = Number(last.width);
         const h = Number(last.height);
         if (!before || !Number.isFinite(w) || !Number.isFinite(h)) continue;
-        const node = findNode(specRef.current, id);
-        if (!node) continue;
         patches.set(id, {
-          x: node.x + before[0],
-          y: node.y + before[1],
+          x: origin.x + before[0],
+          y: origin.y + before[1],
           width: Math.max(8, Math.round(w)),
           height: Math.max(8, Math.round(h)),
         });
-        (ev.target as HTMLElement).style.transform = '';
-        (ev.target as HTMLElement).style.width = '';
-        (ev.target as HTMLElement).style.height = '';
       }
       updateNodes(patches);
     },
@@ -465,12 +542,16 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
           renderDirections={
             editingId ? [] : ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']
           }
+          onDragStart={onDragStart}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
+          onDragGroupStart={onDragGroupStart}
           onDragGroup={onDragGroup}
           onDragGroupEnd={onDragGroupEnd}
+          onResizeStart={onResizeStart}
           onResize={onResize}
           onResizeEnd={onResizeEnd}
+          onResizeGroupStart={onResizeGroupStart}
           onResizeGroup={onResizeGroup}
           onResizeGroupEnd={onResizeGroupEnd}
         />

@@ -238,12 +238,18 @@ function Editable({
   className?: string;
 }): ReactNode {
   const ref = useRef<HTMLDivElement | null>(null);
+  // Track whether Enter or Escape already settled this edit, so the trailing
+  // blur (which fires on unmount in some browsers) doesn't re-commit or
+  // resurrect a discarded edit.
+  const settled = useRef(false);
 
-  // When edit mode starts, focus and select-all so the user can immediately
-  // overwrite the text. We can't put `value` in the JSX of a contentEditable
-  // (React would fight us); set it imperatively on mount.
+  // When edit mode starts, seed the contentEditable with the current value
+  // and select-all so the user can overwrite. Intentionally NOT depending on
+  // `value` — re-running on prop change would clobber whatever the user has
+  // typed since edit-start. The seed is captured once per edit session.
   useEffect(() => {
     if (!isEditing) return;
+    settled.current = false;
     const el = ref.current;
     if (!el) return;
     el.textContent = value;
@@ -255,7 +261,8 @@ function Editable({
       sel.removeAllRanges();
       sel.addRange(range);
     }
-  }, [isEditing, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]);
 
   if (!isEditing) {
     return <div className={className}>{value}</div>;
@@ -273,15 +280,20 @@ function Editable({
       onKeyDown={(e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
+          settled.current = true;
           const next = (e.currentTarget.textContent ?? '').trim();
           onCommit(next);
           onEnd();
         } else if (e.key === 'Escape') {
           e.preventDefault();
+          // Discard: mark settled so the trailing blur doesn't commit.
+          settled.current = true;
           onEnd();
         }
       }}
       onBlur={(e) => {
+        if (settled.current) return;
+        settled.current = true;
         const next = (e.currentTarget.textContent ?? '').trim();
         onCommit(next);
         onEnd();

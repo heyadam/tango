@@ -16,10 +16,25 @@ type SnapshotListener = (spec: UISpec) => void;
 const applyListeners = new Set<ApplyListener>();
 const snapshotListeners = new Set<SnapshotListener>();
 
+// Last apply message — replayed to new subscribers. UIMockCanvas is dynamic-
+// imported (react-moveable touches `window` at module load), and UIPanel
+// opens the WS the moment its outer shell mounts. If the bridge sends its
+// initial `set` while the canvas chunk is still loading, the message would
+// be dropped on the floor; replay closes that window without coupling
+// UIPanel to the canvas's mount lifecycle.
+let lastApply: ApplyMsg | null = null;
+
 export const uiMockBus = {
   // Wired by UIMockCanvas — receives server-driven updates (set / append).
   _onApply(cb: ApplyListener): () => void {
     applyListeners.add(cb);
+    if (lastApply) {
+      try {
+        cb(lastApply);
+      } catch {
+        // listener threw; we still want to keep it registered
+      }
+    }
     return () => applyListeners.delete(cb);
   },
 
@@ -31,11 +46,18 @@ export const uiMockBus = {
   },
 
   _emitApply(msg: ApplyMsg): void {
+    lastApply = msg;
     for (const fn of applyListeners) fn(msg);
   },
 
   _emitSnapshot(spec: UISpec): void {
     for (const fn of snapshotListeners) fn(spec);
+  },
+
+  // Called by UIPanel on workspace switch so a fresh mount doesn't replay
+  // the previous workspace's spec.
+  _resetForWorkspaceSwitch(): void {
+    lastApply = null;
   },
 };
 

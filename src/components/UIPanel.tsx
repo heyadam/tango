@@ -38,6 +38,10 @@ export default function UIPanel() {
   const [generation, setGeneration] = useState(0);
   const [sendBusy, setSendBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  // Live screen count — drives the toolbar's "X screens" text and the
+  // disabled state of the Send / Clear buttons. Has to be state (not just a
+  // ref) because the toolbar is rendered by this component, not the canvas.
+  const [screenCount, setScreenCount] = useState(0);
 
   // Latest spec — kept in a ref so "Send to Claude" / "Clear" don't have to
   // re-render to read it. Updated on every server `set` and every local
@@ -48,7 +52,9 @@ export default function UIPanel() {
   useEffect(() => {
     return workspaceBus.subscribe(() => {
       uiMockStore.clear();
+      uiMockBus._resetForWorkspaceSwitch();
       specRef.current = EMPTY_SPEC;
+      setScreenCount(0);
       setLoad({ status: 'loading' });
       setGeneration((g) => g + 1);
     });
@@ -60,11 +66,13 @@ export default function UIPanel() {
   useEffect(() => {
     const initial = uiMockStore.load();
     specRef.current = initial;
+    setScreenCount(initial.screens.length);
     setLoad({ status: 'ready', initialSpec: initial });
   }, [generation]);
 
   const persist = useCallback((spec: UISpec) => {
     specRef.current = spec;
+    setScreenCount(spec.screens.length);
     uiMockStore.save(spec);
   }, []);
 
@@ -98,15 +106,24 @@ export default function UIPanel() {
         return;
       }
       const msg = parsed as { type: string };
-      if (msg.type === 'set' || msg.type === 'append_screen') {
-        // Persist server-driven full replacements too so a refresh keeps them.
-        if (msg.type === 'set') {
-          const setMsg = parsed as { type: 'set'; spec: UISpec };
-          specRef.current = setMsg.spec;
-          uiMockStore.save(setMsg.spec);
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        uiMockBus._emitApply(parsed as any);
+      if (msg.type === 'set') {
+        const setMsg = parsed as { type: 'set'; spec: UISpec };
+        specRef.current = setMsg.spec;
+        setScreenCount(setMsg.spec.screens.length);
+        uiMockStore.save(setMsg.spec);
+        uiMockBus._emitApply(setMsg);
+      } else if (msg.type === 'append_screen') {
+        const appMsg = parsed as {
+          type: 'append_screen';
+          screen: UISpec['screens'][number];
+        };
+        specRef.current = {
+          ...specRef.current,
+          screens: [...specRef.current.screens, appMsg.screen],
+        };
+        setScreenCount(specRef.current.screens.length);
+        uiMockStore.save(specRef.current);
+        uiMockBus._emitApply(appMsg);
       }
     });
 
@@ -150,13 +167,12 @@ export default function UIPanel() {
     // here — clear_ui_mock is for Claude.
     const empty: UISpec = { screens: [] };
     specRef.current = empty;
+    setScreenCount(0);
     uiMockStore.save(empty);
     uiMockBus._emitApply({ type: 'set', spec: empty });
     uiMockBus._emitSnapshot(empty);
     setStatus('Cleared.');
   }, []);
-
-  const screenCount = load.status === 'ready' ? load.initialSpec.screens.length : 0;
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-neutral-950 text-neutral-100">
