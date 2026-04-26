@@ -6,10 +6,9 @@ import AppTopBar from '@/components/AppTopBar';
 import LeftPanel from '@/components/LeftPanel';
 import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
 import { cn } from '@/lib/utils';
+import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
-
-type WorkspaceMode = 'sketch' | 'moodboard' | 'brand';
 
 function HomeBody() {
   const { current, openDialog } = useWorkspace();

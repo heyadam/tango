@@ -5,6 +5,7 @@ import { Terminal as Xterm } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 import { terminalBus } from '@/lib/terminalBus';
+import { openWS } from '@/lib/wsClient';
 
 export default function Terminal() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -42,8 +43,7 @@ export default function Terminal() {
       // container has zero size on first paint; ResizeObserver will fix it
     }
 
-    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${location.host}/ws/terminal`);
+    const ws = openWS('/ws/terminal');
     ws.binaryType = 'arraybuffer';
 
     const decoder = new TextDecoder('utf-8');

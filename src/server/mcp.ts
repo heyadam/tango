@@ -19,15 +19,27 @@ import {
   getCanvasState,
   requestScreenshot,
   setCanvasFromServer,
-  type CanvasElement,
 } from './canvasBridge';
 import { pushCursorCommand, requestInspect } from './agentCursorBridge';
+import type { CanvasElement } from '@/lib/canvasProtocol';
 import { recordNote } from './memory';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
 // Permissive Zod shape — we don't reproduce Excalidraw's element schema here.
 // Excalidraw will reject malformed elements at updateScene() time on the
 // client; we surface that as the tool result.
+
+function toolErrorResult(toolName: string, err: unknown) {
+  return {
+    isError: true,
+    content: [
+      {
+        type: 'text' as const,
+        text: `${toolName} failed: ${err instanceof Error ? err.message : String(err)}`,
+      },
+    ],
+  };
+}
 
 function buildServer(): McpServer {
   const server = new McpServer({
@@ -132,15 +144,7 @@ function buildServer(): McpServer {
           content: [{ type: 'image', data, mimeType: mime }],
         };
       } catch (err) {
-        return {
-          isError: true,
-          content: [
-            {
-              type: 'text',
-              text: `screenshot_canvas failed: ${err instanceof Error ? err.message : String(err)}`,
-            },
-          ],
-        };
+        return toolErrorResult('screenshot_canvas', err);
       }
     },
   );
@@ -169,15 +173,7 @@ function buildServer(): McpServer {
           content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         };
       } catch (err) {
-        return {
-          isError: true,
-          content: [
-            {
-              type: 'text',
-              text: `dom_inspect failed: ${err instanceof Error ? err.message : String(err)}`,
-            },
-          ],
-        };
+        return toolErrorResult('dom_inspect', err);
       }
     },
   );

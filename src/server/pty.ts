@@ -2,25 +2,19 @@ import * as pty from 'node-pty';
 import type { WebSocket } from 'ws';
 import { getWorkspaceOrNull } from './workspace';
 import { registerHook } from './serverHooks';
+import { createHub } from './wsHub';
 
 type ResizeMessage = { type: 'resize'; cols: number; rows: number };
 type ControlMessage = ResizeMessage;
 
 // Active terminal sockets — tracked so workspace switches can broadcast a
 // JSON control frame to every browser-side terminal so they can reconnect.
-const activeSockets = new Set<WebSocket>();
+const hub = createHub();
 
 // Register the broadcast hook once on module load so the route-handler graph
 // can reach this Set via the cross-context registry. See serverHooks.ts.
 registerHook('broadcastWorkspaceChanged', () => {
-  const payload = JSON.stringify({ type: 'workspace_changed' });
-  for (const ws of activeSockets) {
-    try {
-      ws.send(payload);
-    } catch {
-      // socket dying; cleanup will run on close/error
-    }
-  }
+  hub.broadcast({ type: 'workspace_changed' });
 });
 
 const defaultShell = (): string => {
@@ -67,7 +61,7 @@ export function attachPty(ws: WebSocket): void {
   });
 
   let alive = true;
-  activeSockets.add(ws);
+  hub.attach(ws);
 
   // Auto-launch claude on every fresh PTY. The shell still runs first (so
   // .zshrc / login messages still apply), then this command queues into its
@@ -116,8 +110,9 @@ export function attachPty(ws: WebSocket): void {
     }
   });
 
+  // hub.attach already removes ws from the broadcast set on close/error; we
+  // just need to tear down the PTY-specific resources.
   const cleanup = () => {
-    activeSockets.delete(ws);
     if (!alive) return;
     alive = false;
     onDataDisposable.dispose();
