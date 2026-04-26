@@ -27,6 +27,15 @@ const UIMockCanvas = dynamic(() => import('./UIMockCanvas'), {
   loading: () => <div className="h-full w-full bg-background" />,
 });
 
+// Subtracted from the wrapper rect when reporting "viewport" to Claude so
+// the size is the largest frame that fits *without scrolling*. Mirrors
+// UIMockCanvas's inner `gap-20 p-10` (40px outer padding each side → 80px
+// per axis) plus each screen's title row above the frame (text-xs ≈ 16px
+// + gap-2 = 8px → ~24px on top, none on bottom). If those classes change
+// in UIMockCanvas, update these in lockstep.
+const FRAME_INSET_X = 80;
+const FRAME_INSET_Y = 104;
+
 type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; initialSpec: UISpec };
@@ -48,6 +57,20 @@ export default function UIPanel() {
   // snapshot.
   const specRef = useRef<UISpec>(EMPTY_SPEC);
 
+  // Container we hand to ResizeObserver — its rect is what frames render
+  // into, so it's the "viewport" Claude wants when defaulting frame sizes.
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  // The live WS, exposed to the viewport effect (which lives outside the
+  // socket-owning effect) via this ref so a resize during a workspace switch
+  // doesn't try to send through a closed socket.
+  const wsRef = useRef<WebSocket | null>(null);
+  // Last-sent {w,h} so we don't spam identical frames after no-op resizes.
+  const lastSentViewport = useRef<{ w: number; h: number } | null>(null);
+  // Header caption.
+  const [viewport, setViewport] = useState<{ w: number; h: number } | null>(
+    null,
+  );
+
   // On workspace switch: drop local cache and remount.
   useEffect(() => {
     return workspaceBus.subscribe(() => {
@@ -56,6 +79,10 @@ export default function UIPanel() {
       specRef.current = EMPTY_SPEC;
       setScreenCount(0);
       setLoad({ status: 'loading' });
+      // Server-side viewport got reset; force a resend on the new socket
+      // even if our measured size didn't change.
+      lastSentViewport.current = null;
+      setViewport(null);
       setGeneration((g) => g + 1);
     });
   }, []);
@@ -81,6 +108,7 @@ export default function UIPanel() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const ws = openWS('/ws/ui-mock');
+    wsRef.current = ws;
 
     const offSnapshot = uiMockBus._onSnapshot((spec) => {
       if (ws.readyState !== WebSocket.OPEN) return;
@@ -90,6 +118,24 @@ export default function UIPanel() {
         // socket dying — cleanup runs on close
       }
     });
+
+    // Once the socket opens, prime the server with whatever viewport size
+    // we already measured — the ResizeObserver fires before openWS returns
+    // a connected socket, so the first measurement would otherwise be lost.
+    const sendCurrentViewport = () => {
+      const last = lastSentViewport.current;
+      if (!last) return;
+      try {
+        ws.send(JSON.stringify({ type: 'viewport', w: last.w, h: last.h }));
+      } catch {
+        // socket dying — cleanup runs on close
+      }
+    };
+    if (ws.readyState === WebSocket.OPEN) {
+      sendCurrentViewport();
+    } else {
+      ws.addEventListener('open', sendCurrentViewport, { once: true });
+    }
 
     ws.addEventListener('message', (ev) => {
       let parsed: unknown;
@@ -129,11 +175,55 @@ export default function UIPanel() {
 
     return () => {
       offSnapshot();
+      wsRef.current = null;
       try {
         ws.close();
       } catch {
         // already closed
       }
+    };
+  }, [generation]);
+
+  // Watch the panel's render area and ship viewport size up the WS on every
+  // (debounced) resize. Trailing-edge only — Claude only ever needs the
+  // latest size. Round to integers so noisy subpixel measurements don't
+  // produce a flood of identical-after-rounding sends.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const el = viewportRef.current;
+    if (!el) return;
+
+    let timer: number | null = null;
+    const measureAndSend = () => {
+      const rect = el.getBoundingClientRect();
+      const w = Math.max(0, Math.round(rect.width) - FRAME_INSET_X);
+      const h = Math.max(0, Math.round(rect.height) - FRAME_INSET_Y);
+      if (w <= 0 || h <= 0) return;
+      const prev = lastSentViewport.current;
+      if (prev && prev.w === w && prev.h === h) return;
+      lastSentViewport.current = { w, h };
+      setViewport({ w, h });
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(JSON.stringify({ type: 'viewport', w, h }));
+        } catch {
+          // socket dying — the open handler will resend on reconnect
+        }
+      }
+    };
+
+    measureAndSend();
+
+    const ro = new ResizeObserver(() => {
+      if (timer != null) window.clearTimeout(timer);
+      timer = window.setTimeout(measureAndSend, 150);
+    });
+    ro.observe(el);
+
+    return () => {
+      ro.disconnect();
+      if (timer != null) window.clearTimeout(timer);
     };
   }, [generation]);
 
@@ -184,6 +274,14 @@ export default function UIPanel() {
               {screenCount} screen{screenCount === 1 ? '' : 's'}
             </span>
           )}
+          {viewport && (
+            <span
+              className="font-mono text-[10px] text-muted-foreground/60"
+              title="Default frame size for new screens"
+            >
+              {viewport.w}×{viewport.h}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -210,7 +308,7 @@ export default function UIPanel() {
         </div>
       </header>
 
-      <div className="relative min-h-0 flex-1">
+      <div ref={viewportRef} className="relative min-h-0 flex-1">
         {load.status === 'ready' && (
           <UIMockCanvas
             key={generation}

@@ -24,6 +24,7 @@ import {
   appendUIScreenFromServer,
   clearUIMockFromServer,
   getUIMock,
+  getUIViewport,
   setUIMockFromServer,
 } from './uiMockBridge';
 import { pushCursorCommand, requestInspect } from './agentCursorBridge';
@@ -221,11 +222,28 @@ function buildServer(): McpServer {
   );
 
   server.registerTool(
+    'get_ui_viewport',
+    {
+      title: 'Read the UI panel viewport size',
+      description:
+        "Returns the live pixel size of the largest frame that fits without scrolling in the user's UI mode panel — already adjusted for the canvas's padding and per-screen title row. Call this BEFORE `set_ui_mock` / `add_ui_screen` when the user wants a mock that fills their current screen (the common case — anything other than an explicit mobile/tablet request). Use the returned `{w, h}` as the screen's frame size so the mock matches exactly what they see. Returns `{w: null, h: null}` if no measurement is available yet (no browser open this session, or right after a workspace switch before the new tab has measured) — fall back to 1280×800 in that case.",
+    },
+    async () => {
+      const v = getUIViewport();
+      return {
+        content: [
+          { type: 'text', text: JSON.stringify(v ?? { w: null, h: null }) },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
     'set_ui_mock',
     {
       title: 'Replace the UI mock',
       description:
-        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — standard sizes: desktop 1280×800, tablet 768×1024, mobile 360×720), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals — colors, padding, typography; layout-affecting classes are ignored, coords win), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow.",
+        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals — colors, padding, typography; layout-affecting classes are ignored, coords win), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow.",
       inputSchema: {
         spec: uiSpecSchema,
       },
@@ -257,7 +275,7 @@ function buildServer(): McpServer {
     {
       title: 'Append a screen to the UI mock',
       description:
-        'Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions.',
+        "Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions; for a brand-new flow, default the frame to the user's current panel size from `get_ui_viewport` (use 360×720 for explicit mobile, 768×1024 for explicit tablet).",
       inputSchema: {
         screen: uiScreenSchema,
       },

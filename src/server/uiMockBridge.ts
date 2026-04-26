@@ -15,6 +15,11 @@ import {
 // source of truth for AI edits (set/append helpers below). Last-writer-wins.
 
 let cache: UISpec = EMPTY_SPEC;
+// Live pixel size of the browser's UI panel render area, pushed up the WS by
+// UIPanel on mount + debounced resize. Surfaced to Claude via `get_ui_viewport`
+// so new screens default to "what the user actually sees" instead of a
+// hardcoded form-factor size. `null` until the first browser connects.
+let viewport: { w: number; h: number } | null = null;
 
 const hub = createHub();
 
@@ -22,6 +27,7 @@ const hub = createHub();
 // in a different module graph; see serverHooks.ts).
 registerHook('resetUiMock', () => {
   cache = { screens: [] };
+  viewport = null;
   broadcast({ type: 'set', spec: cache });
 });
 
@@ -35,6 +41,12 @@ export function attachUIMock(ws: WebSocket): void {
       const parsed = raw as UIMockClientMsg;
       if (parsed.type === 'snapshot' && parsed.spec) {
         cache = parsed.spec;
+      } else if (parsed.type === 'viewport') {
+        const w = Math.round(parsed.w);
+        const h = Math.round(parsed.h);
+        if (Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0) {
+          viewport = { w, h };
+        }
       }
     },
   });
@@ -54,6 +66,10 @@ export function attachUIMock(ws: WebSocket): void {
 
 export function getUIMock(): UISpec {
   return cache;
+}
+
+export function getUIViewport(): { w: number; h: number } | null {
+  return viewport;
 }
 
 export function setUIMockFromServer(spec: UISpec): void {

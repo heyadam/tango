@@ -95,6 +95,7 @@ Reach for these whenever the user asks for visual work — wireframes, diagrams,
 The same MCP server also exposes **UI mock tools** for tango's "UI" mode — a higher-fidelity surface where the user sees real shadcn/Tailwind components instead of an Excalidraw wireframe, and can drag/resize/text-edit them directly:
 
 - \`get_ui_mock\` — read the current shadcn-based UI mock spec (call this first; user tweaks live here)
+- \`get_ui_viewport\` — read the live pixel size of the user's UI panel; use it as the default frame size for new screens so the mock fills exactly what they see
 - \`set_ui_mock\` — replace the whole spec (one or more screens of absolutely-positioned nodes)
 - \`add_ui_screen\` — append a screen to an existing flow without touching the others
 - \`clear_ui_mock\` — empty the spec
@@ -308,7 +309,7 @@ This is not a wireframe surface (use \`tango-ui-sketch\` for that). The mock ren
 
 ## Tools
 
-\`get_ui_mock\`, \`set_ui_mock\`, \`add_ui_screen\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
+\`get_ui_mock\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
 
 \`\`\`ts
 type UISpec = { screens: UIScreen[] };
@@ -350,13 +351,15 @@ If the user described the UI in words instead of pointing at the codebase, write
 
 ### 2. Pick a frame
 
-| Form factor | Frame size      |
-|-------------|-----------------|
-| Mobile      | 360 × 720       |
-| Tablet      | 768 × 1024      |
-| Desktop     | 1280 × 800      |
+| Form factor                 | Frame size                                                                 |
+|-----------------------------|-----------------------------------------------------------------------------|
+| **Default (current view)**  | Call \`get_ui_viewport\` and use the returned \`{w, h}\`. Falls back to 1280×800 if it returns nulls (no browser connected). |
+| Explicit mobile             | 360 × 720                                                                  |
+| Explicit tablet             | 768 × 1024                                                                 |
 
-Multi-screen flows: separate \`UIScreen\` objects, one per screen. The panel tiles them left-to-right with a gutter — your coords stay screen-local.
+For "mock my X" / "show me the X screen" / "build a UI for Y" with no form factor specified, **always start with \`get_ui_viewport\`** so the frame matches what the user is actually looking at — a 1280×800 default into a 900-wide pane just produces a horizontal scrollbar and noise.
+
+Multi-screen flows: separate \`UIScreen\` objects, one per screen. The panel tiles them left-to-right with an 80px gutter — your coords stay screen-local. The viewport size is for **single-screen** mocks; for a flow of N screens, scale frames down so the row roughly fits the viewport (e.g. for 3 screens: each frame ≈ \`(viewport.w − 160) / 3\` wide), or accept that the user will pan horizontally to see them all.
 
 ### 3. Lay out regions, then controls
 
@@ -439,6 +442,7 @@ After a successful mock or apply pass, \`remember_note({ category: 'context', te
 
 - Don't ship absolute-positioned JSX to production. Translate coords → flex/grid.
 - Don't use layout-affecting Tailwind on mock nodes (\`flex\`, \`grid\`, \`w-full\`). Coords win, those classes get ignored.
+- Don't default to 1280×800 for the desktop case. The user's actual UI panel is rarely that — it's whatever's left after the splitter, agent sidebar, and window chrome. Use \`get_ui_viewport\`.
 - Don't \`clear_ui_mock\` without asking.
 - Don't invent a \`type\` outside the union. The validator will reject; the user sees an error.
 - Don't import \`@excalidraw/excalidraw\` or use the canvas tools here — \`tango-ui-sketch\` is the wireframe path.
