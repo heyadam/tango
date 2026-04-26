@@ -15,6 +15,13 @@ const DesignerCanvas = dynamic(() => import('./DesignerCanvas'), {
   loading: () => <div className="h-full w-full bg-background" />,
 });
 
+// Brand cream for Excalidraw's `viewBackgroundColor`. Excalidraw renders to
+// <canvas>, so it can't read the `--background` CSS token directly — we mirror
+// it as a hex literal here. Keep in sync with `--background` in globals.css
+// (oklch(0.95 0.02 85) ≈ #F4EEDF). Forced on every load so Excalidraw's bg is
+// a brand default rather than a per-canvas preference.
+const SKETCH_BG_COLOR = '#F4EEDF';
+
 type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; initialData: ExcalidrawInitialDataState | null };
@@ -52,7 +59,7 @@ export default function SketchPanel({ onCanvasReady }: Props) {
           version: 2,
           source: 'tango',
           elements: [],
-          appState: {},
+          appState: { viewBackgroundColor: SKETCH_BG_COLOR },
           files: {},
         }),
       );
@@ -78,7 +85,16 @@ export default function SketchPanel({ onCanvasReady }: Props) {
         parsed = null;
       }
     }
-    setLoad({ status: 'ready', initialData: parsed });
+    // Force the brand cream bg on every load. Excalidraw persists
+    // viewBackgroundColor via onChange, but we treat the canvas bg as a brand
+    // default rather than a per-user preference — overwriting on each load
+    // keeps it consistent across workspaces and refreshes.
+    const seeded: ExcalidrawInitialDataState = parsed ?? { elements: [] };
+    seeded.appState = {
+      ...(seeded.appState ?? {}),
+      viewBackgroundColor: SKETCH_BG_COLOR,
+    };
+    setLoad({ status: 'ready', initialData: seeded });
   }, [generation]);
 
   // After a (re)mount — e.g. switching back from Moodboard mode — kick

@@ -4,7 +4,6 @@ import {
   Code2,
   Folder,
   FolderOpen,
-  LayoutDashboard,
   Lock,
   PanelLeftClose,
   PanelLeftOpen,
@@ -12,6 +11,7 @@ import {
   PanelRightOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import TangoLogo from '@/components/TangoLogo';
 import {
   Tooltip,
   TooltipContent,
@@ -70,9 +70,9 @@ export default function AppTopBar({
             <PanelLeftOpen className="size-4" />
           )}
         </Button>
-        <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-          <LayoutDashboard className="size-3.5 text-muted-foreground" />
-          <span>Tango</span>
+        <div className="flex items-center gap-1.5 font-serif text-sm font-semibold tracking-tight text-foreground">
+          <TangoLogo className="size-5" />
+          <span>tango</span>
         </div>
         <span className="text-muted-foreground/60">/</span>
         <WorkspacePill
@@ -163,12 +163,12 @@ function WorkspacePill({
           className={cn(
             'flex h-7 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors',
             isUnset
-              ? 'border-amber-700/40 bg-amber-900/20 text-amber-200 hover:border-amber-600/60 hover:bg-amber-900/30'
+              ? 'border-orange-300 bg-orange-100 text-orange-900 hover:border-orange-400 hover:bg-orange-200'
               : 'border-border bg-muted text-foreground hover:border-foreground/30 hover:bg-accent',
           )}
         >
           {isUnset ? (
-            <FolderOpen className="size-3.5 text-amber-300" />
+            <FolderOpen className="size-3.5 text-orange-600" />
           ) : (
             <Folder className="size-3.5 text-muted-foreground" />
           )}

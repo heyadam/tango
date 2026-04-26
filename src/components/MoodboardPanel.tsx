@@ -536,7 +536,7 @@ export default function MoodboardPanel() {
                       <span
                         key={hex}
                         title={hex}
-                        className="size-4 rounded-full border border-white/15"
+                        className="size-4 rounded-full border border-foreground/15"
                         style={{ backgroundColor: hex }}
                       />
                     ))}
@@ -702,7 +702,7 @@ export default function MoodboardPanel() {
           {(status || error) && (
             <div className="mt-2 px-1 font-mono text-[11px]">
               {error ? (
-                <span className="text-red-300">{error}</span>
+                <span className="text-pink-700">{error}</span>
               ) : (
                 <span className="text-muted-foreground">{status}</span>
               )}

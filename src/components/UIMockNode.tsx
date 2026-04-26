@@ -73,7 +73,7 @@ export default function UIMockNode({
           onCommit={onCommitText}
           onEnd={onEndEdit}
           className={cn(
-            'h-full w-full overflow-hidden whitespace-pre-wrap tracking-tight text-foreground',
+            'h-full w-full overflow-hidden whitespace-pre-wrap font-serif tracking-tight text-foreground',
             fontSize,
             node.className,
           )}
