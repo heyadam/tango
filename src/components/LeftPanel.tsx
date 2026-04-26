@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import AgentSidebar from './AgentSidebar';
 import MoodboardPanel from './MoodboardPanel';
 import SketchPanel from './SketchPanel';
+import UIPanel from './UIPanel';
 import type { DesignerHandles } from './DesignerCanvas';
 import { writeSnapshot } from '@/lib/designSnapshot';
 import { terminalBus } from '@/lib/terminalBus';
@@ -45,11 +46,13 @@ export default function LeftPanel({ agentSidebarOpen, mode }: Props) {
         open={agentSidebarOpen}
         onSendSketch={sendSketch}
         sendBusy={sendBusy}
-        canSendSketch={mode !== 'moodboard'}
+        canSendSketch={mode === 'sketch' || mode === 'brand'}
       />
       <div className="min-w-0 flex-1">
         {mode === 'moodboard' ? (
           <MoodboardPanel />
+        ) : mode === 'ui' ? (
+          <UIPanel />
         ) : (
           <SketchPanel onCanvasReady={onCanvasReady} />
         )}

@@ -154,6 +154,7 @@ export async function setWorkspace(
     // sees the reset before its terminal reconnects. These hooks live in
     // server.ts's module graph; we reach them via the cross-context registry.
     callHook('resetCanvas');
+    callHook('resetUiMock');
     callHook('broadcastWorkspaceChanged');
   }
 

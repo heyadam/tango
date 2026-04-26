@@ -39,6 +39,7 @@ const modes: Array<{ value: WorkspaceMode; label: string }> = [
   { value: 'sketch', label: 'Sketch' },
   { value: 'moodboard', label: 'Moodboard' },
   { value: 'brand', label: 'Brand' },
+  { value: 'ui', label: 'UI' },
 ];
 
 export default function AppTopBar({
