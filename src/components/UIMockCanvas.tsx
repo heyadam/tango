@@ -265,9 +265,37 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   // ── Drag / resize handlers ────────────────────────────────────────────
   // During drag/resize we mutate the DOM directly for smoothness; on end we
-  // commit final geometry to spec (origin + delta) and reset the inline
-  // transform. The origin is captured on *Start so a server-driven `set`
-  // arriving mid-gesture can't shift the base.
+  // commit final geometry to spec (origin + delta) and pin the wrapper's
+  // inline left/top/width/height to the same values before queuing the spec
+  // update. Pinning matters: React's reconciler skips writing same-value
+  // style props, so a naive "clear inline overrides; let React's render
+  // restore" sequence ends up clearing whatever onResize/onDrag set without
+  // React putting anything back — the wrapper briefly has no width/height
+  // and collapses to its content's intrinsic size, which the user perceives
+  // as the element snapping to its original aspect ratio. The origin is
+  // captured on *Start so a server-driven `set` arriving mid-gesture can't
+  // shift the base.
+
+  // Restore the inline geometry of a target whose gesture didn't commit.
+  // React's prev-render tracked values match `origin`, so its diff would
+  // skip writing — we have to put the values back ourselves. Without an
+  // origin (gesture started outside our normal flow) we just clear the
+  // overrides and hope the next render touches the styles.
+  const restoreInlineGeometry = (
+    target: HTMLElement,
+    origin: { x: number; y: number; width: number; height: number } | undefined,
+  ) => {
+    target.style.transform = '';
+    if (origin) {
+      target.style.width = `${origin.width}px`;
+      target.style.height = `${origin.height}px`;
+      target.style.left = `${origin.x}px`;
+      target.style.top = `${origin.y}px`;
+    } else {
+      target.style.width = '';
+      target.style.height = '';
+    }
+  };
 
   const onDragStart = useCallback(
     (e: OnDragStart) => {
@@ -283,17 +311,27 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onDragEnd = useCallback(
     (e: OnDragEnd) => {
-      const id = (e.target as HTMLElement).getAttribute('data-mock-id');
-      if (!id) return;
+      const target = e.target as HTMLElement;
+      const id = target.getAttribute('data-mock-id');
+      if (!id) {
+        target.style.transform = '';
+        return;
+      }
       const origin = dragOrigin.current.get(id);
       dragOrigin.current.delete(id);
-      (e.target as HTMLElement).style.transform = '';
-      if (!e.isDrag || !origin) return;
-      const last = e.lastEvent?.beforeTranslate as
-        | [number, number]
-        | undefined;
-      if (!last) return;
-      updateNode(id, { x: origin.x + last[0], y: origin.y + last[1] });
+      const last = e.isDrag
+        ? (e.lastEvent?.beforeTranslate as [number, number] | undefined)
+        : undefined;
+      if (!last || !origin) {
+        restoreInlineGeometry(target, origin);
+        return;
+      }
+      const newX = origin.x + last[0];
+      const newY = origin.y + last[1];
+      target.style.transform = '';
+      target.style.left = `${newX}px`;
+      target.style.top = `${newY}px`;
+      updateNode(id, { x: newX, y: newY });
     },
     [updateNode],
   );
@@ -316,29 +354,25 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onDragGroupEnd = useCallback(
     (e: OnDragGroupEnd) => {
-      // Always reset inline transforms, even on a click-without-drag.
-      for (const ev of e.events) {
-        (ev.target as HTMLElement).style.transform = '';
-      }
-      if (!e.isDrag) {
-        for (const ev of e.events) {
-          const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
-          if (id) dragOrigin.current.delete(id);
-        }
-        return;
-      }
       const patches = new Map<string, Partial<UINode>>();
       for (const ev of e.events) {
-        const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
-        if (!id) continue;
-        const origin = dragOrigin.current.get(id);
-        dragOrigin.current.delete(id);
-        if (!origin) continue;
-        const last = ev.lastEvent?.beforeTranslate as
-          | [number, number]
-          | undefined;
-        if (!last) continue;
-        patches.set(id, { x: origin.x + last[0], y: origin.y + last[1] });
+        const target = ev.target as HTMLElement;
+        const id = target.getAttribute('data-mock-id');
+        const origin = id ? dragOrigin.current.get(id) : undefined;
+        if (id) dragOrigin.current.delete(id);
+        const last = e.isDrag
+          ? (ev.lastEvent?.beforeTranslate as [number, number] | undefined)
+          : undefined;
+        if (!id || !last || !origin) {
+          restoreInlineGeometry(target, origin);
+          continue;
+        }
+        const newX = origin.x + last[0];
+        const newY = origin.y + last[1];
+        target.style.transform = '';
+        target.style.left = `${newX}px`;
+        target.style.top = `${newY}px`;
+        patches.set(id, { x: newX, y: newY });
       }
       updateNodes(patches);
     },
@@ -361,28 +395,41 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onResizeEnd = useCallback(
     (e: OnResizeEnd) => {
-      const id = (e.target as HTMLElement).getAttribute('data-mock-id');
       const target = e.target as HTMLElement;
-      target.style.transform = '';
-      target.style.width = '';
-      target.style.height = '';
-      if (!id) return;
+      const id = target.getAttribute('data-mock-id');
+      if (!id) {
+        target.style.transform = '';
+        target.style.width = '';
+        target.style.height = '';
+        return;
+      }
       const origin = dragOrigin.current.get(id);
       dragOrigin.current.delete(id);
-      if (!e.lastEvent || !origin) return;
       const last = e.lastEvent;
-      const before = last.drag?.beforeTranslate as
+      const before = last?.drag?.beforeTranslate as
         | [number, number]
         | undefined;
-      const w = Number(last.width);
-      const h = Number(last.height);
-      if (!before || !Number.isFinite(w) || !Number.isFinite(h)) return;
-      updateNode(id, {
-        x: origin.x + before[0],
-        y: origin.y + before[1],
-        width: Math.max(8, Math.round(w)),
-        height: Math.max(8, Math.round(h)),
-      });
+      const w = last ? Number(last.width) : NaN;
+      const h = last ? Number(last.height) : NaN;
+      if (
+        !origin ||
+        !before ||
+        !Number.isFinite(w) ||
+        !Number.isFinite(h)
+      ) {
+        restoreInlineGeometry(target, origin);
+        return;
+      }
+      const newW = Math.max(8, Math.round(w));
+      const newH = Math.max(8, Math.round(h));
+      const newX = origin.x + before[0];
+      const newY = origin.y + before[1];
+      target.style.transform = '';
+      target.style.width = `${newW}px`;
+      target.style.height = `${newH}px`;
+      target.style.left = `${newX}px`;
+      target.style.top = `${newY}px`;
+      updateNode(id, { x: newX, y: newY, width: newW, height: newH });
     },
     [updateNode],
   );
@@ -407,33 +454,38 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
 
   const onResizeGroupEnd = useCallback(
     (e: OnResizeGroupEnd) => {
-      // Always reset inline styles.
-      for (const ev of e.events) {
-        const target = ev.target as HTMLElement;
-        target.style.transform = '';
-        target.style.width = '';
-        target.style.height = '';
-      }
       const patches = new Map<string, Partial<UINode>>();
       for (const ev of e.events) {
-        const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
-        if (!id) continue;
-        const origin = dragOrigin.current.get(id);
-        dragOrigin.current.delete(id);
-        if (!ev.lastEvent || !origin) continue;
+        const target = ev.target as HTMLElement;
+        const id = target.getAttribute('data-mock-id');
+        const origin = id ? dragOrigin.current.get(id) : undefined;
+        if (id) dragOrigin.current.delete(id);
         const last = ev.lastEvent;
-        const before = last.drag?.beforeTranslate as
+        const before = last?.drag?.beforeTranslate as
           | [number, number]
           | undefined;
-        const w = Number(last.width);
-        const h = Number(last.height);
-        if (!before || !Number.isFinite(w) || !Number.isFinite(h)) continue;
-        patches.set(id, {
-          x: origin.x + before[0],
-          y: origin.y + before[1],
-          width: Math.max(8, Math.round(w)),
-          height: Math.max(8, Math.round(h)),
-        });
+        const w = last ? Number(last.width) : NaN;
+        const h = last ? Number(last.height) : NaN;
+        if (
+          !id ||
+          !origin ||
+          !before ||
+          !Number.isFinite(w) ||
+          !Number.isFinite(h)
+        ) {
+          restoreInlineGeometry(target, origin);
+          continue;
+        }
+        const newW = Math.max(8, Math.round(w));
+        const newH = Math.max(8, Math.round(h));
+        const newX = origin.x + before[0];
+        const newY = origin.y + before[1];
+        target.style.transform = '';
+        target.style.width = `${newW}px`;
+        target.style.height = `${newH}px`;
+        target.style.left = `${newX}px`;
+        target.style.top = `${newY}px`;
+        patches.set(id, { x: newX, y: newY, width: newW, height: newH });
       }
       updateNodes(patches);
     },
