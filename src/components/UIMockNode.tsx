@@ -5,9 +5,12 @@
 // fills its bounding box with `w-full h-full` so the wrapper's absolute
 // positioning is the single source of truth for size — drag/resize math in
 // the canvas writes back to the node's x/y/width/height, never touches inner
-// styling. The node's optional `className` rides on top via tailwind-merge.
+// styling. The node's optional `className` rides on top via tailwind-merge,
+// and `style` is applied inline on the same element so off-theme colors that
+// can't be expressed as Tailwind classes (the JIT can't see runtime strings)
+// still render faithfully.
 
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type CSSProperties, type ReactNode, useEffect, useRef } from 'react';
 import * as Lucide from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -16,6 +19,76 @@ import { Separator } from './ui/separator';
 import { Textarea } from './ui/textarea';
 import { cn } from '@/lib/utils';
 import type { UINode } from '@/lib/uiMockProtocol';
+
+// Layout-affecting CSS keys the renderer drops from `node.style`. Coords are
+// the source of truth for layout (same policy as `className` ignoring
+// `flex`/`grid`/`w-*`/`h-*`), so anything that would push the node away from
+// its absolute box gets stripped before reaching React.
+const LAYOUT_STYLE_KEYS = new Set([
+  'position',
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'inset',
+  'insetBlock',
+  'insetBlockEnd',
+  'insetBlockStart',
+  'insetInline',
+  'insetInlineEnd',
+  'insetInlineStart',
+  'width',
+  'minWidth',
+  'maxWidth',
+  'height',
+  'minHeight',
+  'maxHeight',
+  'transform',
+  'translate',
+  'rotate',
+  'scale',
+  'display',
+  'float',
+  'clear',
+  'flex',
+  'flexBasis',
+  'flexDirection',
+  'flexFlow',
+  'flexGrow',
+  'flexShrink',
+  'flexWrap',
+  'grid',
+  'gridArea',
+  'gridAutoColumns',
+  'gridAutoFlow',
+  'gridAutoRows',
+  'gridColumn',
+  'gridColumnEnd',
+  'gridColumnStart',
+  'gridRow',
+  'gridRowEnd',
+  'gridRowStart',
+  'gridTemplate',
+  'gridTemplateAreas',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+]);
+
+export function sanitizeNodeStyle(
+  style: UINode['style'],
+): CSSProperties | undefined {
+  if (!style) return undefined;
+  const out: Record<string, string | number> = {};
+  let kept = 0;
+  for (const [key, value] of Object.entries(style)) {
+    if (LAYOUT_STYLE_KEYS.has(key)) continue;
+    if (value === null || value === undefined) continue;
+    out[key] = value;
+    kept += 1;
+  }
+  if (kept === 0) return undefined;
+  return out as CSSProperties;
+}
 
 type Props = {
   node: UINode;
@@ -30,6 +103,12 @@ export default function UIMockNode({
   onCommitText,
   onEndEdit,
 }: Props) {
+  // Inline-style overrides land on the same element that gets `node.className`,
+  // so they win over both shadcn variants and theme-token Tailwind. This is
+  // the channel for off-theme colors / gradients / custom shadows that
+  // arbitrary-value Tailwind classes can't carry from runtime JSON.
+  const style = sanitizeNodeStyle(node.style);
+
   switch (node.type) {
     case 'div':
       return (
@@ -38,6 +117,7 @@ export default function UIMockNode({
             'h-full w-full rounded-md border border-dashed border-border/60 bg-muted/30',
             node.className,
           )}
+          style={style}
         />
       );
 
@@ -55,6 +135,7 @@ export default function UIMockNode({
             'h-full w-full overflow-hidden whitespace-pre-wrap text-sm leading-tight text-foreground',
             node.className,
           )}
+          style={style}
         />
       );
 
@@ -77,6 +158,7 @@ export default function UIMockNode({
             fontSize,
             node.className,
           )}
+          style={style}
         />
       );
     }
@@ -97,6 +179,7 @@ export default function UIMockNode({
             isEditing && 'pointer-events-none',
             node.className,
           )}
+          style={style}
         >
           {isEditing ? (
             <Editable
@@ -126,6 +209,7 @@ export default function UIMockNode({
           readOnly
           tabIndex={-1}
           className={cn('h-full w-full', node.className)}
+          style={style}
         />
       );
     }
@@ -141,6 +225,7 @@ export default function UIMockNode({
           readOnly
           tabIndex={-1}
           className={cn('h-full w-full resize-none', node.className)}
+          style={style}
         />
       );
     }
@@ -149,7 +234,7 @@ export default function UIMockNode({
       const variant = pickBadgeVariant(node.props?.variant);
       return (
         <div className="flex h-full w-full items-center justify-center">
-          <Badge variant={variant} className={cn(node.className)}>
+          <Badge variant={variant} className={cn(node.className)} style={style}>
             {isEditing ? (
               <Editable
                 isEditing
@@ -174,6 +259,7 @@ export default function UIMockNode({
           <Separator
             orientation={orientation}
             className={cn(node.className)}
+            style={style}
           />
         </div>
       );
@@ -192,6 +278,7 @@ export default function UIMockNode({
               'h-full w-full rounded-md object-cover',
               node.className,
             )}
+            style={style}
           />
         );
       }
@@ -203,6 +290,7 @@ export default function UIMockNode({
             'flex h-full w-full items-center justify-center rounded-md border border-dashed border-border bg-muted/40 text-muted-foreground',
             node.className,
           )}
+          style={style}
           aria-label="Image placeholder"
         >
           <Lucide.ImageIcon className="size-6" />
@@ -214,7 +302,10 @@ export default function UIMockNode({
       const Icon = pickLucideIcon(node.props?.iconName);
       return (
         <div className="flex h-full w-full items-center justify-center">
-          <Icon className={cn('size-full text-foreground', node.className)} />
+          <Icon
+            className={cn('size-full text-foreground', node.className)}
+            style={style}
+          />
         </div>
       );
     }
@@ -230,12 +321,14 @@ function Editable({
   onCommit,
   onEnd,
   className,
+  style,
 }: {
   isEditing: boolean;
   value: string;
   onCommit: (text: string) => void;
   onEnd: () => void;
   className?: string;
+  style?: CSSProperties;
 }): ReactNode {
   const ref = useRef<HTMLDivElement | null>(null);
   // Track whether Enter or Escape already settled this edit, so the trailing
@@ -265,7 +358,11 @@ function Editable({
   }, [isEditing]);
 
   if (!isEditing) {
-    return <div className={className}>{value}</div>;
+    return (
+      <div className={className} style={style}>
+        {value}
+      </div>
+    );
   }
 
   return (
@@ -273,6 +370,7 @@ function Editable({
       ref={ref}
       contentEditable
       suppressContentEditableWarning
+      style={style}
       // Stop pointerdown from bubbling up to react-moveable so clicks land
       // inside the editor instead of starting a drag.
       onPointerDown={(e) => e.stopPropagation()}

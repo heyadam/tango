@@ -327,6 +327,7 @@ type UINode = {
   width: number; height: number;
   text?: string;
   className?: string;  // Tailwind for visuals only — coords win for layout
+  style?: Record<string, string | number>;  // Inline-style overrides — see §5
   props?: {
     // Button:    variant: 'default'|'secondary'|'outline'|'ghost'|'destructive'|'link'
     // Badge:     variant: 'default'|'secondary'|'destructive'|'outline'
@@ -390,14 +391,32 @@ Multi-screen flows: separate \`UIScreen\` objects, one per screen. The panel til
 - **Card**: large enough for its contents + 16–24px inner padding (you set this with the card's children's coords)
 - **Icon**: 16×16 (inline) to 24×24 (button), match the surrounding type size
 
-### 5. Style with \`className\`, not coordinates
+### 5. Style with \`className\` + \`style\`, not coordinates
 
-Put visual styling on \`className\` (Tailwind for color, padding, typography, borders, shadows). **Layout-affecting Tailwind classes are dropped** by the renderer — coords win — so don't use \`flex\`, \`grid\`, \`w-full\`, \`h-full\` etc. Examples that work:
+Visual styling lives on two channels. Pick the right one based on whether the color is a tango theme token or comes from somewhere else (the source UI's brand palette, a referenced design, an explicit hex the user gave you).
+
+**\`className\` — for theme tokens and typography.** Tailwind classes that resolve to the app's palette: \`bg-card\`, \`text-muted-foreground\`, \`border-border\`, \`text-foreground/80\`. Also size, weight, leading, padding, border-radius, shadow utilities, etc. **Layout-affecting Tailwind classes are dropped** by the renderer — coords win — so don't use \`flex\`, \`grid\`, \`w-full\`, \`h-full\`. Examples that work:
 
 - Card surface: \`bg-card text-card-foreground border rounded-lg shadow-sm\`
 - Muted body text: \`text-muted-foreground\`
 - Heading prominence: handled by \`type: 'heading'\` + \`props.level\`
 - Subtle dividing line inside a region: \`bg-border\` on a thin \`div\`
+
+**\`style\` — for off-theme colors and arbitrary CSS.** A React inline-style object (camelCase keys, string or number values) applied verbatim. Use this and only this for any color outside the app's theme palette: exact hex from the source UI, brand gradients, custom shadows, off-theme borders. Inline style wins over both \`className\` and shadcn variants, so it's the right place for "this button is exactly \`#0E7C66\`" or "this hero has Stripe's purple gradient."
+
+**Why not \`className: 'bg-[#0E7C66]'\`?** Tailwind v4's JIT scans source files at build time. Class names that arrive in runtime JSON are never seen by the compiler, so arbitrary-value classes silently render with no CSS rule. \`style\` is the only reliable channel for off-theme color fidelity.
+
+Examples that work:
+
+- A brand-colored button: \`type: 'Button'\`, \`props: { variant: 'default' }\`, \`style: { backgroundColor: '#0E7C66', color: '#ffffff' }\` — the inline style overrides the \`--primary\` paint that \`variant: 'default'\` would have given.
+- A hero gradient: \`type: 'div'\`, \`style: { background: 'linear-gradient(135deg, #635BFF 0%, #00D4FF 100%)' }\`.
+- A custom shadow + border: \`style: { boxShadow: '0 8px 32px rgba(99, 91, 255, 0.24)', borderColor: '#635BFF' }\`.
+
+Anti-patterns:
+
+- Don't put theme tokens in \`style\` — \`style: { color: 'var(--foreground)' }\` is wrong; use \`className: 'text-foreground'\` so a future palette swap re-skins the mock.
+- Don't put colors in \`className\` as arbitrary Tailwind values — \`className: 'bg-[#0E7C66]'\` does NOT render a color (see above). Move it to \`style\`.
+- Layout-affecting CSS keys (\`position\`, \`top\`, \`left\`, \`width\`, \`height\`, \`transform\`, \`display\`, \`flex*\`, \`grid*\`) are dropped from \`style\` for the same reason layout Tailwind is dropped from \`className\` — coords win.
 
 ### 6. Don't trample existing work
 
