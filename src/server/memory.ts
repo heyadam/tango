@@ -121,7 +121,8 @@ type Parsed = {
   trailer: string;
 };
 
-function sliceBetween(
+/** @internal exported for tests */
+export function sliceBetween(
   src: string,
   startRe: RegExp | string,
   end: string,
@@ -147,7 +148,8 @@ function sliceBetween(
   };
 }
 
-function parseFile(raw: string): Parsed | null {
+/** @internal exported for tests */
+export function parseFile(raw: string): Parsed | null {
   const summary = sliceBetween(raw, SUMMARY_START_RE, SUMMARY_END);
   if (!summary) return null;
   const recent = sliceBetween(summary.after, RECENT_START, RECENT_END);
@@ -163,7 +165,8 @@ function parseFile(raw: string): Parsed | null {
   };
 }
 
-function serialize(p: Parsed, summaryUpdatedIso: string): string {
+/** @internal exported for tests */
+export function serialize(p: Parsed, summaryUpdatedIso: string): string {
   const trailer = p.trailer.replace(/\s+$/, '');
   return (
     p.header +
@@ -185,7 +188,8 @@ function serialize(p: Parsed, summaryUpdatedIso: string): string {
 
 // Wraps an existing-but-malformed file's content into the user-notes block
 // so we never destroy what the user wrote, even by accident.
-function rescueMalformed(existing: string): string {
+/** @internal exported for tests */
+export function rescueMalformed(existing: string): string {
   const skel = emptySkeleton();
   // Inject the existing content as the body of the user block.
   return skel.replace(
@@ -209,7 +213,8 @@ function truncate(s: string, n: number): string {
   return s.slice(0, Math.max(0, n - 1)).trimEnd() + '…';
 }
 
-function formatEntry(evt: MemoryEvent, ts: string): string {
+/** @internal exported for tests */
+export function formatEntry(evt: MemoryEvent, ts: string): string {
   switch (evt.type) {
     case 'snapshot': {
       const cap = evt.caption ? ` — "${oneLine(evt.caption)}"` : '';
@@ -225,7 +230,8 @@ function formatEntry(evt: MemoryEvent, ts: string): string {
   }
 }
 
-function countRecentEntries(recent: string): number {
+/** @internal exported for tests */
+export function countRecentEntries(recent: string): number {
   return recent
     .split('\n')
     .filter((l) => l.trim().startsWith('- '))
