@@ -4,6 +4,7 @@ import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
 import { attachCanvas } from './src/server/canvasBridge';
 import { attachAgentCursor } from './src/server/agentCursorBridge';
+import { attachUIMock } from './src/server/uiMockBridge';
 import { mountMcp } from './src/server/mcp';
 import { ensureWorkspace, resolveWorkspaceAtBoot } from './src/server/workspace';
 import { loadPersistedWorkspace } from './src/server/workspaceState';
@@ -22,6 +23,7 @@ const app = next({ dev, hostname, port });
 const TERMINAL_PATH = '/ws/terminal';
 const CANVAS_PATH = '/ws/canvas';
 const AGENT_CURSOR_PATH = '/ws/agent-cursor';
+const UI_MOCK_PATH = '/ws/ui-mock';
 
 app.prepare().then(async () => {
   // Resolve the active workspace before anything else. Order:
@@ -69,6 +71,11 @@ app.prepare().then(async () => {
     attachAgentCursor(ws);
   });
 
+  const wssUIMock = new WebSocketServer({ noServer: true });
+  wssUIMock.on('connection', (ws) => {
+    attachUIMock(ws);
+  });
+
   server.on('upgrade', (req, socket, head) => {
     const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
     if (url.pathname === TERMINAL_PATH) {
@@ -86,6 +93,12 @@ app.prepare().then(async () => {
     if (url.pathname === AGENT_CURSOR_PATH) {
       wssAgentCursor.handleUpgrade(req, socket, head, (ws) => {
         wssAgentCursor.emit('connection', ws, req);
+      });
+      return;
+    }
+    if (url.pathname === UI_MOCK_PATH) {
+      wssUIMock.handleUpgrade(req, socket, head, (ws) => {
+        wssUIMock.emit('connection', ws, req);
       });
       return;
     }

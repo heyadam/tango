@@ -20,14 +20,63 @@ import {
   requestScreenshot,
   setCanvasFromServer,
 } from './canvasBridge';
+import {
+  appendUIScreenFromServer,
+  clearUIMockFromServer,
+  getUIMock,
+  setUIMockFromServer,
+} from './uiMockBridge';
 import { pushCursorCommand, requestInspect } from './agentCursorBridge';
 import type { CanvasElement } from '@/lib/canvasProtocol';
+import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import { recordNote } from './memory';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
 // Permissive Zod shape — we don't reproduce Excalidraw's element schema here.
 // Excalidraw will reject malformed elements at updateScene() time on the
 // client; we surface that as the tool result.
+
+// UI mock spec — keep this aligned with src/lib/uiMockProtocol.ts. Strict
+// enum on `type` and required positioning so Claude gets a useful validation
+// error instead of nodes silently rendering as `null`.
+const uiNodeTypeEnum = z.enum([
+  'div',
+  'text',
+  'heading',
+  'Button',
+  'Input',
+  'Textarea',
+  'Badge',
+  'Separator',
+  'Image',
+  'Icon',
+]);
+
+const uiNodeSchema = z.object({
+  id: z.string().min(1),
+  type: uiNodeTypeEnum,
+  x: z.number(),
+  y: z.number(),
+  width: z.number().positive(),
+  height: z.number().positive(),
+  text: z.string().optional(),
+  className: z.string().optional(),
+  props: z.record(z.string(), z.unknown()).optional(),
+});
+
+const uiScreenSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  frame: z.object({
+    w: z.number().int().positive(),
+    h: z.number().int().positive(),
+  }),
+  nodes: z.array(uiNodeSchema),
+});
+
+const uiSpecSchema = z.object({
+  screens: z.array(uiScreenSchema),
+});
 
 function toolErrorResult(toolName: string, err: unknown) {
   return {
@@ -146,6 +195,100 @@ function buildServer(): McpServer {
       } catch (err) {
         return toolErrorResult('screenshot_canvas', err);
       }
+    },
+  );
+
+  // UI mock tools. Sibling tool group to the canvas tools but for the "UI"
+  // mode panel — Claude writes a shadcn-based mock spec, the user drags/
+  // resizes/edits-text in the browser, and Claude reads the result back. The
+  // spec lives in uiMockBridge's in-memory cache and syncs to the browser
+  // over /ws/ui-mock. Element shape matches `UISpec` in
+  // src/lib/uiMockProtocol.ts.
+
+  server.registerTool(
+    'get_ui_mock',
+    {
+      title: 'Read the UI mock',
+      description:
+        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind prototype shown in the left pane when the workspace is in 'UI' mode. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Empty `screens` array means nothing has been mocked yet.",
+    },
+    async () => {
+      const spec = getUIMock();
+      return {
+        content: [{ type: 'text', text: JSON.stringify(spec, null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
+    'set_ui_mock',
+    {
+      title: 'Replace the UI mock',
+      description:
+        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — standard sizes: desktop 1280×800, tablet 768×1024, mobile 360×720), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals — colors, padding, typography; layout-affecting classes are ignored, coords win), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow.",
+      inputSchema: {
+        spec: uiSpecSchema,
+      },
+    },
+    async ({ spec }) => {
+      try {
+        setUIMockFromServer(spec as UISpec);
+        const screenCount = spec.screens.length;
+        const nodeCount = spec.screens.reduce(
+          (sum, s) => sum + s.nodes.length,
+          0,
+        );
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Replaced UI mock with ${screenCount} screen(s), ${nodeCount} node(s).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('set_ui_mock', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'add_ui_screen',
+    {
+      title: 'Append a screen to the UI mock',
+      description:
+        'Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions.',
+      inputSchema: {
+        screen: uiScreenSchema,
+      },
+    },
+    async ({ screen }) => {
+      try {
+        appendUIScreenFromServer(screen as UIScreen);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Appended screen "${screen.title}" with ${screen.nodes.length} node(s).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('add_ui_screen', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'clear_ui_mock',
+    {
+      title: 'Clear the UI mock',
+      description:
+        'Empties the UI mock — removes every screen and node. Reach for this when starting a fresh mock; otherwise prefer `set_ui_mock` (whole-spec replace) or `add_ui_screen` (extend) so user tweaks elsewhere are not silently dropped.',
+    },
+    async () => {
+      clearUIMockFromServer();
+      return { content: [{ type: 'text', text: 'UI mock cleared.' }] };
     },
   );
 

@@ -15,6 +15,7 @@ const HOOKS_KEY = '__tangoServerHooks__';
 export type ServerHooks = {
   broadcastWorkspaceChanged?: () => void;
   resetCanvas?: () => void;
+  resetUiMock?: () => void;
 };
 
 function getHooks(): ServerHooks {
