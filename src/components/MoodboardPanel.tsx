@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type KeyboardEvent,
 } from 'react';
 import {
@@ -33,12 +34,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { writeSnapshot } from '@/lib/designSnapshot';
+import {
+  moodboardStore,
+  type MoodboardDirection,
+  type MoodboardMode,
+  type MoodboardQuality,
+  type MoodboardSize,
+} from '@/lib/moodboardStore';
 import { terminalBus } from '@/lib/terminalBus';
 import { cn } from '@/lib/utils';
-
-type MoodboardSize = '1024x1024' | '1536x1024' | '1024x1536';
-type MoodboardQuality = 'low' | 'medium' | 'high' | 'auto';
-type MoodboardMode = 'complete' | 'logo' | 'ui-elements' | 'random';
 
 const modeLabels: Record<MoodboardMode, string> = {
   complete: 'Full moodboard',
@@ -53,103 +57,6 @@ const modePlaceholders: Record<MoodboardMode, string> = {
   'ui-elements': 'Describe the product and which UI elements to explore…',
   random: 'Describe the rough territory you want inspiration from…',
 };
-
-// Only title + imagePrompt are universally present. The rest are mode-dependent
-// — full moodboards include all of them; logo / random typically include none.
-type MoodboardDirection = {
-  id: string;
-  title: string;
-  rationale?: string;
-  palette?: string[];
-  brandNotes?: string;
-  uiNotes?: string;
-  imagePrompt: string;
-  base64: string;
-  mediaType: string;
-  // Set when the server persisted the image into the workspace's
-  // design-scratch/moodboard/ folder. Undefined when no workspace was active
-  // at generation time.
-  relPath?: string;
-};
-
-type Session = {
-  size: MoodboardSize;
-  quality: MoodboardQuality;
-  mode: MoodboardMode;
-  selectedId: string | null;
-  directions: MoodboardDirection[];
-};
-
-const STORAGE_KEY = 'tango:moodboard-session:v1';
-
-const defaultSession: Session = {
-  size: '1536x1024',
-  quality: 'medium',
-  mode: 'complete',
-  selectedId: null,
-  directions: [],
-};
-
-function isMode(value: unknown): value is MoodboardMode {
-  return (
-    value === 'complete' ||
-    value === 'logo' ||
-    value === 'ui-elements' ||
-    value === 'random'
-  );
-}
-
-function isDirection(value: unknown): value is MoodboardDirection {
-  if (!value || typeof value !== 'object') return false;
-  const item = value as Record<string, unknown>;
-  return (
-    typeof item.id === 'string' &&
-    typeof item.title === 'string' &&
-    (item.rationale === undefined || typeof item.rationale === 'string') &&
-    (item.palette === undefined || Array.isArray(item.palette)) &&
-    (item.brandNotes === undefined || typeof item.brandNotes === 'string') &&
-    (item.uiNotes === undefined || typeof item.uiNotes === 'string') &&
-    typeof item.imagePrompt === 'string' &&
-    typeof item.base64 === 'string' &&
-    typeof item.mediaType === 'string' &&
-    (item.relPath === undefined || typeof item.relPath === 'string')
-  );
-}
-
-function loadSession(): Session {
-  if (typeof window === 'undefined') return defaultSession;
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '');
-    if (!parsed || typeof parsed !== 'object') return defaultSession;
-    const raw = parsed as Partial<Session>;
-    const directions = Array.isArray(raw.directions)
-      ? raw.directions.filter(isDirection)
-      : [];
-    return {
-      size:
-        raw.size === '1024x1024' ||
-        raw.size === '1536x1024' ||
-        raw.size === '1024x1536'
-          ? raw.size
-          : '1536x1024',
-      quality:
-        raw.quality === 'low' ||
-        raw.quality === 'medium' ||
-        raw.quality === 'high' ||
-        raw.quality === 'auto'
-          ? raw.quality
-          : 'medium',
-      mode: isMode(raw.mode) ? raw.mode : 'complete',
-      selectedId:
-        typeof raw.selectedId === 'string'
-          ? raw.selectedId
-          : (directions[directions.length - 1]?.id ?? null),
-      directions,
-    };
-  } catch {
-    return defaultSession;
-  }
-}
 
 function imageSrc(direction: MoodboardDirection): string {
   return `data:${direction.mediaType};base64,${direction.base64}`;
@@ -210,29 +117,29 @@ function handoffPrompt(
   return sections.join('\n');
 }
 
+const subscribe = (cb: () => void) => moodboardStore.subscribe(cb);
+const getSnapshot = () => moodboardStore.getState();
+
 export default function MoodboardPanel() {
-  const [session, setSession] = useState<Session>(defaultSession);
-  const [loaded, setLoaded] = useState(false);
-  // Single-flight: the API can only run one generation at a time anyway, and
-  // the UI needs to know whether to disable the input/buttons.
-  const [busy, setBusy] = useState(false);
+  const { session, busy, status, error } = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getSnapshot,
+  );
+  // Handoff is short and component-local: writing the snapshot to disk and
+  // pushing into the terminal bus completes in milliseconds, so it doesn't
+  // need to survive an unmount.
   const [handoffBusy, setHandoffBusy] = useState(false);
-  const [status, setStatus] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [handoffStatus, setHandoffStatus] = useState<string | null>(null);
+  const [handoffError, setHandoffError] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    setSession(loadSession());
-    setLoaded(true);
+    moodboardStore.ensureLoaded();
   }, []);
-
-  useEffect(() => {
-    if (!loaded) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-  }, [loaded, session]);
 
   const selected = useMemo(() => {
     if (session.directions.length === 0) return null;
@@ -242,92 +149,11 @@ export default function MoodboardPanel() {
     );
   }, [session.directions, session.selectedId]);
 
-  const generate = useCallback(
-    async (brief: string) => {
-      const trimmed = brief.trim();
-      if (!trimmed || busy) return;
-      setBusy(true);
-      setError(null);
-      setStatus(null);
-      try {
-        const res = await fetch('/api/moodboard/directions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            brief: trimmed,
-            size: session.size,
-            quality: session.quality,
-            mode: session.mode,
-          }),
-        });
-        const raw = await res.text();
-        let body: { directions?: MoodboardDirection[]; error?: string };
-        try {
-          body = JSON.parse(raw);
-        } catch {
-          throw new Error(raw || `Generation failed: ${res.status}`);
-        }
-        if (!res.ok) {
-          throw new Error(body.error ?? `Generation failed: ${res.status}`);
-        }
-        const next = body.directions?.[0];
-        if (!next) {
-          throw new Error('Generation response did not include a direction.');
-        }
-        setSession((current) => ({
-          ...current,
-          directions: [...current.directions, next],
-          selectedId: next.id,
-        }));
-        setStatus(`Added ${next.title}.`);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setBusy(false);
-      }
-    },
-    [busy, session.mode, session.quality, session.size],
-  );
-
-  const seedDummy = useCallback(async () => {
-    if (busy) return;
-    setBusy(true);
-    setError(null);
-    setStatus(null);
-    try {
-      const res = await fetch('/api/moodboard/seed', { method: 'POST' });
-      const raw = await res.text();
-      let body: { directions?: MoodboardDirection[]; error?: string };
-      try {
-        body = JSON.parse(raw);
-      } catch {
-        throw new Error(raw || `Seed failed: ${res.status}`);
-      }
-      if (!res.ok) {
-        throw new Error(body.error ?? `Seed failed: ${res.status}`);
-      }
-      const directions = body.directions ?? [];
-      // Append to the bank rather than replacing — seed is just a fast way to
-      // bulk-load some history without spending image-gen tokens.
-      setSession((current) => ({
-        ...current,
-        directions: [...current.directions, ...directions],
-        selectedId:
-          directions[directions.length - 1]?.id ?? current.selectedId,
-      }));
-      setStatus(`Seeded ${directions.length} dummy directions.`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
-    }
-  }, [busy]);
-
   const sendSelected = useCallback(async () => {
     if (!selected || handoffBusy) return;
     setHandoffBusy(true);
-    setError(null);
-    setStatus(null);
+    setHandoffError(null);
+    setHandoffStatus(null);
     try {
       // Prefer the server-persisted file if generation captured one — avoids a
       // duplicate copy in design-scratch/. Fall back to writing a snapshot for
@@ -340,9 +166,9 @@ export default function MoodboardPanel() {
             )
           ).relPath;
       terminalBus.submitToTerminal(handoffPrompt(relPath, selected));
-      setStatus(`Sent ${selected.title} to Claude.`);
+      setHandoffStatus(`Sent ${selected.title} to Claude.`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setHandoffError(err instanceof Error ? err.message : String(err));
     } finally {
       setHandoffBusy(false);
     }
@@ -351,9 +177,9 @@ export default function MoodboardPanel() {
   const submit = useCallback(() => {
     const text = draft.trim();
     if (!text || busy) return;
-    void generate(text);
+    void moodboardStore.generate(text);
     setDraft('');
-  }, [busy, draft, generate]);
+  }, [busy, draft]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -367,6 +193,8 @@ export default function MoodboardPanel() {
 
   const swatches = selected ? paletteSwatches(selected.palette) : [];
   const hasDirections = session.directions.length > 0;
+  const visibleError = handoffError ?? error;
+  const visibleStatus = handoffError ? null : (handoffStatus ?? status);
 
   return (
     <div className="flex h-full min-h-0 bg-background text-foreground">
@@ -380,7 +208,7 @@ export default function MoodboardPanel() {
                   <button
                     type="button"
                     onClick={() =>
-                      setSession((current) => ({
+                      moodboardStore.updateSession((current) => ({
                         ...current,
                         selectedId: direction.id,
                       }))
@@ -468,7 +296,7 @@ export default function MoodboardPanel() {
               <Select
                 value={session.size}
                 onValueChange={(value) =>
-                  setSession((current) => ({
+                  moodboardStore.updateSession((current) => ({
                     ...current,
                     size: value as MoodboardSize,
                   }))
@@ -491,7 +319,7 @@ export default function MoodboardPanel() {
               <Select
                 value={session.quality}
                 onValueChange={(value) =>
-                  setSession((current) => ({
+                  moodboardStore.updateSession((current) => ({
                     ...current,
                     quality: value as MoodboardQuality,
                   }))
@@ -629,7 +457,7 @@ export default function MoodboardPanel() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={seedDummy}
+                onClick={() => void moodboardStore.seedDummy()}
                 disabled={busy}
                 className="mt-4"
               >
@@ -649,7 +477,7 @@ export default function MoodboardPanel() {
             <Select
               value={session.mode}
               onValueChange={(value) =>
-                setSession((current) => ({
+                moodboardStore.updateSession((current) => ({
                   ...current,
                   mode: value as MoodboardMode,
                 }))
@@ -699,12 +527,12 @@ export default function MoodboardPanel() {
             </Button>
           </div>
 
-          {(status || error) && (
+          {(visibleStatus || visibleError) && (
             <div className="mt-2 px-1 font-mono text-[11px]">
-              {error ? (
-                <span className="text-pink-700">{error}</span>
+              {visibleError ? (
+                <span className="text-pink-700">{visibleError}</span>
               ) : (
-                <span className="text-muted-foreground">{status}</span>
+                <span className="text-muted-foreground">{visibleStatus}</span>
               )}
             </div>
           )}
