@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { ImageUp, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import {
   Conversation,
   ConversationContent,
@@ -24,23 +23,13 @@ import {
   PromptInputTools,
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 type Props = {
   open: boolean;
-  onSendSketch: (caption?: string) => Promise<string | null>;
-  sendBusy: boolean;
-  canSendSketch?: boolean;
 };
 
-export default function AgentSidebar({
-  open,
-  onSendSketch,
-  sendBusy,
-  canSendSketch = true,
-}: Props) {
+export default function AgentSidebar({ open }: Props) {
   // Talk to the UI-controller agent (cursor_move / cursor_click / terminal_type
   // / dom_inspect MCP tools). The agent doesn't draft content itself — it
   // delegates to terminal-Claude via terminal_type and visibly moves the
@@ -48,28 +37,11 @@ export default function AgentSidebar({
   const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({ api: '/api/agent' }),
   });
-  const [sketchPath, setSketchPath] = useState<string | null>(null);
-  const [sketchError, setSketchError] = useState<string | null>(null);
-  const [sketchCaption, setSketchCaption] = useState('');
 
   const handleSubmit = (msg: PromptInputMessage) => {
     const text = msg.text.trim();
     if (!text) return;
     sendMessage({ text });
-  };
-
-  const handleSendSketch = async () => {
-    setSketchError(null);
-    try {
-      const captionTrimmed = sketchCaption.trim();
-      const rel = await onSendSketch(captionTrimmed || undefined);
-      if (rel) {
-        setSketchPath(rel);
-        setSketchCaption('');
-      }
-    } catch (e) {
-      setSketchError(e instanceof Error ? e.message : String(e));
-    }
   };
 
   return (
@@ -82,47 +54,12 @@ export default function AgentSidebar({
     >
       <div className="flex h-12 shrink-0 items-center justify-between border-b border-border px-2">
         {open && (
-          <>
-            <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-              <Sparkles className="size-3.5 text-muted-foreground" />
-              <span>Agent</span>
-            </div>
-            {canSendSketch && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSendSketch}
-                disabled={sendBusy}
-                title="Send the canvas as a PNG to Claude in the terminal"
-                className="h-8 gap-1.5 px-2 text-xs"
-              >
-                <ImageUp className="size-3.5" />
-                {sendBusy ? 'Sending…' : 'Send sketch'}
-              </Button>
-            )}
-          </>
+          <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+            <Sparkles className="size-3.5 text-muted-foreground" />
+            <span>Agent</span>
+          </div>
         )}
       </div>
-
-      {open && canSendSketch && (
-        <div className="shrink-0 border-b border-border px-2 py-1.5">
-          <Input
-            type="text"
-            value={sketchCaption}
-            onChange={(e) => setSketchCaption(e.target.value)}
-            placeholder="Note (optional) — appears in tango-memory.md"
-            disabled={sendBusy}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                if (!sendBusy) void handleSendSketch();
-              }
-            }}
-            maxLength={240}
-            className="h-7 text-xs"
-          />
-        </div>
-      )}
 
       {open && (
         <>
@@ -132,11 +69,7 @@ export default function AgentSidebar({
                 {messages.length === 0 ? (
                   <ConversationEmptyState
                     title="Talk to the agent"
-                    description={
-                      canSendSketch
-                        ? 'Ask about the canvas, brainstorm, or hit Send sketch to share it with Claude in the terminal.'
-                        : 'Ask the agent to delegate work to Claude in the terminal.'
-                    }
+                    description="Ask the agent to delegate work to Claude in the terminal."
                     icon={<Sparkles className="size-6" />}
                   />
                 ) : (
@@ -193,16 +126,6 @@ export default function AgentSidebar({
               <ConversationScrollButton />
             </Conversation>
           </div>
-
-          {(sketchPath || sketchError) && (
-            <div className="shrink-0 border-t border-border px-3 py-1.5 font-mono text-[10px]">
-              {sketchError ? (
-                <span className="text-pink-700">{sketchError}</span>
-              ) : (
-                <span className="text-muted-foreground">sent {sketchPath}</span>
-              )}
-            </div>
-          )}
 
           <div className="shrink-0 border-t border-border p-3">
             <PromptInput onSubmit={handleSubmit}>

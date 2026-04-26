@@ -2,10 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { RefreshCw, Send } from 'lucide-react';
 import type { ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types';
+import { Button } from '@/components/ui/button';
+import { writeSnapshot } from '@/lib/designSnapshot';
 import { sketchStore } from '@/lib/sketchStore';
 import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
 import type { ScreenshotRequestMsg } from '@/lib/canvasProtocol';
+import { terminalBus } from '@/lib/terminalBus';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
 import type { DesignerHandles } from './DesignerCanvas';
@@ -37,13 +41,11 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-type Props = {
-  onCanvasReady?: (handles: DesignerHandles) => void;
-};
-
-export default function SketchPanel({ onCanvasReady }: Props) {
+export default function SketchPanel() {
   const handlesRef = useRef<DesignerHandles | null>(null);
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
+  const [sendBusy, setSendBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
   // Bumping this counter remounts DesignerCanvas (and re-runs the WS effect)
   // so a workspace switch starts from a clean slate.
   const [generation, setGeneration] = useState(0);
@@ -114,13 +116,29 @@ export default function SketchPanel({ onCanvasReady }: Props) {
     sketchStore.setCurrent(json);
   }, []);
 
-  const handleReady = useCallback(
-    (handles: DesignerHandles) => {
-      handlesRef.current = handles;
-      onCanvasReady?.(handles);
-    },
-    [onCanvasReady],
-  );
+  const handleReady = useCallback((handles: DesignerHandles) => {
+    handlesRef.current = handles;
+  }, []);
+
+  const sendToClaude = useCallback(async () => {
+    if (sendBusy) return;
+    const handles = handlesRef.current;
+    if (!handles) return;
+    setSendBusy(true);
+    setStatus(null);
+    try {
+      const blob = await handles.getPng();
+      const { relPath } = await writeSnapshot(blob);
+      terminalBus.sendToTerminal(`# review design at ${relPath}\n`);
+      setStatus(`Sent ${relPath} to Claude.`);
+    } catch (err) {
+      setStatus(
+        `Send failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    } finally {
+      setSendBusy(false);
+    }
+  }, [sendBusy]);
 
   // Open the canvas WS bridge. Locally-debounced snapshots from the canvas
   // (forwarded via canvasBus) ship up to the server cache; server frames apply
@@ -215,14 +233,42 @@ export default function SketchPanel({ onCanvasReady }: Props) {
   }, [generation]);
 
   return (
-    <div className="h-full w-full bg-card">
-      {load.status === 'ready' && (
-        <DesignerCanvas
-          key={generation}
-          initialData={load.initialData}
-          onPersist={onPersist}
-          onReady={handleReady}
-        />
+    <div className="flex h-full min-h-0 w-full flex-col bg-card">
+      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <h1 className="text-sm font-semibold text-foreground">Sketch</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={sendToClaude}
+            disabled={sendBusy || load.status !== 'ready'}
+          >
+            {sendBusy ? (
+              <RefreshCw className="size-3.5 animate-spin" />
+            ) : (
+              <Send className="size-3.5" />
+            )}
+            Send to Claude
+          </Button>
+        </div>
+      </header>
+
+      <div className="min-h-0 flex-1">
+        {load.status === 'ready' && (
+          <DesignerCanvas
+            key={generation}
+            initialData={load.initialData}
+            onPersist={onPersist}
+            onReady={handleReady}
+          />
+        )}
+      </div>
+
+      {status && (
+        <div className="shrink-0 border-t border-border bg-background px-4 py-2 font-mono text-[11px] text-muted-foreground">
+          {status}
+        </div>
       )}
     </div>
   );
