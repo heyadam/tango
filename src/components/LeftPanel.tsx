@@ -46,7 +46,7 @@ export default function LeftPanel({ agentSidebarOpen, mode }: Props) {
         open={agentSidebarOpen}
         onSendSketch={sendSketch}
         sendBusy={sendBusy}
-        canSendSketch={mode === 'sketch' || mode === 'brand'}
+        canSendSketch={mode === 'sketch'}
       />
       <div className="min-w-0 flex-1">
         {mode === 'moodboard' ? (

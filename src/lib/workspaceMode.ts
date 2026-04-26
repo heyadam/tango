@@ -3,4 +3,4 @@
 // pick which left-pane component to mount. Adding a new mode is a one-file
 // change here plus wiring up its rendering in LeftPanel.
 
-export type WorkspaceMode = 'sketch' | 'moodboard' | 'brand' | 'ui';
+export type WorkspaceMode = 'sketch' | 'moodboard' | 'ui';
