@@ -37,6 +37,16 @@ export type UINode = {
   // classes (flex/grid/w-*) are ignored — coords win — so use this for visual
   // styling (colors, padding inside the box, typography).
   className?: string;
+  // Inline style overrides applied verbatim via React's `style` prop. Use this
+  // for colors that aren't theme tokens (raw hex, gradients, custom shadows) —
+  // arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className`
+  // because the JIT only scans source files at build time, so off-theme color
+  // fidelity has to come through here. React inline-style schema (camelCase
+  // keys, string or number values). Layout-affecting keys (`position`, `top`,
+  // `left`, `right`, `bottom`, `width`, `height`, `inset`, `transform`,
+  // `display`, `flex*`, `grid*`) are silently dropped — coords win for layout,
+  // same policy as `className`.
+  style?: Record<string, string | number>;
   // Component-specific props. shadcn variant/size for Button & Badge; src for
   // Image; iconName (lucide) for Icon; level (1|2|3) for heading; etc.
   props?: Record<string, unknown>;
