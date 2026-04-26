@@ -19,7 +19,7 @@ function HomeBody() {
   const workspaceReady = current != null && current.path != null;
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-neutral-950 text-neutral-100">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
       <AppTopBar
         agentOpen={agentOpen}
         claudeOpen={claudeOpen}
@@ -33,7 +33,7 @@ function HomeBody() {
         onModeChange={setMode}
       />
       <main className="flex min-h-0 flex-1">
-        <section className="min-w-0 flex-1 bg-neutral-900">
+        <section className="min-w-0 flex-1 bg-card">
           {workspaceReady ? (
             <LeftPanel agentSidebarOpen={agentOpen} mode={mode} />
           ) : (
@@ -43,8 +43,8 @@ function HomeBody() {
         <aside
           aria-hidden={!claudeOpen}
           className={cn(
-            'h-full shrink-0 overflow-hidden bg-[#0a0a0a] transition-[width] duration-200 ease-out',
-            claudeOpen ? 'w-[35vw] min-w-[320px] border-l border-neutral-800' : 'w-0',
+            'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
+            claudeOpen ? 'w-[35vw] min-w-[320px] border-l border-border' : 'w-0',
           )}
         >
           {workspaceReady ? <Terminal /> : <TerminalPlaceholder />}
@@ -56,7 +56,7 @@ function HomeBody() {
 
 function UnsetPlaceholder() {
   return (
-    <div className="flex h-full w-full items-center justify-center px-8 text-center text-sm text-neutral-500">
+    <div className="flex h-full w-full items-center justify-center px-8 text-center text-sm text-muted-foreground">
       Pick a project folder to begin.
     </div>
   );
@@ -64,7 +64,7 @@ function UnsetPlaceholder() {
 
 function TerminalPlaceholder() {
   return (
-    <div className="flex h-full w-full items-center justify-center bg-[#0a0a0a] px-4 text-center text-xs text-neutral-600">
+    <div className="flex h-full w-full items-center justify-center bg-background px-4 text-center text-xs text-muted-foreground/60">
       Claude will start once a workspace is selected.
     </div>
   );

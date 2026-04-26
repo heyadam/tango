@@ -369,8 +369,8 @@ export default function MoodboardPanel() {
   const hasDirections = session.directions.length > 0;
 
   return (
-    <div className="flex h-full min-h-0 bg-neutral-950 text-neutral-100">
-      <aside className="flex w-20 shrink-0 flex-col items-center gap-2 border-r border-neutral-900 bg-neutral-950 py-3">
+    <div className="flex h-full min-h-0 bg-background text-foreground">
+      <aside className="flex w-20 shrink-0 flex-col items-center gap-2 border-r border-border bg-background py-3">
         <div className="flex w-full flex-1 flex-col items-center gap-2 overflow-y-auto px-2">
           {session.directions.map((direction, index) => {
             const active = direction.id === session.selectedId;
@@ -390,11 +390,11 @@ export default function MoodboardPanel() {
                     className={cn(
                       'group relative w-full overflow-hidden rounded-md border transition-colors',
                       active
-                        ? 'border-neutral-100'
-                        : 'border-neutral-800 hover:border-neutral-600',
+                        ? 'border-foreground'
+                        : 'border-border hover:border-foreground/40',
                     )}
                   >
-                    <div className="aspect-square w-full bg-neutral-900">
+                    <div className="aspect-square w-full bg-card">
                       <img
                         src={imageSrc(direction)}
                         alt={direction.title}
@@ -404,7 +404,7 @@ export default function MoodboardPanel() {
                         )}
                       />
                     </div>
-                    <div className="absolute left-1 top-1 rounded bg-neutral-950/80 px-1 font-mono text-[9px] text-neutral-300">
+                    <div className="absolute left-1 top-1 rounded bg-background/80 px-1 font-mono text-[9px] text-foreground">
                       {index + 1}
                     </div>
                   </button>
@@ -417,13 +417,13 @@ export default function MoodboardPanel() {
       </aside>
 
       <div className="relative flex min-w-0 flex-1 flex-col">
-        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-neutral-900 bg-neutral-950 px-4">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <h1 className="text-sm font-semibold text-neutral-100">Moodboard</h1>
+            <h1 className="text-sm font-semibold text-foreground">Moodboard</h1>
             {selected && (
               <>
-                <span className="text-neutral-700">·</span>
-                <span className="truncate text-sm text-neutral-300">
+                <span className="text-muted-foreground/60">·</span>
+                <span className="truncate text-sm text-foreground/90">
                   {selected.title}
                 </span>
               </>
@@ -438,7 +438,6 @@ export default function MoodboardPanel() {
                   onClick={() => setOptionsOpen((v) => !v)}
                   aria-pressed={optionsOpen}
                   aria-label="Options"
-                  className="text-neutral-400 hover:text-neutral-100"
                 >
                   <Settings2 className="size-4" />
                 </Button>
@@ -449,7 +448,6 @@ export default function MoodboardPanel() {
               size="sm"
               onClick={sendSelected}
               disabled={!selected || handoffBusy}
-              className="h-8 bg-emerald-300 text-neutral-950 hover:bg-emerald-200 disabled:bg-neutral-800 disabled:text-neutral-500"
             >
               {handoffBusy ? (
                 <RefreshCw className="size-3.5 animate-spin" />
@@ -462,9 +460,9 @@ export default function MoodboardPanel() {
         </header>
 
         {optionsOpen && (
-          <div className="grid shrink-0 grid-cols-[auto_auto] items-end gap-3 border-b border-neutral-900 bg-neutral-950/80 px-4 py-3">
+          <div className="grid shrink-0 grid-cols-[auto_auto] items-end gap-3 border-b border-border bg-background/80 px-4 py-3">
             <label className="space-y-1">
-              <span className="text-[11px] font-medium uppercase text-neutral-500">
+              <span className="text-[11px] font-medium uppercase text-muted-foreground">
                 Size
               </span>
               <Select
@@ -476,7 +474,7 @@ export default function MoodboardPanel() {
                   }))
                 }
               >
-                <SelectTrigger className="h-9 w-36 border-neutral-800 bg-neutral-900 text-neutral-100">
+                <SelectTrigger className="h-9 w-36">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -487,7 +485,7 @@ export default function MoodboardPanel() {
               </Select>
             </label>
             <label className="space-y-1">
-              <span className="text-[11px] font-medium uppercase text-neutral-500">
+              <span className="text-[11px] font-medium uppercase text-muted-foreground">
                 Quality
               </span>
               <Select
@@ -499,7 +497,7 @@ export default function MoodboardPanel() {
                   }))
                 }
               >
-                <SelectTrigger className="h-9 w-28 border-neutral-800 bg-neutral-900 text-neutral-100">
+                <SelectTrigger className="h-9 w-28">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -514,7 +512,7 @@ export default function MoodboardPanel() {
           </div>
         )}
 
-        <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center bg-neutral-950 p-6">
+        <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center bg-background p-6">
           {selected ? (
             <div className="flex h-full w-full flex-col items-center justify-center gap-3">
               <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
@@ -524,7 +522,7 @@ export default function MoodboardPanel() {
                   className="max-h-full max-w-full rounded-md object-contain shadow-xl"
                 />
                 {busy && (
-                  <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-2 rounded-md bg-neutral-900/90 px-3 py-1.5 text-xs text-neutral-200 shadow">
+                  <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-2 rounded-md bg-card/90 px-3 py-1.5 text-xs text-foreground shadow">
                     <RefreshCw className="size-3.5 animate-spin" />
                     Generating…
                   </div>
@@ -544,7 +542,7 @@ export default function MoodboardPanel() {
                     ))}
                   </div>
                 ) : (
-                  <span className="text-xs text-neutral-600">No palette</span>
+                  <span className="text-xs text-muted-foreground/60">No palette</span>
                 )}
 
                 <Button
@@ -552,7 +550,6 @@ export default function MoodboardPanel() {
                   size="sm"
                   onClick={() => setDetailsOpen((v) => !v)}
                   aria-pressed={detailsOpen}
-                  className="h-8 text-neutral-400 hover:text-neutral-100"
                 >
                   {detailsOpen ? (
                     <ChevronUp className="size-3.5" />
@@ -564,52 +561,52 @@ export default function MoodboardPanel() {
               </div>
 
               {detailsOpen && (
-                <div className="grid w-full max-w-3xl shrink-0 gap-3 rounded-md border border-neutral-800 bg-neutral-900/60 p-3 text-xs text-neutral-300 sm:grid-cols-2">
+                <div className="grid w-full max-w-3xl shrink-0 gap-3 rounded-md border border-border bg-card/60 p-3 text-xs text-foreground/90 sm:grid-cols-2">
                   {selected.rationale && (
                     <div className="space-y-1">
-                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      <div className="text-[10px] font-medium uppercase text-muted-foreground">
                         Rationale
                       </div>
-                      <p className="leading-5 text-neutral-300">
+                      <p className="leading-5 text-foreground/90">
                         {selected.rationale}
                       </p>
                     </div>
                   )}
                   {selected.palette && selected.palette.length > 0 && (
                     <div className="space-y-1">
-                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      <div className="text-[10px] font-medium uppercase text-muted-foreground">
                         Palette
                       </div>
-                      <p className="font-mono text-[11px] leading-5 text-neutral-300">
+                      <p className="font-mono text-[11px] leading-5 text-foreground/90">
                         {selected.palette.join(', ')}
                       </p>
                     </div>
                   )}
                   {selected.brandNotes && (
                     <div className="space-y-1">
-                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      <div className="text-[10px] font-medium uppercase text-muted-foreground">
                         Brand notes
                       </div>
-                      <p className="leading-5 text-neutral-300">
+                      <p className="leading-5 text-foreground/90">
                         {selected.brandNotes}
                       </p>
                     </div>
                   )}
                   {selected.uiNotes && (
                     <div className="space-y-1">
-                      <div className="text-[10px] font-medium uppercase text-neutral-500">
+                      <div className="text-[10px] font-medium uppercase text-muted-foreground">
                         UI notes
                       </div>
-                      <p className="leading-5 text-neutral-300">
+                      <p className="leading-5 text-foreground/90">
                         {selected.uiNotes}
                       </p>
                     </div>
                   )}
                   <div className="sm:col-span-2 space-y-1">
-                    <div className="text-[10px] font-medium uppercase text-neutral-500">
+                    <div className="text-[10px] font-medium uppercase text-muted-foreground">
                       Image prompt
                     </div>
-                    <p className="font-mono text-[11px] leading-5 text-neutral-400">
+                    <p className="font-mono text-[11px] leading-5 text-muted-foreground">
                       {selected.imagePrompt || '—'}
                     </p>
                   </div>
@@ -618,13 +615,13 @@ export default function MoodboardPanel() {
             </div>
           ) : (
             <div className="flex max-w-md flex-col items-center text-center">
-              <div className="mb-4 flex size-12 items-center justify-center rounded-md border border-neutral-800 bg-neutral-900">
-                <ImagePlus className="size-6 text-neutral-500" />
+              <div className="mb-4 flex size-12 items-center justify-center rounded-md border border-border bg-card">
+                <ImagePlus className="size-6 text-muted-foreground" />
               </div>
-              <h2 className="text-base font-semibold text-neutral-100">
+              <h2 className="text-base font-semibold text-foreground">
                 Describe a creative direction to start
               </h2>
-              <p className="mt-2 text-sm leading-6 text-neutral-400">
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Type a brief below. Tango generates one direction at a time and
                 keeps every result in the rail on the left so you can flip back
                 later.
@@ -634,7 +631,7 @@ export default function MoodboardPanel() {
                 size="sm"
                 onClick={seedDummy}
                 disabled={busy}
-                className="mt-4 h-8 text-neutral-400 hover:text-neutral-100"
+                className="mt-4"
               >
                 {busy ? (
                   <RefreshCw className="size-3.5 animate-spin" />
@@ -647,8 +644,8 @@ export default function MoodboardPanel() {
           )}
         </div>
 
-        <div className="shrink-0 border-t border-neutral-900 bg-neutral-950 px-4 py-3">
-          <div className="flex items-end gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2">
+        <div className="shrink-0 border-t border-border bg-background px-4 py-3">
+          <div className="flex items-end gap-2 rounded-xl border border-border bg-card p-2">
             <Select
               value={session.mode}
               onValueChange={(value) =>
@@ -660,7 +657,7 @@ export default function MoodboardPanel() {
             >
               <SelectTrigger
                 aria-label="Generation mode"
-                className="h-9 w-36 shrink-0 border-neutral-800 bg-neutral-950 text-neutral-100"
+                className="h-9 w-36 shrink-0"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -682,7 +679,7 @@ export default function MoodboardPanel() {
                   ? 'Describe another direction…'
                   : modePlaceholders[session.mode]
               }
-              className="min-h-9 resize-none border-0 bg-transparent px-1 py-1.5 text-sm text-neutral-100 shadow-none focus-visible:ring-0 placeholder:text-neutral-500"
+              className="min-h-9 resize-none border-0 bg-transparent px-1 py-1.5 text-sm shadow-none focus-visible:ring-0"
               rows={1}
             />
             <Button
@@ -690,7 +687,7 @@ export default function MoodboardPanel() {
               onClick={submit}
               disabled={busy || !draft.trim()}
               aria-label="Generate"
-              className="shrink-0 bg-neutral-100 text-neutral-950 hover:bg-white disabled:bg-neutral-800 disabled:text-neutral-500"
+              className="shrink-0"
             >
               {busy ? (
                 <RefreshCw className="size-4 animate-spin" />
@@ -707,7 +704,7 @@ export default function MoodboardPanel() {
               {error ? (
                 <span className="text-red-300">{error}</span>
               ) : (
-                <span className="text-neutral-400">{status}</span>
+                <span className="text-muted-foreground">{status}</span>
               )}
             </div>
           )}

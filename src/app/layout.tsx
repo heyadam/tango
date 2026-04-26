@@ -29,7 +29,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="h-full overflow-hidden bg-neutral-950 text-neutral-100">
+      <body className="h-full overflow-hidden">
         <TooltipProvider>{children}</TooltipProvider>
         <AgentCursorOverlay />
       </body>
