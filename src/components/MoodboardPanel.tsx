@@ -79,7 +79,14 @@ function ShimmerBlock({
       role="status"
       aria-label={label ?? 'Generating'}
     >
-      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+      <div
+        className="absolute inset-0 animate-shimmer"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, transparent 0%, color-mix(in oklch, var(--color-foreground) 10%, transparent) 25%, transparent 50%, color-mix(in oklch, var(--color-foreground) 10%, transparent) 75%, transparent 100%)',
+          backgroundSize: '200% 100%',
+        }}
+      />
       {label && (
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="flex items-center gap-2 rounded-md bg-card/80 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur">

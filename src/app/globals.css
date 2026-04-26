@@ -125,8 +125,8 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% { background-position-x: 0%; }
+  100% { background-position-x: -200%; }
 }
 
 @layer base {
