@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   CaptureUpdateAction,
   Excalidraw,
   exportToBlob,
+  restoreElements,
   serializeAsJSON,
 } from '@excalidraw/excalidraw';
 import type {
@@ -50,31 +51,59 @@ export default function DesignerCanvas({ initialData, onPersist, onReady }: Prop
 
   // Subscribe to bus updates from the server. Always reach through apiRef at
   // call time — Excalidraw can remount and the captured api would go stale.
+  // `restoreElements` fills in defaults for skeleton-shaped MCP payloads (e.g.
+  // an arrow without `points`) — without it Excalidraw crashes during render
+  // when iterating over scene elements.
   useEffect(() => {
     return canvasBus._onApply((msg) => {
       const api = apiRef.current;
       if (!api) return;
       if (msg.type === 'set') {
         const cleanAppState = sanitizeAppState(msg.appState);
+        const restored = restoreElements(
+          msg.elements as Parameters<typeof restoreElements>[0],
+          null,
+        );
         api.updateScene({
-          elements: msg.elements as Parameters<ExcalidrawImperativeAPI['updateScene']>[0]['elements'],
+          elements: restored as Parameters<ExcalidrawImperativeAPI['updateScene']>[0]['elements'],
           appState: cleanAppState as Parameters<ExcalidrawImperativeAPI['updateScene']>[0]['appState'],
           captureUpdate: CaptureUpdateAction.IMMEDIATELY,
         });
       } else if (msg.type === 'patch' && msg.mode === 'append') {
         const current = api.getSceneElements();
+        const restored = restoreElements(
+          msg.elements as Parameters<typeof restoreElements>[0],
+          null,
+        );
         api.updateScene({
-          elements: [...current, ...(msg.elements as typeof current)],
+          elements: [...current, ...(restored as typeof current)],
           captureUpdate: CaptureUpdateAction.IMMEDIATELY,
         });
       }
     });
   }, []);
 
+  // Normalize initialData on mount so a localStorage cache poisoned by a prior
+  // skeleton-shaped MCP write doesn't crash Excalidraw on rehydrate. Idempotent
+  // on already-well-formed elements.
+  const normalizedInitialData = useMemo<ExcalidrawInitialDataState | undefined>(() => {
+    if (!initialData) return undefined;
+    return {
+      ...initialData,
+      elements: restoreElements(
+        (initialData.elements ?? []) as Parameters<typeof restoreElements>[0],
+        null,
+      ) as ExcalidrawInitialDataState['elements'],
+      appState: sanitizeAppState(
+        initialData.appState as unknown as Record<string, unknown>,
+      ) as ExcalidrawInitialDataState['appState'],
+    };
+  }, [initialData]);
+
   return (
     <div className="h-full w-full">
       <Excalidraw
-        initialData={initialData ?? undefined}
+        initialData={normalizedInitialData}
         excalidrawAPI={(api: ExcalidrawImperativeAPI) => {
           apiRef.current = api;
           if (!onReady) return;
