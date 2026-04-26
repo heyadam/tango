@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
+import AgentCursorOverlay from '@/components/AgentCursorOverlay';
 import AppTopBar from '@/components/AppTopBar';
 import LeftPanel from '@/components/LeftPanel';
 import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
@@ -12,7 +13,7 @@ const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
 
 function HomeBody() {
   const { current, openDialog } = useWorkspace();
-  const [agentOpen, setAgentOpen] = useState(true);
+  const [agentOpen, setAgentOpen] = useState(false);
   const [claudeOpen, setClaudeOpen] = useState(true);
   const [mode, setMode] = useState<WorkspaceMode>('sketch');
 
@@ -50,6 +51,7 @@ function HomeBody() {
           {workspaceReady ? <Terminal /> : <TerminalPlaceholder />}
         </aside>
       </main>
+      {agentOpen ? <AgentCursorOverlay /> : null}
     </div>
   );
 }
