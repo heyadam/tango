@@ -68,6 +68,11 @@ export type UIMockServerMsg = ServerSetMsg | ServerAppendScreenMsg;
 // Browser → server. Debounced after local edits; server replaces its cache.
 // No broadcast — last-writer-wins, single-browser typical.
 export type ClientSnapshotMsg = { type: 'snapshot'; spec: UISpec };
-export type UIMockClientMsg = ClientSnapshotMsg;
+// Browser → server. Live pixel size of the UI panel's render area, sent on
+// mount and on debounced resize. Surfaced to Claude via the `get_ui_viewport`
+// MCP tool so new screens default to "exactly what fits the user's pane"
+// instead of a hardcoded 1280×800.
+export type ClientViewportMsg = { type: 'viewport'; w: number; h: number };
+export type UIMockClientMsg = ClientSnapshotMsg | ClientViewportMsg;
 
 export const EMPTY_SPEC: UISpec = { screens: [] };
