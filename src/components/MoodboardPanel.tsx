@@ -167,7 +167,7 @@ export default function MoodboardPanel() {
             )
           ).relPath;
       transmitBus.show({
-        src: `data:${selected.mediaType};base64,${selected.base64}`,
+        src: imageSrc(selected),
         label: selected.title,
       });
       terminalBus.submitToTerminal(handoffPrompt(relPath, selected));

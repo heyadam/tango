@@ -63,6 +63,8 @@ function ScanCard({ src }: { src: string }) {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
   const startRef = useRef<number>(performance.now());
 
+  const [failed, setFailed] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     const img = new Image();
@@ -74,6 +76,10 @@ function ScanCard({ src }: { src: string }) {
       startRef.current = performance.now();
       setSize({ w: img.naturalWidth, h: img.naturalHeight });
       setTexture(t);
+    };
+    img.onerror = () => {
+      if (cancelled) return;
+      setFailed(true);
     };
     img.src = src;
     return () => {
@@ -87,7 +93,7 @@ function ScanCard({ src }: { src: string }) {
     };
   }, [texture]);
 
-  if (!size || !texture) return null;
+  if (failed || !size || !texture) return null;
 
   const maxW = window.innerWidth * 0.6;
   const maxH = window.innerHeight * 0.6;
