@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect } from 'vitest';
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {
+  ensureWorkspace,
   mergeClaudeMd,
   mergeMcpJson,
   mergeClaudeSettings,
@@ -214,5 +218,83 @@ describe('mergeClaudeSettings', () => {
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(JSON.parse(r.next).env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS).toBe('1');
+  });
+});
+
+// End-to-end coverage for the bundled skills emitted by ensureWorkspace.
+// The skill bodies themselves are module-private TS template literals; this
+// is the only way to assert they reach the workspace correctly. Same test
+// shape covers existence, content invariants, and idempotency for the
+// tango-swiftui skill (the new one) without exporting implementation
+// details.
+describe('ensureWorkspace skill emission', () => {
+  let dir: string;
+
+  beforeEach(async () => {
+    dir = await fs.mkdtemp(path.join(os.tmpdir(), 'tango-ensure-'));
+  });
+
+  afterEach(async () => {
+    await fs.rm(dir, { recursive: true, force: true });
+  });
+
+  it('writes the tango-swiftui skill with the expected shape', async () => {
+    const result = await ensureWorkspace(3000, dir);
+    expect(result.ok).toBe(true);
+
+    const skillPath = path.join(dir, '.claude', 'skills', 'tango-swiftui', 'SKILL.md');
+    const body = await fs.readFile(skillPath, 'utf8');
+
+    // Frontmatter present and well-formed (auto-discovery requires both keys).
+    expect(body).toMatch(/^---\nname: tango-swiftui\ndescription: /);
+    expect(body).toContain('\n---\n');
+
+    // Trigger surface — the description must mention the load-bearing keywords
+    // so Claude Code's skill auto-invocation reliably picks it up.
+    expect(body).toContain('SwiftUI');
+    expect(body).toContain('.swift');
+    expect(body).toContain('Xcode');
+
+    // Both flow directions must be documented.
+    expect(body).toContain('Read flow');
+    expect(body).toContain('Write flow');
+
+    // Both modes (UI mock + sketch) must be reachable from the skill.
+    expect(body).toContain('UI mock');
+    expect(body).toContain('sketch');
+
+    // Mapping cheat sheets are the load-bearing knowledge for the round-trip.
+    expect(body).toContain('SwiftUI → UINode');
+    expect(body).toContain('UINode → SwiftUI');
+
+    // Disambiguation from the sibling skills must be explicit so they don't
+    // steal SwiftUI prompts and vice versa.
+    expect(body).toContain('tango-ui-mock');
+    expect(body).toContain('tango-ui-sketch');
+
+    // Standard tango trailer marking the file as managed/overwritten.
+    expect(body).toContain('overwritten on each server boot');
+  });
+
+  it('points at tango-swiftui from the always-loaded tango.md', async () => {
+    await ensureWorkspace(3000, dir);
+    const tangoMd = await fs.readFile(
+      path.join(dir, '.claude', 'tango.md'),
+      'utf8',
+    );
+    expect(tangoMd).toContain('tango-swiftui');
+    expect(tangoMd).toContain('.claude/skills/tango-swiftui/SKILL.md');
+  });
+
+  it('is idempotent — re-running ensure leaves the skill content unchanged', async () => {
+    await ensureWorkspace(3000, dir);
+    const skillPath = path.join(dir, '.claude', 'skills', 'tango-swiftui', 'SKILL.md');
+    const first = await fs.readFile(skillPath, 'utf8');
+
+    const result = await ensureWorkspace(3000, dir);
+    expect(result.ok).toBe(true);
+
+    const second = await fs.readFile(skillPath, 'utf8');
+    expect(second).toBe(first);
   });
 });
