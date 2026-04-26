@@ -538,7 +538,11 @@ For sketch mode: same idea, but you build labeled Excalidraw rectangles + text a
 
 ### 4. Pick a frame
 
-Call \`get_ui_viewport\` and use the returned \`{w, h}\` as the frame so it matches what the user is actually looking at. Falls back to 1280×800 if no browser is connected. For SwiftUI views explicitly designed for iPhone, 390×844 (iPhone 15) is a reasonable override if the user mentions a device.
+**Default to iPhone proportions** — SwiftUI views are iOS-first, and the user's UI panel is wider-than-tall, so using the raw viewport produces a 16:9 frame that doesn't match how the view will actually render on device.
+
+- **Default**: \`390×844\` (iPhone 15 logical size). If the panel is taller (call \`get_ui_viewport\` to check), scale proportionally — keep the ~9:19.5 ratio, e.g. \`{ w: viewport.w, h: Math.round(viewport.w * 844 / 390) }\` capped at the viewport height.
+- **iPad**: \`820×1180\` (iPad Air) if the source uses iPad-only modifiers (\`.navigationSplitViewStyle\`, \`NavigationSplitView\`, \`.regular\` size class checks) or the user mentions iPad.
+- **Mac**: only fall back to the raw \`get_ui_viewport\` size when the source is clearly a macOS app (\`WindowGroup\` with macOS modifiers, \`.frame(minWidth: 800, minHeight: 600)\` style desktop sizing) or the user explicitly says "Mac".
 
 ### 5. Push it
 
