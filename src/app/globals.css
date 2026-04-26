@@ -4,7 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans-flex);
+  --font-serif: var(--font-fraunces);
   --font-mono: var(--font-geist-mono);
 
   --color-background: var(--background);
@@ -50,37 +51,41 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Tango brand palette (light theme).
+     Navy = foreground, cream = page bg, white = card surface,
+     purple = primary action, mint = secondary, peach + pink = accents. */
+  --background: oklch(0.95 0.02 85);
+  --foreground: oklch(0.20 0.07 270);
+  --card: oklch(0.99 0.005 85);
+  --card-foreground: oklch(0.20 0.07 270);
+  --popover: oklch(0.99 0.005 85);
+  --popover-foreground: oklch(0.20 0.07 270);
+  --primary: oklch(0.55 0.20 280);
+  --primary-foreground: oklch(0.99 0.005 85);
+  --secondary: oklch(0.81 0.08 170);
+  --secondary-foreground: oklch(0.20 0.07 270);
+  --muted: oklch(0.93 0.02 85);
+  --muted-foreground: oklch(0.45 0.05 270);
+  --accent: oklch(0.93 0.03 60);
+  --accent-foreground: oklch(0.20 0.07 270);
+  --destructive: oklch(0.66 0.21 0);
+  --border: oklch(0.88 0.02 270);
+  --input: oklch(0.88 0.02 270);
+  --ring: oklch(0.55 0.20 280);
+  --chart-1: oklch(0.55 0.20 280);
+  --chart-2: oklch(0.74 0.16 45);
+  --chart-3: oklch(0.81 0.08 170);
+  --chart-4: oklch(0.66 0.21 0);
+  --chart-5: oklch(0.20 0.07 270);
+  --sidebar: oklch(0.95 0.02 85);
+  --sidebar-foreground: oklch(0.20 0.07 270);
+  --sidebar-primary: oklch(0.55 0.20 280);
+  --sidebar-primary-foreground: oklch(0.99 0.005 85);
+  --sidebar-accent: oklch(0.93 0.03 60);
+  --sidebar-accent-foreground: oklch(0.20 0.07 270);
+  --sidebar-border: oklch(0.88 0.02 270);
+  --sidebar-ring: oklch(0.55 0.20 280);
 }
 
 .dark {

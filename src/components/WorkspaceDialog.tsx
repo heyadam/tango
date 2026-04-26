@@ -254,7 +254,7 @@ export default function WorkspaceDialog({
         </DialogHeader>
 
         {envLocked && (
-          <div className="rounded-md border border-amber-700/40 bg-amber-900/20 p-3 text-xs text-amber-200">
+          <div className="rounded-md border border-orange-300 bg-orange-100 p-3 text-xs text-orange-900">
             <code className="font-mono">TANGO_WORKSPACE</code> is set to{' '}
             <code className="font-mono break-all">{current.path}</code>. The picker is read-only.
           </div>
@@ -373,7 +373,7 @@ export default function WorkspaceDialog({
               </p>
 
               {state.kind === 'error' && (
-                <div className="rounded-md border border-red-900/40 bg-red-950/40 p-3 text-xs text-red-200">
+                <div className="rounded-md border border-pink-300 bg-pink-100 p-3 text-xs text-pink-900">
                   {state.reason}
                 </div>
               )}
@@ -438,9 +438,9 @@ function SoftWarningsView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="rounded-md border border-amber-700/40 bg-amber-900/20 p-3 text-xs text-amber-100">
+      <div className="rounded-md border border-orange-300 bg-orange-100 p-3 text-xs text-orange-900">
         <p className="font-medium">Workspace is set, with warnings.</p>
-        <p className="mt-1 text-amber-200/80">
+        <p className="mt-1 text-orange-800/90">
           We couldn&apos;t merge some managed files in{' '}
           <code className="font-mono">{path}</code>. Tango is usable; the listed files were
           left untouched and the affected features may not work until you fix or remove them.

@@ -166,7 +166,7 @@ export default function AgentSidebar({
                                 key={i}
                                 className="rounded border border-border bg-muted px-2 py-1 font-mono text-[10px] text-foreground"
                               >
-                                <div className="text-sky-300">
+                                <div className="text-violet-700">
                                   {name}
                                   {p.state ? ` · ${p.state}` : ''}
                                 </div>
@@ -197,7 +197,7 @@ export default function AgentSidebar({
           {(sketchPath || sketchError) && (
             <div className="shrink-0 border-t border-border px-3 py-1.5 font-mono text-[10px]">
               {sketchError ? (
-                <span className="text-red-400">{sketchError}</span>
+                <span className="text-pink-700">{sketchError}</span>
               ) : (
                 <span className="text-muted-foreground">sent {sketchPath}</span>
               )}
