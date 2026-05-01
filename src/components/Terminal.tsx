@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Terminal as Xterm } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
+import { Code2 } from 'lucide-react';
 import { terminalBus } from '@/lib/terminalBus';
 import { openWS } from '@/lib/wsClient';
 
@@ -145,5 +146,13 @@ export default function Terminal() {
     };
   }, [generation]);
 
-  return <div ref={containerRef} className="h-full w-full bg-[#0a0a0a] p-2" />;
+  return (
+    <div className="flex h-full w-full flex-col">
+      <div className="flex h-12 shrink-0 items-center gap-1.5 border-b border-border bg-panel-header px-3 text-xs font-medium text-panel-header-foreground">
+        <Code2 className="size-3.5 text-panel-header-foreground/70" />
+        <span>Claude Code</span>
+      </div>
+      <div ref={containerRef} className="min-h-0 flex-1 bg-[#0a0a0a] p-2" />
+    </div>
+  );
 }

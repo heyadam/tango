@@ -30,7 +30,6 @@ function HomeBody() {
         agentOpen={agentOpen}
         claudeOpen={claudeOpen}
         simOpen={simOpen}
-        mode={mode}
         workspaceName={current?.name ?? null}
         workspacePath={current?.path ?? null}
         workspaceSource={current?.source ?? 'unset'}
@@ -38,12 +37,15 @@ function HomeBody() {
         onToggleAgent={() => setAgentOpen((v) => !v)}
         onToggleClaude={() => setClaudeOpen((v) => !v)}
         onToggleSim={() => setSimOpen((v) => !v)}
-        onModeChange={setMode}
       />
       <main className="flex min-h-0 flex-1">
         <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
-            <LeftPanel agentSidebarOpen={agentOpen} mode={mode} />
+            <LeftPanel
+              agentSidebarOpen={agentOpen}
+              mode={mode}
+              onModeChange={setMode}
+            />
           ) : (
             <UnsetPlaceholder />
           )}

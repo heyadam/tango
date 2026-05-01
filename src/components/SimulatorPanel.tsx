@@ -53,8 +53,8 @@ export default function SimulatorPanel() {
 
   return (
     <div className="flex h-full w-full flex-col bg-background">
-      <div className="flex h-12 shrink-0 items-center gap-1.5 border-b border-border px-3 text-xs font-medium text-foreground">
-        <Smartphone className="size-3.5 text-muted-foreground" />
+      <div className="flex h-12 shrink-0 items-center gap-1.5 border-b border-border bg-panel-header px-3 text-xs font-medium text-panel-header-foreground">
+        <Smartphone className="size-3.5 text-panel-header-foreground/70" />
         <span>Simulator</span>
       </div>
       <div className="relative min-h-0 flex-1">

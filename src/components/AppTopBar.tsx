@@ -19,7 +19,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 type WorkspaceSource = 'env' | 'persisted' | 'unset';
 
@@ -27,7 +26,6 @@ type Props = {
   agentOpen: boolean;
   claudeOpen: boolean;
   simOpen: boolean;
-  mode: WorkspaceMode;
   workspaceName: string | null;
   workspacePath: string | null;
   workspaceSource: WorkspaceSource;
@@ -35,20 +33,12 @@ type Props = {
   onToggleAgent: () => void;
   onToggleClaude: () => void;
   onToggleSim: () => void;
-  onModeChange: (mode: WorkspaceMode) => void;
 };
-
-const modes: Array<{ value: WorkspaceMode; label: string }> = [
-  { value: 'sketch', label: 'Sketch' },
-  { value: 'moodboard', label: 'Moodboard' },
-  { value: 'ui', label: 'UI' },
-];
 
 export default function AppTopBar({
   agentOpen,
   claudeOpen,
   simOpen,
-  mode,
   workspaceName,
   workspacePath,
   workspaceSource,
@@ -56,10 +46,9 @@ export default function AppTopBar({
   onToggleAgent,
   onToggleClaude,
   onToggleSim,
-  onModeChange,
 }: Props) {
   return (
-    <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-background px-2">
+    <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-background px-2">
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
@@ -86,29 +75,6 @@ export default function AppTopBar({
           source={workspaceSource}
           onClick={onOpenWorkspaceDialog}
         />
-      </div>
-
-      <div
-        role="tablist"
-        aria-label="Workspace mode"
-        className="flex h-8 items-center rounded-md border border-border bg-muted p-0.5"
-      >
-        {modes.map((item) => (
-          <button
-            key={item.value}
-            type="button"
-            role="tab"
-            aria-selected={mode === item.value}
-            onClick={() => onModeChange(item.value)}
-            className={cn(
-              'h-7 min-w-20 rounded px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:min-w-24 sm:px-3',
-              mode === item.value &&
-                'bg-foreground text-background shadow-sm hover:text-background',
-            )}
-          >
-            {item.label}
-          </button>
-        ))}
       </div>
 
       <div className="flex items-center justify-end gap-2">
