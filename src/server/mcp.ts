@@ -31,6 +31,14 @@ import { pushCursorCommand, requestInspect } from './agentCursorBridge';
 import type { CanvasElement } from '@/lib/canvasProtocol';
 import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import { recordNote } from './memory';
+import { getIosProject, getWorkspaceOrNull } from './workspace';
+import {
+  iosBuildRun,
+  iosLogsRecent,
+  listBootedDevices,
+  readActiveDeviceFromServeSim,
+} from './iosBuild';
+import { getSimStatus } from './sim';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
 // Permissive Zod shape — we don't reproduce Excalidraw's element schema here.
@@ -87,6 +95,27 @@ function toolErrorResult(toolName: string, err: unknown) {
       {
         type: 'text' as const,
         text: `${toolName} failed: ${err instanceof Error ? err.message : String(err)}`,
+      },
+    ],
+  };
+}
+
+// Shared shape for `ios_build_run` early-exit errors — keeps the result
+// schema consistent with the orchestrator's own `{ok:false, stage, message,
+// errors}` returns so terminal-Claude doesn't have to parse two formats.
+function iosBuildErrorResult(
+  stage: 'detect' | 'build' | 'install' | 'launch',
+  message: string,
+) {
+  return {
+    content: [
+      {
+        type: 'text' as const,
+        text: JSON.stringify(
+          { ok: false, stage, message, errors: [] as string[] },
+          null,
+          2,
+        ),
       },
     ],
   };
@@ -447,6 +476,220 @@ function buildServer(): McpServer {
           },
         ],
       };
+    },
+  );
+
+  // iOS build / install / launch tools. Available regardless of whether the
+  // workspace contains an Xcode project — `ios_status` returns `project.kind:
+  // 'none'` if not, and the skill (`tango-ios-sim`) tells terminal-Claude to
+  // bail out gracefully in that case. Not exposed to the controller agent's
+  // ALLOWED_TOOLS — these are terminal-Claude's domain (the controller
+  // delegates via `terminal_type`).
+
+  server.registerTool(
+    'ios_status',
+    {
+      title: 'Detected Xcode project + booted simulators',
+      description:
+        "Read-only summary of the iOS dev environment for the current workspace. Returns the detected Xcode project (`kind: 'none' | 'detected' | 'ambiguous' | 'error'`), the booted simulators (`xcrun simctl list devices booted`), and the active device UDID — preferring the simulator that `serve-sim` is currently iframing in tango's right sidebar so your build targets the device the user is actually watching. Call this once at the START of a session to confirm the project is detected and a simulator is booted, OR whenever device/scheme intent changes (user says \"switch to iPad\", \"use the prod scheme\"). Don't pre-call before every `ios_build_run` — that tool already re-resolves the active device internally, and the `simctl list` shell-out is wasted latency on every rebuild.",
+    },
+    async () => {
+      try {
+        const project = getIosProject();
+        const bootedDevices = await listBootedDevices();
+        const sim = getSimStatus();
+        let activeDeviceUdid: string | null = null;
+        if (sim.phase === 'ready') {
+          activeDeviceUdid = await readActiveDeviceFromServeSim(sim.url);
+        }
+        if (!activeDeviceUdid && bootedDevices.length > 0) {
+          activeDeviceUdid = bootedDevices[0].udid;
+        }
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(
+                { project, bootedDevices, activeDeviceUdid },
+                null,
+                2,
+              ),
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('ios_status', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_build_run',
+    {
+      title: 'Build the Xcode project, install on the simulator, launch',
+      description:
+        "Atomic `xcodebuild → simctl install → simctl terminate → simctl launch` against the booted iOS simulator. Headline tool of the `tango-ios-sim` skill — call after every batch of Swift edits the user accepts so the simulator (which they're watching iframed in the right sidebar) reflects the change. The build is incremental, so the second+ rebuild is fast (~5–15s on M-series). All inputs are optional and default to the values from `ios_status`: `scheme` (from the detected project), `udid` (from serve-sim's active device, or the first booted simulator), `configuration` ('Debug'), `bringForeground` (true — terminate-then-launch so the running app refreshes). On failure, returns `{ok:false, stage, message, errors}` where `errors` is the deduplicated `xcodebuild` `error:` lines (capped at 20) — surface those to the user, don't dump the full log.",
+      inputSchema: {
+        scheme: z.string().optional(),
+        udid: z.string().optional(),
+        configuration: z.enum(['Debug', 'Release']).optional(),
+        bringForeground: z.boolean().optional(),
+      },
+    },
+    async ({ scheme, udid, configuration, bringForeground }) => {
+      try {
+        const workspace = getWorkspaceOrNull();
+        if (!workspace) {
+          return toolErrorResult(
+            'ios_build_run',
+            new Error('no workspace selected'),
+          );
+        }
+        const projectStatus = getIosProject();
+        if (projectStatus.kind === 'none') {
+          return iosBuildErrorResult(
+            'detect',
+            'no Xcode project detected in this workspace (need a *.xcodeproj or *.xcworkspace at depth ≤ 3)',
+          );
+        }
+        if (projectStatus.kind === 'error') {
+          return iosBuildErrorResult('detect', projectStatus.message);
+        }
+        if (projectStatus.kind === 'ambiguous' && !scheme) {
+          return iosBuildErrorResult(
+            'detect',
+            'multiple Xcode projects detected; pass an explicit `scheme` matching one of the candidates (call `ios_status` to see them)',
+          );
+        }
+
+        // Resolve the project to build. For ambiguous, find the candidate
+        // whose schemes include the requested scheme.
+        let project;
+        if (projectStatus.kind === 'detected') {
+          project = projectStatus.project;
+        } else {
+          const match = projectStatus.candidates.find((c) =>
+            c.schemes.includes(scheme!),
+          );
+          if (!match) {
+            return iosBuildErrorResult(
+              'detect',
+              `scheme "${scheme}" not found in any detected Xcode project`,
+            );
+          }
+          project = {
+            projectPath: match.projectPath,
+            projectKind: match.projectKind,
+            scheme: scheme!,
+            bundleId: null,
+            configurations: ['Debug', 'Release'],
+          };
+        }
+
+        // Resolve the device. If the caller passed a udid, use it. Otherwise
+        // prefer the simulator serve-sim is showing; fall back to the first
+        // booted device.
+        let resolvedUdid = udid ?? null;
+        if (!resolvedUdid) {
+          const sim = getSimStatus();
+          if (sim.phase === 'ready') {
+            resolvedUdid = await readActiveDeviceFromServeSim(sim.url);
+          }
+        }
+        if (!resolvedUdid) {
+          const booted = await listBootedDevices();
+          if (booted.length > 0) resolvedUdid = booted[0].udid;
+        }
+        if (!resolvedUdid) {
+          return iosBuildErrorResult(
+            'detect',
+            'no booted iOS simulator (boot one from Xcode → Open Developer Tool → Simulator)',
+          );
+        }
+
+        const result = await iosBuildRun(workspace, project, {
+          scheme,
+          udid: resolvedUdid,
+          configuration,
+          bringForeground,
+        });
+        return {
+          content: [
+            { type: 'text', text: JSON.stringify(result, null, 2) },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('ios_build_run', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_logs_recent',
+    {
+      title: 'Recent unified-log entries from the running app',
+      description:
+        "Reads recent log entries from the booted simulator scoped to the running app's bundle id (`subsystem == \"<bundleId>\"`) and process name (`processImagePath CONTAINS \"<targetName>\"`). Use after `ios_build_run` to investigate runtime issues the user reports. `sinceSeconds` defaults to 30; raise if the issue happened earlier. Pass `bundleId` explicitly when the workspace's detection is `ambiguous` (so there's no auto-resolved bundle id) or when targeting a different installed app. Returns at most 500 entries; `truncated: true` means there were more.",
+      inputSchema: {
+        udid: z.string().optional(),
+        bundleId: z.string().optional(),
+        sinceSeconds: z.number().int().positive().max(3600).optional(),
+      },
+    },
+    async ({ udid, bundleId, sinceSeconds }) => {
+      try {
+        const detectedBundleId =
+          (() => {
+            const p = getIosProject();
+            return p.kind === 'detected' ? p.project.bundleId : null;
+          })();
+        const resolvedBundleId = bundleId ?? detectedBundleId;
+        if (!resolvedBundleId) {
+          return toolErrorResult(
+            'ios_logs_recent',
+            new Error(
+              'no bundle id available — run `ios_build_run` first, call `ios_status` to confirm detection, or pass `bundleId` explicitly',
+            ),
+          );
+        }
+        let resolvedUdid = udid ?? null;
+        if (!resolvedUdid) {
+          const sim = getSimStatus();
+          if (sim.phase === 'ready') {
+            resolvedUdid = await readActiveDeviceFromServeSim(sim.url);
+          }
+        }
+        if (!resolvedUdid) {
+          const booted = await listBootedDevices();
+          if (booted.length > 0) resolvedUdid = booted[0].udid;
+        }
+        if (!resolvedUdid) {
+          return toolErrorResult(
+            'ios_logs_recent',
+            new Error('no booted iOS simulator'),
+          );
+        }
+        const result = await iosLogsRecent({
+          udid: resolvedUdid,
+          bundleId: resolvedBundleId,
+          sinceSeconds,
+        });
+        // Surface validator rejections structurally so terminal-Claude
+        // doesn't mistake them for "no entries in the window."
+        if (result.rejected) {
+          return toolErrorResult(
+            'ios_logs_recent',
+            new Error(`request rejected: ${result.rejected}`),
+          );
+        }
+        return {
+          content: [
+            { type: 'text', text: JSON.stringify(result, null, 2) },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('ios_logs_recent', err);
+      }
     },
   );
 
