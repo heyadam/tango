@@ -1,6 +1,6 @@
 # tango
 
-A split-pane web app for collaborating with terminal-based coding agents. The left pane is an Excalidraw canvas (and other UI surfaces, over time); the right pane is a real interactive terminal running `claude --dangerously-skip-permissions` in your chosen workspace. An in-process MCP server gives Claude tools to read and write the canvas, and a small gpt-5.5 controller agent in the toolbar can drive the visible UI on your behalf — moving the cursor, clicking buttons, and dispatching work to terminal-Claude.
+A split-pane web app for collaborating with terminal-based coding agents. The left pane is an Excalidraw canvas (and other UI surfaces, over time); the right pane is a real interactive terminal running `claude --dangerously-skip-permissions` in your chosen workspace. An optional further-right sidebar mirrors a booted iOS Simulator via [serve-sim](https://github.com/EvanBacon/serve-sim) for tight feedback while building mobile UI. An in-process MCP server gives Claude tools to read and write the canvas, and a small gpt-5.5 controller agent in the toolbar can drive the visible UI on your behalf — moving the cursor, clicking buttons, and dispatching work to terminal-Claude.
 
 The repo is **tango itself**. The directory tango operates on (where Claude's shell runs, where snapshots get written) is a separate workspace you pick from the in-app picker on first launch.
 
@@ -41,6 +41,7 @@ If a fresh clone errors with `posix_spawnp failed`, run `node scripts/fix-node-p
 browser ──HTTP──►  Next request handler                                 ┐
 browser ──HTTP──►  /mcp        StreamableHTTPServerTransport            │
 browser ──HTTP──►  /api/agent  streamText + @ai-sdk/mcp client          │── server.ts
+browser ──HTTP──►  /api/sim/status  → getSimStatus()                    │
 browser ──WS────►  /ws/terminal      → attachPty                        │
 browser ──WS────►  /ws/canvas        → attachCanvas                     │
 browser ──WS────►  /ws/agent-cursor  → attachAgentCursor                ┘
@@ -50,9 +51,12 @@ browser ──WS────►  /ws/agent-cursor  → attachAgentCursor        
                           auto-runs `claude`
 ```
 
+Plus, on darwin, server boot also spawns `npx serve-sim` once and the right-most panel iframes its preview UI.
+
 - **Custom server** ([server.ts](server.ts)) hosts Next, three `WebSocketServer`s, and the MCP transport in one process. Required for `node-pty` and for the SDK's Node-typed transport — don't migrate to `next dev` or edge runtimes.
 - **MCP tools** ([src/server/mcp.ts](src/server/mcp.ts)) split into *canvas* (`get_canvas_state`, `set_canvas_state`, `add_elements`, `clear_canvas`, `screenshot_canvas`) and *agent UI* (`dom_inspect`, `cursor_move`, `cursor_click`, `cursor_type`, `terminal_type`). Terminal-Claude sees all of them; the controller agent sees only the agent UI subset (it's a controller, not the brain — it delegates creative work back into the terminal via `terminal_type`).
 - **Designer canvas** is duplex: Excalidraw changes snapshot to the server every 500ms, and MCP tool writes broadcast back to all connected browsers as scene patches.
+- **Simulator sidebar** ([src/server/sim.ts](src/server/sim.ts), darwin only) mirrors a booted iOS Simulator. Server boot spawns `npx serve-sim`, parses the preview URL from its stdout, and the right-most aside iframes that URL inside a sandboxed frame. Best-effort: if `xcrun` or the package isn't available, the panel surfaces the error and the rest of tango is unaffected.
 
 ## Workspace
 

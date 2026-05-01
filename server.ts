@@ -6,6 +6,7 @@ import { attachCanvas } from './src/server/canvasBridge';
 import { attachAgentCursor } from './src/server/agentCursorBridge';
 import { attachUIMock } from './src/server/uiMockBridge';
 import { mountMcp } from './src/server/mcp';
+import { startSimHelper, stopSimHelper } from './src/server/sim';
 import { ensureWorkspace, resolveWorkspaceAtBoot } from './src/server/workspace';
 import { loadPersistedWorkspace } from './src/server/workspaceState';
 
@@ -40,6 +41,25 @@ app.prepare().then(async () => {
       );
     }
   }
+
+  // Boot the iOS Simulator stream helper. No-op on non-darwin; failures
+  // surface through /api/sim/status, not by crashing the server.
+  startSimHelper();
+
+  let shuttingDown = false;
+  const onShutdown = () => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    stopSimHelper();
+    process.exit(0);
+  };
+  process.on('SIGINT', onShutdown);
+  process.on('SIGTERM', onShutdown);
+  // Belt-and-suspenders for tsx hot-reload and any path that exits without
+  // routing through SIGINT/SIGTERM. 'exit' is sync-only — stopSimHelper is sync.
+  process.on('exit', () => {
+    stopSimHelper();
+  });
 
   const handle = app.getRequestHandler();
   const upgradeHandle = app.getUpgradeHandler();

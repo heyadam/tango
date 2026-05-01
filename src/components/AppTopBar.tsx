@@ -9,6 +9,7 @@ import {
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
+  Smartphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import TangoLogo from '@/components/TangoLogo';
@@ -25,6 +26,7 @@ type WorkspaceSource = 'env' | 'persisted' | 'unset';
 type Props = {
   agentOpen: boolean;
   claudeOpen: boolean;
+  simOpen: boolean;
   mode: WorkspaceMode;
   workspaceName: string | null;
   workspacePath: string | null;
@@ -32,6 +34,7 @@ type Props = {
   onOpenWorkspaceDialog: () => void;
   onToggleAgent: () => void;
   onToggleClaude: () => void;
+  onToggleSim: () => void;
   onModeChange: (mode: WorkspaceMode) => void;
 };
 
@@ -44,6 +47,7 @@ const modes: Array<{ value: WorkspaceMode; label: string }> = [
 export default function AppTopBar({
   agentOpen,
   claudeOpen,
+  simOpen,
   mode,
   workspaceName,
   workspacePath,
@@ -51,6 +55,7 @@ export default function AppTopBar({
   onOpenWorkspaceDialog,
   onToggleAgent,
   onToggleClaude,
+  onToggleSim,
   onModeChange,
 }: Props) {
   return (
@@ -127,6 +132,26 @@ export default function AppTopBar({
             <PanelRightOpen className="size-4" />
           )}
         </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onToggleSim}
+              aria-label={simOpen ? 'Hide simulator sidebar' : 'Show simulator sidebar'}
+              aria-pressed={simOpen}
+              className={cn(
+                'text-muted-foreground hover:text-foreground',
+                simOpen && 'text-foreground',
+              )}
+            >
+              <Smartphone className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {simOpen ? 'Hide simulator' : 'Show simulator'}
+          </TooltipContent>
+        </Tooltip>
       </div>
     </header>
   );
