@@ -562,21 +562,35 @@ function buildServer(): McpServer {
           );
         }
 
-        // Resolve the project to build. For ambiguous, find the candidate
-        // whose schemes include the requested scheme.
+        // Resolve the project to build. For ambiguous, find the candidate(s)
+        // whose schemes include the requested scheme. Two projects can share
+        // a scheme name (common: a generic `App` scheme in both an old and
+        // new project, or a tooling project alongside the main one) — in
+        // that case pick-first would silently build the wrong codebase, so
+        // we error and ask the user to disambiguate by renaming.
         let project;
         if (projectStatus.kind === 'detected') {
           project = projectStatus.project;
         } else {
-          const match = projectStatus.candidates.find((c) =>
+          const matches = projectStatus.candidates.filter((c) =>
             c.schemes.includes(scheme!),
           );
-          if (!match) {
+          if (matches.length === 0) {
             return iosBuildErrorResult(
               'detect',
               `scheme "${scheme}" not found in any detected Xcode project`,
             );
           }
+          if (matches.length > 1) {
+            const paths = matches
+              .map((m) => m.projectPath)
+              .join(', ');
+            return iosBuildErrorResult(
+              'detect',
+              `scheme "${scheme}" matches multiple Xcode projects (${paths}); rename the scheme in one of them or remove the unwanted project from the workspace to disambiguate`,
+            );
+          }
+          const match = matches[0];
           project = {
             projectPath: match.projectPath,
             projectKind: match.projectKind,

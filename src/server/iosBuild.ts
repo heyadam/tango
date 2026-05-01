@@ -633,16 +633,20 @@ export async function iosBuildRun(
     };
   }
 
-  let bundleId = project.bundleId;
-  if (!bundleId) {
-    bundleId = await readBundleIdFromAppBundle(appPath);
-  }
+  // Always read the bundle id from the .app we just installed. `project.bundleId`
+  // was resolved at detection time for the *default* scheme; if the caller
+  // passed `opts.scheme` and the project has multiple schemes mapping to
+  // different PRODUCT_BUNDLE_IDENTIFIERs (Dev/Prod splits), trusting the cached
+  // value would terminate/launch the wrong bundle. The .app's Info.plist is
+  // authoritative for what we just installed.
+  let bundleId = await readBundleIdFromAppBundle(appPath);
+  if (!bundleId) bundleId = project.bundleId;
   if (!bundleId) {
     return {
       ok: false,
       stage: 'install',
       message:
-        'could not determine bundle id (PRODUCT_BUNDLE_IDENTIFIER) from project or built .app',
+        'could not determine bundle id (PRODUCT_BUNDLE_IDENTIFIER) from built .app or detection cache',
       errors: [],
     };
   }
