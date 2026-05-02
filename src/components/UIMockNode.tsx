@@ -397,7 +397,7 @@ function Editable({
         onEnd();
       }}
       className={cn(
-        'outline-none ring-2 ring-blue-500/60 ring-offset-1 cursor-text',
+        'outline-none ring-2 ring-ring/60 ring-offset-1 cursor-text',
         className,
       )}
       role="textbox"

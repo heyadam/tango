@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { recentProjects, type RecentProject } from '@/lib/recentProjects';
@@ -254,10 +255,12 @@ export default function WorkspaceDialog({
         </DialogHeader>
 
         {envLocked && (
-          <div className="rounded-md border border-orange-300 bg-orange-100 p-3 text-xs text-orange-900">
-            <code className="font-mono">TANGO_WORKSPACE</code> is set to{' '}
-            <code className="font-mono break-all">{current.path}</code>. The picker is read-only.
-          </div>
+          <Alert variant="warning">
+            <AlertDescription>
+              <code className="font-mono">TANGO_WORKSPACE</code> is set to{' '}
+              <code className="font-mono break-all">{current.path}</code>. The picker is read-only.
+            </AlertDescription>
+          </Alert>
         )}
 
         {state.kind === 'softWarnings' ? (
@@ -373,9 +376,9 @@ export default function WorkspaceDialog({
               </p>
 
               {state.kind === 'error' && (
-                <div className="rounded-md border border-pink-300 bg-pink-100 p-3 text-xs text-pink-900">
-                  {state.reason}
-                </div>
+                <Alert variant="destructive">
+                  <AlertDescription>{state.reason}</AlertDescription>
+                </Alert>
               )}
             </form>
 
@@ -438,14 +441,14 @@ function SoftWarningsView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="rounded-md border border-orange-300 bg-orange-100 p-3 text-xs text-orange-900">
-        <p className="font-medium">Workspace is set, with warnings.</p>
-        <p className="mt-1 text-orange-800/90">
+      <Alert variant="warning">
+        <AlertTitle>Workspace is set, with warnings.</AlertTitle>
+        <AlertDescription>
           We couldn&apos;t merge some managed files in{' '}
           <code className="font-mono">{path}</code>. Tango is usable; the listed files were
           left untouched and the affected features may not work until you fix or remove them.
-        </p>
-      </div>
+        </AlertDescription>
+      </Alert>
       <ul className="space-y-1 text-xs">
         {warnings.map((w) => (
           <li

@@ -128,8 +128,8 @@ Sizes accept strings with units (`"35%"`, `"400px"`) or bare numbers (percent).
 
 The app uses a shadcn-style stack (Tailwind v4 + Radix + CVA + `cn()`). Two seams matter:
 
-- **Primitives** live in [src/components/ui/](src/components/ui/) — `button`, `input`, `dialog`, `dropdown-menu`, `select`, `tooltip`, `hover-card`, `command`, `accordion`, `badge`, `button-group`, `input-group`, `separator`, `spinner`, `textarea`. Higher-level chat composites live in [src/components/ai-elements/](src/components/ai-elements/). All of them use `cn()` from [src/lib/utils.ts](src/lib/utils.ts) for class merging and CVA for variant systems.
-- **Tokens** live in [src/app/globals.css](src/app/globals.css) — the `@theme inline` block exposes them as Tailwind utilities (`bg-background`, `text-muted-foreground`, `border-border`, etc.); the OKLCH values themselves sit in `:root` (light, currently dead) and `.dark` (the active palette, since [layout.tsx](src/app/layout.tsx) hardcodes `dark` on `<html>`). Adding a new themable color = three edits in this one file.
+- **Primitives** live in [src/components/ui/](src/components/ui/) — `alert`, `button`, `input`, `dialog`, `dropdown-menu`, `select`, `tabs`, `tooltip`, `hover-card`, `command`, `accordion`, `badge`, `button-group`, `input-group`, `separator`, `spinner`, `textarea`. Higher-level chat composites live in [src/components/ai-elements/](src/components/ai-elements/). Tango-specific composites that aren't generic shadcn primitives live in [src/components/](src/components/) — notably [PanelHeader.tsx](src/components/PanelHeader.tsx), the shared chrome for every full-height panel (Terminal / Simulator / LeftPanel / AgentSidebar). All use `cn()` from [src/lib/utils.ts](src/lib/utils.ts) for class merging and CVA for variant systems.
+- **Tokens** live in [src/app/globals.css](src/app/globals.css) — the `@theme inline` block exposes them as Tailwind utilities (`bg-background`, `text-muted-foreground`, `border-border`, etc.); the OKLCH values themselves sit in `:root` (the active tango brand palette: navy fg, cream bg, purple primary, mint secondary, peach + pink accents) and `.dark` (currently inactive — no `.dark` class is set on `<html>`, but the palette is kept up to date for the day a theme switcher lands). Adding a new themable color = three edits in this one file.
 
 **Rule for feature components: use semantic tokens, not raw Tailwind palette utilities.** No `bg-neutral-*` / `border-neutral-*` / `text-neutral-*` / hex literals in `src/components/*.tsx` or `src/app/*.tsx` outside the primitives. The semantic mapping is:
 
@@ -146,8 +146,10 @@ The app uses a shadcn-style stack (Tailwind v4 + Radix + CVA + `cn()`). Two seam
 | Captions / labels / placeholders | `text-muted-foreground` |
 | Very muted / decorative | `text-muted-foreground/60` |
 | Selection / focus rings | `ring-ring/50` |
+| Error / destructive surface | `bg-destructive text-destructive-foreground` (or `text-destructive` on inline error text, `<Alert variant="destructive">` for boxed errors) |
+| Warning surface | `bg-warning text-warning-foreground` (or `<Alert variant="warning">` for boxed warnings, `<Button variant="warning">` for warning CTAs) |
 
-Status colors (amber for warnings, red for errors, sky for info) are kept as raw Tailwind utilities — they're intentional accents, not theme surfaces.
+Sky/info surfaces don't have a token yet — add one (`--info` / `--info-foreground` in `globals.css` + the matching `@theme inline` exposure) the first time you need it; don't reach for raw `bg-sky-*`.
 
 **Known exceptions** (non-CSS rendering layers that can't consume CSS variables directly):
 

@@ -147,25 +147,24 @@ function WorkspacePill({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
-          type="button"
+        <Button
+          variant={isUnset ? 'warning' : 'outline'}
+          size="sm"
           onClick={onClick}
           aria-label={`Workspace: ${label}. Click to change.`}
           className={cn(
-            'flex h-7 items-center gap-1.5 rounded-md border px-2 text-xs font-medium transition-colors',
-            isUnset
-              ? 'border-orange-300 bg-orange-100 text-orange-900 hover:border-orange-400 hover:bg-orange-200'
-              : 'border-border bg-muted text-foreground hover:border-foreground/30 hover:bg-accent',
+            'gap-1.5 px-2 text-xs font-medium',
+            !isUnset && 'bg-muted hover:bg-accent',
           )}
         >
           {isUnset ? (
-            <FolderOpen className="size-3.5 text-orange-600" />
+            <FolderOpen className="size-3.5" />
           ) : (
             <Folder className="size-3.5 text-muted-foreground" />
           )}
           <span className="max-w-[16ch] truncate sm:max-w-[24ch]">{label}</span>
           {isEnvLocked && <Lock className="size-3 text-muted-foreground" />}
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[28rem] whitespace-pre-line break-all font-mono">
         {tooltipBody}

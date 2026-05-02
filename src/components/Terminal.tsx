@@ -5,6 +5,7 @@ import { Terminal as Xterm } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 import { Code2 } from 'lucide-react';
+import PanelHeader from '@/components/PanelHeader';
 import { terminalBus } from '@/lib/terminalBus';
 import { openWS } from '@/lib/wsClient';
 
@@ -148,10 +149,7 @@ export default function Terminal() {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex h-12 shrink-0 items-center gap-1.5 border-b border-border bg-panel-header px-3 text-xs font-medium text-panel-header-foreground">
-        <Code2 className="size-3.5 text-panel-header-foreground/70" />
-        <span>Claude Code</span>
-      </div>
+      <PanelHeader icon={Code2} title="Claude Code" />
       <div ref={containerRef} className="min-h-0 flex-1 bg-[#0a0a0a] p-2" />
     </div>
   );
