@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Smartphone } from 'lucide-react';
+import PanelHeader from '@/components/PanelHeader';
 import { Spinner } from '@/components/ui/spinner';
 import type { SimStatus } from '@/server/sim';
 
@@ -53,10 +54,7 @@ export default function SimulatorPanel() {
 
   return (
     <div className="flex h-full w-full flex-col bg-background">
-      <div className="flex h-12 shrink-0 items-center gap-1.5 border-b border-border bg-panel-header px-3 text-xs font-medium text-panel-header-foreground">
-        <Smartphone className="size-3.5 text-panel-header-foreground/70" />
-        <span>Simulator</span>
-      </div>
+      <PanelHeader icon={Smartphone} title="Simulator" />
       <div className="relative min-h-0 flex-1">
         <SimulatorBody status={status} />
       </div>

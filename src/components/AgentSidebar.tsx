@@ -3,6 +3,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Sparkles } from 'lucide-react';
+import PanelHeader from '@/components/PanelHeader';
 import {
   Conversation,
   ConversationContent,
@@ -52,94 +53,83 @@ export default function AgentSidebar({ open }: Props) {
         open ? 'w-[380px] border-r border-border' : 'w-0',
       )}
     >
-      <div className="flex h-12 shrink-0 items-center justify-between border-b border-border px-2">
-        {open && (
-          <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-            <Sparkles className="size-3.5 text-muted-foreground" />
-            <span>Agent</span>
-          </div>
-        )}
+      <PanelHeader icon={Sparkles} title="Agent" />
+
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <Conversation>
+          <ConversationContent className="gap-6 px-3 py-4">
+            {messages.length === 0 ? (
+              <ConversationEmptyState
+                title="Talk to the agent"
+                description="Ask the agent to delegate work to Claude in the terminal."
+                icon={<Sparkles className="size-6" />}
+              />
+            ) : (
+              messages.map((m) => (
+                <Message from={m.role} key={m.id}>
+                  <MessageContent>
+                    {m.parts.map((part, i) => {
+                      if (part.type === 'text') {
+                        return (
+                          <MessageResponse key={i}>
+                            {part.text}
+                          </MessageResponse>
+                        );
+                      }
+                      if (
+                        typeof part.type === 'string' &&
+                        part.type.startsWith('tool-')
+                      ) {
+                        const name = part.type.slice('tool-'.length);
+                        const p = part as unknown as {
+                          state?: string;
+                          input?: unknown;
+                          output?: unknown;
+                        };
+                        return (
+                          <div
+                            key={i}
+                            className="rounded border border-border bg-muted px-2 py-1 font-mono text-[10px] text-foreground"
+                          >
+                            <div className="text-primary">
+                              {name}
+                              {p.state ? ` · ${p.state}` : ''}
+                            </div>
+                            {p.input !== undefined && (
+                              <pre className="mt-0.5 whitespace-pre-wrap text-muted-foreground">
+                                {JSON.stringify(p.input, null, 2)}
+                              </pre>
+                            )}
+                            {p.output !== undefined && (
+                              <pre className="mt-0.5 whitespace-pre-wrap text-muted-foreground/70">
+                                → {JSON.stringify(p.output, null, 2)}
+                              </pre>
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
+                  </MessageContent>
+                </Message>
+              ))
+            )}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
       </div>
 
-      {open && (
-        <>
-          <div className="relative flex min-h-0 flex-1 flex-col">
-            <Conversation>
-              <ConversationContent className="gap-6 px-3 py-4">
-                {messages.length === 0 ? (
-                  <ConversationEmptyState
-                    title="Talk to the agent"
-                    description="Ask the agent to delegate work to Claude in the terminal."
-                    icon={<Sparkles className="size-6" />}
-                  />
-                ) : (
-                  messages.map((m) => (
-                    <Message from={m.role} key={m.id}>
-                      <MessageContent>
-                        {m.parts.map((part, i) => {
-                          if (part.type === 'text') {
-                            return (
-                              <MessageResponse key={i}>
-                                {part.text}
-                              </MessageResponse>
-                            );
-                          }
-                          if (
-                            typeof part.type === 'string' &&
-                            part.type.startsWith('tool-')
-                          ) {
-                            const name = part.type.slice('tool-'.length);
-                            const p = part as unknown as {
-                              state?: string;
-                              input?: unknown;
-                              output?: unknown;
-                            };
-                            return (
-                              <div
-                                key={i}
-                                className="rounded border border-border bg-muted px-2 py-1 font-mono text-[10px] text-foreground"
-                              >
-                                <div className="text-violet-700">
-                                  {name}
-                                  {p.state ? ` · ${p.state}` : ''}
-                                </div>
-                                {p.input !== undefined && (
-                                  <pre className="mt-0.5 whitespace-pre-wrap text-muted-foreground">
-                                    {JSON.stringify(p.input, null, 2)}
-                                  </pre>
-                                )}
-                                {p.output !== undefined && (
-                                  <pre className="mt-0.5 whitespace-pre-wrap text-muted-foreground/70">
-                                    → {JSON.stringify(p.output, null, 2)}
-                                  </pre>
-                                )}
-                              </div>
-                            );
-                          }
-                          return null;
-                        })}
-                      </MessageContent>
-                    </Message>
-                  ))
-                )}
-              </ConversationContent>
-              <ConversationScrollButton />
-            </Conversation>
-          </div>
-
-          <div className="shrink-0 border-t border-border p-3">
-            <PromptInput onSubmit={handleSubmit}>
-              <PromptInputBody>
-                <PromptInputTextarea placeholder="Message the agent…" />
-              </PromptInputBody>
-              <PromptInputFooter>
-                <PromptInputTools />
-                <PromptInputSubmit status={status} onStop={stop} />
-              </PromptInputFooter>
-            </PromptInput>
-          </div>
-        </>
-      )}
+      <div className="shrink-0 border-t border-border p-3">
+        <PromptInput onSubmit={handleSubmit}>
+          <PromptInputBody>
+            <PromptInputTextarea placeholder="Message the agent…" />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputTools />
+            <PromptInputSubmit status={status} onStop={stop} />
+          </PromptInputFooter>
+        </PromptInput>
+      </div>
     </aside>
   );
 }

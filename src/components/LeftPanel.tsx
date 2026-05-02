@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import AgentSidebar from './AgentSidebar';
 import MoodboardPanel from './MoodboardPanel';
+import PanelHeader from './PanelHeader';
 import SketchPanel from './SketchPanel';
 import UIPanel from './UIPanel';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   PanelHeaderLeftSlot,
   PanelHeaderRightSlot,
 } from '@/lib/leftPanelSlots';
-import { cn } from '@/lib/utils';
 import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 type Props = {
@@ -35,53 +36,48 @@ export default function LeftPanel({
   return (
     <div className="flex h-full w-full">
       <AgentSidebar open={agentSidebarOpen} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-panel-header px-3 text-panel-header-foreground">
-          <div
-            ref={setLeftSlot}
-            className="flex min-w-0 flex-1 items-center gap-2"
-          />
-          <div
-            role="tablist"
-            aria-label="Workspace mode"
-            className="flex h-8 shrink-0 items-center rounded-md border border-panel-header-foreground/20 bg-panel-header-foreground/10 p-0.5"
-          >
-            {modes.map((item) => (
-              <button
-                key={item.value}
-                type="button"
-                role="tab"
-                aria-selected={mode === item.value}
-                onClick={() => onModeChange(item.value)}
-                className={cn(
-                  'h-7 min-w-20 rounded px-2 text-xs font-medium text-panel-header-foreground/70 transition-colors hover:text-panel-header-foreground sm:min-w-24 sm:px-3',
-                  mode === item.value &&
-                    'bg-panel-header-foreground text-panel-header shadow-sm hover:text-panel-header',
-                )}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <div
-            ref={setRightSlot}
-            className="flex min-w-0 flex-1 items-center justify-end gap-2"
-          />
-        </header>
+      <Tabs
+        value={mode}
+        onValueChange={(v) => onModeChange(v as WorkspaceMode)}
+        activationMode="manual"
+        className="flex min-w-0 flex-1 flex-col gap-0"
+      >
+        <PanelHeader
+          leftSlotRef={setLeftSlot}
+          rightSlotRef={setRightSlot}
+          centerSlot={
+            <TabsList
+              aria-label="Workspace mode"
+              className="bg-panel-header-foreground/10 border border-panel-header-foreground/20 text-panel-header-foreground/70"
+            >
+              {modes.map((item) => (
+                <TabsTrigger
+                  key={item.value}
+                  value={item.value}
+                  className="min-w-20 sm:min-w-24 sm:px-3 hover:text-panel-header-foreground data-[state=active]:bg-panel-header-foreground data-[state=active]:text-panel-header"
+                >
+                  {item.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          }
+        />
         <div className="min-h-0 flex-1">
           <PanelHeaderLeftSlot.Provider value={leftSlot}>
             <PanelHeaderRightSlot.Provider value={rightSlot}>
-              {mode === 'moodboard' ? (
-                <MoodboardPanel />
-              ) : mode === 'ui' ? (
-                <UIPanel />
-              ) : (
+              <TabsContent value="sketch" className="h-full">
                 <SketchPanel />
-              )}
+              </TabsContent>
+              <TabsContent value="moodboard" className="h-full">
+                <MoodboardPanel />
+              </TabsContent>
+              <TabsContent value="ui" className="h-full">
+                <UIPanel />
+              </TabsContent>
             </PanelHeaderRightSlot.Provider>
           </PanelHeaderLeftSlot.Provider>
         </div>
-      </div>
+      </Tabs>
     </div>
   );
 }

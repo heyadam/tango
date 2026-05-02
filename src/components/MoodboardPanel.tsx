@@ -591,7 +591,7 @@ export default function MoodboardPanel() {
           {(visibleStatus || visibleError) && (
             <div className="mt-2 px-1 font-mono text-[11px]">
               {visibleError ? (
-                <span className="text-pink-700">{visibleError}</span>
+                <span className="text-destructive">{visibleError}</span>
               ) : (
                 <span className="text-muted-foreground">{visibleStatus}</span>
               )}
