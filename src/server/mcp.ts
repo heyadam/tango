@@ -30,6 +30,13 @@ import {
 import { pushCursorCommand, requestInspect } from './agentCursorBridge';
 import type { CanvasElement } from '@/lib/canvasProtocol';
 import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
+import {
+  type Edge as FlowEdge,
+  type Screen as FlowScreen,
+  layoutScreenFlow,
+  screenFlowElements,
+  validateScreenFlowInput,
+} from './screenFlow';
 import { recordNote } from './memory';
 import { getIosProject, getWorkspaceOrNull } from './workspace';
 import {
@@ -87,6 +94,44 @@ const uiScreenSchema = z.object({
 const uiSpecSchema = z.object({
   screens: z.array(uiScreenSchema),
 });
+
+// Screen-flow spec — the input shape for `set_screen_flow`. Aligned with
+// `Screen` / `Edge` in src/server/screenFlow.ts. Strict enums on `kind` so
+// terminal-Claude gets a useful validation error for typos. Bounded fields
+// keep the rendered card readable; `name.max(120)` accommodates real UIKit
+// `ViewController` names that routinely exceed 60 chars.
+const flowScreenSchema = z.object({
+  id: z.string().min(1).max(120),
+  name: z.string().min(1).max(120),
+  kind: z.enum(['swiftui', 'uikit', 'storyboard']),
+  filePath: z.string().max(240).optional(),
+  summary: z.string().max(120).optional(),
+  isEntry: z.boolean().optional(),
+});
+
+const flowEdgeSchema = z.object({
+  from: z.string().min(1).max(120),
+  to: z.string().min(1).max(120),
+  kind: z.enum(['push', 'sheet', 'cover', 'present', 'segue', 'tab']),
+  // Cap matches the in-card truncation budget — kept in sync so Claude
+  // can't silently lose chars to a render-time `slice` that the schema
+  // didn't warn about.
+  label: z.string().max(24).optional(),
+});
+
+const flowOptionsSchema = z
+  .object({
+    append: z.boolean().optional(),
+    cardWidth: z.number().int().min(120).max(800).optional(),
+    cardHeight: z.number().int().min(80).max(600).optional(),
+    origin: z
+      .object({
+        x: z.number().min(-10000).max(10000),
+        y: z.number().min(-10000).max(10000),
+      })
+      .optional(),
+  })
+  .optional();
 
 function toolErrorResult(toolName: string, err: unknown) {
   return {
@@ -226,6 +271,48 @@ function buildServer(): McpServer {
       } catch (err) {
         return toolErrorResult('screenshot_canvas', err);
       }
+    },
+  );
+
+  server.registerTool(
+    'set_screen_flow',
+    {
+      title: 'Render an app screen-flow diagram',
+      description:
+        "Render an app's screens + navigation as a Figma-style flow diagram on the Excalidraw canvas. Hand it a parsed graph: `screens` (each with stable `id`, `name` ≤120 chars, `kind`: 'swiftui' | 'uikit' | 'storyboard', optional `filePath`, `summary` ≤120 chars, and `isEntry` for the launch screen) plus `edges` connecting screen ids by navigation `kind` ('push' | 'sheet' | 'cover' | 'present' | 'segue' | 'tab', with optional `label` ≤24 chars). The tool runs a layered BFS layout (entries on top, children below), draws each screen as a rounded card with title + meta + summary, and connects them with kind-colored arrows. Defaults to replacing the canvas; pass `options.append: true` to add alongside existing content — when appending, also pass `options.origin: {x, y}` pointing at empty space (call `get_canvas_state` first to find a free area), or the new diagram lands on top of the existing one at the default `(200, 200)`. Use this once with the full graph rather than dribbling elements in via `add_elements`. Designed for the `tango-ios-map` skill.",
+      inputSchema: {
+        screens: z.array(flowScreenSchema).min(1).max(300),
+        edges: z.array(flowEdgeSchema).max(3000),
+        options: flowOptionsSchema,
+      },
+    },
+    async ({ screens, edges, options }) => {
+      const screenList = screens as FlowScreen[];
+      const edgeList = edges as FlowEdge[];
+      const validation = validateScreenFlowInput(screenList, edgeList);
+      if (validation) {
+        return toolErrorResult('set_screen_flow', new Error(validation));
+      }
+      const layout = layoutScreenFlow(screenList, edgeList, {
+        cardWidth: options?.cardWidth,
+        cardHeight: options?.cardHeight,
+        originX: options?.origin?.x,
+        originY: options?.origin?.y,
+      });
+      const elements = screenFlowElements(screenList, edgeList, layout);
+      if (options?.append) {
+        appendElementsFromServer(elements);
+      } else {
+        setCanvasFromServer(elements);
+      }
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Rendered ${screenList.length} screen(s), ${edgeList.length} edge(s) on the canvas.`,
+          },
+        ],
+      };
     },
   );
 
