@@ -171,7 +171,9 @@ function renderIosSection(
 
 This workspace is the Xcode ${p.projectKind} at \`${rel}\`, scheme \`${p.scheme}\`${bundleClause}. The booted iOS simulator is iframed into the right sidebar via \`serve-sim\`, so the user is *watching* the simulator while you work.
 
-Build, install, and launch the app on that simulator with the \`tango-canvas\` MCP tools — \`ios_status\` (sanity-check the project + booted devices), \`ios_build_run\` (atomic build → install → launch), \`ios_logs_recent\` (read the running app's recent log output). \`ios_build_run\` is the headline tool — call it after every batch of Swift edits the user accepts; the build is incremental, so it's the closest thing to hot reload without source modifications. ${skillRef}
+Build, install, and launch the app on that simulator with the \`tango-canvas\` MCP tools — \`ios_status\` (sanity-check the project + booted devices), \`ios_build_run\` (atomic build → install → launch), \`ios_logs_recent\` (read the running app's recent log output). \`ios_build_run\` is the headline tool. The build is incremental, so it's the closest thing to hot reload without source modifications. ${skillRef}
+
+**Rule:** any time you edit a \`.swift\` file in this workspace, immediately load the \`tango-ios-sim\` skill and call \`ios_build_run\` to reload the simulator. The user is watching it — design changes don't exist for them until the running app reflects them. Don't wait for the user to ask, don't batch edits silently, don't skip the rebuild because "they'll see it next time."
 
 `;
   }
@@ -183,6 +185,8 @@ Build, install, and launch the app on that simulator with the \`tango-canvas\` M
   return `## iOS simulator
 
 This workspace contains multiple Xcode projects (${list}) and tango couldn't pick one automatically. Call \`ios_status\` first to see the candidates and their schemes, then pass an explicit \`scheme\` (and \`udid\` if multiple simulators are booted) to \`ios_build_run\`. The booted iOS simulator is iframed into the right sidebar via \`serve-sim\`. ${skillRef}
+
+**Rule:** any time you edit a \`.swift\` file, load the \`tango-ios-sim\` skill and call \`ios_build_run\` (with the resolved \`scheme\`) to reload the simulator. The user is watching it — design changes don't exist for them until the running app reflects them.
 
 `;
 }
@@ -806,11 +810,13 @@ When the app shows up on the simulator the user can see it. If they describe a r
 
 ### 4. The hot-reload story
 
-There's no native SwiftUI hot reload. The dev loop here is:
+**Rule:** after **any** Swift edit lands, call \`ios_build_run\` immediately — same turn, no batching. The user is watching the simulator iframed in their right sidebar; the change isn't real to them until the running app reflects it.
+
+There's no native SwiftUI hot reload, so the dev loop is:
 
 1. User asks for a UI/code change.
 2. You edit the \`.swift\` file (use \`tango-swiftui\` for UI mock-driven edits if it's a layout change; otherwise \`Read\` + \`Edit\` directly).
-3. After the edit lands, **immediately call \`ios_build_run\`** — don't wait for the user to ask. xcodebuild is incremental, so the second build is much faster than the first. Realistic ranges on M-series silicon: ~5–15s for a small UI tweak, 20–60s for projects with deep package graphs or first-build SwiftPM resolution, and ~2–5 minutes for a fully cold rebuild. Set the user's expectations accordingly — don't promise "instant."
+3. Call \`ios_build_run\` with no overrides unless the user gave you a reason. xcodebuild is incremental, so the second build is much faster than the first. Realistic ranges on M-series silicon: ~5–15s for a small UI tweak, 20–60s for projects with deep package graphs or first-build SwiftPM resolution, and ~2–5 minutes for a fully cold rebuild. Set the user's expectations accordingly — don't promise "instant."
 4. Briefly tell the user the rebuild is in flight and what duration it took.
 
 After several rebuilds in a session, if the loop feels slow and the user asks for true sub-second hot reload, tell them about [Inject](https://github.com/krzysztofzablocki/Inject):
