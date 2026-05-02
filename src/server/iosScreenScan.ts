@@ -135,7 +135,12 @@ const NON_DESTINATION_TYPES = new Set([
 // ordering, and Xcode emits `id` first in real `.storyboard` files which
 // silently dropped the `customClass` capture. Same lesson as the segue
 // pattern below: tag-body match + per-attribute regex is the robust shape.
-const STORYBOARD_VC_TAG_RE = /<viewController\b([^>]*?)\/?>/g;
+//
+// The opening regex captures (1) the attribute body and (2) an optional
+// trailing `/` so the caller can tell self-closing tags apart from regular
+// open tags — needed to find the matching `</viewController>` for the
+// non-self-closing case (which contains the segues).
+const STORYBOARD_VC_OPEN_RE = /<viewController\b([^>]*?)(\/)?>/g;
 const STORYBOARD_VC_CUSTOM_CLASS_RE = /\bcustomClass="(\w+)"/;
 const STORYBOARD_VC_ID_RE = /\bid="([\w-]+)"/;
 const STORYBOARD_VC_INITIAL_RE = /\bisInitialViewController="YES"/;
@@ -195,27 +200,52 @@ export function parseUIKitScreens(
   return screens;
 }
 
+// Internal: split a storyboard XML blob into per-viewController scenes,
+// each carrying the inner body so segue attribution + destination
+// translation can both happen from the same parse. Single source of truth
+// for `parseStoryboardScreens` / `parseStoryboardEdges` / entry detection
+// — they all need the same scene boundaries and would otherwise diverge.
+type StoryboardScene = {
+  rawId: string | null;       // the storyboard scene id (e.g. "abc-1")
+  customClass: string | null; // the runtime class (e.g. "LoginVC")
+  stableId: string;           // customClass ?? rawId — used as the screen id
+  isInitial: boolean;
+  body: string;               // content between open and close tags ("" for self-closing)
+};
+
+function findStoryboardScenes(content: string): StoryboardScene[] {
+  const scenes: StoryboardScene[] = [];
+  const seen = new Set<string>();
+  for (const m of content.matchAll(STORYBOARD_VC_OPEN_RE)) {
+    const attrs = m[1] ?? '';
+    const selfClose = m[2] === '/';
+    const customClass = STORYBOARD_VC_CUSTOM_CLASS_RE.exec(attrs)?.[1] ?? null;
+    const rawId = STORYBOARD_VC_ID_RE.exec(attrs)?.[1] ?? null;
+    const isInitial = STORYBOARD_VC_INITIAL_RE.test(attrs);
+    const stableId = customClass ?? rawId;
+    if (!stableId || seen.has(stableId)) continue;
+    seen.add(stableId);
+    let body = '';
+    if (!selfClose && typeof m.index === 'number') {
+      const afterOpen = m.index + m[0].length;
+      const closeIdx = content.indexOf('</viewController>', afterOpen);
+      body = closeIdx >= 0 ? content.slice(afterOpen, closeIdx) : '';
+    }
+    scenes.push({ rawId, customClass, stableId, isInitial, body });
+  }
+  return scenes;
+}
+
 export function parseStoryboardScreens(
   content: string,
   filePath: string | undefined,
 ): ScannedScreen[] {
-  const screens: ScannedScreen[] = [];
-  const seen = new Set<string>();
-  for (const m of content.matchAll(STORYBOARD_VC_TAG_RE)) {
-    const body = m[1] ?? '';
-    const customClass = STORYBOARD_VC_CUSTOM_CLASS_RE.exec(body)?.[1];
-    const id = STORYBOARD_VC_ID_RE.exec(body)?.[1];
-    const stableId = customClass ?? id;
-    if (!stableId || seen.has(stableId)) continue;
-    seen.add(stableId);
-    screens.push({
-      id: stableId,
-      name: customClass ?? humanizeStoryboardId(id ?? stableId),
-      kind: 'storyboard',
-      filePath,
-    });
-  }
-  return screens;
+  return findStoryboardScenes(content).map((s) => ({
+    id: s.stableId,
+    name: s.customClass ?? humanizeStoryboardId(s.rawId ?? s.stableId),
+    kind: 'storyboard',
+    filePath,
+  }));
 }
 
 function humanizeStoryboardId(id: string): string {
@@ -269,21 +299,44 @@ export function parseSwiftEdges(content: string, from: string): ScannedEdge[] {
 //   kind="show" / "push"            → push
 //   kind="modal" / "presentModally" → sheet
 //   anything else                    → segue
-export function parseStoryboardEdges(
-  content: string,
-  fromId: string,
-): ScannedEdge[] {
+//
+// Edges are attributed to their source viewController (the scene whose body
+// contains the `<segue>` element) rather than to the file's first scene —
+// real `.storyboard` files routinely declare many view controllers, and
+// pre-fix every segue from a non-first scene was misattributed.
+//
+// Destinations in storyboard XML are scene ids (e.g. `def-2`), but
+// `parseStoryboardScreens` promotes `customClass` to the screen id when
+// present. We translate scene-id → stableId via an in-file map so segues to
+// customClassed scenes don't dangle. Cross-storyboard refs (destinations
+// not in this file) pass through unchanged and surface as
+// `screenFlowDiagnostics.danglingEdges` downstream.
+export function parseStoryboardEdges(content: string): ScannedEdge[] {
+  const scenes = findStoryboardScenes(content);
+  const sceneToStable = new Map<string, string>();
+  for (const s of scenes) {
+    if (s.rawId) sceneToStable.set(s.rawId, s.stableId);
+  }
   const edges: ScannedEdge[] = [];
-  for (const m of content.matchAll(STORYBOARD_SEGUE_TAG_RE)) {
-    const body = m[1] ?? '';
-    const destMatch = SEGUE_DEST_RE.exec(body);
-    if (!destMatch) continue;
-    const dest = destMatch[1];
-    const kindAttr = SEGUE_KIND_RE.exec(body)?.[1];
-    let kind: EdgeKind = 'segue';
-    if (kindAttr === 'show' || kindAttr === 'push') kind = 'push';
-    else if (kindAttr === 'modal' || kindAttr === 'presentModally') kind = 'sheet';
-    edges.push({ from: fromId, to: dest, kind });
+  const seen = new Set<string>();
+  for (const scene of scenes) {
+    if (!scene.body) continue;
+    for (const m of scene.body.matchAll(STORYBOARD_SEGUE_TAG_RE)) {
+      const body = m[1] ?? '';
+      const destMatch = SEGUE_DEST_RE.exec(body);
+      if (!destMatch) continue;
+      const rawDest = destMatch[1];
+      const toStable = sceneToStable.get(rawDest) ?? rawDest;
+      if (toStable === scene.stableId) continue; // self-loop
+      const kindAttr = SEGUE_KIND_RE.exec(body)?.[1];
+      let kind: EdgeKind = 'segue';
+      if (kindAttr === 'show' || kindAttr === 'push') kind = 'push';
+      else if (kindAttr === 'modal' || kindAttr === 'presentModally') kind = 'sheet';
+      const key = `${scene.stableId}|${toStable}|${kind}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      edges.push({ from: scene.stableId, to: toStable, kind });
+    }
   }
   return edges;
 }
@@ -314,13 +367,8 @@ export function detectEntryIds(content: string, kind: 'swift' | 'storyboard'): s
       if (m[1]) ids.push(m[1]);
     }
   } else {
-    for (const m of content.matchAll(STORYBOARD_VC_TAG_RE)) {
-      const body = m[1] ?? '';
-      if (!STORYBOARD_VC_INITIAL_RE.test(body)) continue;
-      const customClass = STORYBOARD_VC_CUSTOM_CLASS_RE.exec(body)?.[1];
-      const id = STORYBOARD_VC_ID_RE.exec(body)?.[1];
-      const stableId = customClass ?? id;
-      if (stableId) ids.push(stableId);
+    for (const s of findStoryboardScenes(content)) {
+      if (s.isInitial) ids.push(s.stableId);
     }
   }
   return ids;
@@ -617,9 +665,12 @@ export async function scanIosScreens(opts: ScanOpts): Promise<ScanResult> {
       fileEdges = primary ? parseSwiftEdges(content, primary) : [];
       fileEntries = detectEntryIds(content, 'swift');
     } else {
+      // Storyboards: per-scene segue attribution + scene-id→stableId
+      // destination translation happen inside `parseStoryboardEdges`, so the
+      // caller doesn't pass a `from` — every viewController contributes its
+      // own outgoing edges.
       fileScreens = parseStoryboardScreens(content, abs);
-      const primary = fileScreens[0]?.id;
-      fileEdges = primary ? parseStoryboardEdges(content, primary) : [];
+      fileEdges = parseStoryboardEdges(content);
       fileEntries = detectEntryIds(content, 'storyboard');
     }
 

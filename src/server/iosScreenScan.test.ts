@@ -238,18 +238,101 @@ NavigationLink(destination: Detail()) {}
 
 describe('parseStoryboardEdges', () => {
   it('translates segue kind to push / sheet / segue', () => {
+    // Wrap in a viewController scene so segues have an attribution source —
+    // segues at file scope (no enclosing scene) are unattributable and
+    // correctly dropped.
     const xml = `
-<segue destination="A" kind="show" />
-<segue destination="B" kind="modal" />
-<segue destination="C" kind="custom" />
-<segue destination="D" />
+<viewController id="home-1">
+  <segue destination="dest-a" kind="show" />
+  <segue destination="dest-b" kind="modal" />
+  <segue destination="dest-c" kind="custom" />
+  <segue destination="dest-d" />
+</viewController>
+<viewController id="dest-a"></viewController>
+<viewController id="dest-b"></viewController>
+<viewController id="dest-c"></viewController>
+<viewController id="dest-d"></viewController>
 `;
-    const edges = parseStoryboardEdges(xml, 'Home');
-    expect(edges.map((e) => `${e.to}:${e.kind}`)).toEqual([
-      'A:push',
-      'B:sheet',
-      'C:segue',
-      'D:segue',
+    const edges = parseStoryboardEdges(xml);
+    expect(
+      edges.map((e) => `${e.from}:${e.to}:${e.kind}`).sort(),
+    ).toEqual([
+      'home-1:dest-a:push',
+      'home-1:dest-b:sheet',
+      'home-1:dest-c:segue',
+      'home-1:dest-d:segue',
+    ]);
+  });
+
+  it('attributes each segue to its enclosing viewController in multi-VC storyboards', () => {
+    // Pre-fix every segue was attributed to the file's first scene, which
+    // collapsed multi-VC storyboard navigation into a single source.
+    const xml = `
+<viewController customClass="LoginVC" id="login-1">
+  <connections>
+    <segue destination="dashboard-2" kind="show" />
+  </connections>
+</viewController>
+<viewController customClass="DashboardVC" id="dashboard-2">
+  <connections>
+    <segue destination="settings-3" kind="modal" />
+  </connections>
+</viewController>
+<viewController customClass="SettingsVC" id="settings-3"></viewController>
+`;
+    const edges = parseStoryboardEdges(xml);
+    expect(
+      edges.map((e) => `${e.from}:${e.to}:${e.kind}`).sort(),
+    ).toEqual([
+      'DashboardVC:SettingsVC:sheet',
+      'LoginVC:DashboardVC:push',
+    ]);
+  });
+
+  it('translates destination scene ids through the customClass map', () => {
+    // Pre-fix destination="login-1" emitted edges to "login-1" while the
+    // screen was registered as "LoginVC" — every customClassed destination
+    // dangled. The translation step is the load-bearing fix.
+    const xml = `
+<viewController customClass="HomeVC" id="home-1">
+  <connections>
+    <segue destination="login-2" kind="show" />
+  </connections>
+</viewController>
+<viewController customClass="LoginVC" id="login-2"></viewController>
+`;
+    const edges = parseStoryboardEdges(xml);
+    expect(edges).toEqual([
+      { from: 'HomeVC', to: 'LoginVC', kind: 'push' },
+    ]);
+  });
+
+  it('keeps cross-storyboard destination ids as-is so they surface as dangling downstream', () => {
+    const xml = `
+<viewController customClass="HomeVC" id="home-1">
+  <connections>
+    <segue destination="external-scene" kind="show" />
+  </connections>
+</viewController>
+`;
+    const edges = parseStoryboardEdges(xml);
+    expect(edges).toEqual([
+      { from: 'HomeVC', to: 'external-scene', kind: 'push' },
+    ]);
+  });
+
+  it('leaves self-closing viewControllers contributing no edges', () => {
+    const xml = `
+<viewController customClass="EmptyVC" id="empty-1" />
+<viewController customClass="HomeVC" id="home-2">
+  <connections>
+    <segue destination="empty-1" kind="show" />
+  </connections>
+</viewController>
+`;
+    const edges = parseStoryboardEdges(xml);
+    expect(edges).toEqual([
+      { from: 'HomeVC', to: 'EmptyVC', kind: 'push' },
     ]);
   });
 });
