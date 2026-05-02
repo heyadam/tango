@@ -5,6 +5,7 @@ import {
   EMPTY_SPEC,
   type UIMockClientMsg,
   type UIMockServerMsg,
+  type UINode,
   type UIScreen,
   type UISpec,
 } from '@/lib/uiMockProtocol';
@@ -84,4 +85,101 @@ export function appendUIScreenFromServer(screen: UIScreen): void {
 
 export function clearUIMockFromServer(): void {
   setUIMockFromServer({ screens: [] });
+}
+
+export type UIMockDiagnostics = {
+  frameOverflows: Array<{
+    screenId: string;
+    nodeId: string;
+    axis: 'x' | 'y';
+    overshoot: number;
+  }>;
+  emptyText: Array<{ screenId: string; nodeId: string; type: string }>;
+};
+
+// Types where missing/blank `text` is a concrete UX bug — the rendered shadcn
+// primitive ends up label-less. `Input`/`Textarea` use `props.placeholder`
+// instead, and `div` is decorative; both are excluded.
+const TEXT_REQUIRED_TYPES = new Set<UINode['type']>([
+  'text',
+  'heading',
+  'Button',
+  'Badge',
+]);
+
+// Soft diagnostics for UI mock writes — surfaced on `set_ui_mock` /
+// `add_ui_screen` so the model can self-correct without a follow-up
+// `get_ui_mock` round-trip. Empty arrays mean "you're done."
+export function analyzeUiSpec(spec: UISpec): UIMockDiagnostics {
+  const frameOverflows: UIMockDiagnostics['frameOverflows'] = [];
+  const emptyText: UIMockDiagnostics['emptyText'] = [];
+  for (const screen of spec.screens) {
+    for (const node of screen.nodes) {
+      const overshootX = node.x + node.width - screen.frame.w;
+      if (node.x < 0) {
+        frameOverflows.push({
+          screenId: screen.id,
+          nodeId: node.id,
+          axis: 'x',
+          overshoot: -node.x,
+        });
+      } else if (overshootX > 0) {
+        frameOverflows.push({
+          screenId: screen.id,
+          nodeId: node.id,
+          axis: 'x',
+          overshoot: overshootX,
+        });
+      }
+      const overshootY = node.y + node.height - screen.frame.h;
+      if (node.y < 0) {
+        frameOverflows.push({
+          screenId: screen.id,
+          nodeId: node.id,
+          axis: 'y',
+          overshoot: -node.y,
+        });
+      } else if (overshootY > 0) {
+        frameOverflows.push({
+          screenId: screen.id,
+          nodeId: node.id,
+          axis: 'y',
+          overshoot: overshootY,
+        });
+      }
+      if (TEXT_REQUIRED_TYPES.has(node.type)) {
+        const text = (node.text ?? '').trim();
+        if (text === '') {
+          emptyText.push({
+            screenId: screen.id,
+            nodeId: node.id,
+            type: node.type,
+          });
+        }
+      }
+    }
+  }
+  return { frameOverflows, emptyText };
+}
+
+// Diagnostics for raw Excalidraw element batches (canvas tools). No implicit
+// frame on the canvas, so frame-overflow is meaningless here — `emptyText` on
+// `text` elements is the only check that consistently catches model errors
+// (e.g. a placeholder element written with no `text` field at all).
+export type CanvasDiagnostics = {
+  emptyText: Array<{ id: string }>;
+};
+
+export function analyzeCanvasElements(
+  elements: ReadonlyArray<Record<string, unknown>>,
+): CanvasDiagnostics {
+  const emptyText: CanvasDiagnostics['emptyText'] = [];
+  for (const el of elements) {
+    if (el.type !== 'text') continue;
+    const text = typeof el.text === 'string' ? el.text.trim() : '';
+    if (text === '') {
+      emptyText.push({ id: typeof el.id === 'string' ? el.id : '<unknown>' });
+    }
+  }
+  return { emptyText };
 }

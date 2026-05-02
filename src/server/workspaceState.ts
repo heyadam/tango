@@ -155,6 +155,7 @@ export async function setWorkspace(
     // server.ts's module graph; we reach them via the cross-context registry.
     callHook('resetCanvas');
     callHook('resetUiMock');
+    callHook('resetIosScan');
     callHook('broadcastWorkspaceChanged');
   }
 

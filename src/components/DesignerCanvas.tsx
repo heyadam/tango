@@ -125,8 +125,8 @@ export default function DesignerCanvas({ initialData, onPersist, onReady }: Prop
                 appState: api.getAppState(),
                 files: api.getFiles(),
                 mimeType: mime,
-                quality: opts?.quality ?? 0.85,
-                maxWidthOrHeight: opts?.maxDim ?? 1024,
+                quality: opts?.quality ?? 0.6,
+                maxWidthOrHeight: opts?.maxDim ?? 768,
               });
               if (!blob) throw new Error('exportToBlob returned null');
               const bytes = new Uint8Array(await blob.arrayBuffer());

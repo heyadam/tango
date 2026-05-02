@@ -16,6 +16,7 @@ export type ServerHooks = {
   broadcastWorkspaceChanged?: () => void;
   resetCanvas?: () => void;
   resetUiMock?: () => void;
+  resetIosScan?: () => void;
 };
 
 function getHooks(): ServerHooks {
