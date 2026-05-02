@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -9,6 +10,7 @@ import {
   useSyncExternalStore,
   type KeyboardEvent,
 } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ArrowUp,
   ChevronDown,
@@ -34,6 +36,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { writeSnapshot } from '@/lib/designSnapshot';
+import {
+  PanelHeaderLeftSlot,
+  PanelHeaderRightSlot,
+} from '@/lib/leftPanelSlots';
 import {
   moodboardStore,
   type MoodboardDirection,
@@ -234,6 +240,8 @@ export default function MoodboardPanel() {
 
   const swatches = selected ? paletteSwatches(selected.palette) : [];
   const hasDirections = session.directions.length > 0;
+  const leftSlot = useContext(PanelHeaderLeftSlot);
+  const rightSlot = useContext(PanelHeaderRightSlot);
   const visibleError = handoffError ?? error;
   const visibleStatus = handoffError ? null : (handoffStatus ?? status);
 
@@ -290,47 +298,48 @@ export default function MoodboardPanel() {
       </aside>
 
       <div className="relative flex min-w-0 flex-1 flex-col">
-        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <h1 className="text-sm font-semibold text-foreground">Moodboard</h1>
-            {selected && (
+        {leftSlot && selected
+          ? createPortal(
+              <span className="truncate text-xs text-panel-header-foreground/80">
+                {selected.title}
+              </span>,
+              leftSlot,
+            )
+          : null}
+        {rightSlot
+          ? createPortal(
               <>
-                <span className="text-muted-foreground/60">·</span>
-                <span className="truncate text-sm text-foreground/90">
-                  {selected.title}
-                </span>
-              </>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setOptionsOpen((v) => !v)}
+                      aria-pressed={optionsOpen}
+                      aria-label="Options"
+                      className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+                    >
+                      <Settings2 className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">Options</TooltipContent>
+                </Tooltip>
                 <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => setOptionsOpen((v) => !v)}
-                  aria-pressed={optionsOpen}
-                  aria-label="Options"
+                  size="sm"
+                  onClick={sendSelected}
+                  disabled={!selected || selected.pending || handoffBusy}
                 >
-                  <Settings2 className="size-4" />
+                  {handoffBusy ? (
+                    <RefreshCw className="size-3.5 animate-spin" />
+                  ) : (
+                    <Send className="size-3.5" />
+                  )}
+                  Send to Claude
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">Options</TooltipContent>
-            </Tooltip>
-            <Button
-              size="sm"
-              onClick={sendSelected}
-              disabled={!selected || selected.pending || handoffBusy}
-            >
-              {handoffBusy ? (
-                <RefreshCw className="size-3.5 animate-spin" />
-              ) : (
-                <Send className="size-3.5" />
-              )}
-              Send to Claude
-            </Button>
-          </div>
-        </header>
+              </>,
+              rightSlot,
+            )
+          : null}
 
         {optionsOpen && (
           <div className="grid shrink-0 grid-cols-[auto_auto] items-end gap-3 border-b border-border bg-background/80 px-4 py-3">

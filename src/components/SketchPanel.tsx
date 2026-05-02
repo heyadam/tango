@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
 import { RefreshCw, Send } from 'lucide-react';
 import type { ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types';
@@ -9,6 +10,7 @@ import { writeSnapshot } from '@/lib/designSnapshot';
 import { sketchStore } from '@/lib/sketchStore';
 import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
 import type { ScreenshotRequestMsg } from '@/lib/canvasProtocol';
+import { PanelHeaderRightSlot } from '@/lib/leftPanelSlots';
 import { terminalBus } from '@/lib/terminalBus';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
@@ -232,27 +234,27 @@ export default function SketchPanel() {
     };
   }, [generation]);
 
+  const rightSlot = useContext(PanelHeaderRightSlot);
+
   return (
     <div className="flex h-full min-h-0 w-full flex-col bg-card">
-      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <h1 className="text-sm font-semibold text-foreground">Sketch</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            onClick={sendToClaude}
-            disabled={sendBusy || load.status !== 'ready'}
-          >
-            {sendBusy ? (
-              <RefreshCw className="size-3.5 animate-spin" />
-            ) : (
-              <Send className="size-3.5" />
-            )}
-            Send to Claude
-          </Button>
-        </div>
-      </header>
+      {rightSlot
+        ? createPortal(
+            <Button
+              size="sm"
+              onClick={sendToClaude}
+              disabled={sendBusy || load.status !== 'ready'}
+            >
+              {sendBusy ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Send className="size-3.5" />
+              )}
+              Send to Claude
+            </Button>,
+            rightSlot,
+          )
+        : null}
 
       <div className="min-h-0 flex-1">
         {load.status === 'ready' && (

@@ -11,10 +11,15 @@
 // production codebase. The user's drag/resize tweaks are visible to Claude
 // as updated coords on its next `get_ui_mock` read.
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
 import { RefreshCw, Send, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
+import {
+  PanelHeaderLeftSlot,
+  PanelHeaderRightSlot,
+} from '@/lib/leftPanelSlots';
 import { uiMockBus } from '@/lib/uiMockBus';
 import { uiMockStore } from '@/lib/uiMockStore';
 import { EMPTY_SPEC, type UISpec } from '@/lib/uiMockProtocol';
@@ -264,49 +269,60 @@ export default function UIPanel() {
     setStatus('Cleared.');
   }, []);
 
+  const leftSlot = useContext(PanelHeaderLeftSlot);
+  const rightSlot = useContext(PanelHeaderRightSlot);
+
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <h1 className="text-sm font-semibold text-foreground">UI mock</h1>
-          {load.status === 'ready' && screenCount > 0 && (
-            <span className="text-xs text-muted-foreground">
-              {screenCount} screen{screenCount === 1 ? '' : 's'}
-            </span>
-          )}
-          {viewport && (
-            <span
-              className="font-mono text-[10px] text-muted-foreground/60"
-              title="Default frame size for new screens"
-            >
-              {viewport.w}×{viewport.h}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearMock}
-            disabled={screenCount === 0}
-          >
-            <Trash2 className="size-3.5" />
-            Clear
-          </Button>
-          <Button
-            size="sm"
-            onClick={sendToClaude}
-            disabled={sendBusy || screenCount === 0}
-          >
-            {sendBusy ? (
-              <RefreshCw className="size-3.5 animate-spin" />
-            ) : (
-              <Send className="size-3.5" />
-            )}
-            Send to Claude
-          </Button>
-        </div>
-      </header>
+      {leftSlot
+        ? createPortal(
+            <>
+              {load.status === 'ready' && screenCount > 0 && (
+                <span className="text-xs text-panel-header-foreground/80">
+                  {screenCount} screen{screenCount === 1 ? '' : 's'}
+                </span>
+              )}
+              {viewport && (
+                <span
+                  className="font-mono text-[10px] text-panel-header-foreground/60"
+                  title="Default frame size for new screens"
+                >
+                  {viewport.w}×{viewport.h}
+                </span>
+              )}
+            </>,
+            leftSlot,
+          )
+        : null}
+      {rightSlot
+        ? createPortal(
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearMock}
+                disabled={screenCount === 0}
+                className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+              >
+                <Trash2 className="size-3.5" />
+                Clear
+              </Button>
+              <Button
+                size="sm"
+                onClick={sendToClaude}
+                disabled={sendBusy || screenCount === 0}
+              >
+                {sendBusy ? (
+                  <RefreshCw className="size-3.5 animate-spin" />
+                ) : (
+                  <Send className="size-3.5" />
+                )}
+                Send to Claude
+              </Button>
+            </>,
+            rightSlot,
+          )
+        : null}
 
       <div ref={viewportRef} className="relative min-h-0 flex-1">
         {load.status === 'ready' && (

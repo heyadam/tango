@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import AgentCursorOverlay from '@/components/AgentCursorOverlay';
 import AppTopBar from '@/components/AppTopBar';
 import LeftPanel from '@/components/LeftPanel';
+import SimulatorPanel from '@/components/SimulatorPanel';
 import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
 import { cn } from '@/lib/utils';
 import type { WorkspaceMode } from '@/lib/workspaceMode';
@@ -18,6 +19,7 @@ function HomeBody() {
   const { current, openDialog } = useWorkspace();
   const [agentOpen, setAgentOpen] = useState(false);
   const [claudeOpen, setClaudeOpen] = useState(true);
+  const [simOpen, setSimOpen] = useState(false);
   const [mode, setMode] = useState<WorkspaceMode>('sketch');
 
   const workspaceReady = current != null && current.path != null;
@@ -27,19 +29,23 @@ function HomeBody() {
       <AppTopBar
         agentOpen={agentOpen}
         claudeOpen={claudeOpen}
-        mode={mode}
+        simOpen={simOpen}
         workspaceName={current?.name ?? null}
         workspacePath={current?.path ?? null}
         workspaceSource={current?.source ?? 'unset'}
         onOpenWorkspaceDialog={openDialog}
         onToggleAgent={() => setAgentOpen((v) => !v)}
         onToggleClaude={() => setClaudeOpen((v) => !v)}
-        onModeChange={setMode}
+        onToggleSim={() => setSimOpen((v) => !v)}
       />
       <main className="flex min-h-0 flex-1">
-        <section className="min-w-0 flex-1 bg-card">
+        <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
-            <LeftPanel agentSidebarOpen={agentOpen} mode={mode} />
+            <LeftPanel
+              agentSidebarOpen={agentOpen}
+              mode={mode}
+              onModeChange={setMode}
+            />
           ) : (
             <UnsetPlaceholder />
           )}
@@ -52,6 +58,15 @@ function HomeBody() {
           )}
         >
           {workspaceReady ? <Terminal /> : <TerminalPlaceholder />}
+        </aside>
+        <aside
+          aria-hidden={!simOpen}
+          className={cn(
+            'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
+            simOpen ? 'w-[420px] min-w-[360px] border-l border-border' : 'w-0',
+          )}
+        >
+          {simOpen ? <SimulatorPanel /> : null}
         </aside>
       </main>
       {agentOpen ? <AgentCursorOverlay /> : null}

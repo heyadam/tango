@@ -9,6 +9,7 @@ import {
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
+  Smartphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import TangoLogo from '@/components/TangoLogo';
@@ -18,43 +19,36 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 type WorkspaceSource = 'env' | 'persisted' | 'unset';
 
 type Props = {
   agentOpen: boolean;
   claudeOpen: boolean;
-  mode: WorkspaceMode;
+  simOpen: boolean;
   workspaceName: string | null;
   workspacePath: string | null;
   workspaceSource: WorkspaceSource;
   onOpenWorkspaceDialog: () => void;
   onToggleAgent: () => void;
   onToggleClaude: () => void;
-  onModeChange: (mode: WorkspaceMode) => void;
+  onToggleSim: () => void;
 };
-
-const modes: Array<{ value: WorkspaceMode; label: string }> = [
-  { value: 'sketch', label: 'Sketch' },
-  { value: 'moodboard', label: 'Moodboard' },
-  { value: 'ui', label: 'UI' },
-];
 
 export default function AppTopBar({
   agentOpen,
   claudeOpen,
-  mode,
+  simOpen,
   workspaceName,
   workspacePath,
   workspaceSource,
   onOpenWorkspaceDialog,
   onToggleAgent,
   onToggleClaude,
-  onModeChange,
+  onToggleSim,
 }: Props) {
   return (
-    <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-background px-2">
+    <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-background px-2">
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
@@ -83,29 +77,6 @@ export default function AppTopBar({
         />
       </div>
 
-      <div
-        role="tablist"
-        aria-label="Workspace mode"
-        className="flex h-8 items-center rounded-md border border-border bg-muted p-0.5"
-      >
-        {modes.map((item) => (
-          <button
-            key={item.value}
-            type="button"
-            role="tab"
-            aria-selected={mode === item.value}
-            onClick={() => onModeChange(item.value)}
-            className={cn(
-              'h-7 min-w-20 rounded px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:min-w-24 sm:px-3',
-              mode === item.value &&
-                'bg-foreground text-background shadow-sm hover:text-background',
-            )}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
       <div className="flex items-center justify-end gap-2">
         <div className="hidden items-center gap-1.5 text-xs font-medium text-foreground sm:flex">
           <Code2 className="size-3.5 text-muted-foreground" />
@@ -127,6 +98,26 @@ export default function AppTopBar({
             <PanelRightOpen className="size-4" />
           )}
         </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onToggleSim}
+              aria-label={simOpen ? 'Hide simulator sidebar' : 'Show simulator sidebar'}
+              aria-pressed={simOpen}
+              className={cn(
+                'text-muted-foreground hover:text-foreground',
+                simOpen && 'text-foreground',
+              )}
+            >
+              <Smartphone className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {simOpen ? 'Hide simulator' : 'Show simulator'}
+          </TooltipContent>
+        </Tooltip>
       </div>
     </header>
   );
