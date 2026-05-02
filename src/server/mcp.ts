@@ -21,6 +21,8 @@ import {
   setCanvasFromServer,
 } from './canvasBridge';
 import {
+  analyzeCanvasElements,
+  analyzeUiSpec,
   appendUIScreenFromServer,
   clearUIMockFromServer,
   getUIMock,
@@ -34,6 +36,7 @@ import {
   type Edge as FlowEdge,
   type Screen as FlowScreen,
   layoutScreenFlow,
+  screenFlowDiagnostics,
   screenFlowElements,
   validateScreenFlowInput,
 } from './screenFlow';
@@ -45,6 +48,7 @@ import {
   listBootedDevices,
   readActiveDeviceFromServeSim,
 } from './iosBuild';
+import { checkScanScope, scanIosScreens } from './iosScreenScan';
 import { getSimStatus } from './sim';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
@@ -145,6 +149,45 @@ function toolErrorResult(toolName: string, err: unknown) {
   };
 }
 
+// Pretty-print a write-tool result as a single text content block. Centralizes
+// the JSON shape so every "write" tool reports `{ok, action, written,
+// diagnostics}` the same way — the model can branch on
+// `diagnostics.<key>.length === 0` to decide whether a follow-up
+// `screenshot_canvas` / `get_*` is needed.
+function jsonResult(payload: unknown) {
+  return {
+    content: [
+      { type: 'text' as const, text: JSON.stringify(payload, null, 2) },
+    ],
+  };
+}
+
+// Build the canonical write-tool payload. Exported for contract tests so a
+// future refactor that drops `action` or `written` surfaces immediately.
+export type WriteToolResult = {
+  ok: true;
+  action:
+    | 'set_canvas_state'
+    | 'add_elements'
+    | 'set_screen_flow'
+    | 'set_ui_mock'
+    | 'add_ui_screen';
+  written: Record<string, number | string>;
+  diagnostics: Record<string, unknown>;
+};
+export function buildWriteResult<A extends WriteToolResult['action']>(args: {
+  action: A;
+  written: WriteToolResult['written'];
+  diagnostics: WriteToolResult['diagnostics'];
+}): WriteToolResult {
+  return {
+    ok: true,
+    action: args.action,
+    written: args.written,
+    diagnostics: args.diagnostics,
+  };
+}
+
 // Shared shape for `ios_build_run` early-exit errors — keeps the result
 // schema consistent with the orchestrator's own `{ok:false, stage, message,
 // errors}` returns so terminal-Claude doesn't have to parse two formats.
@@ -197,7 +240,7 @@ function buildServer(): McpServer {
     {
       title: 'Replace the canvas',
       description:
-        'Replaces the entire canvas with the provided elements. `elements` must match the shape of the `elements` field returned by `get_canvas_state`. Call `get_canvas_state` first if you need to see the current scene shape. Useful for proposing wireframes or full-screen redesigns.',
+        'Replaces the entire canvas with the provided elements. `elements` must match the shape of the `elements` field returned by `get_canvas_state`. Returns a JSON result with `written.elementCount` and a `diagnostics` block (currently `emptyText` for any text element with no `text` field) — when `diagnostics.emptyText` is empty, the write was clean and you do not need to follow up with `get_canvas_state` or `screenshot_canvas`. Call `get_canvas_state` first only if you need to see the current scene shape. Useful for proposing wireframes or full-screen redesigns.',
       inputSchema: {
         elements: elementSchema,
         appState: z.record(z.string(), z.unknown()).optional(),
@@ -205,14 +248,16 @@ function buildServer(): McpServer {
     },
     async ({ elements, appState }) => {
       setCanvasFromServer(elements as CanvasElement[], appState);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Replaced canvas with ${elements.length} element(s).`,
-          },
-        ],
-      };
+      const diagnostics = analyzeCanvasElements(
+        elements as ReadonlyArray<Record<string, unknown>>,
+      );
+      return jsonResult(
+        buildWriteResult({
+          action: 'set_canvas_state',
+          written: { elementCount: elements.length },
+          diagnostics,
+        }),
+      );
     },
   );
 
@@ -221,21 +266,23 @@ function buildServer(): McpServer {
     {
       title: 'Append to the canvas',
       description:
-        'Appends new elements to the existing canvas without disturbing what is already there. `elements` must match the shape of the `elements` field returned by `get_canvas_state`. Useful for adding annotations, callouts, or new shapes alongside existing work.',
+        'Appends new elements to the existing canvas without disturbing what is already there. `elements` must match the shape of the `elements` field returned by `get_canvas_state`. Returns a JSON result with `written.elementCount` and a `diagnostics` block (currently `emptyText` for any text element with no `text` field) — when `diagnostics.emptyText` is empty, the write was clean and you do not need to follow up with `get_canvas_state` or `screenshot_canvas`. Useful for adding annotations, callouts, or new shapes alongside existing work.',
       inputSchema: {
         elements: elementSchema,
       },
     },
     async ({ elements }) => {
       appendElementsFromServer(elements as CanvasElement[]);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Appended ${elements.length} element(s) to the canvas.`,
-          },
-        ],
-      };
+      const diagnostics = analyzeCanvasElements(
+        elements as ReadonlyArray<Record<string, unknown>>,
+      );
+      return jsonResult(
+        buildWriteResult({
+          action: 'add_elements',
+          written: { elementCount: elements.length },
+          diagnostics,
+        }),
+      );
     },
   );
 
@@ -256,7 +303,7 @@ function buildServer(): McpServer {
     {
       title: 'See the canvas',
       description:
-        "Returns the current Excalidraw canvas as a rendered image (vs. `get_canvas_state`'s scene JSON), so you can actually see what the user has drawn — including embedded screenshots whose bytes `get_canvas_state` strips. Reflects the live browser canvas at call time, with no debounce window. Safe to call in a loop. Defaults to a JPEG ~1024px on the longest side, which is plenty for vision and keeps round-trips fast; pass `maxDim` (up to 4096) for more detail or a smaller value for faster polling, and `quality` (0.1–1) to tune JPEG compression.",
+        "Returns the current Excalidraw canvas as a rendered image (vs. `get_canvas_state`'s scene JSON), so you can actually see what the user has drawn — including embedded screenshots whose bytes `get_canvas_state` strips. Reflects the live browser canvas at call time, with no debounce window. Safe to call in a loop. Defaults to a JPEG ~768px on the longest side at q≈0.6 — sufficient for verifying layout and embedded imagery while keeping round-trips fast; pass `maxDim` (up to 4096) for more detail when reviewing fine pixels and `quality` (0.1–1) to tune JPEG compression.",
       inputSchema: {
         maxDim: z.number().int().positive().max(4096).optional(),
         quality: z.number().min(0.1).max(1).optional(),
@@ -279,7 +326,7 @@ function buildServer(): McpServer {
     {
       title: 'Render an app screen-flow diagram',
       description:
-        "Render an app's screens + navigation as a Figma-style flow diagram on the Excalidraw canvas. Hand it a parsed graph: `screens` (each with stable `id`, `name` ≤120 chars, `kind`: 'swiftui' | 'uikit' | 'storyboard', optional `filePath`, `summary` ≤120 chars, and `isEntry` for the launch screen) plus `edges` connecting screen ids by navigation `kind` ('push' | 'sheet' | 'cover' | 'present' | 'segue' | 'tab', with optional `label` ≤24 chars). The tool runs a layered BFS layout (entries on top, children below), draws each screen as a rounded card with title + meta + summary, and connects them with kind-colored arrows. Defaults to replacing the canvas; pass `options.append: true` to add alongside existing content — when appending, also pass `options.origin: {x, y}` pointing at empty space (call `get_canvas_state` first to find a free area), or the new diagram lands on top of the existing one at the default `(200, 200)`. Use this once with the full graph rather than dribbling elements in via `add_elements`. Designed for the `tango-ios-map` skill.",
+        "Render an app's screens + navigation as a Figma-style flow diagram on the Excalidraw canvas. Hand it a parsed graph: `screens` (each with stable `id`, `name` ≤120 chars, `kind`: 'swiftui' | 'uikit' | 'storyboard', optional `filePath`, `summary` ≤120 chars, and `isEntry` for the launch screen) plus `edges` connecting screen ids by navigation `kind` ('push' | 'sheet' | 'cover' | 'present' | 'segue' | 'tab', with optional `label` ≤24 chars). The tool runs a layered BFS layout (entries on top, children below), draws each screen as a rounded card with title + meta + summary, and connects them with kind-colored arrows. Defaults to replacing the canvas; pass `options.append: true` to add alongside existing content — when appending, also pass `options.origin: {x, y}` pointing at empty space (call `get_canvas_state` first to find a free area), or the new diagram lands on top of the existing one at the default `(200, 200)`. Use this once with the full graph rather than dribbling elements in via `add_elements`. Returns `{ok, written, diagnostics}` where `diagnostics.danglingEdges` lists edges to/from unknown screen ids (silently dropped from the layout — informational, not fatal) and `diagnostics.layoutOverlaps` lists pairs of cards whose bounding boxes collide; when both are empty, the diagram is clean and you do NOT need to follow up with `screenshot_canvas`. Designed for the `tango-ios-map` skill.",
       inputSchema: {
         screens: z.array(flowScreenSchema).min(1).max(300),
         edges: z.array(flowEdgeSchema).max(3000),
@@ -305,14 +352,49 @@ function buildServer(): McpServer {
       } else {
         setCanvasFromServer(elements);
       }
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Rendered ${screenList.length} screen(s), ${edgeList.length} edge(s) on the canvas.`,
+      const diagnostics = screenFlowDiagnostics(screenList, edgeList, layout);
+      return jsonResult(
+        buildWriteResult({
+          action: 'set_screen_flow',
+          written: {
+            screenCount: screenList.length,
+            edgeCount: edgeList.length,
+            elementCount: elements.length,
           },
-        ],
-      };
+          diagnostics,
+        }),
+      );
+    },
+  );
+
+  server.registerTool(
+    'scan_ios_app',
+    {
+      title: 'Scan the workspace for iOS screens + navigation',
+      description:
+        "Walks the workspace's `.swift` and `.storyboard` sources and returns the screen-flow graph ready for `set_screen_flow`: `{ screens, edges, scannedFiles, cachedFiles, skippedDirs }`. Skips Pods/build/test/preview directories and recognizes SwiftUI Views (top-level `struct X: View`), UIKit `UIViewController`/`*VC` classes, and `<viewController>` storyboard scenes. Identifies entry points from `@main` + `WindowGroup`, `AppDelegate.window?.rootViewController`, and `isInitialViewController=\"YES\"`. Cached by file mtime — re-running after a small edit only re-reads the changed files. Pass `includeSummaries: true` to add a one-line summary inferred from each View's first `Text(\"…\")` literal (slightly slower). The default scope is the active tango workspace; override with `rootDir` (absolute path) when scanning a sub-directory.",
+      inputSchema: {
+        rootDir: z.string().optional(),
+        includeSummaries: z.boolean().optional(),
+      },
+    },
+    async ({ rootDir, includeSummaries }) => {
+      try {
+        const workspace = getWorkspaceOrNull();
+        const scope = await checkScanScope(rootDir, workspace);
+        if (!scope.ok) {
+          return toolErrorResult('scan_ios_app', new Error(scope.reason));
+        }
+        const result = await scanIosScreens({
+          rootDir: scope.absRoot,
+          includeSummaries: includeSummaries ?? false,
+        });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (err) {
+        return toolErrorResult('scan_ios_app', err);
+      }
     },
   );
 
@@ -360,27 +442,28 @@ function buildServer(): McpServer {
     {
       title: 'Replace the UI mock',
       description:
-        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals using THEME tokens — `bg-card`, `text-muted-foreground`, etc.; layout-affecting classes are ignored, coords win), `style` (React inline-style object — use this for colors outside the app's theme palette like exact brand hex, gradients, and custom shadows; arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className` because the JIT only scans source files at build time, so off-theme color fidelity must come through `style`), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow.",
+        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals using THEME tokens — `bg-card`, `text-muted-foreground`, etc.; layout-affecting classes are ignored, coords win), `style` (React inline-style object — use this for colors outside the app's theme palette like exact brand hex, gradients, and custom shadows; arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className` because the JIT only scans source files at build time, so off-theme color fidelity must come through `style`), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Returns `{ok, written, diagnostics}` where `diagnostics.frameOverflows` flags nodes that spill outside their frame (negative coords or x+width > frame.w / y+height > frame.h) and `diagnostics.emptyText` flags Buttons / Badges / headings / text nodes with no `text`; when both are empty arrays, the spec is clean and you do NOT need to follow up with `get_ui_mock`. Prefer `add_ui_screen` when extending an existing flow.",
       inputSchema: {
         spec: uiSpecSchema,
       },
     },
     async ({ spec }) => {
       try {
-        setUIMockFromServer(spec as UISpec);
-        const screenCount = spec.screens.length;
-        const nodeCount = spec.screens.reduce(
+        const typedSpec = spec as UISpec;
+        setUIMockFromServer(typedSpec);
+        const screenCount = typedSpec.screens.length;
+        const nodeCount = typedSpec.screens.reduce(
           (sum, s) => sum + s.nodes.length,
           0,
         );
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Replaced UI mock with ${screenCount} screen(s), ${nodeCount} node(s).`,
-            },
-          ],
-        };
+        const diagnostics = analyzeUiSpec(typedSpec);
+        return jsonResult(
+          buildWriteResult({
+            action: 'set_ui_mock',
+            written: { screenCount, nodeCount },
+            diagnostics,
+          }),
+        );
       } catch (err) {
         return toolErrorResult('set_ui_mock', err);
       }
@@ -392,22 +475,27 @@ function buildServer(): McpServer {
     {
       title: 'Append a screen to the UI mock',
       description:
-        "Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions; for a brand-new flow, default the frame to the user's current panel size from `get_ui_viewport` (use 360×720 for explicit mobile, 768×1024 for explicit tablet).",
+        "Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions; for a brand-new flow, default the frame to the user's current panel size from `get_ui_viewport` (use 360×720 for explicit mobile, 768×1024 for explicit tablet). Returns `{ok, written, diagnostics}` with `frameOverflows` and `emptyText` arrays — same shape as `set_ui_mock`. Empty arrays = clean write, no need to re-read.",
       inputSchema: {
         screen: uiScreenSchema,
       },
     },
     async ({ screen }) => {
       try {
-        appendUIScreenFromServer(screen as UIScreen);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Appended screen "${screen.title}" with ${screen.nodes.length} node(s).`,
+        const typedScreen = screen as UIScreen;
+        appendUIScreenFromServer(typedScreen);
+        const diagnostics = analyzeUiSpec({ screens: [typedScreen] });
+        return jsonResult(
+          buildWriteResult({
+            action: 'add_ui_screen',
+            written: {
+              screenCount: 1,
+              nodeCount: typedScreen.nodes.length,
+              screenId: typedScreen.id,
             },
-          ],
-        };
+            diagnostics,
+          }),
+        );
       } catch (err) {
         return toolErrorResult('add_ui_screen', err);
       }

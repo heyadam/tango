@@ -297,4 +297,41 @@ describe('ensureWorkspace skill emission', () => {
     const second = await fs.readFile(skillPath, 'utf8');
     expect(second).toBe(first);
   });
+
+  it('writes the tango-swiftui mappings reference alongside SKILL.md', async () => {
+    await ensureWorkspace(3000, dir);
+    const refPath = path.join(
+      dir,
+      '.claude',
+      'skills',
+      'tango-swiftui',
+      '_reference',
+      'mappings.md',
+    );
+    const body = await fs.readFile(refPath, 'utf8');
+    // The full per-row mapping table lives in the reference, not the
+    // always-loaded SKILL body. The SKILL body keeps a 7-row "common cases"
+    // summary; this file holds the long tail.
+    expect(body).toContain('Toggle');
+    expect(body).toContain('ProgressView');
+    expect(body).toContain('ColorPicker');
+    expect(body).toContain('SwiftUI → UINode');
+  });
+
+  it('keeps the tango-swiftui SKILL body lean by externalizing the cheat sheet', async () => {
+    await ensureWorkspace(3000, dir);
+    const skillPath = path.join(dir, '.claude', 'skills', 'tango-swiftui', 'SKILL.md');
+    const body = await fs.readFile(skillPath, 'utf8');
+    // Pointer to the reference file is the load-bearing affordance.
+    expect(body).toContain('_reference/mappings.md');
+    // Long-tail primitive *names* may appear in the body (the signpost tells
+    // Claude: "anything not in the 7-row table — Toggle/Picker/etc — Read the
+    // reference"). What must NOT appear is the detailed mapping content
+    // (variant strings, common-iconName lookups, modifier translations).
+    expect(body).not.toContain('borderedProminent');
+    expect(body).not.toContain('borderless');
+    // The lucide-react icon name lookup table is reference-only.
+    expect(body).not.toContain('chevron.right');
+    expect(body).not.toContain('Trash2');
+  });
 });

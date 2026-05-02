@@ -345,14 +345,12 @@ Element JSON matches Excalidraw's \`serializeAsJSON\` output. Permissive — ext
 - **Type sizes**: \`14\` for body / placeholder, \`16\` for button labels, \`18\` for region headers, \`24\` for screen title (above the frame).
 - **One \`add_elements\` call** with all elements when you can — it's cheaper and atomic on undo.
 
-### 7. Verify, then iterate
-Call \`screenshot_canvas\` immediately after writing. Look for:
-- Boxes overlapping, clipped by the frame, or outside the frame → recompute coords, \`set_canvas_state\` to fix
-- Labels clipped or running outside their box → grow the box or shrink the label
-- Empty regions reading as "broken" rather than "intentionally blank" → add a placeholder line or a region label
-- Multiple screens drifting out of alignment → snap to the gutter math
+### 7. Inspect, then iterate
+\`add_elements\` / \`set_canvas_state\` return a JSON result with \`written.elementCount\` and a \`diagnostics\` block. If \`diagnostics.emptyText\` is empty, the write was clean — you're done. If it's non-empty, you wrote a \`text\` element with no \`text\` field; fill it in and re-call.
 
-Don't tell the user "done" until the screenshot looks right. Iterate.
+For *layout* issues that JSON can't catch (boxes overlapping, labels clipped, regions drifting out of alignment), call \`screenshot_canvas\` only when (a) the user explicitly asked to see the result, (b) the diagnostics flagged something you can't reason about from the JSON, or (c) the wireframe is unusually complex (≥3 screens or dense overlap risk). Otherwise the screenshot round-trip is wasted latency.
+
+When you do iterate, recompute coords and \`set_canvas_state\` to fix.
 
 ### 8. Record it
 Call \`remember_note({ category: 'context', text: 'Sketched UI: <one-line shape, e.g. "Mobile to-do screen — header, list, FAB">' })\`. Future sessions will see this in \`tango-memory.md\`.
@@ -362,7 +360,7 @@ Call \`remember_note({ category: 'context', text: 'Sketched UI: <one-line shape,
 - Don't add fills, brand colors, or icons. Stroke and text only.
 - Don't draw what the user didn't ask for. "Sketch the login screen" means one screen, not three.
 - Don't \`clear_canvas\` without asking.
-- Don't skip the \`screenshot_canvas\` verify step. Element JSON looks fine on paper and lays out badly in practice.
+- Don't reach for \`screenshot_canvas\` reflexively — inspect the write result's \`diagnostics\` block first; only screenshot when the user asked or diagnostics flagged a layout issue.
 - Don't try to draw architecture diagrams here — for "diagram my codebase" / "draw the architecture" prompts, you don't need a skill: use the canvas tools directly with rectangles + arrows for modules and edges.
 
 ---
@@ -509,16 +507,13 @@ Always \`get_ui_mock\` first.
 - Has screens you want to keep? Use \`add_ui_screen\` to append.
 - The user explicitly asked to start over? \`clear_ui_mock\` then \`set_ui_mock\`. Confirm in chat first if it's not obvious from the prompt.
 
-### 7. Verify
+### 7. Inspect the result
 
-After writing, **call \`get_ui_mock\` and re-read the spec you just sent** — Claude can't see the rendered pixels, but the spec round-trip catches:
+\`set_ui_mock\` / \`add_ui_screen\` return a JSON result with \`written\` counts and a \`diagnostics\` block. If both \`diagnostics.frameOverflows\` and \`diagnostics.emptyText\` are empty arrays, the write was clean — tell the user, you're done.
 
-- Nodes overlapping or running off the frame (x+width > frame.w, etc.)
-- Empty \`text\` on Buttons / Badges
-- Unknown \`type\` strings (validation will have rejected the call — fix and resend)
-- Frame dimensions wrong for the form factor
+If \`diagnostics.frameOverflows\` is non-empty, one or more nodes spill outside the screen frame (negative x/y or x+width > frame.w / y+height > frame.h). Fix the coords and re-call. If \`diagnostics.emptyText\` is non-empty, you wrote a \`Button\` / \`Badge\` / \`heading\` / \`text\` with no \`text\` field — fill it in.
 
-Fix and \`set_ui_mock\` again. Don't tell the user "done" until the spec lines up.
+You do NOT need to re-call \`get_ui_mock\` to verify a clean write — the diagnostics already cover what the round-trip used to catch. Only call \`screenshot_canvas\` if the user asked to see the result or you suspect a visual issue the spec JSON can't reveal.
 
 ### 8. Tell the user how to tweak
 
@@ -548,7 +543,7 @@ After a successful mock or apply pass, \`remember_note({ category: 'context', te
 - Don't \`clear_ui_mock\` without asking.
 - Don't invent a \`type\` outside the union. The validator will reject; the user sees an error.
 - Don't import \`@excalidraw/excalidraw\` or use the canvas tools here — \`tango-ui-sketch\` is the wireframe path.
-- Don't skip the verify round-trip on \`get_ui_mock\`. Spec JSON looks fine on paper and overflows the frame in practice.
+- Don't ignore the \`diagnostics\` block in the write tool's result. Empty arrays = clean; non-empty = fix and re-call.
 
 ---
 
@@ -631,16 +626,13 @@ UI mock: \`set_ui_mock({ spec: { screens: [{ id, title, frame, nodes }] } })\`. 
 
 Sketch: \`get_canvas_state\` first to avoid trampling existing work; then \`add_elements\` (default) or \`set_canvas_state\` (with explicit user OK).
 
-### 6. Verify
+### 6. Inspect the result
 
-Immediately re-read the spec via \`get_ui_mock\` (or \`get_canvas_state\` for sketch) and check:
+\`set_ui_mock\` / \`add_ui_screen\` (and \`set_canvas_state\` / \`add_elements\` in sketch mode) return a JSON result with \`written\` counts and a \`diagnostics\` block. If \`diagnostics.frameOverflows\` and \`diagnostics.emptyText\` are both empty, the spec is clean — tell the user.
 
-- Nodes overflow the frame (\`x + width > frame.w\`, etc.)
-- Buttons / Badges with empty \`text\`
-- Unknown \`type\` strings (validation will have rejected — fix and resend)
-- Mismatched container axes (everything stacked the wrong way)
+When the diagnostics flag overflows, you've likely picked the wrong frame size for an iOS view in a wide browser pane. Recompute against the iPhone-proportions default and re-call. When the diagnostics flag empty text, you skipped a label — fill it in.
 
-Fix and re-push. Don't tell the user "rendered" until the spec round-trips clean.
+You do NOT need to re-read via \`get_ui_mock\` / \`get_canvas_state\` to verify a clean write. Only \`screenshot_canvas\` (sketch mode) for layout doubts the JSON can't resolve.
 
 ## Write flow (tango → \`.swift\`)
 
@@ -689,34 +681,21 @@ Don't run \`xcodebuild\` — out of scope for this skill. But do sanity-check yo
 
 ## Mapping cheat sheets
 
-### SwiftUI → UINode
+The full per-view mapping (every supported SwiftUI primitive, every modifier, every node \`type\`) lives in **\`.claude/skills/tango-swiftui/_reference/mappings.md\`**. \`Read\` it the first time you read or write SwiftUI in a session — once is enough; cache it mentally and re-skim only when you hit a primitive you haven't placed yet. Common cases you can do from memory:
 
-| SwiftUI                                                | UINode \`type\`              | Notes                                                                 |
-|--------------------------------------------------------|----------------------------|-----------------------------------------------------------------------|
-| \`Text("…")\`                                            | \`text\`                     | Promote to \`heading\` + \`props.level\` (1/2/3) when font is \`.largeTitle\`/\`.title\`/\`.title2\`. |
-| \`Button("…") { }\`                                      | \`Button\`                   | \`props.variant\`: \`default\` (\`.borderedProminent\` / no style), \`secondary\` (\`.bordered\`), \`outline\` (\`.bordered\` + \`.tint(.gray)\`), \`ghost\` (\`.plain\`), \`destructive\` (\`.destructive\` role), \`link\` (\`.borderless\`). \`text\` = label. |
-| \`TextField("…", text:)\`                                | \`Input\`                    | \`props.placeholder\` = the label string.                               |
-| \`SecureField\` / \`TextEditor\`                           | \`Input\` / \`Textarea\`        | \`SecureField\` → \`Input\`; \`TextEditor\` → \`Textarea\`.                    |
-| \`Divider()\`                                            | \`Separator\`                | Horizontal in \`VStack\`, vertical in \`HStack\` — pick by container axis. |
-| \`Image(systemName: "xyz")\`                             | \`Icon\`                     | \`props.iconName\` = best lucide-react match. Common: \`gear\`→\`Settings\`, \`magnifyingglass\`→\`Search\`, \`chevron.right\`→\`ChevronRight\`, \`plus\`→\`Plus\`, \`xmark\`→\`X\`, \`trash\`→\`Trash2\`, \`bell\`→\`Bell\`, \`house\`→\`Home\`, \`person\`→\`User\`. On miss, closest visual match. |
-| \`Image("asset")\` / \`AsyncImage(url:)\`                  | \`Image\`                    | \`props.src\` if it's a URL; otherwise omit and the renderer shows a placeholder. |
-| \`Capsule().background(…)\` with text overlay            | \`Badge\`                    | \`props.variant\` per fill / border style.                              |
-| \`Toggle\`, \`Picker\`, \`Slider\`, \`Stepper\`, \`DatePicker\`, \`ColorPicker\`, \`ProgressView\` | \`Button\` (placeholder)   | UI mock can't represent these natively. Use \`text\` = \`"<ViewName>: <label>"\` (e.g. \`Toggle: Notifications\`). On writeback, restore the original SwiftUI from a hint stashed via \`remember_note\`, else leave a \`// TODO: <ViewName>\` and ask the user. |
-| \`List\` / \`ForEach\` row                                 | \`div\` per row + child nodes | Flatten the rows. Add a \`Separator\` between them if the SwiftUI used \`.listStyle(.plain)\`. |
-| \`VStack\` / \`HStack\` / \`ZStack\` / \`Group\` / \`ScrollView\` / \`Form\` / \`Section\` | (none — container)         | Containers don't emit nodes; their children do, with positions inferred from the container axis. |
-| \`Spacer()\`                                             | (none — gap)               | Translate by leaving a gap in the next sibling's coords.               |
-| \`.padding(p)\`                                          | (offset)                   | Inflate child coords by \`p\` on the relevant axes.                     |
-| \`.frame(width:height:)\`                                | (sets \`width\`/\`height\`)     | If only one dim given, use the default for the other.                  |
-| \`.foregroundColor(.theme)\` / \`.foregroundStyle(.primary)\` | \`className\`                | \`text-foreground\` / \`text-muted-foreground\` per role.                  |
-| \`.foregroundColor(Color(red:green:blue:))\` / off-theme | \`style.color: '#hex'\`      | Off-theme colors must be inline — Tailwind v4's JIT can't see runtime arbitrary values. |
-| \`.background(Color.theme)\`                             | \`className\`                | \`bg-card\` / \`bg-muted\` / \`bg-accent\` per intent.                       |
-| \`.background(Color(red:green:blue:))\` / gradients      | \`style.background: ...\`    | Inline, same reasoning.                                                |
-| \`.font(.largeTitle/.title/.title2)\`                    | \`type: 'heading'\`, \`props.level: 1/2/3\` | Promote \`text\` → \`heading\`.                              |
-| \`.font(.headline/.body/.caption)\`                      | \`className\`                | \`text-lg font-semibold\` / (default) / \`text-xs text-muted-foreground\`. |
+| SwiftUI                                | UINode                              |
+|----------------------------------------|-------------------------------------|
+| \`Text("…")\`                           | \`text\` (or \`heading\` if \`.largeTitle\`/\`.title\`) |
+| \`Button("…") { }\`                     | \`Button\` + \`text\` + \`props.variant\`  |
+| \`TextField\` / \`SecureField\`           | \`Input\` + \`props.placeholder\`       |
+| \`TextEditor\`                          | \`Textarea\` + \`props.placeholder\`    |
+| \`Image(systemName:)\` / \`Image("…")\`   | \`Icon\` (with \`props.iconName\`) / \`Image\` |
+| \`Divider()\`                           | \`Separator\` (axis from container)    |
+| \`VStack\` / \`HStack\` / \`ZStack\`        | (no node — translate via coords)    |
 
-### UINode → SwiftUI
+**Anything not in this 7-row table — \`Toggle\`, \`Picker\`, \`Slider\`, \`Stepper\`, \`DatePicker\`, \`ColorPicker\`, \`ProgressView\`, \`List\`/\`ForEach\` rows, off-theme color/font/background modifiers — \`Read\` \`_reference/mappings.md\` before guessing.** Those primitives have specific placeholder rules and \`remember_note\` stash conventions that the in-body table doesn't carry.
 
-Inverse of the above plus container inference (Write flow §3). Layout-affecting CSS keys in \`style\` are dropped by the renderer (\`position\`, \`top\`, \`left\`, \`width\`, \`height\`, \`transform\`, \`display\`, \`flex*\`, \`grid*\`) so you'll never see them on read; on write, infer SwiftUI layout from coords, not from any (absent) CSS hints.
+For UINode → SwiftUI: the inverse mapping plus container inference (Write flow §3) — same reference file. Layout-affecting CSS keys in \`style\` (\`position\`, \`top\`, \`left\`, etc.) are dropped by the renderer; infer SwiftUI layout from coords, not from CSS hints.
 
 ### Sketch mode notes
 
@@ -741,7 +720,7 @@ After a successful read or write pass: \`remember_note({ category: 'context', te
 - Don't ship absolute-positioned SwiftUI back to the file. Use \`VStack\`/\`HStack\`/\`ZStack\` inferred from sibling clustering; coords are visualization, not implementation.
 - Don't write to \`.swift\` files outside the workspace without checking with the user — paths the user named are fine; paths you guessed are not.
 - Don't put off-theme colors in \`className\` — Tailwind JIT can't see runtime arbitrary values; always use the \`style\` field.
-- Don't claim "done" until you've round-tripped the spec via \`get_ui_mock\` (read) or shown the diff (write).
+- Don't claim "done" until both \`diagnostics.frameOverflows\` and \`diagnostics.emptyText\` arrays are empty (read) or you've shown the diff (write).
 
 ---
 
@@ -874,31 +853,15 @@ description: Use **this skill — not \`tango-ui-sketch\`, \`tango-ui-mock\`, or
 
 Render the user's whole iOS app as a labeled-card flow diagram on tango's Excalidraw canvas: one card per screen, kind-colored arrows for navigation, the entry point highlighted. Best-effort heuristic parsing — partial graphs are valuable; perfect is not the bar.
 
-The output is one call to \`set_screen_flow\` with a clean \`{screens, edges}\` payload. The tool handles layered BFS layout + arrow routing + element JSON; your job is finding the screens and their navigation.
+Two MCP tool calls do the whole job: \`scan_ios_app\` (server-side regex over \`.swift\` / \`.storyboard\`) hands you the \`{screens, edges}\` graph; \`set_screen_flow\` lays it out and draws it. You don't need to \`Read\` Swift files for this — the scanner already did.
 
 ## Tools
 
 - \`ios_status\` — confirm there's a detected Xcode project before scanning. Bail with a friendly message if not.
 - \`get_canvas_state\` — check the canvas isn't already showing the user's work.
-- \`set_screen_flow\` — single tool call, full graph. Input shape:
-  \`\`\`ts
-  type Screen = {
-    id: string;          // stable, unique — usually the type name
-    name: string;        // displayed on the card
-    kind: 'swiftui' | 'uikit' | 'storyboard';
-    filePath?: string;   // workspace-relative, shown as the card subtitle
-    summary?: string;    // ≤120 chars, one-line "what this screen is for"
-    isEntry?: boolean;   // mark the launch screen(s)
-  };
-  type Edge = {
-    from: string;        // screen id
-    to: string;          // screen id
-    kind: 'push' | 'sheet' | 'cover' | 'present' | 'segue' | 'tab';
-    label?: string;      // ≤24 chars, e.g. the button text that triggers it
-  };
-  \`\`\`
-  Options: \`{ append?: boolean, cardWidth?: number, cardHeight?: number, origin?: {x,y} }\`. Default replaces the canvas.
-- \`screenshot_canvas\` — verify the diagram looks right after writing.
+- \`scan_ios_app\` — server-side scan. Returns \`{ screens, edges, scannedFiles, cachedFiles, skippedDirs }\`. Skips \`Pods/\`, \`.build/\`, \`DerivedData/\`, \`*.xcassets/\`, \`*Tests*\`, \`Preview Content/\`, \`*Previews.swift\` automatically. Cached by file mtime — re-runs after small edits only read changed files. Pass \`includeSummaries: true\` for one-line per-screen summaries (slightly slower).
+- \`set_screen_flow\` — single tool call, full graph. Input mirrors \`scan_ios_app\`'s output, plus an optional \`options\` field: \`{ append?, cardWidth?, cardHeight?, origin?: {x,y} }\`. Default replaces the canvas.
+- \`screenshot_canvas\` — verify the diagram on the rare occasion the JSON alone isn't enough.
 - \`remember_note\` — record the macro shape so future sessions know.
 
 ## Playbook
@@ -912,124 +875,132 @@ Call \`ios_status\` first.
 - \`project.kind === 'ambiguous'\`: ask the user which candidate to map.
 - \`project.kind === 'detected'\`: proceed.
 
+\`Read\` \`tango-memory.md\` first. If a previous session has already mapped the app (look for "Mapped iOS app:" in the memory log), confirm with the user before re-mapping — the cached scan makes re-runs cheap, but the user may have asked just to confirm last session's shape.
+
 ### 2. Don't trample existing canvas content
 
 \`get_canvas_state\`. If \`elements.length > 0\`, ask the user before \`set_screen_flow\` (which replaces by default). Phrase it: *"There's existing content on the canvas — replace it with the screen-flow diagram, or place it alongside?"*
 
 If they want to keep what's there: pass \`options.append: true\` and an \`options.origin\` offset so the new diagram doesn't overlap.
 
-### 3. Enumerate sources
+### 3. Scan
 
-\`Glob\` for \`**/*.swift\` and \`**/*.storyboard\` from the workspace root. **Skip:**
+Call \`scan_ios_app\`. Pass \`includeSummaries: true\` if the user said anything like "describe each screen", "summarize", or "with a one-liner"; otherwise omit it (faster, and the user can ask later).
 
-- \`Pods/\`, \`.build/\`, \`DerivedData/\`, \`.swiftpm/\`, \`build/\`
-- \`*.xcassets/\`, \`*.xcdatamodel/\`
-- \`*Tests/\`, \`*Tests.swift\`, \`*UITests/\`, \`*UITests.swift\`
-- \`Preview Content/\`, \`*Previews.swift\`, \`#Preview\` macros (these are designer previews, not runtime screens)
+The scanner detects:
 
-If the project is huge (>400 files after filtering), tell the user and ask whether to scope to a specific directory.
+- **SwiftUI** — top-level \`struct X: View\` (nested inner views are skipped).
+- **UIKit** — top-level \`class X: ...UIViewController|VC\`.
+- **Storyboard** — \`<viewController>\` scenes; \`customClass\` wins as id, falls back to the scene id.
+- **Edges** — \`NavigationLink(destination:)\`, \`.navigationDestination\`, \`.sheet\`, \`.fullScreenCover\`, \`pushViewController\`, \`present\`, \`TabView\` children, \`<segue destination=…>\`.
+- **Entries** — \`@main\` + \`WindowGroup { Root() }\`, \`AppDelegate.window?.rootViewController = X()\`, \`<viewController isInitialViewController="YES">\`.
 
-### 4. Identify screens (each becomes a card)
+If \`scannedFiles + cachedFiles\` is suspiciously small (e.g. 0–2 on what should be a real app), the scanner may have run from the wrong directory or the project may be entirely outside the workspace. Tell the user and stop.
 
-A "screen" is a top-level (file-scope), non-nested type. Three sources:
+### 4. Sanity-check the graph (before drawing)
 
-**SwiftUI** — \`.swift\` files. Match a top-level (column 0) \`struct\` whose conformance list mentions \`View\` somewhere — including \`: View\`, \`: View, ObservableObject\`, \`: SomeCustomView\`, etc.
+Glance at the result before calling \`set_screen_flow\`. **Trim now — re-trimming after the first draw forces a second \`set_screen_flow\` and overwrites the user's view of the bad first draw.**
 
-\`\`\`
-^struct\\s+(\\w+)\\s*:[^{]*\\bView\\b[^{]*\\{
-\`\`\`
+- **Card-count gut check.** If \`screens.length\` is way out of line with what feels right for the project — 80 cards on what's clearly a small app, or 3 cards on something big — the scanner has likely picked up leaf components as screens (former) or your \`rootDir\` is misaligned (latter). Drop the obvious leaves from the \`screens\` array; \`set_screen_flow\` silently drops edges to types you removed, so you don't have to clean \`edges\` separately.
+- **Other false positives.** Drop any types that aren't really screens (a row component picked up as a SwiftUI View, a helper that conforms to View for previewing, etc.).
+- **Entry detection.** If \`screens.some(s => s.isEntry)\` is false, the scanner couldn't detect an entry. \`set_screen_flow\` falls back to "no-incoming-edges" nodes as entries — usually fine. Override only if you have evidence (e.g. the user named the entry).
+- **Very large apps** (>200 screens): warn the user before drawing — the diagram will be wide.
 
-Skip nested types (any \`struct\` indented inside another type — they're sub-views). Also skip types whose body is trivially simple (e.g. \`var body: some View { Text(...) }\` with nothing else) and aren't referenced by another View — these are leaf components, not screens. Best judgment.
+### 5. One \`set_screen_flow\` call
 
-**UIKit** — \`.swift\` files. Match a top-level \`class\` whose conformance list contains a name ending in \`ViewController\` or \`VC\` — including \`: UIViewController\`, \`: B, UIViewController\`, \`: BaseVC\`.
-
-\`\`\`
-^(?:final\\s+)?class\\s+(\\w+)\\s*:[^{]*\\b\\w*(?:ViewController|VC)\\b
-\`\`\`
-
-**Storyboard** — \`.storyboard\` XML. Each \`<viewController>\` element. The screen's \`id\` is the \`customClass\` attribute if present, else the storyboard \`id\` attribute. \`name\` is \`customClass\` or a humanized form of the storyboard id.
-
-For each screen, capture:
-- \`id\`, \`name\`, \`kind\`
-- \`filePath\` — workspace-relative
-- \`summary\` (optional) — one short sentence about what the screen does, inferred from its body (e.g. *"Sign-in form with email + password"*, *"List of saved items"*). Skip if you can't tell from a quick read.
-
-### 5. Identify entry points
-
-Mark screens with \`isEntry: true\` when:
-
-- **SwiftUI**: the \`@main\` type's \`body\` resolves to a \`WindowGroup { <RootView>() }\` — \`RootView\` is the entry. If \`RootView\` is itself a \`TabView\`, mark its tab destinations as entries (multi-entry is fine — they tile at rank 0).
-- **UIKit**: \`AppDelegate\` / \`SceneDelegate\` setting \`window?.rootViewController = <X>(...)\`. \`X\` is the entry.
-- **Storyboard**: \`<viewController ... isInitialViewController="YES" ... />\`. Map back to the screen \`id\`.
-
-If you can't find any entry, leave \`isEntry\` unset on all screens — \`set_screen_flow\` falls back to "no-incoming-edges" nodes as entries automatically.
-
-### 6. Identify edges (navigation)
-
-Heuristic regex/grep over the \`.swift\` and \`.storyboard\` files. The patterns to look for (line-by-line is fine):
-
-| Pattern (caller side)                                              | \`kind\`     |
-|--------------------------------------------------------------------|------------|
-| \`NavigationLink(destination: <Type>(\`                             | \`push\`    |
-| \`.navigationDestination(for: T.self) { ... <Type>(\`               | \`push\`    |
-| \`.sheet(isPresented:) { <Type>(\` / \`.sheet(item:) { <Type>(\`     | \`sheet\`   |
-| \`.fullScreenCover { <Type>(\`                                      | \`cover\`   |
-| \`navigationController?.pushViewController(<Type>(\`                | \`push\`    |
-| \`present(<Type>(\` / \`present(<instance of Type>\`                 | \`present\` |
-| \`TabView { ... <Type>(...) ... }\` (each child)                    | \`tab\`     |
-| Storyboard \`<segue destination="X" kind="show|push">\`             | \`push\`    |
-| Storyboard \`<segue destination="X" kind="modal|presentModally">\`  | \`sheet\`   |
-| Other storyboard \`<segue destination="X">\`                        | \`segue\`   |
-
-The \`from\` is the screen whose file you're scanning. The \`to\` is the type referenced. If the type isn't a screen you've already identified, drop the edge silently — don't invent a phantom card.
-
-If the navigation is triggered by a button/title with obvious text (\`Button("Sign in") { ... NavigationLink ... }\`), set the edge's \`label\` to that text (≤24 chars). Optional polish.
-
-### 7. One \`set_screen_flow\` call
-
-Build the payload and call once:
+Hand the graph straight through:
 
 \`\`\`json
 {
-  "screens": [...],
-  "edges": [...],
+  "screens": [...],   // from scan_ios_app, possibly trimmed
+  "edges":   [...],   // from scan_ios_app
   "options": { "append": false }
 }
 \`\`\`
 
 Don't dribble the diagram in via multiple \`add_elements\` — \`set_screen_flow\` runs the layered layout in one go and that's how it stays orderly.
 
-### 8. Verify
+### 6. Inspect the result
 
-\`screenshot_canvas\` immediately after writing. Look for:
+\`set_screen_flow\` returns a JSON result with \`written\` counts and a \`diagnostics\` object: \`{ danglingEdges: […], layoutOverlaps: […] }\`. If both arrays are empty, the diagram is clean — you're done.
 
-- Cards overlapping → call \`set_screen_flow\` again with \`options.cardWidth: 280\` (more horizontal room) or \`options.cardHeight: 180\` (more vertical room).
-- Diagram running off-screen → ask the user to zoom out (\`Cmd+0\`).
-- A card that's clearly miscategorized as a screen (e.g. a row component) → drop it from \`screens\` and re-call.
-- Missing edges → revisit the file with \`Read\` and check whether the navigation pattern matches one in §6. Add to \`edges\` and re-call.
+If \`diagnostics.danglingEdges\` is non-empty, you've dropped edges to types that weren't recognized as screens — usually fine (the scanner over-captures and the layout silently drops these), but mention the count to the user. If \`diagnostics.layoutOverlaps\` is non-empty, re-call with \`options.cardWidth: 280\` (more horizontal room) or \`options.cardHeight: 180\` (more vertical room).
 
-### 9. Tell the user what they got
+If after drawing the card count *still* looks wrong, trim more screens and re-call \`set_screen_flow\` with the same payload minus the leaf components — the second call defaults to replacing the canvas, so the bad first draw is overwritten.
+
+Only call \`screenshot_canvas\` if the user explicitly asked to see the diagram, the diagnostics flagged a layout issue you can't reason about from the JSON, or the graph is unusually large (≥30 screens) and you want to vibe-check the visual before claiming done.
+
+### 7. Tell the user what they got
 
 A one-sentence summary: *"Mapped 14 screens and 22 navigation edges. \`HomeView\` is the entry (highlighted in amber). Push edges are black; sheets blue; covers purple; tab links teal."*
 
 Mention what you couldn't classify — if there are 6 storyboard scenes you couldn't link to Swift code, say so. Partial maps are useful; pretending to be complete is not.
 
-### 10. Record it
+### 8. Record it
 
 \`remember_note({ category: 'context', text: 'Mapped iOS app: N screens, M edges. Entry: <Name>.' })\` — future sessions will see this in \`tango-memory.md\` and won't re-scan unless the user asks.
 
 ## Anti-patterns
 
+- Don't \`Glob\` and \`Read\` Swift files yourself — \`scan_ios_app\` is the seam, and re-doing it in-context burns time and tokens. The only Swift you should \`Read\` here is a specific file the user pointed at.
 - Don't run \`xcodebuild\` for this — that's \`tango-ios-sim\`'s job. Mapping is read-only and doesn't need a built binary.
-- Don't recurse into nested types treating sub-views as screens. Your card count should look right at a glance — if you have 80 cards for a small app, you're picking up leaf components.
-- Don't include test targets, preview providers, or design-time \`.swift\` files (\`#Preview\`, \`PreviewProvider\`).
+- Don't include test targets, preview providers, or design-time \`.swift\` files. The scanner already filters these.
 - Don't try to render the *contents* of each screen on the cards — text-only cards are the bar. For one screen at a time with rendered UI, point the user at \`tango-swiftui\` instead.
-- Don't ask before scanning — once preconditions are met, just go. Asking before the first call adds latency for no value.
+- Don't ask before scanning — once preconditions are met, just call \`scan_ios_app\`. The scanner is cheap and re-runs are cached.
 - Don't \`clear_canvas\` without checking with the user first when the canvas already has content.
 
 ---
 
 This skill is generated by tango and overwritten on each server boot. To customize, fork it under a different name in \`.claude/skills/\` — tango won't touch other skills.
+`;
+
+// Externalized reference for `tango-swiftui` — the dense SwiftUI ↔ UINode
+// mapping cheat sheet. Loaded by Claude on demand via `Read`, so it doesn't
+// burn skill-body tokens on every invocation. Kept as a separate string here
+// so unit tests can assert it lands on disk without filesystem fixtures.
+const SWIFTUI_MAPPING_REFERENCE_MD = `# SwiftUI ↔ UINode mapping reference
+
+Companion to \`.claude/skills/tango-swiftui/SKILL.md\`. The skill body has the playbook and a 7-row "common cases" table; this file has the full per-view mapping for everything else.
+
+## SwiftUI → UINode
+
+| SwiftUI                                                | UINode \`type\`              | Notes                                                                 |
+|--------------------------------------------------------|----------------------------|-----------------------------------------------------------------------|
+| \`Text("…")\`                                            | \`text\`                     | Promote to \`heading\` + \`props.level\` (1/2/3) when font is \`.largeTitle\`/\`.title\`/\`.title2\`. |
+| \`Button("…") { }\`                                      | \`Button\`                   | \`props.variant\`: \`default\` (\`.borderedProminent\` / no style), \`secondary\` (\`.bordered\`), \`outline\` (\`.bordered\` + \`.tint(.gray)\`), \`ghost\` (\`.plain\`), \`destructive\` (\`.destructive\` role), \`link\` (\`.borderless\`). \`text\` = label. |
+| \`TextField("…", text:)\`                                | \`Input\`                    | \`props.placeholder\` = the label string.                               |
+| \`SecureField\` / \`TextEditor\`                           | \`Input\` / \`Textarea\`        | \`SecureField\` → \`Input\`; \`TextEditor\` → \`Textarea\`.                    |
+| \`Divider()\`                                            | \`Separator\`                | Horizontal in \`VStack\`, vertical in \`HStack\` — pick by container axis. |
+| \`Image(systemName: "xyz")\`                             | \`Icon\`                     | \`props.iconName\` = best lucide-react match. Common: \`gear\`→\`Settings\`, \`magnifyingglass\`→\`Search\`, \`chevron.right\`→\`ChevronRight\`, \`plus\`→\`Plus\`, \`xmark\`→\`X\`, \`trash\`→\`Trash2\`, \`bell\`→\`Bell\`, \`house\`→\`Home\`, \`person\`→\`User\`. On miss, closest visual match. |
+| \`Image("asset")\` / \`AsyncImage(url:)\`                  | \`Image\`                    | \`props.src\` if it's a URL; otherwise omit and the renderer shows a placeholder. |
+| \`Capsule().background(…)\` with text overlay            | \`Badge\`                    | \`props.variant\` per fill / border style.                              |
+| \`Toggle\`, \`Picker\`, \`Slider\`, \`Stepper\`, \`DatePicker\`, \`ColorPicker\`, \`ProgressView\` | \`Button\` (placeholder)   | UI mock can't represent these natively. Use \`text\` = \`"<ViewName>: <label>"\` (e.g. \`Toggle: Notifications\`). On writeback, restore the original SwiftUI from a hint stashed via \`remember_note\`, else leave a \`// TODO: <ViewName>\` and ask the user. |
+| \`List\` / \`ForEach\` row                                 | \`div\` per row + child nodes | Flatten the rows. Add a \`Separator\` between them if the SwiftUI used \`.listStyle(.plain)\`. |
+| \`VStack\` / \`HStack\` / \`ZStack\` / \`Group\` / \`ScrollView\` / \`Form\` / \`Section\` | (none — container)         | Containers don't emit nodes; their children do, with positions inferred from the container axis. |
+| \`Spacer()\`                                             | (none — gap)               | Translate by leaving a gap in the next sibling's coords.               |
+| \`.padding(p)\`                                          | (offset)                   | Inflate child coords by \`p\` on the relevant axes.                     |
+| \`.frame(width:height:)\`                                | (sets \`width\`/\`height\`)     | If only one dim given, use the default for the other.                  |
+| \`.foregroundColor(.theme)\` / \`.foregroundStyle(.primary)\` | \`className\`                | \`text-foreground\` / \`text-muted-foreground\` per role.                  |
+| \`.foregroundColor(Color(red:green:blue:))\` / off-theme | \`style.color: '#hex'\`      | Off-theme colors must be inline — Tailwind v4's JIT can't see runtime arbitrary values. |
+| \`.background(Color.theme)\`                             | \`className\`                | \`bg-card\` / \`bg-muted\` / \`bg-accent\` per intent.                       |
+| \`.background(Color(red:green:blue:))\` / gradients      | \`style.background: ...\`    | Inline, same reasoning.                                                |
+| \`.font(.largeTitle/.title/.title2)\`                    | \`type: 'heading'\`, \`props.level: 1/2/3\` | Promote \`text\` → \`heading\`.                              |
+| \`.font(.headline/.body/.caption)\`                      | \`className\`                | \`text-lg font-semibold\` / (default) / \`text-xs text-muted-foreground\`. |
+
+## UINode → SwiftUI
+
+Inverse of the above plus container inference (skill body's Write flow §3). Layout-affecting CSS keys in \`style\` (\`position\`, \`top\`, \`left\`, \`width\`, \`height\`, \`transform\`, \`display\`, \`flex*\`, \`grid*\`) are dropped by the renderer, so you'll never see them on read; on write, infer SwiftUI layout from coords, not from any (absent) CSS hints.
+
+Cluster siblings to recover containers:
+
+- Similar \`y\`, rising \`x\` → \`HStack(spacing:)\`. \`spacing\` ≈ mean adjacent gap.
+- Similar \`x\`, rising \`y\` → \`VStack(spacing:)\`.
+- Overlapping in both axes → \`ZStack\`.
+- A leaf with non-trivial offset from container origin → \`.padding(...)\` rather than a wrapping container.
+
+---
+
+This reference is generated by tango and overwritten on each server boot. To customize, fork the parent skill under a different name in \`.claude/skills/\` — tango won't touch other skills.
 `;
 
 const CLAUDE_MD_SENTINEL_START = '<!-- tango:start (managed by tango — do not edit) -->';
@@ -1118,6 +1089,29 @@ async function writeIfChanged(p: string, next: string): Promise<void> {
   }
 }
 
+// Writes a skill's `SKILL.md` plus an arbitrary set of sibling reference
+// files under `_reference/<name>.md`. The reference files are loaded by
+// Claude on demand via the `Read` tool — keeps the always-loaded SKILL.md
+// small while preserving the dense per-domain detail (mapping cheat sheets,
+// element JSON shapes, …). All paths are inside the workspace.
+type SkillReference = { fileName: string; body: string };
+async function writeSkillBundle(
+  workspace: string,
+  name: string,
+  body: string,
+  references: SkillReference[] = [],
+): Promise<void> {
+  const skillDir = path.join(workspace, '.claude', 'skills', name);
+  await fs.mkdir(skillDir, { recursive: true });
+  await writeIfChanged(path.join(skillDir, 'SKILL.md'), body);
+  if (references.length === 0) return;
+  const refDir = path.join(skillDir, '_reference');
+  await fs.mkdir(refDir, { recursive: true });
+  for (const ref of references) {
+    await writeIfChanged(path.join(refDir, ref.fileName), ref.body);
+  }
+}
+
 export type EnsureError = { file: string; reason: string };
 export type EnsureResult =
   | { ok: true }
@@ -1139,26 +1133,6 @@ export async function ensureWorkspace(
   await fs.mkdir(workspace, { recursive: true });
   await fs.mkdir(path.join(workspace, '.claude'), { recursive: true });
   await fs.mkdir(path.join(workspace, 'design-scratch'), { recursive: true });
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-sketch'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-mock'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-swiftui'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-sim'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-map'),
-    { recursive: true },
-  );
 
   // Mark detection in flight for this workspace, then reset the slot's
   // iOS state so MCP tools don't see a stale `detected` from the previous
@@ -1196,48 +1170,17 @@ export async function ensureWorkspace(
     tangoMd(detected, workspace),
   );
 
-  // .claude/skills/tango-ui-sketch/SKILL.md — wholly ours, always overwrite.
-  // Auto-discovered by Claude Code; gives terminal-Claude a tuned playbook for
-  // turning a UI (existing or proposed) into an Excalidraw wireframe.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-sketch', 'SKILL.md'),
-    UI_SKETCH_SKILL_MD,
-  );
-
-  // .claude/skills/tango-ui-mock/SKILL.md — wholly ours, always overwrite.
-  // Sibling skill that drives terminal-Claude through tango's high-fidelity
-  // "UI" mode (shadcn/Tailwind mock with drag/resize/text-edit).
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-mock', 'SKILL.md'),
-    UI_MOCK_SKILL_MD,
-  );
-
-  // .claude/skills/tango-swiftui/SKILL.md — wholly ours, always overwrite.
-  // Round-trips a SwiftUI View through tango's canvas (UI mock or sketch);
-  // edits the .swift file the user has selected. No new tango UI surfaces.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-swiftui', 'SKILL.md'),
-    SWIFTUI_SKILL_MD,
-  );
-
-  // .claude/skills/tango-ios-sim/SKILL.md — wholly ours, always overwrite.
-  // Drives the build / install / launch dev loop on the booted simulator.
-  // Available regardless of whether detectXcodeProject found anything; the
-  // skill's own first step is to call ios_status and bail out gracefully if
-  // the workspace has no Xcode project.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-sim', 'SKILL.md'),
-    TANGO_IOS_SIM_SKILL_MD,
-  );
-
-  // .claude/skills/tango-ios-map/SKILL.md — wholly ours, always overwrite.
-  // Drives terminal-Claude through scanning the workspace's Swift sources and
-  // calling `set_screen_flow` to render the macro screen-flow diagram.
-  // Available regardless of detection; the skill's first step is `ios_status`.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-map', 'SKILL.md'),
-    TANGO_IOS_MAP_SKILL_MD,
-  );
+  // Each skill bundle: SKILL.md (always overwritten, wholly tango-managed)
+  // plus an optional `_reference/` folder for dense material the model loads
+  // on demand via `Read`. New references go in their own file alongside
+  // SKILL.md so the always-loaded body stays small.
+  await writeSkillBundle(workspace, 'tango-ui-sketch', UI_SKETCH_SKILL_MD);
+  await writeSkillBundle(workspace, 'tango-ui-mock', UI_MOCK_SKILL_MD);
+  await writeSkillBundle(workspace, 'tango-swiftui', SWIFTUI_SKILL_MD, [
+    { fileName: 'mappings.md', body: SWIFTUI_MAPPING_REFERENCE_MD },
+  ]);
+  await writeSkillBundle(workspace, 'tango-ios-sim', TANGO_IOS_SIM_SKILL_MD);
+  await writeSkillBundle(workspace, 'tango-ios-map', TANGO_IOS_MAP_SKILL_MD);
 
   // Best-effort cleanup of the previous skill name in workspaces that were
   // ensured before the rename. It was wholly tango-managed, so it's safe to
