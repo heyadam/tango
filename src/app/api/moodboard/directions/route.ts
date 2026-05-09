@@ -1,5 +1,5 @@
 import * as z from 'zod/v4';
-import { IMAGE_MODEL, VISION_MODEL } from '@/lib/ai';
+import { IMAGE_MODEL, SUMMARIZE_MODEL } from '@/lib/ai';
 import { appendEvent } from '@/server/memory';
 import { saveMoodboardPng } from '@/server/moodboard';
 import { getWorkspaceOrNull } from '@/server/workspace';
@@ -212,7 +212,7 @@ async function planDirections(brief: string, mode: MoodboardMode) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: VISION_MODEL,
+      model: SUMMARIZE_MODEL,
       input: [
         {
           role: 'system',

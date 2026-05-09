@@ -141,10 +141,17 @@ describe('formatEntry', () => {
 
   it('formats an agent_run', () => {
     const out = formatEntry(
-      { type: 'agent_run', goal: 'add a button', tools: 'cursor_click', outcome: 'done' },
+      {
+        type: 'agent_run',
+        goal: 'add a button',
+        tools: 'screenshot_canvas→set_canvas_state',
+        outcome: 'done',
+      },
       ts,
     );
-    expect(out).toBe(`- ${ts} [agent_run] "add a button" → cursor_click → done`);
+    expect(out).toBe(
+      `- ${ts} [agent_run] "add a button" → screenshot_canvas→set_canvas_state → done`,
+    );
   });
 
   it('substitutes "no tools" when tools string is empty', () => {

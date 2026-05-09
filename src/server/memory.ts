@@ -14,7 +14,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { generateText, openai, VISION_MODEL } from '@/lib/ai';
+import { generateText, openai, SUMMARIZE_MODEL } from '@/lib/ai';
 import { getWorkspaceOrNull } from './workspace';
 
 const FILE_NAME = 'tango-memory.md';
@@ -370,7 +370,7 @@ async function summarizeOnce(p: string): Promise<void> {
   let nextSummary: string;
   try {
     const result = await generateText({
-      model: openai(VISION_MODEL),
+      model: openai(SUMMARIZE_MODEL),
       system: SUMMARY_SYSTEM,
       prompt: userPrompt,
       maxOutputTokens: SUMMARY_MAX_TOKENS,

@@ -4,12 +4,12 @@
 // UIMockCanvas (react-moveable touches `window` at module load). Same pattern
 // as SketchPanel + DesignerCanvas.
 //
-// "Send to Claude" packages the current spec into a markdown handoff prompt
-// and submits it to the terminal-Claude session via terminalBus. The spec
-// JSON is the source of truth for what the user wants — Claude reads it and
+// "Send to chat" packages the current spec into a markdown handoff prompt
+// and pushes it into the chat harness via chatBus. The spec JSON is the
+// source of truth for what the user wants — the chat brain reads it and
 // translates the absolute-positioned mock into responsive Tailwind in the
-// production codebase. The user's drag/resize tweaks are visible to Claude
-// as updated coords on its next `get_ui_mock` read.
+// production codebase. The user's drag/resize tweaks are visible to the
+// chat brain as updated coords on its next `get_ui_mock` read.
 
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -25,7 +25,7 @@ import { uiMockStore } from '@/lib/uiMockStore';
 import { EMPTY_SPEC, type UISpec } from '@/lib/uiMockProtocol';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
-import { terminalBus } from '@/lib/terminalBus';
+import { chatBus } from '@/lib/chatBus';
 
 const UIMockCanvas = dynamic(() => import('./UIMockCanvas'), {
   ssr: false,
@@ -57,7 +57,7 @@ export default function UIPanel() {
   // ref) because the toolbar is rendered by this component, not the canvas.
   const [screenCount, setScreenCount] = useState(0);
 
-  // Latest spec — kept in a ref so "Send to Claude" / "Clear" don't have to
+  // Latest spec — kept in a ref so "Send to chat" / "Clear" don't have to
   // re-render to read it. Updated on every server `set` and every local
   // snapshot.
   const specRef = useRef<UISpec>(EMPTY_SPEC);
@@ -243,9 +243,9 @@ export default function UIPanel() {
     setStatus(null);
     try {
       const handoff = buildHandoffPrompt(spec);
-      terminalBus.submitToTerminal(handoff);
+      chatBus.send(handoff);
       setStatus(
-        `Sent ${spec.screens.length} screen${spec.screens.length === 1 ? '' : 's'} to Claude.`,
+        `Sent ${spec.screens.length} screen${spec.screens.length === 1 ? '' : 's'} to chat.`,
       );
     } catch (err) {
       setStatus(
@@ -317,7 +317,7 @@ export default function UIPanel() {
                 ) : (
                   <Send className="size-3.5" />
                 )}
-                Send to Claude
+                Send to chat
               </Button>
             </>,
             rightSlot,

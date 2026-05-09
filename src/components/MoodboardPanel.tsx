@@ -47,7 +47,7 @@ import {
   type MoodboardQuality,
   type MoodboardSize,
 } from '@/lib/moodboardStore';
-import { terminalBus } from '@/lib/terminalBus';
+import { chatBus } from '@/lib/chatBus';
 import { transmitBus } from '@/lib/transmitBus';
 import { cn } from '@/lib/utils';
 
@@ -170,7 +170,7 @@ export default function MoodboardPanel() {
     getSnapshot,
   );
   // Handoff is short and component-local: writing the snapshot to disk and
-  // pushing into the terminal bus completes in milliseconds, so it doesn't
+  // pushing into chatBus completes in milliseconds, so it doesn't
   // need to survive an unmount.
   const [handoffBusy, setHandoffBusy] = useState(false);
   const [handoffStatus, setHandoffStatus] = useState<string | null>(null);
@@ -212,8 +212,8 @@ export default function MoodboardPanel() {
         src: imageSrc(selected),
         label: selected.title,
       });
-      terminalBus.submitToTerminal(handoffPrompt(relPath, selected));
-      setHandoffStatus(`Sent ${selected.title} to Claude.`);
+      chatBus.send(handoffPrompt(relPath, selected));
+      setHandoffStatus(`Sent ${selected.title} to chat.`);
     } catch (err) {
       setHandoffError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -334,7 +334,7 @@ export default function MoodboardPanel() {
                   ) : (
                     <Send className="size-3.5" />
                   )}
-                  Send to Claude
+                  Send to chat
                 </Button>
               </>,
               rightSlot,

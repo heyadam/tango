@@ -148,7 +148,7 @@ For visual context, prefer \`screenshot_canvas\` — it's the live channel. The 
 
 const TANGO_MD_TAIL = `## Workspace memory
 
-A live memory file lives at \`./tango-memory.md\` — read it now for prior context (snapshots taken, agent runs, recorded design decisions). When the user states a design decision, constraint, or context worth keeping for future sessions, call the \`remember_note\` MCP tool with the appropriate \`category\` (\`'decision'\`, \`'context'\`, or \`'todo'\`). Don't edit the Summary or Recent sections of \`tango-memory.md\` directly — those are managed by tango. Your own working notes go in the \`Notes (yours)\` block at the bottom, which tango never touches. Note: snapshot captions and recorded notes are summarized via the same OpenAI key as the controller agent.
+A live memory file lives at \`./tango-memory.md\` — read it now for prior context (snapshots taken, agent runs, recorded design decisions). When the user states a design decision, constraint, or context worth keeping for future sessions, call the \`remember_note\` MCP tool with the appropriate \`category\` (\`'decision'\`, \`'context'\`, or \`'todo'\`). Don't edit the Summary or Recent sections of \`tango-memory.md\` directly — those are managed by tango. Your own working notes go in the \`Notes (yours)\` block at the bottom, which tango never touches. Note: snapshot captions and recorded notes are periodically summarized by tango via OpenAI.
 
 ---
 

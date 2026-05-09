@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import AgentSidebar from './AgentSidebar';
 import MoodboardPanel from './MoodboardPanel';
 import PanelHeader from './PanelHeader';
 import SketchPanel from './SketchPanel';
@@ -14,7 +13,6 @@ import {
 import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 type Props = {
-  agentSidebarOpen: boolean;
   mode: WorkspaceMode;
   onModeChange: (mode: WorkspaceMode) => void;
 };
@@ -25,17 +23,12 @@ const modes: Array<{ value: WorkspaceMode; label: string }> = [
   { value: 'ui', label: 'UI' },
 ];
 
-export default function LeftPanel({
-  agentSidebarOpen,
-  mode,
-  onModeChange,
-}: Props) {
+export default function LeftPanel({ mode, onModeChange }: Props) {
   const [leftSlot, setLeftSlot] = useState<HTMLElement | null>(null);
   const [rightSlot, setRightSlot] = useState<HTMLElement | null>(null);
 
   return (
     <div className="flex h-full w-full">
-      <AgentSidebar open={agentSidebarOpen} />
       <Tabs
         value={mode}
         onValueChange={(v) => onModeChange(v as WorkspaceMode)}
