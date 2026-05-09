@@ -47,7 +47,7 @@ import {
   type MoodboardQuality,
   type MoodboardSize,
 } from '@/lib/moodboardStore';
-import { terminalBus } from '@/lib/terminalBus';
+import { chatBus } from '@/lib/chatBus';
 import { transmitBus } from '@/lib/transmitBus';
 import { cn } from '@/lib/utils';
 
@@ -212,8 +212,8 @@ export default function MoodboardPanel() {
         src: imageSrc(selected),
         label: selected.title,
       });
-      terminalBus.submitToTerminal(handoffPrompt(relPath, selected));
-      setHandoffStatus(`Sent ${selected.title} to Claude.`);
+      chatBus.send(handoffPrompt(relPath, selected));
+      setHandoffStatus(`Sent ${selected.title} to chat.`);
     } catch (err) {
       setHandoffError(err instanceof Error ? err.message : String(err));
     } finally {

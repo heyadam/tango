@@ -11,7 +11,7 @@ import { sketchStore } from '@/lib/sketchStore';
 import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
 import type { ScreenshotRequestMsg } from '@/lib/canvasProtocol';
 import { PanelHeaderRightSlot } from '@/lib/leftPanelSlots';
-import { terminalBus } from '@/lib/terminalBus';
+import { chatBus } from '@/lib/chatBus';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
 import type { DesignerHandles } from './DesignerCanvas';
@@ -131,8 +131,10 @@ export default function SketchPanel() {
     try {
       const blob = await handles.getPng();
       const { relPath } = await writeSnapshot(blob);
-      terminalBus.sendToTerminal(`# review design at ${relPath}\n`);
-      setStatus(`Sent ${relPath} to Claude.`);
+      chatBus.send(
+        `Please review my design (saved at ${relPath}). Use \`vision_describe_canvas\` if you need to see what's currently drawn.`,
+      );
+      setStatus(`Sent ${relPath} to chat.`);
     } catch (err) {
       setStatus(
         `Send failed: ${err instanceof Error ? err.message : String(err)}`,

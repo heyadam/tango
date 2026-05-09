@@ -7,7 +7,6 @@ import {
   mcpUrl,
 } from './helpers';
 
-// Helper to build a UIMessage without dragging in the AI SDK's full type machinery.
 function userMsg(...texts: string[]): UIMessage {
   return {
     id: Math.random().toString(36).slice(2),
@@ -64,13 +63,13 @@ describe('mcpUrl', () => {
   }
 
   it('builds a same-origin /mcp URL over http', () => {
-    expect(mcpUrl(req('http://localhost:3000/api/agent'))).toBe(
+    expect(mcpUrl(req('http://localhost:3000/api/chat'))).toBe(
       'http://localhost:3000/mcp',
     );
   });
 
   it('builds a same-origin /mcp URL over https', () => {
-    expect(mcpUrl(req('https://example.com/api/agent'))).toBe(
+    expect(mcpUrl(req('https://example.com/api/chat'))).toBe(
       'https://example.com/mcp',
     );
   });
@@ -82,37 +81,42 @@ describe('mcpUrl', () => {
   });
 
   it('preserves an IPv6 host', () => {
-    expect(mcpUrl(req('http://[::1]:3000/api/agent'))).toBe(
+    expect(mcpUrl(req('http://[::1]:3000/api/chat'))).toBe(
       'http://[::1]:3000/mcp',
     );
   });
 });
 
 describe('filterAllowedTools', () => {
-  it('keeps the five UI/terminal tools and drops every canvas tool', () => {
+  it('keeps every brain-side MCP tool and drops the legacy cursor/terminal tools', () => {
     const allTools = {
-      dom_inspect: { description: 'inspect' },
-      cursor_move: { description: 'move' },
-      cursor_click: { description: 'click' },
-      cursor_type: { description: 'type' },
-      terminal_type: { description: 'tt' },
-      // canvas tools that must be dropped:
-      get_canvas_state: { description: 'gcs' },
-      set_canvas_state: { description: 'scs' },
-      add_elements: { description: 'add' },
-      clear_canvas: { description: 'clear' },
-      screenshot_canvas: { description: 'snap' },
+      // chat-allowlisted:
+      get_canvas_state: { description: '' },
+      set_canvas_state: { description: '' },
+      add_elements: { description: '' },
+      clear_canvas: { description: '' },
+      screenshot_canvas: { description: '' },
+      set_screen_flow: { description: '' },
+      get_ui_mock: { description: '' },
+      get_ui_viewport: { description: '' },
+      set_ui_mock: { description: '' },
+      add_ui_screen: { description: '' },
+      clear_ui_mock: { description: '' },
+      ios_status: { description: '' },
+      ios_build_run: { description: '' },
+      ios_logs_recent: { description: '' },
+      remember_note: { description: '' },
+      // legacy controller-agent tools that must be dropped:
+      dom_inspect: { description: '' },
+      cursor_move: { description: '' },
+      cursor_click: { description: '' },
+      cursor_type: { description: '' },
+      terminal_type: { description: '' },
     };
     const filtered = filterAllowedTools(allTools);
-    expect(Object.keys(filtered).sort()).toEqual([
-      'cursor_click',
-      'cursor_move',
-      'cursor_type',
-      'dom_inspect',
-      'terminal_type',
-    ]);
-    expect('set_canvas_state' in filtered).toBe(false);
-    expect('add_elements' in filtered).toBe(false);
+    expect(Object.keys(filtered).sort()).toEqual([...ALLOWED_TOOLS].sort());
+    expect('terminal_type' in filtered).toBe(false);
+    expect('dom_inspect' in filtered).toBe(false);
   });
 
   it('returns {} for empty input', () => {
@@ -128,20 +132,44 @@ describe('filterAllowedTools', () => {
   });
 
   it('does not mutate the input object', () => {
-    const input = { dom_inspect: 1, set_canvas_state: 2 };
+    const input = { get_canvas_state: 1, terminal_type: 2 };
     filterAllowedTools(input);
-    expect(input).toEqual({ dom_inspect: 1, set_canvas_state: 2 });
+    expect(input).toEqual({ get_canvas_state: 1, terminal_type: 2 });
   });
 });
 
 describe('ALLOWED_TOOLS', () => {
-  it('contains exactly the five UI/terminal tool names', () => {
-    expect([...ALLOWED_TOOLS].sort()).toEqual([
-      'cursor_click',
-      'cursor_move',
-      'cursor_type',
+  it('contains the 15 brain-side tool names', () => {
+    expect([...ALLOWED_TOOLS].sort()).toEqual(
+      [
+        'add_elements',
+        'add_ui_screen',
+        'clear_canvas',
+        'clear_ui_mock',
+        'get_canvas_state',
+        'get_ui_mock',
+        'get_ui_viewport',
+        'ios_build_run',
+        'ios_logs_recent',
+        'ios_status',
+        'remember_note',
+        'screenshot_canvas',
+        'set_canvas_state',
+        'set_screen_flow',
+        'set_ui_mock',
+      ].sort(),
+    );
+  });
+
+  it('does not contain any cursor/terminal puppet tools', () => {
+    for (const banned of [
       'dom_inspect',
+      'cursor_move',
+      'cursor_click',
+      'cursor_type',
       'terminal_type',
-    ]);
+    ]) {
+      expect(ALLOWED_TOOLS.has(banned)).toBe(false);
+    }
   });
 });
