@@ -42,31 +42,40 @@ export default function ChatPanel({ workspacePath }: Props) {
   });
 
   // Hydrate from localStorage post-mount (avoids SSR mismatch — chatStore
-  // touches window). Re-hydrates whenever the workspace changes.
+  // touches window). Re-hydrates whenever the workspace changes; if a stream
+  // is in flight for the previous workspace we abort it first so the eventual
+  // tool-result + memory-log land against the right workspace.
   const hydratedFor = useRef<string | null>(null);
   useEffect(() => {
     if (!workspacePath) return;
     if (hydratedFor.current === workspacePath) return;
+    if (status === 'streaming' || status === 'submitted') {
+      stop();
+    }
     hydratedFor.current = workspacePath;
     const saved = chatStore.load(workspacePath);
-    if (saved.length > 0) setMessages(saved);
-    else setMessages([]);
-  }, [workspacePath, setMessages]);
+    setMessages(saved);
+  }, [workspacePath, setMessages, status, stop]);
 
   // Mirror messages back to localStorage as they change. Skip until hydration
   // has run for this workspace so we don't clobber saved state with [].
+  // Skip while streaming — every token would re-stringify the whole transcript;
+  // we save once on stream completion below.
   useEffect(() => {
     if (!workspacePath) return;
     if (hydratedFor.current !== workspacePath) return;
+    if (status === 'streaming' || status === 'submitted') return;
     chatStore.save(workspacePath, messages);
-  }, [messages, workspacePath]);
+  }, [messages, workspacePath, status]);
 
   // Bus seam — feature panels (SketchPanel, UIPanel, MoodboardPanel) push
-  // prompts into chat without holding their own useChat reference.
+  // prompts into chat without holding their own useChat reference. Honor
+  // `autosubmit:false` so a future caller can seed the input without firing.
   useEffect(() => {
-    return chatBus._onSend((text) => {
+    return chatBus._onSend((text, opts) => {
       const trimmed = text.trim();
       if (!trimmed) return;
+      if (opts?.autosubmit === false) return;
       sendMessage({ text: trimmed });
     });
   }, [sendMessage]);

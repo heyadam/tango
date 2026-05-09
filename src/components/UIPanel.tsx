@@ -57,7 +57,7 @@ export default function UIPanel() {
   // ref) because the toolbar is rendered by this component, not the canvas.
   const [screenCount, setScreenCount] = useState(0);
 
-  // Latest spec — kept in a ref so "Send to Claude" / "Clear" don't have to
+  // Latest spec — kept in a ref so "Send to chat" / "Clear" don't have to
   // re-render to read it. Updated on every server `set` and every local
   // snapshot.
   const specRef = useRef<UISpec>(EMPTY_SPEC);
@@ -317,7 +317,7 @@ export default function UIPanel() {
                 ) : (
                   <Send className="size-3.5" />
                 )}
-                Send to Claude
+                Send to chat
               </Button>
             </>,
             rightSlot,

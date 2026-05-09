@@ -4,12 +4,18 @@ import {
   stepCountIs,
   streamText,
   tool,
+  type ToolCallOptions,
   type UIMessage,
 } from 'ai';
 import { createMCPClient } from '@ai-sdk/mcp';
 import { z } from 'zod';
-import { getModel, safeModel } from '@/lib/ai';
+import { safeModel } from '@/lib/ai';
 import { appendEvent } from '@/server/memory';
+import {
+  errorTextFromResult,
+  extractScreenshotImage,
+  isErrorResult,
+} from './extractScreenshot';
 import { filterAllowedTools, lastUserGoal, mcpUrl } from './helpers';
 
 export const runtime = 'nodejs';
@@ -39,34 +45,6 @@ Working rules:
 
 const STEP_LIMIT = 20;
 
-type CallToolResultLike = {
-  content?: Array<
-    | { type: 'text'; text: string }
-    | { type: 'image'; data: string; mimeType: string }
-    | { type: string; [k: string]: unknown }
-  >;
-};
-
-function extractImagePart(
-  result: unknown,
-): { data: string; mimeType: string } | null {
-  const content = (result as CallToolResultLike | null)?.content ?? [];
-  for (const part of content) {
-    if (
-      part &&
-      (part as { type?: string }).type === 'image' &&
-      typeof (part as { data?: string }).data === 'string' &&
-      typeof (part as { mimeType?: string }).mimeType === 'string'
-    ) {
-      return {
-        data: (part as { data: string }).data,
-        mimeType: (part as { mimeType: string }).mimeType,
-      };
-    }
-  }
-  return null;
-}
-
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
@@ -89,6 +67,13 @@ export async function POST(req: Request) {
     const allTools = await client.tools();
     const mcpTools = filterAllowedTools(allTools);
 
+    type McpExecutableTool = {
+      execute: (
+        input: Record<string, unknown>,
+        options: ToolCallOptions,
+      ) => Promise<unknown>;
+    };
+
     const localTools = {
       vision_describe_canvas: tool({
         description:
@@ -101,26 +86,23 @@ export async function POST(req: Request) {
               'Optional aspect to emphasize, e.g. "layout", "color palette", "interactive elements".',
             ),
         }),
-        execute: async ({ focus }) => {
+        execute: async ({ focus }, options) => {
           const screenshotTool = (mcpTools as Record<string, unknown>)
-            .screenshot_canvas as
-            | {
-                execute: (
-                  input: unknown,
-                  options: unknown,
-                ) => Promise<unknown>;
-              }
-            | undefined;
+            .screenshot_canvas as McpExecutableTool | undefined;
           if (!screenshotTool) {
             return { error: 'screenshot_canvas tool not available' };
           }
-          const shot = await screenshotTool.execute({}, {});
-          const image = extractImagePart(shot);
+          const shot = await screenshotTool.execute({}, options);
+          if (isErrorResult(shot)) {
+            return { error: errorTextFromResult(shot) };
+          }
+          const image = extractScreenshotImage(shot);
           if (!image) {
             return { error: 'screenshot returned no image data' };
           }
           const { text } = await generateText({
             model: safeModel('vision'),
+            abortSignal: options.abortSignal,
             messages: [
               {
                 role: 'user',
@@ -156,9 +138,10 @@ export async function POST(req: Request) {
             .optional()
             .describe('Optional screen name (e.g. "ProfileView").'),
         }),
-        execute: async ({ spec, screen }) => {
+        execute: async ({ spec, screen }, options) => {
           const { text } = await generateText({
             model: safeModel('code'),
+            abortSignal: options.abortSignal,
             prompt: `Write idiomatic SwiftUI for the screen "${screen ?? 'main'}". Return ONLY the Swift source — no markdown fence, no commentary.
 
 Spec:
@@ -216,6 +199,3 @@ ${spec}`,
     throw err;
   }
 }
-
-// re-export so type-checking + future test suites can reach internals
-export { getModel };

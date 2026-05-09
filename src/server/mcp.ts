@@ -96,7 +96,7 @@ const uiSpecSchema = z.object({
 
 // Screen-flow spec — the input shape for `set_screen_flow`. Aligned with
 // `Screen` / `Edge` in src/server/screenFlow.ts. Strict enums on `kind` so
-// terminal-Claude gets a useful validation error for typos. Bounded fields
+// the model gets a useful validation error for typos. Bounded fields
 // keep the rendered card readable; `name.max(120)` accommodates real UIKit
 // `ViewController` names that routinely exceed 60 chars.
 const flowScreenSchema = z.object({
@@ -146,7 +146,7 @@ function toolErrorResult(toolName: string, err: unknown) {
 
 // Shared shape for `ios_build_run` early-exit errors — keeps the result
 // schema consistent with the orchestrator's own `{ok:false, stage, message,
-// errors}` returns so terminal-Claude doesn't have to parse two formats.
+// errors}` returns so the model doesn't have to parse two formats.
 function iosBuildErrorResult(
   stage: 'detect' | 'build' | 'install' | 'launch',
   message: string,
@@ -632,8 +632,8 @@ function buildServer(): McpServer {
           bundleId: resolvedBundleId,
           sinceSeconds,
         });
-        // Surface validator rejections structurally so terminal-Claude
-        // doesn't mistake them for "no entries in the window."
+        // Surface validator rejections structurally so the model doesn't
+        // mistake them for "no entries in the window."
         if (result.rejected) {
           return toolErrorResult(
             'ios_logs_recent',

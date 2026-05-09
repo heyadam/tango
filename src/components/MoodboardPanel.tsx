@@ -170,7 +170,7 @@ export default function MoodboardPanel() {
     getSnapshot,
   );
   // Handoff is short and component-local: writing the snapshot to disk and
-  // pushing into the terminal bus completes in milliseconds, so it doesn't
+  // pushing into chatBus completes in milliseconds, so it doesn't
   // need to survive an unmount.
   const [handoffBusy, setHandoffBusy] = useState(false);
   const [handoffStatus, setHandoffStatus] = useState<string | null>(null);
@@ -334,7 +334,7 @@ export default function MoodboardPanel() {
                   ) : (
                     <Send className="size-3.5" />
                   )}
-                  Send to Claude
+                  Send to chat
                 </Button>
               </>,
               rightSlot,

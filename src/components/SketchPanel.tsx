@@ -252,7 +252,7 @@ export default function SketchPanel() {
               ) : (
                 <Send className="size-3.5" />
               )}
-              Send to Claude
+              Send to chat
             </Button>,
             rightSlot,
           )

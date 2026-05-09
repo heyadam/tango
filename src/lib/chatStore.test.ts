@@ -98,6 +98,17 @@ describe('chatStore', () => {
     expect(loaded[0].id).toBe('s');
   });
 
+  it('keeps a single huge message rather than dropping it to []', () => {
+    // The trim loop guards on `trimmed.length > 1`, so the last surviving
+    // message is preserved even if it alone exceeds MAX_BYTES. Regressing
+    // this would silently lose the user's most recent turn.
+    const onlyHuge = msg('giant', 'assistant', 'x'.repeat(MAX_BYTES * 3));
+    chatStore.save('/ws', [onlyHuge]);
+    const loaded = chatStore.load('/ws');
+    expect(loaded.length).toBe(1);
+    expect(loaded[0].id).toBe('giant');
+  });
+
   it('is a no-op for empty workspacePath', () => {
     chatStore.save('', [msg('1', 'user', 'x')]);
     expect(chatStore.load('')).toEqual([]);

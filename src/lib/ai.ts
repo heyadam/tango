@@ -96,9 +96,10 @@ export function safeModel(task: TaskType): LanguageModel {
   return getModel(task);
 }
 
-// Back-compat re-exports. memory.ts and any not-yet-migrated callers still
-// import `openai`, `generateText`, `VISION_MODEL`, `IMAGE_MODEL`. Keep them.
+// Re-exports for callers outside the chat harness — memory.ts (Recent
+// summarization) and the moodboard directions route (OpenAI Responses API).
+// Both are cheap-text OpenAI tasks, so they ride on `summarize`.
 export { openaiProvider as openai, generateText };
 
-export const VISION_MODEL = MODEL_IDS.summarize;
+export const SUMMARIZE_MODEL = MODEL_IDS.summarize;
 export const IMAGE_MODEL = 'gpt-image-2-2026-04-21' as const;
