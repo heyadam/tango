@@ -54,6 +54,8 @@ if (typeof window !== 'undefined') {
 // per axis) plus each screen's title row above the frame (text-xs ≈ 16px
 // + gap-2 = 8px → ~24px on top, none on bottom). If those classes change
 // in UIMockCanvas, update these in lockstep.
+// The reported size is physical px and intentionally ignores the canvas
+// camera zoom — frames should default to a size that fits at 100%.
 const FRAME_INSET_X = 80;
 const FRAME_INSET_Y = 104;
 
