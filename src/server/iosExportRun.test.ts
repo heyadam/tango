@@ -51,6 +51,7 @@ function deps(overrides: Partial<Parameters<typeof runExportAndRun>[1]> = {}) {
       inclusion: 'fs-synced' as const,
     })),
     writeFiles: vi.fn(async () => {}),
+    checkEmbedded: vi.fn(async () => true),
     ...overrides,
   };
 }
@@ -85,6 +86,33 @@ describe('runExportAndRun', () => {
       expect.objectContaining({ udid: 'UDID-1', bringForeground: true }),
     );
     expect(getExportRunState()).toEqual(state);
+    expect(state.embedded).toBe(true);
+    // The scan runs against the project's parent dir with every embeddable
+    // type name (root view + per-screen views).
+    expect(d.checkEmbedded).toHaveBeenCalledWith(
+      '/repo',
+      expect.arrayContaining(['TangoGeneratedRootView']),
+    );
+  });
+
+  it('reports embedded=false when no user source references the views', async () => {
+    const d = deps({ checkEmbedded: vi.fn(async () => false) });
+    const state = await runExportAndRun({}, d);
+    expect(state.phase).toBe('done');
+    if (state.phase !== 'done') return;
+    expect(state.embedded).toBe(false);
+  });
+
+  it('treats an embed-scan crash as embedded (warning suppressed, export still done)', async () => {
+    const d = deps({
+      checkEmbedded: vi.fn(async () => {
+        throw new Error('EACCES');
+      }),
+    });
+    const state = await runExportAndRun({}, d);
+    expect(state.phase).toBe('done');
+    if (state.phase !== 'done') return;
+    expect(state.embedded).toBe(true);
   });
 
   it('fails on an empty spec without touching the toolchain', async () => {

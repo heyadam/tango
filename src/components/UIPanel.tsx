@@ -439,6 +439,7 @@ export default function UIPanel({ terminalAgent }: Props) {
           bundleId?: string;
           durationMs?: number;
           inclusion?: string;
+          embedded?: boolean;
         };
         if (s.phase === 'done') {
           const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
@@ -446,6 +447,14 @@ export default function UIPanel({ terminalAgent }: Props) {
             s.inclusion === 'manual-add-required'
               ? ' — one-time setup: drag TangoGenerated/ into your Xcode target'
               : '';
+          if (s.embedded === false) {
+            // Built and launched, but no user Swift shows the generated views
+            // — without this warning the launch looks like a silent no-op.
+            setStatus(
+              `Launched in ${secs}s — but the app doesn't show the design yet: add TangoGeneratedRootView() to your app (e.g. in place of ContentView()), or ask ${terminalAgentMeta.shortLabel} to wire it up.${manual}`,
+            );
+            return;
+          }
           setStatus(`Launched ${s.bundleId ?? 'app'} in ${secs}s.${manual}`);
           return;
         }
@@ -476,7 +485,7 @@ export default function UIPanel({ terminalAgent }: Props) {
     } finally {
       if (mountedRef.current) setExporting(false);
     }
-  }, [exporting]);
+  }, [exporting, terminalAgentMeta.shortLabel]);
 
   // Import from code: hand the terminal agent a crafted prompt; it reads the
   // workspace's SwiftUI and writes the design via set_ui_mock. Agent-mediated
