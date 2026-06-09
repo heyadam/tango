@@ -17,11 +17,20 @@ const HOOKS_KEY = '__tangoServerHooks__';
 export type ServerHooks = {
   broadcastWorkspaceChanged?: () => void;
   broadcastTerminalAgentChanged?: () => void;
+  // Same broadcasts, but for the built-in agent's /ws/agent hub (hooks are
+  // single-subscriber, so the agent bridge gets its own names; workspaceState
+  // calls both).
+  agentBroadcastWorkspaceChanged?: () => void;
+  agentBroadcastTerminalAgentChanged?: () => void;
   resetUiMock?: () => void;
   // Read the live design-spec cache / active screen from the route-handler
   // graph (registered by uiMockBridge in server.ts's graph).
   getUiMockSpec?: () => UISpec;
   getUiMockActiveScreen?: () => string | null;
+  // Replace the live design spec from the route-handler graph (fast import).
+  // Routes through uiMockBridge's cacheChanged() so browsers, the preview
+  // host, and the write-behind persist all see the change.
+  setUiMockSpec?: (spec: UISpec) => void;
   // Number of connected /ws/preview clients (registered by previewBridge).
   previewClientCount?: () => number;
 };

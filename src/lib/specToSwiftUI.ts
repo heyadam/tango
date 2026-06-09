@@ -521,7 +521,7 @@ ${body}
 export function specToSwiftUI(
   spec: UISpec,
   opts?: SwiftCodegenOpts,
-): { files: GeneratedFile[] } {
+): { files: GeneratedFile[]; embedTypeNames: string[] } {
   const resolved = resolveSpec(spec);
   const taken = new Set<string>(['TangoGeneratedRootView']);
   const screens = resolved.screens.map((screen) => ({
@@ -543,5 +543,13 @@ export function specToSwiftUI(
       content: emitIndex(screens, opts?.headerNote),
     },
   ];
-  return { files };
+  // The view types user code can reference to actually show the design —
+  // generated screens render nothing until one of these appears in a
+  // non-generated Swift file. The export step scans for them to warn when
+  // an export would launch an app that looks unchanged.
+  const embedTypeNames = [
+    'TangoGeneratedRootView',
+    ...screens.map(({ typeName }) => typeName),
+  ];
+  return { files, embedTypeNames };
 }

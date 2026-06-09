@@ -239,7 +239,7 @@ export async function runCommand(
 
 type ProjectLoc = { projectPath: string; projectKind: IosProjectKind };
 
-const SKIP_DIRS = new Set([
+export const SKIP_DIRS = new Set([
   'node_modules',
   'Pods',
   '.build',

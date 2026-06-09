@@ -6,10 +6,13 @@ import {
   _setTerminalAgentInternal,
   dryRunSetWorkspace,
   getTerminalAgent,
+  loadPersistedAgentSession,
   loadPersistedTerminalAgent,
+  persistAgentSession,
   setTerminalAgent,
 } from './workspaceState';
 import { _setWorkspaceInternal } from './workspace';
+import { DEFAULT_TERMINAL_AGENT } from '@/lib/terminalAgent';
 
 // We test validatePath through dryRunSetWorkspace: it's the public surface that
 // invokes validation without writing anything to disk or mutating the slot.
@@ -32,7 +35,7 @@ afterEach(async () => {
   // Defensive: future cases that call setWorkspace would mutate the slot.
   // Keep the reset so test order doesn't matter.
   _setWorkspaceInternal(null, 'unset');
-  _setTerminalAgentInternal('claude');
+  _setTerminalAgentInternal(DEFAULT_TERMINAL_AGENT);
   delete process.env.TANGO_STATE_DIR;
 });
 
@@ -146,18 +149,18 @@ describe('terminal agent persisted state', () => {
     return dir;
   }
 
-  it('defaults to claude when the state file is absent', async () => {
+  it('defaults to the built-in agent when the state file is absent', async () => {
     await useStateDir();
-    expect(await loadPersistedTerminalAgent()).toBe('claude');
+    expect(await loadPersistedTerminalAgent()).toBe(DEFAULT_TERMINAL_AGENT);
   });
 
-  it('defaults to claude when the state file contains an invalid agent', async () => {
+  it('defaults to the built-in agent when the state file contains an invalid agent', async () => {
     const dir = await useStateDir();
     await fs.writeFile(
       path.join(dir, 'state.json'),
       JSON.stringify({ terminalAgent: 'bad' }),
     );
-    expect(await loadPersistedTerminalAgent()).toBe('claude');
+    expect(await loadPersistedTerminalAgent()).toBe(DEFAULT_TERMINAL_AGENT);
   });
 
   it('persists a valid terminal agent without clobbering lastWorkspace', async () => {
@@ -190,5 +193,49 @@ describe('terminal agent persisted state', () => {
     if (result.ok) return;
     expect(result.code).toBe('invalid_agent');
     expect(getTerminalAgent()).toBe('codex');
+  });
+
+  it('accepts the built-in tango agent', async () => {
+    await useStateDir();
+    const result = await setTerminalAgent('tango');
+    expect(result).toEqual({ ok: true, agent: 'tango' });
+    expect(getTerminalAgent()).toBe('tango');
+  });
+});
+
+describe('agent session persisted state', () => {
+  async function useStateDir(): Promise<string> {
+    const dir = await mkTmpDir();
+    process.env.TANGO_STATE_DIR = dir;
+    return dir;
+  }
+
+  it('round-trips a session id per workspace', async () => {
+    await useStateDir();
+    expect(await loadPersistedAgentSession('/tmp/a')).toBeNull();
+    await persistAgentSession('/tmp/a', 'sess-1');
+    await persistAgentSession('/tmp/b', 'sess-2');
+    expect(await loadPersistedAgentSession('/tmp/a')).toBe('sess-1');
+    expect(await loadPersistedAgentSession('/tmp/b')).toBe('sess-2');
+  });
+
+  it('survives unrelated state writes', async () => {
+    await useStateDir();
+    await persistAgentSession('/tmp/a', 'sess-1');
+    await setTerminalAgent('codex');
+    expect(await loadPersistedAgentSession('/tmp/a')).toBe('sess-1');
+  });
+
+  it('ignores malformed agentSessions entries', async () => {
+    const dir = await useStateDir();
+    await fs.writeFile(
+      path.join(dir, 'state.json'),
+      JSON.stringify({
+        lastWorkspace: null,
+        agentSessions: { '/tmp/a': 42, '/tmp/b': 'ok' },
+      }),
+    );
+    expect(await loadPersistedAgentSession('/tmp/a')).toBeNull();
+    expect(await loadPersistedAgentSession('/tmp/b')).toBe('ok');
   });
 });

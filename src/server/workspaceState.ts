@@ -23,6 +23,9 @@ import {
 type StateFile = {
   lastWorkspace: string | null;
   terminalAgent?: TerminalAgentId;
+  // Built-in agent session continuity: workspace path → last Claude Agent
+  // SDK session id, so reconnects resume the conversation.
+  agentSessions?: Record<string, string>;
 };
 
 type TerminalAgentSlot = {
@@ -88,6 +91,19 @@ async function readStateFile(): Promise<Partial<StateFile>> {
   return {};
 }
 
+function sanitizeAgentSessions(
+  value: unknown,
+): Record<string, string> | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined;
+  }
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    if (typeof v === 'string' && v !== '') out[k] = v;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 async function persistState(patch: Partial<StateFile>): Promise<void> {
   await fs.mkdir(stateDir(), { recursive: true });
   const current = await readStateFile();
@@ -97,12 +113,35 @@ async function persistState(patch: Partial<StateFile>): Promise<void> {
     terminalAgent: isTerminalAgentId(current.terminalAgent)
       ? current.terminalAgent
       : undefined,
+    agentSessions: sanitizeAgentSessions(current.agentSessions),
     ...patch,
   };
   if (!isTerminalAgentId(next.terminalAgent)) {
     delete next.terminalAgent;
   }
+  if (next.agentSessions === undefined) {
+    delete next.agentSessions;
+  }
   await fs.writeFile(statePath(), JSON.stringify(next, null, 2) + '\n');
+}
+
+export async function loadPersistedAgentSession(
+  workspace: string,
+): Promise<string | null> {
+  const parsed = await readStateFile();
+  const sessions = sanitizeAgentSessions(parsed.agentSessions);
+  return sessions?.[workspace] ?? null;
+}
+
+export async function persistAgentSession(
+  workspace: string,
+  sessionId: string,
+): Promise<void> {
+  const current = await readStateFile();
+  const sessions = sanitizeAgentSessions(current.agentSessions) ?? {};
+  if (sessions[workspace] === sessionId) return;
+  sessions[workspace] = sessionId;
+  await persistState({ agentSessions: sessions });
 }
 
 async function persistWorkspace(absPath: string | null): Promise<void> {
@@ -213,6 +252,7 @@ export async function setWorkspace(
     // server.ts's module graph; we reach them via the cross-context registry.
     callHook('resetUiMock');
     callHook('broadcastWorkspaceChanged');
+    callHook('agentBroadcastWorkspaceChanged');
   }
 
   if (ensureResult.ok) {
@@ -232,7 +272,7 @@ export async function setTerminalAgent(
     return {
       ok: false,
       code: 'invalid_agent',
-      reason: 'agent must be "claude" or "codex"',
+      reason: 'agent must be "tango", "claude", or "codex"',
     };
   }
 
@@ -244,5 +284,6 @@ export async function setTerminalAgent(
     console.warn('tango: failed to persist terminal agent state', err);
   }
   callHook('broadcastTerminalAgentChanged');
+  callHook('agentBroadcastTerminalAgentChanged');
   return { ok: true, agent: input };
 }

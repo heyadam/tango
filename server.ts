@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
+import { attachAgent, warmAgentEngine } from './src/server/agentBridge';
 import { attachUIMock, hydrateUIMockFromDisk } from './src/server/uiMockBridge';
 import { flushPersistSync } from './src/server/uiMockPersist';
 import { attachPreview } from './src/server/previewBridge';
@@ -39,6 +40,7 @@ process.env.TANGO_REPO_ROOT = repoRoot;
 const app = next({ dev, hostname, port, dir: repoRoot });
 
 const TERMINAL_PATH = '/ws/terminal';
+const AGENT_PATH = '/ws/agent';
 const UI_MOCK_PATH = '/ws/ui-mock';
 const PREVIEW_PATH = '/ws/preview';
 
@@ -65,6 +67,11 @@ app.prepare().then(async () => {
   // Boot the iOS Simulator stream helper. No-op on non-darwin; failures
   // surface through /api/sim/status, not by crashing the server.
   startSimHelper();
+
+  // Pre-warm the built-in agent engine so the first chat message doesn't pay
+  // the subprocess cold start. Internally guarded: only runs when a workspace
+  // is set and the 'tango' agent is selected.
+  warmAgentEngine();
 
   let shuttingDown = false;
   const onShutdown = () => {
@@ -104,6 +111,13 @@ app.prepare().then(async () => {
     attachPty(ws, url.searchParams.get('agent'));
   });
 
+  // Built-in agent chat panel (the 'tango' terminal agent) — structured JSON
+  // frames to a Claude Agent SDK session instead of PTY bytes.
+  const wssAgent = new WebSocketServer({ noServer: true });
+  wssAgent.on('connection', (ws) => {
+    attachAgent(ws);
+  });
+
   const wssUIMock = new WebSocketServer({ noServer: true });
   wssUIMock.on('connection', (ws) => {
     attachUIMock(ws);
@@ -121,6 +135,12 @@ app.prepare().then(async () => {
     if (url.pathname === TERMINAL_PATH) {
       wssTerminal.handleUpgrade(req, socket, head, (ws) => {
         wssTerminal.emit('connection', ws, req);
+      });
+      return;
+    }
+    if (url.pathname === AGENT_PATH) {
+      wssAgent.handleUpgrade(req, socket, head, (ws) => {
+        wssAgent.emit('connection', ws, req);
       });
       return;
     }

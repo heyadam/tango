@@ -18,7 +18,7 @@ import { atomicWrite } from './fsAtomic';
 import { GENERATED_MARKER, specToSwiftUI } from '@/lib/specToSwiftUI';
 import type { GeneratedFile } from '@/lib/specToSwiftUI';
 import type { IosProject } from './iosBuild';
-import { iosBuildRun, resolveActiveUdid } from './iosBuild';
+import { SKIP_DIRS, iosBuildRun, resolveActiveUdid } from './iosBuild';
 import { getIosProject, getWorkspaceOrNull } from './workspace';
 import { getHook } from './serverHooks';
 import type { UISpec } from '@/lib/uiMockProtocol';
@@ -111,6 +111,54 @@ export async function writeGeneratedFiles(
   }
 }
 
+// Generated views render nothing until some user source references them —
+// exporting into a freshly-created Xcode project builds and launches fine
+// while the app on screen stays the stock template, which reads as "export
+// did nothing". Detecting that is cheap and deterministic: scan the project
+// dir's .swift files (skipping the toolchain dirs and anything carrying the
+// tango:generated marker) for any embeddable type name. We surface the
+// result; wiring `TangoGeneratedRootView()` into user code is the user's or
+// the agent's move, never this pipeline's.
+export async function detectDesignEmbedded(
+  projectDir: string,
+  typeNames: string[],
+  maxDepth = 8,
+): Promise<boolean> {
+  if (typeNames.length === 0) return false;
+  let budget = 2000; // file-read cap so a pathological tree can't stall the export
+  async function walk(dir: string, depth: number): Promise<boolean> {
+    if (depth > maxDepth || budget <= 0) return false;
+    let entries;
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return false;
+    }
+    for (const e of entries) {
+      if (e.isDirectory()) {
+        if (e.name.startsWith('.') || SKIP_DIRS.has(e.name)) continue;
+        if (e.name === GENERATED_DIR_NAME) continue;
+        if (e.name.endsWith('.xcodeproj') || e.name.endsWith('.xcworkspace')) continue;
+        if (await walk(path.join(dir, e.name), depth + 1)) return true;
+        continue;
+      }
+      if (!e.isFile() || !e.name.endsWith('.swift')) continue;
+      if (budget-- <= 0) return false;
+      let content: string;
+      try {
+        content = await fs.readFile(path.join(dir, e.name), 'utf8');
+      } catch {
+        continue;
+      }
+      const head = content.split('\n').slice(0, 3).join('\n');
+      if (head.includes(GENERATED_MARKER)) continue;
+      if (typeNames.some((t) => content.includes(t))) return true;
+    }
+    return false;
+  }
+  return walk(projectDir, 0);
+}
+
 // ── Export & Run orchestration ────────────────────────────────────────────
 
 export type ExportRunState =
@@ -128,6 +176,10 @@ export type ExportRunState =
       fileCount: number;
       inclusion: GeneratedDirInclusion;
       generatedDir: string;
+      // false → no user Swift references the generated views; the launched
+      // app looks unchanged until TangoGeneratedRootView() (or a screen
+      // view) is embedded somewhere.
+      embedded: boolean;
       finishedAt: number;
     }
   | {
@@ -249,6 +301,7 @@ type ExportRunDeps = {
   resolveUdid: typeof resolveActiveUdid;
   resolveDir: (project: IosProject) => Promise<{ dir: string; inclusion: GeneratedDirInclusion }>;
   writeFiles: typeof writeGeneratedFiles;
+  checkEmbedded: (projectDir: string, typeNames: string[]) => Promise<boolean>;
 };
 
 const realDeps: ExportRunDeps = {
@@ -257,6 +310,7 @@ const realDeps: ExportRunDeps = {
   resolveUdid: resolveActiveUdid,
   resolveDir: (project) => resolveGeneratedDir(project),
   writeFiles: writeGeneratedFiles,
+  checkEmbedded: detectDesignEmbedded,
 };
 
 // Deterministic codegen → write into the project → incremental build →
@@ -285,10 +339,11 @@ export async function runExportAndRun(
   const project = projectResult.project;
 
   let files;
+  let embedTypeNames: string[];
   let target;
   try {
     target = await deps.resolveDir(project);
-    files = specToSwiftUI(spec).files;
+    ({ files, embedTypeNames } = specToSwiftUI(spec));
   } catch (err) {
     return fail('generate', err instanceof Error ? err.message : String(err));
   }
@@ -320,6 +375,18 @@ export async function runExportAndRun(
     return fail(result.stage, result.message, result.errors);
   }
 
+  // A scan failure must not fail an export that built and launched — assume
+  // embedded (a missing warning beats a false one).
+  let embedded = true;
+  try {
+    embedded = await deps.checkEmbedded(
+      path.dirname(project.projectPath),
+      embedTypeNames,
+    );
+  } catch {
+    /* keep embedded = true */
+  }
+
   const state: ExportRunState = {
     phase: 'done',
     ok: true,
@@ -329,6 +396,7 @@ export async function runExportAndRun(
     fileCount: files.length,
     inclusion: target.inclusion,
     generatedDir: target.dir,
+    embedded,
     finishedAt: Date.now(),
   };
   slot.state = state;
