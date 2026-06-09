@@ -64,6 +64,9 @@ registerHook('resetUiMock', () => {
 // cache through the globalThis hook registry.
 registerHook('getUiMockSpec', () => cache);
 registerHook('getUiMockActiveScreen', () => activeScreenId);
+// Route-handler-graph writer (the fast import engine) — full broadcast
+// semantics, same as an MCP set_ui_mock.
+registerHook('setUiMockSpec', (spec) => setUIMockFromServer(spec));
 
 function broadcast(msg: UIMockServerMsg): void {
   hub.broadcast(msg);

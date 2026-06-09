@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import AgentPanel from '@/components/AgentPanel';
 import AppTopBar from '@/components/AppTopBar';
 import SimulatorPanel from '@/components/SimulatorPanel';
 import UIPanel from '@/components/UIPanel';
@@ -9,6 +10,7 @@ import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
 import {
   DEFAULT_TERMINAL_AGENT,
   TERMINAL_AGENTS,
+  isPtyAgent,
   isTerminalAgentId,
   type TerminalAgentId,
 } from '@/lib/terminalAgent';
@@ -101,10 +103,17 @@ function HomeBody() {
           )}
         >
           {workspaceReady ? (
-            <Terminal
-              terminalAgent={terminalAgent}
-              onTerminalAgentChanged={setTerminalAgent}
-            />
+            isPtyAgent(terminalAgent) ? (
+              <Terminal
+                terminalAgent={terminalAgent}
+                onTerminalAgentChanged={setTerminalAgent}
+              />
+            ) : (
+              <AgentPanel
+                terminalAgent={terminalAgent}
+                onTerminalAgentChanged={setTerminalAgent}
+              />
+            )
           ) : current == null ? (
             <PanelSkeleton />
           ) : (

@@ -23,7 +23,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { IMPORT_PROMPT } from '@/lib/uiImportPrompt';
 import { Button } from './ui/button';
 import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
@@ -487,16 +486,64 @@ export default function UIPanel({ terminalAgent }: Props) {
     }
   }, [exporting, terminalAgentMeta.shortLabel]);
 
-  // Import from code: hand the terminal agent a crafted prompt; it reads the
-  // workspace's SwiftUI and writes the design via set_ui_mock. Agent-mediated
-  // by design — parsing arbitrary hand-written SwiftUI deterministically is
-  // brittle; the deterministic direction is export (Export & Run).
-  const importFromCode = useCallback(() => {
-    terminalBus.submitToTerminal(IMPORT_PROMPT);
-    setStatus(
-      `Asked ${terminalAgentMeta.shortLabel} to import the workspace's SwiftUI screens.`,
-    );
-  }, [terminalAgentMeta.shortLabel]);
+  // Import from code: kick the server-side fast-import engine (a dedicated
+  // direct-API loop with the SwiftUI→UINode rules baked in — see
+  // src/server/uiImport.ts) and poll progress. Still agent-mediated by design
+  // — parsing arbitrary hand-written SwiftUI deterministically is brittle;
+  // the deterministic direction is export (Export & Run). The canvas updates
+  // live over /ws/ui-mock as each screen lands.
+  const [importing, setImporting] = useState(false);
+  const importFromCode = useCallback(async () => {
+    if (importing) return;
+    setImporting(true);
+    setStatus('Importing…');
+    try {
+      const kick = await fetch('/api/ui/import', { method: 'POST' });
+      if (!kick.ok) {
+        const body = (await kick.json().catch(() => ({}))) as {
+          reason?: string;
+        };
+        setStatus(`Import blocked: ${body.reason ?? `HTTP ${kick.status}`}`);
+        return;
+      }
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 700));
+        if (!mountedRef.current) return;
+        const res = await fetch('/api/ui/import', { cache: 'no-store' });
+        const s = (await res.json()) as {
+          phase: string;
+          filesRead?: number;
+          screensImported?: number;
+          durationMs?: number;
+          message?: string;
+        };
+        if (s.phase === 'done') {
+          const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+          setStatus(
+            `Imported ${s.screensImported} screen${s.screensImported === 1 ? '' : 's'} in ${secs}s.`,
+          );
+          return;
+        }
+        if (s.phase === 'error') {
+          setStatus(`Import failed: ${s.message ?? 'unknown error'}`);
+          return;
+        }
+        if (s.phase === 'idle') {
+          setStatus('Import ended unexpectedly.');
+          return;
+        }
+        setStatus(
+          `Importing… ${s.filesRead ?? 0} file${(s.filesRead ?? 0) === 1 ? '' : 's'} read · ${s.screensImported ?? 0} screen${(s.screensImported ?? 0) === 1 ? '' : 's'}`,
+        );
+      }
+    } catch (err) {
+      setStatus(
+        `Import failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    } finally {
+      if (mountedRef.current) setImporting(false);
+    }
+  }, [importing]);
 
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
@@ -538,11 +585,18 @@ export default function UIPanel({ terminalAgent }: Props) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={importFromCode}
-              title="Ask the terminal agent to read this workspace's SwiftUI screens onto the canvas"
+              onClick={() => {
+                void importFromCode();
+              }}
+              disabled={importing}
+              title="Read this workspace's SwiftUI screens onto the canvas (fast import — no terminal agent involved)"
               className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
             >
-              <FileDown className="size-3.5" />
+              {importing ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <FileDown className="size-3.5" />
+              )}
               Import
             </Button>
             <Button

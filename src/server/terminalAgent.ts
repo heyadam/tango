@@ -19,7 +19,12 @@ export function terminalAgentLaunchCommand(
   agent: TerminalAgentId,
   port: number,
 ): string {
-  if (agent === 'claude') return 'claude --dangerously-skip-permissions';
+  // 'tango' is the built-in (non-PTY) agent — it never legitimately reaches a
+  // PTY launch. A direct /ws/terminal hit while 'tango' is selected falls
+  // back to Claude Code rather than executing nothing.
+  if (agent === 'claude' || agent === 'tango') {
+    return 'claude --dangerously-skip-permissions';
+  }
 
   const mcpUrl = terminalAgentMcpUrl(port);
   return [

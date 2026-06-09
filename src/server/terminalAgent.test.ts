@@ -12,10 +12,15 @@ import {
 
 describe('terminal agent validation', () => {
   it('accepts only supported terminal agent ids', () => {
+    expect(isTerminalAgentId('tango')).toBe(true);
     expect(isTerminalAgentId('claude')).toBe(true);
     expect(isTerminalAgentId('codex')).toBe(true);
     expect(isTerminalAgentId('cursor')).toBe(false);
     expect(isTerminalAgentId(null)).toBe(false);
+  });
+
+  it('defaults to the built-in agent', () => {
+    expect(DEFAULT_TERMINAL_AGENT).toBe('tango');
   });
 
   it('falls back to the default agent for invalid values', () => {
@@ -33,6 +38,12 @@ describe('terminalAgentLaunchCommand', () => {
 
   it('builds the Claude Code launch command', () => {
     expect(terminalAgentLaunchCommand('claude', 3000)).toBe(
+      'claude --dangerously-skip-permissions',
+    );
+  });
+
+  it("falls back to Claude Code for 'tango' (built-in agent never runs in a PTY)", () => {
+    expect(terminalAgentLaunchCommand('tango', 3000)).toBe(
       'claude --dangerously-skip-permissions',
     );
   });
