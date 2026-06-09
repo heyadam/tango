@@ -10,7 +10,13 @@
 // can't be expressed as Tailwind classes (the JIT can't see runtime strings)
 // still render faithfully.
 
-import { type CSSProperties, type ReactNode, useEffect, useRef } from 'react';
+import {
+  type CSSProperties,
+  type ReactNode,
+  memo,
+  useEffect,
+  useRef,
+} from 'react';
 import * as Lucide from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -97,7 +103,9 @@ type Props = {
   onEndEdit: () => void;
 };
 
-export default function UIMockNode({
+// Memoized: parent re-renders (drag frames, selection changes) skip nodes
+// whose props are identity-equal — uiMockOps preserves untouched node refs.
+export default memo(function UIMockNode({
   node,
   isEditing,
   onCommitText,
@@ -313,7 +321,7 @@ export default function UIMockNode({
     default:
       return null;
   }
-}
+});
 
 function Editable({
   isEditing,

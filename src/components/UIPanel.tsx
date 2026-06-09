@@ -32,6 +32,13 @@ const UIMockCanvas = dynamic(() => import('./UIMockCanvas'), {
   loading: () => <div className="h-full w-full bg-background" />,
 });
 
+// Warm the canvas chunk in parallel with the workspace fetch instead of after
+// mount. The dynamic() above stays as the SSR boundary (react-moveable touches
+// `window` at module load).
+if (typeof window !== 'undefined') {
+  void import('./UIMockCanvas');
+}
+
 // Subtracted from the wrapper rect when reporting "viewport" to Claude so
 // the size is the largest frame that fits *without scrolling*. Mirrors
 // UIMockCanvas's inner `gap-20 p-10` (40px outer padding each side → 80px

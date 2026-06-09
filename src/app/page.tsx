@@ -16,6 +16,13 @@ import { cn } from '@/lib/utils';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
 
+// Kick the chunk download immediately on page load instead of waiting for the
+// workspace fetch to resolve and the component to mount — the dynamic() above
+// stays as the SSR boundary (xterm dies on SSR), this just warms the cache.
+if (typeof window !== 'undefined') {
+  void import('@/components/Terminal');
+}
+
 function HomeBody() {
   const { current, openDialog } = useWorkspace();
   const [terminalOpen, setTerminalOpen] = useState(true);
@@ -78,6 +85,8 @@ function HomeBody() {
         <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
             <UIPanel terminalAgent={terminalAgent} />
+          ) : current == null ? (
+            <PanelSkeleton withHeader />
           ) : (
             <UnsetPlaceholder />
           )}
@@ -96,6 +105,8 @@ function HomeBody() {
               terminalAgent={terminalAgent}
               onTerminalAgentChanged={setTerminalAgent}
             />
+          ) : current == null ? (
+            <PanelSkeleton />
           ) : (
             <TerminalPlaceholder terminalAgent={terminalAgent} />
           )}
@@ -118,6 +129,23 @@ function UnsetPlaceholder() {
   return (
     <div className="flex h-full w-full items-center justify-center px-8 text-center text-sm text-muted-foreground">
       Pick a project folder to begin.
+    </div>
+  );
+}
+
+// Shown while the initial /api/workspace/current fetch is in flight, so first
+// paint reads as a loading app rather than empty panes.
+function PanelSkeleton({ withHeader = false }: { withHeader?: boolean }) {
+  return (
+    <div className="flex h-full w-full flex-col">
+      {withHeader && (
+        <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border px-3">
+          <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+        </div>
+      )}
+      <div className="flex min-h-0 flex-1 items-start gap-4 p-6">
+        <div className="h-2/3 w-full max-w-md animate-pulse rounded-lg bg-muted" />
+      </div>
     </div>
   );
 }

@@ -19,6 +19,7 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -204,6 +205,15 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
       }));
     },
     [],
+  );
+
+  // Stable (id, text) commit channel so NodeWrapper props don't change
+  // identity every render — load-bearing for the React.memo on NodeWrapper.
+  const commitNodeText = useCallback(
+    (id: string, text: string) => {
+      updateNode(id, { text });
+    },
+    [updateNode],
   );
 
   const updateNodes = useCallback(
@@ -627,7 +637,7 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
                   onSelectOnly={selectOnly}
                   onAddSelection={addToSelection}
                   onStartEditing={startEditing}
-                  onCommitText={(text) => updateNode(node.id, { text })}
+                  onCommitText={commitNodeText}
                   onEndEdit={stopEditing}
                 />
               ))}
@@ -740,7 +750,10 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
   );
 }
 
-function NodeWrapper({
+// Memoized: with uiMockOps preserving node identity for untouched nodes and
+// every callback prop useCallback-stable in the parent, a drag/selection
+// change re-renders only the affected nodes instead of the whole canvas.
+const NodeWrapper = memo(function NodeWrapper({
   node,
   isSelected,
   isEditing,
@@ -758,7 +771,7 @@ function NodeWrapper({
   onSelectOnly: (id: string) => void;
   onAddSelection: (id: string) => void;
   onStartEditing: (id: string) => void;
-  onCommitText: (text: string) => void;
+  onCommitText: (id: string, text: string) => void;
   onEndEdit: () => void;
 }) {
   // Callback ref keeps the refs map in sync with the live DOM. We register on
@@ -801,6 +814,11 @@ function NodeWrapper({
     [node, onStartEditing],
   );
 
+  const commitText = useCallback(
+    (text: string) => onCommitText(node.id, text),
+    [node.id, onCommitText],
+  );
+
   const style: CSSProperties = {
     position: 'absolute',
     left: node.x,
@@ -824,12 +842,12 @@ function NodeWrapper({
       <UIMockNode
         node={node}
         isEditing={isEditing}
-        onCommitText={onCommitText}
+        onCommitText={commitText}
         onEndEdit={onEndEdit}
       />
     </div>
   );
-}
+});
 
 function findNode(spec: UISpec, id: string): UINode | null {
   for (const screen of spec.screens) {
