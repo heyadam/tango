@@ -42,9 +42,25 @@ import { getIosProject, getWorkspaceOrNull } from './workspace';
 import {
   iosBuildRun,
   iosLogsRecent,
+  isSafeUdid,
   listBootedDevices,
   readActiveDeviceFromServeSim,
+  resolveActiveUdid,
 } from './iosBuild';
+import {
+  type ControlResult,
+  fetchAxSnapshot,
+  iosButton,
+  iosGesture,
+  iosRotate,
+  iosTap,
+  iosType,
+  isValidButtonName,
+  isValidOrientation,
+  ROTATE_ORIENTATIONS,
+  toInspectResult,
+  validateNormalized,
+} from './iosSimControl';
 import { getSimStatus } from './sim';
 
 const elementSchema = z.array(z.record(z.string(), z.unknown()));
@@ -164,6 +180,61 @@ function iosBuildErrorResult(
       },
     ],
   };
+}
+
+// Shared preflight for the `ios_*` simulator-control tools: serve-sim must be
+// streaming a device, and we need a udid to drive. Returns the resolved udid +
+// serve-sim base url, or a ready-to-return error result. Keeps the readiness /
+// resolution boilerplate out of each tool handler.
+async function resolveControlTarget(
+  toolName: string,
+  udid: string | undefined,
+): Promise<
+  | { ok: true; udid: string; simUrl: string }
+  | { ok: false; result: ReturnType<typeof toolErrorResult> }
+> {
+  const sim = getSimStatus();
+  if (sim.phase !== 'ready') {
+    const why = sim.phase === 'error' ? sim.message : sim.phase;
+    return {
+      ok: false,
+      result: toolErrorResult(
+        toolName,
+        new Error(`simulator preview not ready (serve-sim: ${why})`),
+      ),
+    };
+  }
+  if (udid !== undefined && !isSafeUdid(udid)) {
+    return {
+      ok: false,
+      result: toolErrorResult(
+        toolName,
+        new Error(`udid is not a valid simulator identifier: ${udid.slice(0, 64)}`),
+      ),
+    };
+  }
+  const resolved = await resolveActiveUdid(udid);
+  if (!resolved) {
+    return {
+      ok: false,
+      result: toolErrorResult(
+        toolName,
+        new Error('no booted iOS simulator to drive'),
+      ),
+    };
+  }
+  return { ok: true, udid: resolved, simUrl: sim.url };
+}
+
+// Map a serve-sim ControlResult to an MCP tool result: a failure becomes an
+// error result carrying serve-sim's message; success returns `successText`.
+function controlResultToTool(
+  toolName: string,
+  r: ControlResult,
+  successText: string,
+) {
+  if (!r.ok) return toolErrorResult(toolName, new Error(r.message));
+  return { content: [{ type: 'text' as const, text: successText }] };
 }
 
 function buildServer(): McpServer {
@@ -687,20 +758,9 @@ function buildServer(): McpServer {
           };
         }
 
-        // Resolve the device. If the caller passed a udid, use it. Otherwise
-        // prefer the simulator serve-sim is showing; fall back to the first
-        // booted device.
-        let resolvedUdid = udid ?? null;
-        if (!resolvedUdid) {
-          const sim = getSimStatus();
-          if (sim.phase === 'ready') {
-            resolvedUdid = await readActiveDeviceFromServeSim(sim.url);
-          }
-        }
-        if (!resolvedUdid) {
-          const booted = await listBootedDevices();
-          if (booted.length > 0) resolvedUdid = booted[0].udid;
-        }
+        // Resolve the device (explicit udid → serve-sim's active device →
+        // first booted). See `resolveActiveUdid` in iosBuild.ts.
+        const resolvedUdid = await resolveActiveUdid(udid);
         if (!resolvedUdid) {
           return iosBuildErrorResult(
             'detect',
@@ -753,17 +813,7 @@ function buildServer(): McpServer {
             ),
           );
         }
-        let resolvedUdid = udid ?? null;
-        if (!resolvedUdid) {
-          const sim = getSimStatus();
-          if (sim.phase === 'ready') {
-            resolvedUdid = await readActiveDeviceFromServeSim(sim.url);
-          }
-        }
-        if (!resolvedUdid) {
-          const booted = await listBootedDevices();
-          if (booted.length > 0) resolvedUdid = booted[0].udid;
-        }
+        const resolvedUdid = await resolveActiveUdid(udid);
         if (!resolvedUdid) {
           return toolErrorResult(
             'ios_logs_recent',
@@ -790,6 +840,189 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('ios_logs_recent', err);
+      }
+    },
+  );
+
+  // iOS simulator *control* tools — drive the running app the user is watching
+  // in the iframe (serve-sim CLI under the hood). Aim with `ios_inspect` first;
+  // coordinates everywhere are normalized 0..1. Terminal-Claude only; not in
+  // the controller agent's ALLOWED_TOOLS (it can't see the simulator).
+
+  server.registerTool(
+    'ios_inspect',
+    {
+      title: 'Inspect the simulator screen (accessibility tree)',
+      description:
+        "Returns serve-sim's accessibility snapshot of whatever the booted simulator is currently showing: `screen` ({width, height} in device points) and `elements` — each with `label`, `value`, `role`, `type`, `enabled`, a pixel `frame`, and a `centerNorm` {x, y} in normalized 0..1 coords ready to hand straight to `ios_tap`. This is how you AIM: you can't see the simulator's pixels, so call `ios_inspect` to find a control by its label/role, then tap its `centerNorm` — don't guess coordinates. The simulator analog of `dom_inspect` for the web canvas. If accessibility is momentarily unavailable the result carries an `errors` array; retry shortly. Pass `udid` only to target a specific simulator (defaults to the one serve-sim is streaming).",
+      inputSchema: {
+        udid: z.string().optional(),
+      },
+    },
+    async ({ udid }) => {
+      try {
+        const target = await resolveControlTarget('ios_inspect', udid);
+        if (!target.ok) return target.result;
+        const snapshot = await fetchAxSnapshot(target.simUrl, target.udid);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(toInspectResult(snapshot), null, 2),
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('ios_inspect', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_tap',
+    {
+      title: 'Tap the simulator screen',
+      description:
+        "Tap the booted iOS simulator once at normalized coordinates `x`, `y` (0..1; 0,0 = top-left, 1,1 = bottom-right). Find the target first with `ios_inspect` and pass the element's `centerNorm`. Pass `udid` only to override the simulator serve-sim is streaming.",
+      inputSchema: {
+        x: z.number(),
+        y: z.number(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ x, y, udid }) => {
+      try {
+        const v = validateNormalized(x, y);
+        if (!v.ok) return toolErrorResult('ios_tap', new Error(v.reason));
+        const target = await resolveControlTarget('ios_tap', udid);
+        if (!target.ok) return target.result;
+        const r = await iosTap(target.udid, x, y);
+        return controlResultToTool('ios_tap', r, `Tapped (${x}, ${y}).`);
+      } catch (err) {
+        return toolErrorResult('ios_tap', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_gesture',
+    {
+      title: 'Swipe / drag on the simulator',
+      description:
+        "Drag on the booted simulator from (`fromX`, `fromY`) to (`toX`, `toY`), all normalized 0..1 (0,0 = top-left, 1,1 = bottom-right). Use for swipes (scroll a list, swipe between pages, pull to refresh) and drags. The touch travels from → to: to swipe up, start at a larger y and end at a smaller y (e.g. from {0.5, 0.8} to {0.5, 0.2}). Aim endpoints with `ios_inspect` `centerNorm` values where possible. Note: each touch frame is a separate serve-sim call, so very fast continuous drags may register imperfectly. Pass `udid` only to override the active simulator.",
+      inputSchema: {
+        fromX: z.number(),
+        fromY: z.number(),
+        toX: z.number(),
+        toY: z.number(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ fromX, fromY, toX, toY, udid }) => {
+      try {
+        const a = validateNormalized(fromX, fromY);
+        if (!a.ok) return toolErrorResult('ios_gesture', new Error(`from: ${a.reason}`));
+        const b = validateNormalized(toX, toY);
+        if (!b.ok) return toolErrorResult('ios_gesture', new Error(`to: ${b.reason}`));
+        const target = await resolveControlTarget('ios_gesture', udid);
+        if (!target.ok) return target.result;
+        const r = await iosGesture(target.udid, fromX, fromY, toX, toY);
+        return controlResultToTool(
+          'ios_gesture',
+          r,
+          `Swiped (${fromX}, ${fromY}) → (${toX}, ${toY}).`,
+        );
+      } catch (err) {
+        return toolErrorResult('ios_gesture', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_button',
+    {
+      title: 'Press a simulator hardware button',
+      description:
+        "Press a hardware button on the booted simulator. `name` defaults to `home`; other names depend on the simulator (commonly `lock`, `siri`, `side`) and serve-sim validates them — an unsupported name comes back as an error. Use `home` to go to the home screen, `lock` to lock/wake. Pass `udid` only to override the active simulator.",
+      inputSchema: {
+        name: z.string().optional(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ name, udid }) => {
+      try {
+        const button = name ?? 'home';
+        if (!isValidButtonName(button)) {
+          return toolErrorResult(
+            'ios_button',
+            new Error(
+              `invalid button name "${button.slice(0, 32)}" — expected a lowercase token like "home", "lock", "siri", "side"`,
+            ),
+          );
+        }
+        const target = await resolveControlTarget('ios_button', udid);
+        if (!target.ok) return target.result;
+        const r = await iosButton(target.udid, button);
+        return controlResultToTool('ios_button', r, `Pressed "${button}".`);
+      } catch (err) {
+        return toolErrorResult('ios_button', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_type',
+    {
+      title: 'Type text into the simulator',
+      description:
+        "Type `text` into the booted simulator's currently focused field (US keyboard only). Tap the field first with `ios_tap` so it has focus. Sends the literal characters; it does not press Return — submit by tapping the submit control or pressing a button. Pass `udid` only to override the active simulator.",
+      inputSchema: {
+        text: z.string().min(1).max(2000),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ text, udid }) => {
+      try {
+        const target = await resolveControlTarget('ios_type', udid);
+        if (!target.ok) return target.result;
+        const r = await iosType(target.udid, text);
+        return controlResultToTool(
+          'ios_type',
+          r,
+          `Typed ${text.length} character(s).`,
+        );
+      } catch (err) {
+        return toolErrorResult('ios_type', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_rotate',
+    {
+      title: 'Rotate the simulator',
+      description: `Set the booted simulator's orientation. \`orientation\` is one of: ${ROTATE_ORIENTATIONS.join(', ')}. Pass \`udid\` only to override the active simulator.`,
+      inputSchema: {
+        orientation: z.string(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ orientation, udid }) => {
+      try {
+        if (!isValidOrientation(orientation)) {
+          return toolErrorResult(
+            'ios_rotate',
+            new Error(
+              `invalid orientation "${orientation.slice(0, 32)}" — expected one of: ${ROTATE_ORIENTATIONS.join(', ')}`,
+            ),
+          );
+        }
+        const target = await resolveControlTarget('ios_rotate', udid);
+        if (!target.ok) return target.result;
+        const r = await iosRotate(target.udid, orientation);
+        return controlResultToTool('ios_rotate', r, `Rotated to ${orientation}.`);
+      } catch (err) {
+        return toolErrorResult('ios_rotate', err);
       }
     },
   );

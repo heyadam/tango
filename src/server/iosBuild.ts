@@ -9,6 +9,7 @@
 import { spawn } from 'node:child_process';
 import { type Dirent, promises as fs } from 'node:fs';
 import path from 'node:path';
+import { getSimStatus } from './sim';
 
 export type IosProjectKind = 'project' | 'workspace';
 
@@ -148,22 +149,36 @@ export function pickAppByScheme(apps: string[], scheme: string): string | null {
   return apps.find((e) => e === `${scheme}.app`) ?? apps[0];
 }
 
-async function runCommand(
+export async function runCommand(
   cmd: string,
   args: string[],
-  opts: { cwd?: string; timeoutMs?: number; detached?: boolean } = {},
+  opts: {
+    cwd?: string;
+    timeoutMs?: number;
+    detached?: boolean;
+    // When set, the string is written to the child's stdin and the pipe is
+    // closed. Used by `serve-sim type --stdin` so arbitrary text bypasses
+    // argv (no option-flag / whitespace ambiguity). Omitted → stdin ignored.
+    input?: string;
+  } = {},
 ): Promise<RunResult> {
   const start = Date.now();
   return new Promise((resolve) => {
     const child = spawn(cmd, args, {
       cwd: opts.cwd,
-      stdio: ['ignore', 'pipe', 'pipe'],
+      stdio: [opts.input !== undefined ? 'pipe' : 'ignore', 'pipe', 'pipe'],
       // `detached: true` puts the child in its own process group, which lets
       // us SIGKILL the whole subtree on timeout — important for xcodebuild,
       // which forks swift-frontend / clang / ld children that would otherwise
       // outlive the parent kill.
       detached: opts.detached ?? false,
     });
+    if (opts.input !== undefined && child.stdin) {
+      // Swallow EPIPE: a child that exits before reading stdin (bad args,
+      // crash) would otherwise throw on write and crash the server.
+      child.stdin.on('error', () => {});
+      child.stdin.end(opts.input);
+    }
     let stdout = '';
     let stderr = '';
     let timedOut = false;
@@ -453,25 +468,62 @@ export async function listBootedDevices(): Promise<IosDevice[]> {
   return parseSimctlListBooted(r.stdout);
 }
 
-// serve-sim's `/.sim/api` returns `{pid, port, device, url, streamUrl, wsUrl}`.
-// `device` is the booted simulator UDID it's currently streaming. Use it to
-// align builds with whatever the iframe is showing — important when the user
-// has multiple simulators booted.
+// serve-sim's preview API returns `{pid, port, device, url, streamUrl, wsUrl,
+// basePath, axEndpoint, ...}`. `device` is the booted simulator UDID it's
+// currently streaming — use it to align builds (and input) with whatever the
+// iframe is showing, important when multiple simulators are booted.
+//
+// The standalone `npx serve-sim` preview (how tango spawns it) mounts at the
+// root, so the path is `/api`; an embedded middleware mount uses `/.sim/api`.
+// Try root first and fall back, so we keep working across serve-sim versions
+// and mount styles (older builds defaulted standalone to `/.sim`).
 export async function readActiveDeviceFromServeSim(
   serveSimUrl: string,
 ): Promise<string | null> {
-  try {
-    const res = await fetch(`${serveSimUrl}/.sim/api`, {
-      signal: AbortSignal.timeout(2_000),
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as { device?: unknown };
-    return typeof data?.device === 'string' && data.device.length > 0
-      ? data.device
-      : null;
-  } catch {
-    return null;
+  for (const base of ['/api', '/.sim/api']) {
+    try {
+      const res = await fetch(`${serveSimUrl}${base}`, {
+        signal: AbortSignal.timeout(2_000),
+      });
+      if (!res.ok) continue; // 404 → wrong base, try the next one
+      const data = (await res.json()) as { device?: unknown } | null;
+      if (
+        data &&
+        typeof data === 'object' &&
+        typeof data.device === 'string' &&
+        data.device.length > 0
+      ) {
+        return data.device;
+      }
+      // 200 but no device → endpoint exists, nothing is streaming. Done.
+      return null;
+    } catch {
+      // network / timeout / parse error — try the next base
+    }
   }
+  return null;
+}
+
+// Resolve which simulator a tool should target. Priority: an explicit udid the
+// caller passed → the device serve-sim is currently iframing (so input/builds
+// land on what the user is watching) → the first booted simulator. Returns
+// null when nothing is booted. Shared by `ios_build_run`, `ios_logs_recent`,
+// and the `ios_*` control tools so the resolution rule stays in one place.
+export async function resolveActiveUdid(
+  udid?: string | null,
+): Promise<string | null> {
+  let resolved = udid ?? null;
+  if (!resolved) {
+    const sim = getSimStatus();
+    if (sim.phase === 'ready') {
+      resolved = await readActiveDeviceFromServeSim(sim.url);
+    }
+  }
+  if (!resolved) {
+    const booted = await listBootedDevices();
+    if (booted.length > 0) resolved = booted[0].udid;
+  }
+  return resolved;
 }
 
 async function isHostAppBundle(appPath: string): Promise<boolean> {
