@@ -323,6 +323,7 @@ describe('ensureWorkspace skill emission', () => {
     expect(codexSkillNames.sort()).toEqual([
       'tango-ios-sim',
       'tango-swiftui',
+      'tango-ui-import',
       'tango-ui-mock',
     ]);
     for (const name of codexSkillNames) {

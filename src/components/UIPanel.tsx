@@ -13,8 +13,17 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Frame, Play, RefreshCw, Rocket, Send, Trash2 } from 'lucide-react';
+import {
+  FileDown,
+  Frame,
+  Play,
+  RefreshCw,
+  Rocket,
+  Send,
+  Trash2,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { IMPORT_PROMPT } from '@/lib/uiImportPrompt';
 import { Button } from './ui/button';
 import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
@@ -465,6 +474,17 @@ export default function UIPanel({ terminalAgent }: Props) {
     }
   }, [exporting]);
 
+  // Import from code: hand the terminal agent a crafted prompt; it reads the
+  // workspace's SwiftUI and writes the design via set_ui_mock. Agent-mediated
+  // by design — parsing arbitrary hand-written SwiftUI deterministically is
+  // brittle; the deterministic direction is export (Export & Run).
+  const importFromCode = useCallback(() => {
+    terminalBus.submitToTerminal(IMPORT_PROMPT);
+    setStatus(
+      `Asked ${terminalAgentMeta.shortLabel} to import the workspace's SwiftUI screens.`,
+    );
+  }, [terminalAgentMeta.shortLabel]);
+
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
     // any open browsers see the same state on refresh. We don't call MCP from
@@ -502,6 +522,16 @@ export default function UIPanel({ terminalAgent }: Props) {
         }
         rightSlot={
           <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={importFromCode}
+              title="Ask the terminal agent to read this workspace's SwiftUI screens onto the canvas"
+              className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+            >
+              <FileDown className="size-3.5" />
+              Import
+            </Button>
             <Button
               variant="ghost"
               size="sm"
