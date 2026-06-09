@@ -1,6 +1,7 @@
 'use client';
 
-// The left panel: an SSR-safe shell around the design canvas. Owns the
+// The design-canvas panel (center, right of the agent sidebar): an SSR-safe
+// shell around the design canvas. Owns the
 // /ws/ui-mock socket and dynamic-imports UIMockCanvas (react-moveable touches
 // `window` at module load).
 //
