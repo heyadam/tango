@@ -33,6 +33,7 @@ import {
   uiSpecSchema,
 } from '@/lib/uiMockSchema';
 import { recordNote } from './memory';
+import { resolveBuildProject, runExportAndRun } from './iosExport';
 import { getIosProject, getWorkspaceOrNull } from './workspace';
 import {
   iosBuildRun,
@@ -469,60 +470,15 @@ function buildServer(): McpServer {
             new Error('no workspace selected'),
           );
         }
-        const projectStatus = getIosProject();
-        if (projectStatus.kind === 'none') {
-          return iosBuildErrorResult(
-            'detect',
-            'no Xcode project detected in this workspace (need a *.xcodeproj or *.xcworkspace at depth ≤ 3)',
-          );
+        // Shared resolution with Export & Run (iosExport.ts) — handles the
+        // none/error/ambiguous cases and the duplicate-scheme trap (two
+        // projects sharing a scheme name would otherwise silently build the
+        // wrong codebase).
+        const projectResult = resolveBuildProject(scheme);
+        if (!projectResult.ok) {
+          return iosBuildErrorResult('detect', projectResult.message);
         }
-        if (projectStatus.kind === 'error') {
-          return iosBuildErrorResult('detect', projectStatus.message);
-        }
-        if (projectStatus.kind === 'ambiguous' && !scheme) {
-          return iosBuildErrorResult(
-            'detect',
-            'multiple Xcode projects detected; pass an explicit `scheme` matching one of the candidates (call `ios_status` to see them)',
-          );
-        }
-
-        // Resolve the project to build. For ambiguous, find the candidate(s)
-        // whose schemes include the requested scheme. Two projects can share
-        // a scheme name (common: a generic `App` scheme in both an old and
-        // new project, or a tooling project alongside the main one) — in
-        // that case pick-first would silently build the wrong codebase, so
-        // we error and ask the user to disambiguate by renaming.
-        let project;
-        if (projectStatus.kind === 'detected') {
-          project = projectStatus.project;
-        } else {
-          const matches = projectStatus.candidates.filter((c) =>
-            c.schemes.includes(scheme!),
-          );
-          if (matches.length === 0) {
-            return iosBuildErrorResult(
-              'detect',
-              `scheme "${scheme}" not found in any detected Xcode project`,
-            );
-          }
-          if (matches.length > 1) {
-            const paths = matches
-              .map((m) => m.projectPath)
-              .join(', ');
-            return iosBuildErrorResult(
-              'detect',
-              `scheme "${scheme}" matches multiple Xcode projects (${paths}); rename the scheme in one of them or remove the unwanted project from the workspace to disambiguate`,
-            );
-          }
-          const match = matches[0];
-          project = {
-            projectPath: match.projectPath,
-            projectKind: match.projectKind,
-            scheme: scheme!,
-            bundleId: null,
-            configurations: ['Debug', 'Release'],
-          };
-        }
+        const project = projectResult.project;
 
         // Resolve the device (explicit udid → serve-sim's active device →
         // first booted). See `resolveActiveUdid` in iosBuild.ts.
@@ -547,6 +503,30 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('ios_build_run', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'export_run',
+    {
+      title: 'Export the design to SwiftUI and run it on the simulator',
+      description:
+        "Deterministically generates SwiftUI from the current design spec into `TangoGenerated/` inside the detected Xcode project, then builds, installs, and launches on the booted simulator — the no-LLM fast path from canvas to running app. One file per screen (`Tango<Name>Screen`), plus `TangoGeneratedRootView` (a TabView over all screens) to embed wherever the design should appear. Files under `TangoGenerated/` are tango-owned: regenerated on every export, never hand-edit them — to change those screens, change the design and re-export. Inputs are all optional and mirror `ios_build_run` (`scheme`, `udid`, `configuration`). The result includes `inclusion`: `'fs-synced'` means the project picks the folder up automatically (Xcode 16 filesystem-synchronized groups); `'manual-add-required'` means the user must drag `TangoGenerated/` into their target in Xcode once — tell them so. Fails fast when the design is empty or no simulator is booted.",
+      inputSchema: {
+        scheme: z.string().optional(),
+        udid: z.string().optional(),
+        configuration: z.enum(['Debug', 'Release']).optional(),
+      },
+    },
+    async ({ scheme, udid, configuration }) => {
+      try {
+        const state = await runExportAndRun({ scheme, udid, configuration });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(state, null, 2) }],
+        };
+      } catch (err) {
+        return toolErrorResult('export_run', err);
       }
     },
   );

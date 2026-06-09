@@ -13,7 +13,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Frame, RefreshCw, Send, Trash2 } from 'lucide-react';
+import { Frame, RefreshCw, Rocket, Send, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
@@ -270,6 +270,84 @@ export default function UIPanel({ terminalAgent }: Props) {
     }
   }, [sendBusy, terminalAgentMeta.shortLabel]);
 
+  // Export & Run: POST kicks the server-side pipeline (codegen → xcodebuild →
+  // install → launch), then poll the phase once a second — matches the
+  // SimulatorPanel polling pattern; phases are coarse and build-dominated, so
+  // SSE would buy nothing.
+  const [exporting, setExporting] = useState(false);
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const exportAndRun = useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    setStatus('Exporting…');
+    const startedAt = Date.now();
+    try {
+      const kick = await fetch('/api/ios/export-run', { method: 'POST' });
+      if (!kick.ok) {
+        const body = (await kick.json().catch(() => ({}))) as {
+          reason?: string;
+        };
+        setStatus(`Export blocked: ${body.reason ?? `HTTP ${kick.status}`}`);
+        return;
+      }
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 1000));
+        if (!mountedRef.current) return;
+        const res = await fetch('/api/ios/export-run', { cache: 'no-store' });
+        const s = (await res.json()) as {
+          phase: string;
+          stage?: string;
+          message?: string;
+          errors?: string[];
+          bundleId?: string;
+          durationMs?: number;
+          inclusion?: string;
+        };
+        if (s.phase === 'done') {
+          const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+          const manual =
+            s.inclusion === 'manual-add-required'
+              ? ' — one-time setup: drag TangoGenerated/ into your Xcode target'
+              : '';
+          setStatus(`Launched ${s.bundleId ?? 'app'} in ${secs}s.${manual}`);
+          return;
+        }
+        if (s.phase === 'error') {
+          const detail = s.errors && s.errors.length > 0 ? ` — ${s.errors[0]}` : '';
+          setStatus(`Export failed (${s.stage}): ${s.message}${detail}`);
+          return;
+        }
+        if (s.phase === 'idle') {
+          setStatus('Export ended unexpectedly.');
+          return;
+        }
+        const labels: Record<string, string> = {
+          generating: 'Generating SwiftUI',
+          writing: 'Writing files',
+          building: 'Building',
+          installing: 'Installing',
+          launching: 'Launching',
+        };
+        setStatus(
+          `${labels[s.phase] ?? s.phase}… ${Math.round((Date.now() - startedAt) / 1000)}s`,
+        );
+      }
+    } catch (err) {
+      setStatus(
+        `Export failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    } finally {
+      if (mountedRef.current) setExporting(false);
+    }
+  }, [exporting]);
+
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
     // any open browsers see the same state on refresh. We don't call MCP from
@@ -316,6 +394,22 @@ export default function UIPanel({ terminalAgent }: Props) {
             >
               <Trash2 className="size-3.5" />
               Clear
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                void exportAndRun();
+              }}
+              disabled={exporting || screenCount === 0}
+              title="Generate SwiftUI into TangoGenerated/, build, and launch on the simulator"
+            >
+              {exporting ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Rocket className="size-3.5" />
+              )}
+              Export &amp; Run
             </Button>
             <Button
               size="sm"
