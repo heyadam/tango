@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import AgentCursorOverlay from '@/components/AgentCursorOverlay';
 import AppTopBar from '@/components/AppTopBar';
 import LeftPanel from '@/components/LeftPanel';
 import SimulatorPanel from '@/components/SimulatorPanel';
@@ -10,15 +9,16 @@ import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
 import { cn } from '@/lib/utils';
 import type { WorkspaceMode } from '@/lib/workspaceMode';
 
-const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
+const ChatPanel = dynamic(() => import('@/components/ChatPanel'), {
+  ssr: false,
+});
 const TransmitOverlay = dynamic(() => import('@/components/TransmitOverlay'), {
   ssr: false,
 });
 
 function HomeBody() {
   const { current, openDialog } = useWorkspace();
-  const [agentOpen, setAgentOpen] = useState(false);
-  const [claudeOpen, setClaudeOpen] = useState(true);
+  const [chatOpen, setChatOpen] = useState(true);
   const [simOpen, setSimOpen] = useState(false);
   const [mode, setMode] = useState<WorkspaceMode>('sketch');
 
@@ -27,37 +27,35 @@ function HomeBody() {
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
       <AppTopBar
-        agentOpen={agentOpen}
-        claudeOpen={claudeOpen}
+        chatOpen={chatOpen}
         simOpen={simOpen}
         workspaceName={current?.name ?? null}
         workspacePath={current?.path ?? null}
         workspaceSource={current?.source ?? 'unset'}
         onOpenWorkspaceDialog={openDialog}
-        onToggleAgent={() => setAgentOpen((v) => !v)}
-        onToggleClaude={() => setClaudeOpen((v) => !v)}
+        onToggleChat={() => setChatOpen((v) => !v)}
         onToggleSim={() => setSimOpen((v) => !v)}
       />
       <main className="flex min-h-0 flex-1">
         <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
-            <LeftPanel
-              agentSidebarOpen={agentOpen}
-              mode={mode}
-              onModeChange={setMode}
-            />
+            <LeftPanel mode={mode} onModeChange={setMode} />
           ) : (
             <UnsetPlaceholder />
           )}
         </section>
         <aside
-          aria-hidden={!claudeOpen}
+          aria-hidden={!chatOpen}
           className={cn(
             'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
-            claudeOpen ? 'w-[35vw] min-w-[320px] border-l border-border' : 'w-0',
+            chatOpen ? 'w-[35vw] min-w-[320px] border-l border-border' : 'w-0',
           )}
         >
-          {workspaceReady ? <Terminal /> : <TerminalPlaceholder />}
+          {workspaceReady ? (
+            <ChatPanel workspacePath={current?.path ?? null} />
+          ) : (
+            <ChatPlaceholder />
+          )}
         </aside>
         <aside
           aria-hidden={!simOpen}
@@ -69,7 +67,6 @@ function HomeBody() {
           {simOpen ? <SimulatorPanel /> : null}
         </aside>
       </main>
-      {agentOpen ? <AgentCursorOverlay /> : null}
       <TransmitOverlay />
     </div>
   );
@@ -83,10 +80,10 @@ function UnsetPlaceholder() {
   );
 }
 
-function TerminalPlaceholder() {
+function ChatPlaceholder() {
   return (
     <div className="flex h-full w-full items-center justify-center bg-background px-4 text-center text-xs text-muted-foreground/60">
-      Claude will start once a workspace is selected.
+      Chat will start once a workspace is selected.
     </div>
   );
 }

@@ -1,14 +1,29 @@
 import type { UIMessage } from 'ai';
 
-// The agent is a UI controller, not the brain. It must only use the
-// UI/terminal tools. Canvas mutation tools belong to terminal-Claude — exposing
-// them here lets gpt-5.5 short-circuit the delegation and do the work itself.
+// The chat harness IS the brain — it sees every MCP tool that's part of the
+// design / build / iOS workflow. The cursor/terminal-puppeting tools from the
+// old controller agent are intentionally excluded; with no terminal-Claude to
+// delegate to, they have no reason to exist on this surface.
 export const ALLOWED_TOOLS = new Set([
-  'dom_inspect',
-  'cursor_move',
-  'cursor_click',
-  'cursor_type',
-  'terminal_type',
+  // canvas
+  'get_canvas_state',
+  'set_canvas_state',
+  'add_elements',
+  'clear_canvas',
+  'screenshot_canvas',
+  'set_screen_flow',
+  // ui mock
+  'get_ui_mock',
+  'get_ui_viewport',
+  'set_ui_mock',
+  'add_ui_screen',
+  'clear_ui_mock',
+  // ios
+  'ios_status',
+  'ios_build_run',
+  'ios_logs_recent',
+  // memory
+  'remember_note',
 ]);
 
 export function mcpUrl(req: Request): string {
@@ -20,14 +35,18 @@ export function mcpUrl(req: Request): string {
 }
 
 // Pull the most recent user-authored text out of the UI message list. Each
-// UIMessage's `parts` is an array of typed parts; we want the first text part
-// of the last user message.
+// UIMessage's `parts` is an array of typed parts; we want the joined text
+// parts of the last user message.
 export function lastUserGoal(messages: UIMessage[]): string {
   for (let i = messages.length - 1; i >= 0; i--) {
     const m = messages[i];
     if (m.role !== 'user') continue;
     const text = (m.parts ?? [])
-      .map((p) => (p && (p as { type?: string }).type === 'text' ? (p as { text?: string }).text ?? '' : ''))
+      .map((p) =>
+        p && (p as { type?: string }).type === 'text'
+          ? (p as { text?: string }).text ?? ''
+          : '',
+      )
       .filter(Boolean)
       .join(' ')
       .trim();

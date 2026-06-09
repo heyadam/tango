@@ -1,12 +1,10 @@
 'use client';
 
 import {
-  Code2,
   Folder,
   FolderOpen,
   Lock,
-  PanelLeftClose,
-  PanelLeftOpen,
+  MessageSquare,
   PanelRightClose,
   PanelRightOpen,
   Smartphone,
@@ -23,47 +21,29 @@ import { cn } from '@/lib/utils';
 type WorkspaceSource = 'env' | 'persisted' | 'unset';
 
 type Props = {
-  agentOpen: boolean;
-  claudeOpen: boolean;
+  chatOpen: boolean;
   simOpen: boolean;
   workspaceName: string | null;
   workspacePath: string | null;
   workspaceSource: WorkspaceSource;
   onOpenWorkspaceDialog: () => void;
-  onToggleAgent: () => void;
-  onToggleClaude: () => void;
+  onToggleChat: () => void;
   onToggleSim: () => void;
 };
 
 export default function AppTopBar({
-  agentOpen,
-  claudeOpen,
+  chatOpen,
   simOpen,
   workspaceName,
   workspacePath,
   workspaceSource,
   onOpenWorkspaceDialog,
-  onToggleAgent,
-  onToggleClaude,
+  onToggleChat,
   onToggleSim,
 }: Props) {
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-background px-2">
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={onToggleAgent}
-          aria-label={agentOpen ? 'Hide agent sidebar' : 'Show agent sidebar'}
-          aria-pressed={agentOpen}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          {agentOpen ? (
-            <PanelLeftClose className="size-4" />
-          ) : (
-            <PanelLeftOpen className="size-4" />
-          )}
-        </Button>
         <div className="flex items-center gap-1.5 font-serif text-sm font-semibold tracking-tight text-foreground">
           <TangoLogo className="size-5" />
           <span>tango</span>
@@ -79,20 +59,18 @@ export default function AppTopBar({
 
       <div className="flex items-center justify-end gap-2">
         <div className="hidden items-center gap-1.5 text-xs font-medium text-foreground sm:flex">
-          <Code2 className="size-3.5 text-muted-foreground" />
-          <span>Claude Code</span>
+          <MessageSquare className="size-3.5 text-muted-foreground" />
+          <span>Chat</span>
         </div>
         <Button
           variant="ghost"
           size="icon-sm"
-          onClick={onToggleClaude}
-          aria-label={
-            claudeOpen ? 'Hide Claude Code sidebar' : 'Show Claude Code sidebar'
-          }
-          aria-pressed={claudeOpen}
+          onClick={onToggleChat}
+          aria-label={chatOpen ? 'Hide chat sidebar' : 'Show chat sidebar'}
+          aria-pressed={chatOpen}
           className="text-muted-foreground hover:text-foreground"
         >
-          {claudeOpen ? (
+          {chatOpen ? (
             <PanelRightClose className="size-4" />
           ) : (
             <PanelRightOpen className="size-4" />
