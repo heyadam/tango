@@ -34,6 +34,7 @@ import {
 } from '@/lib/uiMockSchema';
 import { recordNote } from './memory';
 import { resolveBuildProject, runExportAndRun } from './iosExport';
+import { getPreviewHostStatus, startPreviewHost } from './previewHost';
 import { getIosProject, getWorkspaceOrNull } from './workspace';
 import {
   iosBuildRun,
@@ -503,6 +504,33 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('ios_build_run', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'preview_start',
+    {
+      title: 'Launch the live design preview on the simulator',
+      description:
+        "Builds (first run only, ~30–60s; warm runs ~2–4s), installs, and launches tango's preview-host app on the booted iOS simulator. Once running it renders the design spec live: every canvas edit — the user's drags, your set_ui_mock / update_ui_node calls — appears on the simulator in under a second with NO rebuild. xcodebuild is only needed again for `export_run` (real code). Idempotent: if the app is already running and connected this returns immediately. The result's `connected` tells you whether the app's WebSocket is attached; `running` + `connected: false` usually means the user closed the app — calling this again relaunches it. Pass `udid` only to target a specific simulator.",
+      inputSchema: {
+        udid: z.string().optional(),
+      },
+    },
+    async ({ udid }) => {
+      try {
+        await startPreviewHost({ udid });
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(getPreviewHostStatus(), null, 2),
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('preview_start', err);
       }
     },
   );

@@ -1,9 +1,12 @@
 import http from 'node:http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
 import { attachUIMock, hydrateUIMockFromDisk } from './src/server/uiMockBridge';
 import { flushPersistSync } from './src/server/uiMockPersist';
+import { attachPreview } from './src/server/previewBridge';
 import { mountMcp } from './src/server/mcp';
 import { startSimHelper, stopSimHelper } from './src/server/sim';
 import { ensureWorkspace, resolveWorkspaceAtBoot } from './src/server/workspace';
@@ -23,17 +26,21 @@ const port = Number(process.env.PORT ?? 3000);
 process.env.TANGO_PORT = String(port);
 // Expose the tango repo root so route-graph code can find in-repo assets
 // (the preview-host Xcode project) regardless of process.cwd().
-process.env.TANGO_REPO_ROOT = import.meta.dirname;
+// fileURLToPath(import.meta.url), NOT import.meta.dirname — tsx's transform
+// shims import.meta.url but leaves .dirname undefined.
+const repoRoot = path.dirname(fileURLToPath(import.meta.url));
+process.env.TANGO_REPO_ROOT = repoRoot;
 
 // Pin the project root to this file's directory instead of inheriting
 // process.cwd(). Launched from any other cwd (a git worktree, a parent dir,
 // an IDE task), an implicit `dir` makes Next — and the Tailwind/PostCSS CSS
 // pipeline — resolve `@import "tailwindcss"` from the wrong base and fail with
 // "Can't resolve 'tailwindcss' in <parent dir>".
-const app = next({ dev, hostname, port, dir: import.meta.dirname });
+const app = next({ dev, hostname, port, dir: repoRoot });
 
 const TERMINAL_PATH = '/ws/terminal';
 const UI_MOCK_PATH = '/ws/ui-mock';
+const PREVIEW_PATH = '/ws/preview';
 
 app.prepare().then(async () => {
   // Resolve the active workspace before anything else. Order:
@@ -102,6 +109,13 @@ app.prepare().then(async () => {
     attachUIMock(ws);
   });
 
+  // The preview-host app in the iOS simulator connects here (the simulator
+  // shares the host network stack, so ws://localhost works directly).
+  const wssPreview = new WebSocketServer({ noServer: true });
+  wssPreview.on('connection', (ws) => {
+    attachPreview(ws);
+  });
+
   server.on('upgrade', (req, socket, head) => {
     const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
     if (url.pathname === TERMINAL_PATH) {
@@ -113,6 +127,12 @@ app.prepare().then(async () => {
     if (url.pathname === UI_MOCK_PATH) {
       wssUIMock.handleUpgrade(req, socket, head, (ws) => {
         wssUIMock.emit('connection', ws, req);
+      });
+      return;
+    }
+    if (url.pathname === PREVIEW_PATH) {
+      wssPreview.handleUpgrade(req, socket, head, (ws) => {
+        wssPreview.emit('connection', ws, req);
       });
       return;
     }

@@ -2,6 +2,7 @@ import type { WebSocket } from 'ws';
 import { registerHook } from './serverHooks';
 import { createHub } from './wsHub';
 import { getWorkspaceOrNull } from './workspace';
+import { broadcastPreviewSpec, broadcastShowScreen } from './previewBridge';
 import {
   flushPendingPersist,
   loadSpecFromDisk,
@@ -37,6 +38,10 @@ let cache: UISpec = EMPTY_SPEC;
 // so new screens default to "what the user actually sees" instead of a
 // hardcoded form-factor size. `null` until the first browser connects.
 let viewport: { w: number; h: number } | null = null;
+// Which screen the user is working in (last selected node's screen / last
+// clicked frame). The preview-host app shows this screen on the simulator.
+// Defaults to the first screen whenever the current id stops existing.
+let activeScreenId: string | null = null;
 
 const hub = createHub();
 
@@ -49,24 +54,41 @@ registerHook('resetUiMock', () => {
   flushPendingPersist();
   cache = { screens: [] };
   viewport = null;
+  activeScreenId = null;
   broadcast({ type: 'set', spec: cache });
+  broadcastPreviewSpec(cache, activeScreenId);
   void hydrateUIMockFromDisk();
 });
 
-// Route-handler-graph readers (Export & Run) reach the live cache through the
-// globalThis hook registry.
+// Route-handler-graph readers (Export & Run, preview status) reach the live
+// cache through the globalThis hook registry.
 registerHook('getUiMockSpec', () => cache);
+registerHook('getUiMockActiveScreen', () => activeScreenId);
 
 function broadcast(msg: UIMockServerMsg): void {
   hub.broadcast(msg);
 }
 
+// Keep activeScreenId pointing at a real screen: default to the first screen
+// when unset or stale.
+function reconcileActiveScreen(): void {
+  if (cache.screens.length === 0) {
+    activeScreenId = null;
+    return;
+  }
+  if (!activeScreenId || !cache.screens.some((s) => s.id === activeScreenId)) {
+    activeScreenId = cache.screens[0].id;
+  }
+}
+
 // Single choke point for "the cache changed": optionally broadcast to
-// browsers, and always schedule the write-behind persist. The browser
-// snapshot path persists without broadcasting (other browsers keep
-// last-writer-wins semantics, unchanged).
+// browsers, always mirror to the preview host, and always schedule the
+// write-behind persist. The browser snapshot path persists + previews without
+// re-broadcasting to browsers (last-writer-wins semantics, unchanged).
 function cacheChanged(broadcastMsg?: UIMockServerMsg): void {
   if (broadcastMsg) broadcast(broadcastMsg);
+  reconcileActiveScreen();
+  broadcastPreviewSpec(cache, activeScreenId);
   const ws = getWorkspaceOrNull();
   if (ws) schedulePersist(ws, cache);
 }
@@ -84,6 +106,8 @@ export async function hydrateUIMockFromDisk(): Promise<void> {
   if (getWorkspaceOrNull() !== ws) return;
   cache = spec;
   broadcast({ type: 'set', spec });
+  reconcileActiveScreen();
+  broadcastPreviewSpec(cache, activeScreenId);
 }
 
 export function attachUIMock(ws: WebSocket): void {
@@ -98,6 +122,16 @@ export function attachUIMock(ws: WebSocket): void {
         const h = Math.round(parsed.h);
         if (Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0) {
           viewport = { w, h };
+        }
+      } else if (parsed.type === 'active_screen') {
+        const id = parsed.screenId;
+        if (
+          typeof id === 'string' &&
+          id !== activeScreenId &&
+          cache.screens.some((s) => s.id === id)
+        ) {
+          activeScreenId = id;
+          broadcastShowScreen(id);
         }
       }
     },

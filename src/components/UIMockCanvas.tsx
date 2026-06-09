@@ -68,9 +68,17 @@ const SNAPSHOT_DEBOUNCE_MS = 250;
 type Props = {
   initialSpec: UISpec;
   onPersist: (spec: UISpec) => void;
+  // Fired when the user's working screen changes (selecting a node in another
+  // screen, or clicking a frame's background). UIPanel ships it to the server
+  // so the preview-host app shows the screen the user is actually editing.
+  onActiveScreen?: (screenId: string) => void;
 };
 
-export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
+export default function UIMockCanvas({
+  initialSpec,
+  onPersist,
+  onActiveScreen,
+}: Props) {
   const [spec, setSpec] = useState<UISpec>(initialSpec ?? EMPTY_SPEC);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -165,15 +173,43 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
   }, [spec, onPersist]);
 
   // ── Selection helpers ─────────────────────────────────────────────────
-  const selectOnly = useCallback((id: string) => {
-    setSelectedIds([id]);
-    setEditingId(null);
-  }, []);
+  // Report the screen owning a node as the user's working screen (deduped).
+  const lastActiveScreen = useRef<string | null>(null);
+  const reportActiveScreen = useCallback(
+    (screenId: string) => {
+      if (screenId === lastActiveScreen.current) return;
+      lastActiveScreen.current = screenId;
+      onActiveScreen?.(screenId);
+    },
+    [onActiveScreen],
+  );
+  const reportActiveScreenOfNode = useCallback(
+    (nodeId: string) => {
+      const screen = specRef.current.screens.find((s) =>
+        s.nodes.some((n) => n.id === nodeId),
+      );
+      if (screen) reportActiveScreen(screen.id);
+    },
+    [reportActiveScreen],
+  );
 
-  const addToSelection = useCallback((id: string) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
-    setEditingId(null);
-  }, []);
+  const selectOnly = useCallback(
+    (id: string) => {
+      setSelectedIds([id]);
+      setEditingId(null);
+      reportActiveScreenOfNode(id);
+    },
+    [reportActiveScreenOfNode],
+  );
+
+  const addToSelection = useCallback(
+    (id: string) => {
+      setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+      setEditingId(null);
+      reportActiveScreenOfNode(id);
+    },
+    [reportActiveScreenOfNode],
+  );
 
   const clearSelection = useCallback(() => {
     setSelectedIds([]);
@@ -619,11 +655,12 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
               }}
               onPointerDown={(e) => {
                 // Clicks on the frame background (not on a node) clear
-                // selection. Bubbles up from node wrappers stop with their
-                // own stopPropagation, so this only fires for the frame
-                // itself.
+                // selection and mark this screen as the user's working
+                // screen. Bubbles up from node wrappers stop with their own
+                // stopPropagation, so this only fires for the frame itself.
                 if (e.target === e.currentTarget) {
                   clearSelection();
+                  reportActiveScreen(screen.id);
                 }
               }}
             >

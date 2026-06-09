@@ -13,7 +13,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Frame, RefreshCw, Rocket, Send, Trash2 } from 'lucide-react';
+import { Frame, Play, RefreshCw, Rocket, Send, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
@@ -83,6 +84,9 @@ export default function UIPanel({ terminalAgent }: Props) {
   const wsRef = useRef<WebSocket | null>(null);
   // Last-sent {w,h} so we don't spam identical frames after no-op resizes.
   const lastSentViewport = useRef<{ w: number; h: number } | null>(null);
+  // Last reported working screen — resent on (re)connect so the preview host
+  // shows the right screen after a socket bounce.
+  const lastActiveScreen = useRef<string | null>(null);
   // Header caption.
   const [viewport, setViewport] = useState<{ w: number; h: number } | null>(
     null,
@@ -120,6 +124,20 @@ export default function UIPanel({ terminalAgent }: Props) {
     uiMockStore.save(spec);
   }, []);
 
+  // Working-screen reports from the canvas → server (drives the preview-host
+  // app's screen selection). Canvas already dedupes consecutive repeats.
+  const handleActiveScreen = useCallback((screenId: string) => {
+    lastActiveScreen.current = screenId;
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      try {
+        ws.send(JSON.stringify({ type: 'active_screen', screenId }));
+      } catch {
+        // socket dying — the open handler will resend on reconnect
+      }
+    }
+  }, []);
+
   // Open the WS bridge: outbound snapshots flow through uiMockBus from the
   // canvas; inbound apply messages go to the canvas via the same bus.
   useEffect(() => {
@@ -141,11 +159,24 @@ export default function UIPanel({ terminalAgent }: Props) {
     // a connected socket, so the first measurement would otherwise be lost.
     const sendCurrentViewport = () => {
       const last = lastSentViewport.current;
-      if (!last) return;
-      try {
-        ws.send(JSON.stringify({ type: 'viewport', w: last.w, h: last.h }));
-      } catch {
-        // socket dying — cleanup runs on close
+      if (last) {
+        try {
+          ws.send(JSON.stringify({ type: 'viewport', w: last.w, h: last.h }));
+        } catch {
+          // socket dying — cleanup runs on close
+        }
+      }
+      if (lastActiveScreen.current) {
+        try {
+          ws.send(
+            JSON.stringify({
+              type: 'active_screen',
+              screenId: lastActiveScreen.current,
+            }),
+          );
+        } catch {
+          // socket dying — cleanup runs on close
+        }
       }
     };
     if (ws.readyState === WebSocket.OPEN) {
@@ -269,6 +300,92 @@ export default function UIPanel({ terminalAgent }: Props) {
       setSendBusy(false);
     }
   }, [sendBusy, terminalAgentMeta.shortLabel]);
+
+  // Live preview: the preview-host app on the simulator renders the design
+  // over /ws/preview. The dot tracks the lifecycle: gray = stopped, amber =
+  // building/launching, green = running + connected, red = running but its
+  // socket dropped (relaunch usually fixes it).
+  type PreviewUiState = 'stopped' | 'busy' | 'connected' | 'disconnected' | 'error';
+  const [previewState, setPreviewState] = useState<PreviewUiState>('stopped');
+  const [previewBusy, setPreviewBusy] = useState(false);
+  // The poll callback reads the latest state via a ref so the effect doesn't
+  // re-subscribe on every state change.
+  const previewStateRef = useRef<PreviewUiState>('stopped');
+  previewStateRef.current = previewState;
+
+  useEffect(() => {
+    let cancelled = false;
+    let timer: number | null = null;
+    const tick = async () => {
+      try {
+        const res = await fetch('/api/preview/status', { cache: 'no-store' });
+        const s = (await res.json()) as { phase: string; connected?: boolean };
+        if (cancelled) return;
+        if (s.phase === 'running') {
+          setPreviewState(s.connected ? 'connected' : 'disconnected');
+        } else if (s.phase === 'error') {
+          setPreviewState('error');
+        } else if (s.phase === 'stopped') {
+          setPreviewState('stopped');
+        } else {
+          setPreviewState('busy');
+        }
+      } catch {
+        if (!cancelled) setPreviewState('stopped');
+      }
+      if (cancelled) return;
+      timer = window.setTimeout(tick, previewStateRef.current === 'busy' ? 1000 : 5000);
+    };
+    void tick();
+    return () => {
+      cancelled = true;
+      if (timer != null) window.clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const startPreview = useCallback(async () => {
+    if (previewBusy) return;
+    setPreviewBusy(true);
+    setStatus('Starting preview… first run builds the preview app (~30–60s).');
+    try {
+      const res = await fetch('/api/preview/start', { method: 'POST' });
+      if (!res.ok && res.status !== 409) {
+        const body = (await res.json().catch(() => ({}))) as { reason?: string };
+        setStatus(`Preview failed to start: ${body.reason ?? `HTTP ${res.status}`}`);
+        return;
+      }
+      setPreviewState('busy');
+      // Poll until it settles so the status strip tells the story.
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 1000));
+        if (!mountedRef.current) return;
+        const s = (await (
+          await fetch('/api/preview/status', { cache: 'no-store' })
+        ).json()) as { phase: string; connected?: boolean; message?: string };
+        if (s.phase === 'running') {
+          setPreviewState(s.connected ? 'connected' : 'disconnected');
+          setStatus(
+            s.connected
+              ? 'Preview live — canvas edits now mirror to the simulator.'
+              : 'Preview app launched; waiting for it to connect…',
+          );
+          return;
+        }
+        if (s.phase === 'error') {
+          setPreviewState('error');
+          setStatus(`Preview failed: ${s.message ?? 'unknown error'}`);
+          return;
+        }
+      }
+    } catch (err) {
+      setStatus(
+        `Preview failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    } finally {
+      if (mountedRef.current) setPreviewBusy(false);
+    }
+  }, [previewBusy]);
 
   // Export & Run: POST kicks the server-side pipeline (codegen → xcodebuild →
   // install → launch), then poll the phase once a second — matches the
@@ -396,6 +513,40 @@ export default function UIPanel({ terminalAgent }: Props) {
               Clear
             </Button>
             <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                void startPreview();
+              }}
+              disabled={previewBusy}
+              title={
+                previewState === 'connected'
+                  ? 'Preview live — canvas edits mirror to the simulator in real time'
+                  : previewState === 'disconnected'
+                    ? 'Preview app lost its connection — click to relaunch'
+                    : 'Launch the live preview app on the booted simulator (first run builds it once, ~30–60s)'
+              }
+              className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'size-2 rounded-full',
+                  previewState === 'connected' && 'bg-secondary',
+                  previewState === 'disconnected' && 'bg-destructive',
+                  previewState === 'error' && 'bg-destructive',
+                  previewState === 'busy' && 'animate-pulse bg-warning',
+                  previewState === 'stopped' && 'bg-panel-header-foreground/30',
+                )}
+              />
+              {previewBusy ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Play className="size-3.5" />
+              )}
+              Preview
+            </Button>
+            <Button
               variant="secondary"
               size="sm"
               onClick={() => {
@@ -433,6 +584,7 @@ export default function UIPanel({ terminalAgent }: Props) {
             key={generation}
             initialSpec={load.initialSpec}
             onPersist={persist}
+            onActiveScreen={handleActiveScreen}
           />
         )}
       </div>

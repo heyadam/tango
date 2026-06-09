@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- ws://localhost is a cleartext connection; NSAllowsLocalNetworking
+	     permits it without disabling App Transport Security globally.
+	     Merged with Xcode's generated Info.plist keys
+	     (GENERATE_INFOPLIST_FILE = YES + INFOPLIST_FILE = this file). -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+</dict>
+</plist>
