@@ -4,10 +4,9 @@ import path from 'node:path';
 import { ensureMemory } from './memory';
 import { detectXcodeProject, type IosProjectStatus } from './iosBuild';
 
-// The directory Claude operates in: where the in-app terminal lands, where
-// `.mcp.json` and `.claude/tango.md` are managed so the `claude` CLI auto-
-// discovers our canvas tools, and where `design-scratch/` PNGs land for the
-// "Send to Claude" flow.
+// The directory the terminal agent operates in: where the in-app terminal
+// lands, and where `.mcp.json` and `.claude/tango.md` are managed so the
+// `claude` CLI auto-discovers our design tools.
 //
 // Selection order (see workspaceState):
 //   1. process.env.TANGO_WORKSPACE — pinned, picker locked
@@ -108,27 +107,17 @@ const REQUIRED_CLAUDE_ENV = {
 // project's CLAUDE.md is just our 3-line managed block.
 //
 // Split into HEAD + (templated iOS section) + TAIL so detection results from
-// `detectXcodeProject` can be spliced in. The HEAD covers canvas / UI-mock /
-// SwiftUI design flows; the iOS section (when present) covers the build /
-// install / launch loop on the booted simulator; the TAIL is the workspace
-// memory section + footer.
-const TANGO_MD_HEAD = `# Designer canvas (tango)
+// `detectXcodeProject` can be spliced in. The HEAD covers the design-canvas
+// flow; the iOS section (when present) covers the build / install / launch
+// loop on the booted simulator; the TAIL is the workspace memory section +
+// footer.
+const TANGO_MD_HEAD = `# Design canvas (tango)
 
-You're running inside the **tango** workspace. The user is viewing an Excalidraw canvas in the left pane of their browser; this terminal is in the right pane. The \`tango-canvas\` MCP server lets you read and modify that canvas:
+You're running inside the **tango** workspace. The user is viewing a direct-manipulation design canvas in the left pane of their browser — screens of absolutely-positioned shadcn/Tailwind components they can drag, resize, and text-edit — and this terminal in the right pane. The \`tango-canvas\` MCP server lets you read and modify that canvas:
 
-- \`get_canvas_state\` — read the current scene (elements + appState; embedded image bytes elided)
-- \`set_canvas_state\` — replace the entire scene
-- \`add_elements\` — append elements without disturbing existing ones
-- \`clear_canvas\` — empty the scene
-- \`screenshot_canvas\` — see the rendered canvas as an image (call this before proposing wireframes, critiques, or anything that depends on what the user has drawn — \`get_canvas_state\` strips embedded image bytes, this gives you the actual pixels)
-
-Reach for these whenever the user asks for visual work — wireframes, diagrams, sketches, layout proposals. Prefer \`add_elements\` when annotating or extending; \`set_canvas_state\` for a full redesign. Element shape matches Excalidraw's \`serializeAsJSON\` output — call \`get_canvas_state\` first if you need to see the shape.
-
-The same MCP server also exposes **UI mock tools** for tango's "UI" mode — a higher-fidelity surface where the user sees real shadcn/Tailwind components instead of an Excalidraw wireframe, and can drag/resize/text-edit them directly:
-
-- \`get_ui_mock\` — read the current shadcn-based UI mock spec (call this first; user tweaks live here)
-- \`get_ui_layers\` — read a compact, z-ordered outline of the mock (screens → nodes, back-to-front) to grab node ids before editing
-- \`get_ui_viewport\` — read the live pixel size of the user's UI panel; use it as the default frame size for new screens so the mock fills exactly what they see
+- \`get_ui_mock\` — read the current design spec (call this first; user tweaks live here)
+- \`get_ui_layers\` — read a compact, z-ordered outline of the design (screens → nodes, back-to-front) to grab node ids before editing
+- \`get_ui_viewport\` — read the live pixel size of the user's design panel; use it as the default frame size for new screens so the design fills exactly what they see
 - \`set_ui_mock\` — replace the whole spec (one or more screens of absolutely-positioned nodes)
 - \`add_ui_screen\` — append a screen to an existing flow without touching the others
 - \`add_ui_nodes\` — add node(s) to one screen on the LIVE spec (preserves the user's other tweaks; prefer over \`set_ui_mock\` for incremental adds)
@@ -137,23 +126,17 @@ The same MCP server also exposes **UI mock tools** for tango's "UI" mode — a h
 - \`reorder_ui_node\` — change a node's z-order within its screen (front/back/forward/backward)
 - \`clear_ui_mock\` — empty the spec
 
-For UI sketching ("sketch my UI", "wireframe this screen", "draw a layout for X"), follow the **\`tango-ui-sketch\`** skill at \`.claude/skills/tango-ui-sketch/SKILL.md\` — it turns a UI into an Excalidraw wireframe (structure, no pixels).
+For UI design work ("mock my UI", "show me what the X screen would look like", "prototype this flow", "sketch a layout for Y"), follow the **\`tango-ui-mock\`** skill at \`.claude/skills/tango-ui-mock/SKILL.md\` — it transcribes a real production UI (or a described one) into the design surface, where the user can drag, resize, and edit text, and then ship the tweaks back as a reference for the production codebase.
 
-For higher-fidelity UI prototyping ("mock my UI in shadcn", "show me what the X screen would look like", "build a UI mock of Y", "prototype this flow"), follow the **\`tango-ui-mock\`** skill at \`.claude/skills/tango-ui-mock/SKILL.md\` instead — it transcribes a real production UI into the shadcn-based mock surface, where the user can drag, resize, and edit text, and then ship the tweaks back as a reference for the production codebase. Use \`tango-ui-mock\` when the user wants to *visualize and tweak* a UI; \`tango-ui-sketch\` when they want a wireframe.
+For round-tripping a **SwiftUI** view through the canvas — read a \`.swift\` file and render it on the canvas, let the user tweak it, then regenerate SwiftUI back into the same file — follow the **\`tango-swiftui\`** skill at \`.claude/skills/tango-swiftui/SKILL.md\`. Triggers on any prompt naming a \`.swift\` file, SwiftUI, Xcode, or a Swift View together with read / show / render / mock / sketch / save / write / generate intents.
 
-For round-tripping a **SwiftUI** view through the canvas — read a \`.swift\` file and render it on the canvas, let the user tweak it, then regenerate SwiftUI back into the same file — follow the **\`tango-swiftui\`** skill at \`.claude/skills/tango-swiftui/SKILL.md\`. It picks UI mock (default) or sketch mode internally and edits the \`.swift\` file the user has selected. Triggers on any prompt naming a \`.swift\` file, SwiftUI, Xcode, or a Swift View together with read / show / render / mock / sketch / save / write / generate intents.
-
-For mapping the **whole iOS app** as a Figma-style screen-flow diagram on the canvas ("map out my iOS app", "show me all the screens", "draw the navigation graph") — follow the **\`tango-ios-map\`** skill at \`.claude/skills/tango-ios-map/SKILL.md\`. It scans \`.swift\` and \`.storyboard\` sources, builds a screens + edges graph, and calls the \`set_screen_flow\` MCP tool to lay it out and draw it. Distinct from \`tango-swiftui\` (one screen) and \`tango-ui-sketch\` (one wireframe).
-
-Edits via these tools appear on the user's canvas immediately. The user can \`Cmd+Z\` your changes, and their edits flow back so \`get_canvas_state\` always reflects what's on their screen right now.
-
-For visual context, prefer \`screenshot_canvas\` — it's the live channel. The user may also drop a PNG into \`design-scratch/\` and ping you with a \`# review design at design-scratch/...png\` comment line; that's the deliberate-handoff channel — read the file when they point you at it.
+Edits via these tools appear on the user's canvas immediately, and their edits flow back so \`get_ui_mock\` always reflects what's on their screen right now.
 
 `;
 
 const TANGO_MD_TAIL = `## Workspace memory
 
-A live memory file lives at \`./tango-memory.md\` — read it now for prior context (snapshots taken, agent runs, recorded design decisions). When the user states a design decision, constraint, or context worth keeping for future sessions, call the \`remember_note\` MCP tool with the appropriate \`category\` (\`'decision'\`, \`'context'\`, or \`'todo'\`). Don't edit the Summary or Recent sections of \`tango-memory.md\` directly — those are managed by tango. Your own working notes go in the \`Notes (yours)\` block at the bottom, which tango never touches. Note: snapshot captions and recorded notes are summarized via the same OpenAI key as the controller agent.
+A live memory file lives at \`./tango-memory.md\` — read it now for prior context (recorded design decisions, constraints, todos). When the user states a design decision, constraint, or context worth keeping for future sessions, call the \`remember_note\` MCP tool with the appropriate \`category\` (\`'decision'\`, \`'context'\`, or \`'todo'\`). Don't edit the Summary or Recent sections of \`tango-memory.md\` directly — those are managed by tango. Your own working notes go in the \`Notes (yours)\` block at the bottom, which tango never touches.
 
 ---
 
@@ -205,195 +188,26 @@ export function tangoMd(
   return TANGO_MD_HEAD + renderIosSection(iosProject, workspace) + TANGO_MD_TAIL;
 }
 
-// Skill body for `${workspace}/.claude/skills/tango-ui-sketch/SKILL.md`.
-// Auto-discovered by Claude Code from `.claude/skills/<name>/SKILL.md` and
-// invocable both as a slash command (`/tango-ui-sketch`) and via the model's
-// auto-invocation against the `description` field. Wholly tango-managed,
-// same overwrite policy as `.claude/tango.md`. Description is intentionally
-// broad on triggers (sketch / wireframe / mock up / lay out / draw / design,
-// applied to UI / screen / page / interface) so prompts like "sketch my UI"
-// reliably auto-invoke it.
-const UI_SKETCH_SKILL_MD = `---
-name: tango-ui-sketch
-description: Sketch a UI as a wireframe on the tango Excalidraw canvas. Use whenever the user asks to sketch, wireframe, mock up, lay out, draw, or design a UI / screen / page / view / layout / interface — whether the UI already exists in the codebase, the user describes it in words, or you're proposing alternatives. This is the default skill for any "sketch / draw / wireframe / mock up X" prompt where X is a UI surface.
----
-
-# UI → wireframe sketch
-
-You're inside a tango workspace, so the user is staring at an Excalidraw canvas in their left pane. Your job: turn a UI into a clean, labeled wireframe on that canvas — structure first, pixels never. The UI you're sketching is one of:
-
-- **The current app's UI** ("sketch my UI", "draw the to-do screen on the canvas") — extract it from the codebase.
-- **A described UI** ("wireframe a settings page with two tabs") — build it from the user's spec, asking one quick question if intent is genuinely ambiguous.
-- **A redesign / alternative** ("rework this", "propose a different layout") — capture the current shape first, then sketch the alternative alongside.
-
-Use the \`tango-canvas\` MCP tools (already loaded): \`get_canvas_state\`, \`add_elements\`, \`set_canvas_state\`, \`clear_canvas\`, \`screenshot_canvas\`.
-
-## Playbook
-
-### 1. Figure out what you're sketching
-- **From the codebase.** Find the entry-point page (\`src/app/page.tsx\`, \`pages/index.tsx\`, \`App.tsx\`, the relevant route file). \`Read\` it and one level of the components it composes — enough to enumerate the visible regions (header, nav, main content, sidebar, footer) and the controls inside them. Stop as soon as you can list them.
-- **From a description.** Write down the regions and controls in one sentence each before drawing. If the user gave you ambiguous scope (mobile vs desktop? logged-in vs logged-out? what content lives on the screen?), ask one tight clarifying question — don't draw three variants speculatively.
-- **From a reference on the canvas.** \`screenshot_canvas\` first to see what's already drawn; treat that as the reference.
-
-### 2. Don't trample the canvas
-\`get_canvas_state\` first. If it has existing elements:
-- **Default**: use \`add_elements\` and place the new wireframe in empty space below or to the right of existing content.
-- Ask the user before \`clear_canvas\` or \`set_canvas_state\` — those wipe their work. Phrase it: *"There's already content on the canvas — clear it, or place the wireframe alongside?"*
-
-If the canvas is empty, go straight to \`add_elements\`.
-
-### 3. Pick a frame
-Wireframes live inside an outer frame so the screen edge is visible:
-
-| Form factor | Frame size |
-|-------------|------------|
-| Mobile      | \`360 × 720\` |
-| Tablet      | \`768 × 1024\` |
-| Desktop     | \`1280 × 800\` |
-
-Origin around \`(100, 100)\`. If you're drawing multiple screens (a flow), lay frames left-to-right with **80px gutters** and label each frame above it (\`text\` at \`y = frame.y - 32\`, \`fontSize: 18\`).
-
-### 4. Lay out regions, then controls
-Build the wireframe in two passes so the structure is legible before the detail goes in.
-
-**Pass A — regions.** Carve the frame into header / nav / main / sidebar / footer or whatever the screen actually has. Use **inset rectangles** with a 16px gutter from the frame edge and 12–16px gutters between regions. Label each region (\`Header\`, \`Nav\`, \`Feed\`, etc.).
-
-**Pass B — controls.** Inside each region, place the actual controls: buttons, inputs, list rows, cards, avatars, copy. Use the building blocks below.
-
-### 5. Element shapes
-Element JSON matches Excalidraw's \`serializeAsJSON\` output. Permissive — extra fields are fine, missing fields default. **If unsure, call \`get_canvas_state\` first and copy the field set you see.**
-
-**Frame** (outer screen rectangle):
-\`\`\`json
-{ "type": "rectangle", "id": "frame-1", "x": 100, "y": 100, "width": 360, "height": 720,
-  "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
-  "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
-  "roundness": { "type": 3 } }
-\`\`\`
-
-**Region** (rectangle + label):
-\`\`\`json
-[
-  { "type": "rectangle", "id": "header", "x": 116, "y": 116, "width": 328, "height": 56,
-    "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
-    "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0 },
-  { "type": "text", "id": "header-label", "x": 132, "y": 132, "width": 200, "height": 24,
-    "text": "Header", "fontSize": 18, "fontFamily": 1, "textAlign": "left",
-    "verticalAlign": "top", "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-    "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0,
-    "opacity": 100, "angle": 0 }
-]
-\`\`\`
-
-**Button** (rounded rectangle + centered label):
-\`\`\`json
-[
-  { "type": "rectangle", "id": "btn-primary", "x": 132, "y": 644, "width": 296, "height": 44,
-    "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
-    "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
-    "roundness": { "type": 3 } },
-  { "type": "text", "id": "btn-primary-label", "x": 132, "y": 654, "width": 296, "height": 24,
-    "text": "Primary action", "fontSize": 16, "fontFamily": 1, "textAlign": "center",
-    "verticalAlign": "top", "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-    "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0,
-    "opacity": 100, "angle": 0 }
-]
-\`\`\`
-
-**Input** (rectangle + placeholder text):
-\`\`\`json
-[
-  { "type": "rectangle", "id": "input-email", "x": 132, "y": 220, "width": 296, "height": 40,
-    "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
-    "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
-    "roundness": { "type": 3 } },
-  { "type": "text", "id": "input-email-ph", "x": 144, "y": 230, "width": 200, "height": 20,
-    "text": "Email", "fontSize": 14, "fontFamily": 1, "textAlign": "left",
-    "verticalAlign": "top", "strokeColor": "#7a7a7a", "backgroundColor": "transparent",
-    "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0,
-    "opacity": 100, "angle": 0 }
-]
-\`\`\`
-
-**Body / list-row placeholder** (horizontal line — stand-in for one line of copy):
-\`\`\`json
-{ "type": "line", "id": "ph-1", "x": 132, "y": 280, "width": 240, "height": 0,
-  "points": [[0,0],[240,0]], "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-  "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0,
-  "opacity": 100, "angle": 0 }
-\`\`\`
-
-**Image / avatar placeholder** (rectangle with diagonal lines — convention for "image goes here"):
-\`\`\`json
-[
-  { "type": "rectangle", "id": "avatar", "x": 132, "y": 132, "width": 40, "height": 40,
-    "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
-    "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100, "angle": 0,
-    "roundness": { "type": 3 } },
-  { "type": "line", "id": "avatar-x1", "x": 132, "y": 132, "width": 40, "height": 40,
-    "points": [[0,0],[40,40]], "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-    "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0,
-    "opacity": 100, "angle": 0 },
-  { "type": "line", "id": "avatar-x2", "x": 132, "y": 132, "width": 40, "height": 40,
-    "points": [[40,0],[0,40]], "strokeColor": "#1e1e1e", "backgroundColor": "transparent",
-    "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0,
-    "opacity": 100, "angle": 0 }
-]
-\`\`\`
-
-### 6. Style rules (load-bearing for legibility)
-- **Wireframe palette.** One stroke color (\`#1e1e1e\`); placeholder text in \`#7a7a7a\`. **No fills.** No decorative color.
-- **\`roughness: 0\` everywhere.** Excalidraw's hand-drawn look fights legibility for wireframes; clean lines read as structure.
-- **Label every region.** Unlabeled boxes are noise. Controls don't need labels if their shape is conventional (buttons do; placeholder lines don't).
-- **Axis-aligned only.** No diagonal arrows or rotated rectangles. The diagonals on avatar placeholders are the only exception.
-- **Text \`x/y\` ≈ container \`x+12, y+10\`** for inputs and small controls; \`x+16, y+16\` for region headers. Keep text inside its container's bounding box.
-- **Type sizes**: \`14\` for body / placeholder, \`16\` for button labels, \`18\` for region headers, \`24\` for screen title (above the frame).
-- **One \`add_elements\` call** with all elements when you can — it's cheaper and atomic on undo.
-
-### 7. Verify, then iterate
-Call \`screenshot_canvas\` immediately after writing. Look for:
-- Boxes overlapping, clipped by the frame, or outside the frame → recompute coords, \`set_canvas_state\` to fix
-- Labels clipped or running outside their box → grow the box or shrink the label
-- Empty regions reading as "broken" rather than "intentionally blank" → add a placeholder line or a region label
-- Multiple screens drifting out of alignment → snap to the gutter math
-
-Don't tell the user "done" until the screenshot looks right. Iterate.
-
-### 8. Record it
-Call \`remember_note({ category: 'context', text: 'Sketched UI: <one-line shape, e.g. "Mobile to-do screen — header, list, FAB">' })\`. Future sessions will see this in \`tango-memory.md\`.
-
-## Anti-patterns
-- Don't chase pixel-perfection or visual fidelity. Wireframes are about structure.
-- Don't add fills, brand colors, or icons. Stroke and text only.
-- Don't draw what the user didn't ask for. "Sketch the login screen" means one screen, not three.
-- Don't \`clear_canvas\` without asking.
-- Don't skip the \`screenshot_canvas\` verify step. Element JSON looks fine on paper and lays out badly in practice.
-- Don't try to draw architecture diagrams here — for "diagram my codebase" / "draw the architecture" prompts, you don't need a skill: use the canvas tools directly with rectangles + arrows for modules and edges.
-
----
-
-This skill is generated by tango and overwritten on each server boot. To customize, fork it under a different name in \`.claude/skills/\` — tango won't touch other skills.
-`;
 
 // Skill body for `${workspace}/.claude/skills/tango-ui-mock/SKILL.md`.
-// Drives terminal-Claude through tango's "UI" mode: read the production UI
+// Drives terminal-Claude through tango's design canvas: read the production UI
 // from the codebase, transcribe it into a shadcn-based mock spec via the
 // `set_ui_mock` MCP tool, then read user tweaks back via `get_ui_mock` after
 // the user has dragged / resized / edited the mock and pinged Claude.
 // Wholly tango-managed, same overwrite policy as `.claude/tango.md`.
 const UI_MOCK_SKILL_MD = `---
 name: tango-ui-mock
-description: Build a high-fidelity shadcn/Tailwind UI mock on the tango "UI" panel for the user to drag, resize, and tweak — then read their changes back as a reference for the production codebase. Use whenever the user asks to mock up, prototype, visualize, or "see what X would look like" for a UI / screen / page / flow as a real shadcn-based prototype (not a wireframe). Use \`tango-ui-sketch\` instead when they want a wireframe.
+description: Build a high-fidelity shadcn/Tailwind UI design on the tango canvas for the user to drag, resize, and tweak — then read their changes back as a reference for the production codebase. Use whenever the user asks to sketch, wireframe, mock up, prototype, visualize, design, or "see what X would look like" for a UI / screen / page / flow.
 ---
 
 # UI mock (shadcn / Tailwind)
 
-You're inside a tango workspace. When the user is in the "UI" mode tab, the left pane is a fixed-frame mock canvas where shadcn-styled components sit at absolute pixel coordinates. The user can drag, resize, multi-select, and double-click-to-edit-text. Your job is two-way:
+You're inside a tango workspace. The left pane is a fixed-frame design canvas where shadcn-styled components sit at absolute pixel coordinates. The user can drag, resize, multi-select, and double-click-to-edit-text. Your job is two-way:
 
 1. **Down**: turn a production UI (existing in the codebase, or described by the user) into a mock spec that visualizes it.
 2. **Up**: when the user has tweaked the mock and pinged you (typically by clicking "Send to Claude" — you'll see a markdown handoff in the terminal), read the current spec via \`get_ui_mock\` and translate the deltas into responsive Tailwind / shadcn changes in the production source.
 
-This is not a wireframe surface (use \`tango-ui-sketch\` for that). The mock renders real shadcn primitives — Button, Input, Badge, Separator, Textarea — plus layout primitives (\`div\`, \`text\`, \`heading\`, \`Image\`, \`Icon\`).
+The canvas renders real shadcn primitives — Button, Input, Badge, Separator, Textarea — plus layout primitives (\`div\`, \`text\`, \`heading\`, \`Image\`, \`Icon\`). For a deliberately low-fidelity wireframe look, use muted \`div\` boxes and placeholder \`text\` nodes instead of fully-styled components.
 
 ## Tools
 
@@ -562,7 +376,6 @@ After a successful mock or apply pass, \`remember_note({ category: 'context', te
 - Don't default to 1280×800 for the desktop case. The user's actual UI panel is rarely that — it's whatever's left after the splitter, agent sidebar, and window chrome. Use \`get_ui_viewport\`.
 - Don't \`clear_ui_mock\` without asking.
 - Don't invent a \`type\` outside the union. The validator will reject; the user sees an error.
-- Don't import \`@excalidraw/excalidraw\` or use the canvas tools here — \`tango-ui-sketch\` is the wireframe path.
 - Don't skip the verify round-trip on \`get_ui_mock\`. Spec JSON looks fine on paper and overflows the frame in practice.
 
 ---
@@ -571,23 +384,23 @@ This skill is generated by tango and overwritten on each server boot. To customi
 `;
 
 // Skill body for `${workspace}/.claude/skills/tango-swiftui/SKILL.md`.
-// Round-trips a SwiftUI View through tango's canvas: read a `.swift` file and
-// render it as a UI mock (default) or wireframe sketch (on request); the user
-// drags / resizes / edits; then regenerate SwiftUI back into the same file.
-// All driven from terminal-Claude — no new tango UI surfaces. Wholly tango-
-// managed, same overwrite policy as `.claude/tango.md`. Description is broad
-// on triggers (any prompt naming `.swift` / SwiftUI / Xcode + read/show/save/
-// write/render/mock/sketch intents) so it auto-invokes reliably.
+// Round-trips a SwiftUI View through tango's design canvas: read a `.swift`
+// file and render it as a spec of shadcn nodes; the user drags / resizes /
+// edits; then regenerate SwiftUI back into the same file. All driven from
+// terminal-Claude — no new tango UI surfaces. Wholly tango-managed, same
+// overwrite policy as `.claude/tango.md`. Description is broad on triggers
+// (any prompt naming `.swift` / SwiftUI / Xcode + read/show/save/write/
+// render/mock intents) so it auto-invokes reliably.
 const SWIFTUI_SKILL_MD = `---
 name: tango-swiftui
-description: Round-trip a SwiftUI View through tango's canvas — when a \`.swift\` file or SwiftUI source is involved. Use whenever the user mentions SwiftUI, Swift View, \`.swift\`, or Xcode together with intents to read, show, render, mock, sketch, visualize, save, write, generate, or update the design. Internally picks UI mock (default, high-fidelity shadcn nodes) or sketch mode (Excalidraw wireframe) per user request and source complexity. Use \`tango-ui-mock\` / \`tango-ui-sketch\` instead when the UI is generic web/React, not SwiftUI.
+description: Round-trip a SwiftUI View through tango's design canvas — when a \`.swift\` file or SwiftUI source is involved. Use whenever the user mentions SwiftUI, Swift View, \`.swift\`, or Xcode together with intents to read, show, render, mock, sketch, visualize, save, write, generate, or update the design. Use \`tango-ui-mock\` instead when the UI is generic web/React, not SwiftUI.
 ---
 
 # SwiftUI ↔ tango canvas
 
 You're inside a tango workspace. The user has a SwiftUI view (in a \`.swift\` file) that they want to see, edit visually, and write back. Two flows:
 
-1. **Read**: turn a \`.swift\` source file into a tango canvas — UI mock by default (high-fidelity shadcn primitives) or sketch (Excalidraw wireframe) on request.
+1. **Read**: turn a \`.swift\` source file into screens on the tango design canvas (high-fidelity shadcn primitives).
 2. **Write**: turn the current canvas back into SwiftUI source and update the file the user has selected.
 
 Both flows live in this terminal-Claude session. The user does not see SwiftUI buttons in tango's UI — the canvas just reflects whatever you push to it via MCP, and you regenerate the \`.swift\` source when they ping you.
@@ -597,14 +410,9 @@ Both flows live in this terminal-Claude session. The user does not see SwiftUI b
 You'll combine your filesystem tools with tango's MCP tools:
 
 - **Filesystem (built-in)**: \`Read\` / \`Write\` / \`Edit\` / \`Glob\` for \`.swift\` files.
-- **UI mock (\`tango-canvas\` MCP)**: \`get_ui_mock\`, \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`.
-- **Sketch (\`tango-canvas\` MCP)**: \`get_canvas_state\`, \`set_canvas_state\`, \`add_elements\`, \`clear_canvas\`, \`screenshot_canvas\`. Element JSON matches Excalidraw's \`serializeAsJSON\` output — see \`.claude/skills/tango-ui-sketch/SKILL.md\` for the shape conventions and the wireframe palette.
+- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\`, \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`.
 
-## Pick the mode
-
-- **UI mock by default.** When the SwiftUI uses stock components (\`Button\`, \`Text\`, \`TextField\`, \`Image\`, \`Divider\`, …) the structured node graph maps cleanly and the user can edit it like a real UI.
-- **Sketch only** when the user explicitly says "wireframe" / "sketch", or when the source uses heavy custom drawing (\`Path\`, \`Canvas\`, complex \`GeometryReader\` math) that the UI mock node types can't represent. Sketch mode is lower fidelity — the goal is structure, not pixel match.
-- The user may ask for both (mock for editing, sketch as a structural overview). Push to both panels in the same turn when they do.
+For SwiftUI that uses heavy custom drawing (\`Path\`, \`Canvas\`, complex \`GeometryReader\` math) the node types can't represent, render the closest structural approximation (a \`div\` placeholder with a label) and tell the user what was approximated.
 
 ## Read flow (\`.swift\` → tango)
 
@@ -630,8 +438,6 @@ Every leaf becomes one \`UINode\` with absolute pixel coords inside a frame. Inf
 - \`Spacer()\` → leave a gap in the next sibling's coord; don't emit a node.
 - \`.padding(p)\` → inflate child coords by \`p\` on the relevant axes.
 
-For sketch mode: same idea, but you build labeled Excalidraw rectangles + text annotations per \`tango-ui-sketch\`'s shape conventions. Looser fidelity. The label inside each shape is the SwiftUI view name (e.g. \`Button "Sign in"\`, \`TextField "Email"\`).
-
 ### 4. Pick a frame
 
 **Default to iPhone proportions** — SwiftUI views are iOS-first, and the user's UI panel is wider-than-tall, so using the raw viewport produces a 16:9 frame that doesn't match how the view will actually render on device.
@@ -642,13 +448,11 @@ For sketch mode: same idea, but you build labeled Excalidraw rectangles + text a
 
 ### 5. Push it
 
-UI mock: \`set_ui_mock({ spec: { screens: [{ id, title, frame, nodes }] } })\`. Use the file's stem as both \`id\` and \`title\` (e.g. \`OnboardingView\`). One screen per top-level View; if the file declares multiple Views, emit a screen per View.
-
-Sketch: \`get_canvas_state\` first to avoid trampling existing work; then \`add_elements\` (default) or \`set_canvas_state\` (with explicit user OK).
+\`set_ui_mock({ spec: { screens: [{ id, title, frame, nodes }] } })\`. Use the file's stem as both \`id\` and \`title\` (e.g. \`OnboardingView\`). One screen per top-level View; if the file declares multiple Views, emit a screen per View. \`get_ui_mock\` first to avoid trampling existing screens — use \`add_ui_screen\` to append alongside them.
 
 ### 6. Verify
 
-Immediately re-read the spec via \`get_ui_mock\` (or \`get_canvas_state\` for sketch) and check:
+Immediately re-read the spec via \`get_ui_mock\` and check:
 
 - Nodes overflow the frame (\`x + width > frame.w\`, etc.)
 - Buttons / Badges with empty \`text\`
@@ -665,13 +469,11 @@ In priority order: the path the user named in this turn → the \`.swift\` file 
 
 ### 2. Read the canvas
 
-UI mock: \`get_ui_mock\`. The spec is canonical — the user has likely dragged / resized / edited text since you last set it.
-
-Sketch: \`screenshot_canvas\` for pixel context **plus** \`get_canvas_state\` for shape JSON. Reason from both. Lower fidelity is acceptable; ask the user to confirm before overwriting.
+\`get_ui_mock\`. The spec is canonical — the user has likely dragged / resized / edited text since you last set it.
 
 ### 3. Infer SwiftUI containers from positions
 
-UI mock siblings are absolutely positioned — you have to recover the SwiftUI layout. Cluster them:
+Canvas siblings are absolutely positioned — you have to recover the SwiftUI layout. Cluster them:
 
 - Siblings with similar \`y\` and rising \`x\` → wrap in \`HStack(spacing:)\`. \`spacing\` ≈ mean gap between adjacent nodes.
 - Siblings with similar \`x\` and rising \`y\` → wrap in \`VStack(spacing:)\`.
@@ -733,10 +535,6 @@ Don't run \`xcodebuild\` — out of scope for this skill. But do sanity-check yo
 
 Inverse of the above plus container inference (Write flow §3). Layout-affecting CSS keys in \`style\` are dropped by the renderer (\`position\`, \`top\`, \`left\`, \`width\`, \`height\`, \`transform\`, \`display\`, \`flex*\`, \`grid*\`) so you'll never see them on read; on write, infer SwiftUI layout from coords, not from any (absent) CSS hints.
 
-### Sketch mode notes
-
-Treat each leaf SwiftUI view as a labeled rectangle in the wireframe. Use \`tango-ui-sketch\`'s shape vocabulary (frame rectangle, region rectangles, button shapes, input shapes, placeholder lines, avatar-with-X). Container views mark off regions. The label inside each shape is the SwiftUI view name. One stroke color, no fills, \`roughness: 0\`.
-
 ## Round-trip & safety
 
 - **Don't** run \`xcodebuild\`, modify \`.xcodeproj\`, or touch \`Package.swift\`.
@@ -752,7 +550,7 @@ After a successful read or write pass: \`remember_note({ category: 'context', te
 
 ## Anti-patterns
 
-- Don't try to render arbitrary SwiftUI in the UI mock when sketch mode would be more honest. Heavy custom views look broken as a \`Button\` placeholder.
+- Don't try to render heavy custom drawing as fake controls — a labeled \`div\` placeholder plus a note to the user is more honest than a broken-looking \`Button\`.
 - Don't ship absolute-positioned SwiftUI back to the file. Use \`VStack\`/\`HStack\`/\`ZStack\` inferred from sibling clustering; coords are visualization, not implementation.
 - Don't write to \`.swift\` files outside the workspace without checking with the user — paths the user named are fine; paths you guessed are not.
 - Don't put off-theme colors in \`className\` — Tailwind JIT can't see runtime arbitrary values; always use the \`style\` field.
@@ -790,7 +588,7 @@ The \`tango-canvas\` MCP server exposes two groups of tools for this loop.
 
 **Drive the running app** (serve-sim under the hood; all coordinates are **normalized 0..1** — \`{0, 0}\` top-left, \`{1, 1}\` bottom-right):
 
-- \`ios_inspect\` — read the on-screen accessibility tree. Returns \`{ screen, elements }\`; each element has \`label\`, \`value\`, \`role\`, \`type\`, \`enabled\`, a pixel \`frame\`, and a \`centerNorm\` {x, y} ready to hand straight to \`ios_tap\`. **This is how you aim** — you cannot see the simulator's pixels, so inspect to locate a control, then tap its \`centerNorm\`. The simulator analog of \`dom_inspect\`.
+- \`ios_inspect\` — read the on-screen accessibility tree. Returns \`{ screen, elements }\`; each element has \`label\`, \`value\`, \`role\`, \`type\`, \`enabled\`, a pixel \`frame\`, and a \`centerNorm\` {x, y} ready to hand straight to \`ios_tap\`. **This is how you aim** — you cannot see the simulator's pixels, so inspect to locate a control, then tap its \`centerNorm\`.
 - \`ios_tap\` — tap once at \`{x, y}\`.
 - \`ios_gesture\` — swipe / drag from \`{fromX, fromY}\` to \`{toX, toY}\` (lists, paging, pull-to-refresh).
 - \`ios_type\` — type \`text\` into the focused field (US keyboard; does **not** press Return — tap the field first to focus it).
@@ -799,7 +597,7 @@ The \`tango-canvas\` MCP server exposes two groups of tools for this loop.
 
 All the drive tools take an optional \`udid\`; omit it to target the simulator serve-sim is streaming (the one the user is watching). They return a clear "simulator preview not ready" error if no device is being streamed.
 
-\`tango-canvas\` also exposes the canvas / UI mock / SwiftUI-round-tripping tools — those are for *design*, not *running*. If the user wants to see a SwiftUI file on the canvas, that's \`tango-swiftui\`. If they want to run the app, that's this skill.
+\`tango-canvas\` also exposes the design-canvas tools (\`get_ui_mock\` / \`set_ui_mock\` and friends) — those are for *design*, not *running*. If the user wants to see a SwiftUI file on the canvas, that's \`tango-swiftui\`. If they want to run the app, that's this skill.
 
 ## Playbook
 
@@ -902,178 +700,6 @@ After the **first** successful build for a workspace, ever, record the cadence: 
 This skill is generated by tango and overwritten on each server boot. To customize, fork it under a different name in \`.claude/skills/\` — tango won't touch other skills.
 `;
 
-// Skill body for `${workspace}/.claude/skills/tango-ios-map/SKILL.md`. Macro
-// view: scan all .swift / .storyboard files in the workspace, extract a
-// {screens, edges} graph, hand it to the `set_screen_flow` MCP tool which
-// runs layered layout + draws the diagram on the Excalidraw canvas. Distinct
-// from `tango-swiftui` (single-View round-trip) and `tango-ui-sketch` (single
-// UI wireframe). Wholly tango-managed, same overwrite policy as siblings.
-const TANGO_IOS_MAP_SKILL_MD = `---
-name: tango-ios-map
-description: Use **this skill — not \`tango-ui-sketch\`, \`tango-ui-mock\`, or \`tango-swiftui\`** — whenever the user wants their *whole iOS app's screens at once* (multiple screens) on tango's canvas, even if the prompt says "sketch", "mock", or "UI mode". Renders all screens of a Swift / SwiftUI / UIKit / Xcode app as a Figma-style flow diagram. Triggers: "map out my iOS app", "show me all the screens", "draw the navigation graph", "diagram the screen flow", "what does my app look like as a flow", "show me the X flow", "bring my iOS app into sketch mode". For a *single* UI use \`tango-ui-sketch\` / \`tango-ui-mock\`; for one \`.swift\` View round-trip use \`tango-swiftui\`.
----
-
-# iOS app → screen-flow diagram
-
-Render the user's whole iOS app as a labeled-card flow diagram on tango's Excalidraw canvas: one card per screen, kind-colored arrows for navigation, the entry point highlighted. Best-effort heuristic parsing — partial graphs are valuable; perfect is not the bar.
-
-The output is one call to \`set_screen_flow\` with a clean \`{screens, edges}\` payload. The tool handles layered BFS layout + arrow routing + element JSON; your job is finding the screens and their navigation.
-
-## Tools
-
-- \`ios_status\` — confirm there's a detected Xcode project before scanning. Bail with a friendly message if not.
-- \`get_canvas_state\` — check the canvas isn't already showing the user's work.
-- \`set_screen_flow\` — single tool call, full graph. Input shape:
-  \`\`\`ts
-  type Screen = {
-    id: string;          // stable, unique — usually the type name
-    name: string;        // displayed on the card
-    kind: 'swiftui' | 'uikit' | 'storyboard';
-    filePath?: string;   // workspace-relative, shown as the card subtitle
-    summary?: string;    // ≤120 chars, one-line "what this screen is for"
-    isEntry?: boolean;   // mark the launch screen(s)
-  };
-  type Edge = {
-    from: string;        // screen id
-    to: string;          // screen id
-    kind: 'push' | 'sheet' | 'cover' | 'present' | 'segue' | 'tab';
-    label?: string;      // ≤24 chars, e.g. the button text that triggers it
-  };
-  \`\`\`
-  Options: \`{ append?: boolean, cardWidth?: number, cardHeight?: number, origin?: {x,y} }\`. Default replaces the canvas.
-- \`screenshot_canvas\` — verify the diagram looks right after writing.
-- \`remember_note\` — record the macro shape so future sessions know.
-
-## Playbook
-
-### 1. Precondition: detect the Xcode project
-
-Call \`ios_status\` first.
-
-- \`project.kind === 'none'\`: no Xcode project here. Tell the user — they may need to switch the tango workspace to one that contains \`.xcodeproj\` / \`.xcworkspace\`.
-- \`project.kind === 'error'\`: surface the error verbatim.
-- \`project.kind === 'ambiguous'\`: ask the user which candidate to map.
-- \`project.kind === 'detected'\`: proceed.
-
-### 2. Don't trample existing canvas content
-
-\`get_canvas_state\`. If \`elements.length > 0\`, ask the user before \`set_screen_flow\` (which replaces by default). Phrase it: *"There's existing content on the canvas — replace it with the screen-flow diagram, or place it alongside?"*
-
-If they want to keep what's there: pass \`options.append: true\` and an \`options.origin\` offset so the new diagram doesn't overlap.
-
-### 3. Enumerate sources
-
-\`Glob\` for \`**/*.swift\` and \`**/*.storyboard\` from the workspace root. **Skip:**
-
-- \`Pods/\`, \`.build/\`, \`DerivedData/\`, \`.swiftpm/\`, \`build/\`
-- \`*.xcassets/\`, \`*.xcdatamodel/\`
-- \`*Tests/\`, \`*Tests.swift\`, \`*UITests/\`, \`*UITests.swift\`
-- \`Preview Content/\`, \`*Previews.swift\`, \`#Preview\` macros (these are designer previews, not runtime screens)
-
-If the project is huge (>400 files after filtering), tell the user and ask whether to scope to a specific directory.
-
-### 4. Identify screens (each becomes a card)
-
-A "screen" is a top-level (file-scope), non-nested type. Three sources:
-
-**SwiftUI** — \`.swift\` files. Match a top-level (column 0) \`struct\` whose conformance list mentions \`View\` somewhere — including \`: View\`, \`: View, ObservableObject\`, \`: SomeCustomView\`, etc.
-
-\`\`\`
-^struct\\s+(\\w+)\\s*:[^{]*\\bView\\b[^{]*\\{
-\`\`\`
-
-Skip nested types (any \`struct\` indented inside another type — they're sub-views). Also skip types whose body is trivially simple (e.g. \`var body: some View { Text(...) }\` with nothing else) and aren't referenced by another View — these are leaf components, not screens. Best judgment.
-
-**UIKit** — \`.swift\` files. Match a top-level \`class\` whose conformance list contains a name ending in \`ViewController\` or \`VC\` — including \`: UIViewController\`, \`: B, UIViewController\`, \`: BaseVC\`.
-
-\`\`\`
-^(?:final\\s+)?class\\s+(\\w+)\\s*:[^{]*\\b\\w*(?:ViewController|VC)\\b
-\`\`\`
-
-**Storyboard** — \`.storyboard\` XML. Each \`<viewController>\` element. The screen's \`id\` is the \`customClass\` attribute if present, else the storyboard \`id\` attribute. \`name\` is \`customClass\` or a humanized form of the storyboard id.
-
-For each screen, capture:
-- \`id\`, \`name\`, \`kind\`
-- \`filePath\` — workspace-relative
-- \`summary\` (optional) — one short sentence about what the screen does, inferred from its body (e.g. *"Sign-in form with email + password"*, *"List of saved items"*). Skip if you can't tell from a quick read.
-
-### 5. Identify entry points
-
-Mark screens with \`isEntry: true\` when:
-
-- **SwiftUI**: the \`@main\` type's \`body\` resolves to a \`WindowGroup { <RootView>() }\` — \`RootView\` is the entry. If \`RootView\` is itself a \`TabView\`, mark its tab destinations as entries (multi-entry is fine — they tile at rank 0).
-- **UIKit**: \`AppDelegate\` / \`SceneDelegate\` setting \`window?.rootViewController = <X>(...)\`. \`X\` is the entry.
-- **Storyboard**: \`<viewController ... isInitialViewController="YES" ... />\`. Map back to the screen \`id\`.
-
-If you can't find any entry, leave \`isEntry\` unset on all screens — \`set_screen_flow\` falls back to "no-incoming-edges" nodes as entries automatically.
-
-### 6. Identify edges (navigation)
-
-Heuristic regex/grep over the \`.swift\` and \`.storyboard\` files. The patterns to look for (line-by-line is fine):
-
-| Pattern (caller side)                                              | \`kind\`     |
-|--------------------------------------------------------------------|------------|
-| \`NavigationLink(destination: <Type>(\`                             | \`push\`    |
-| \`.navigationDestination(for: T.self) { ... <Type>(\`               | \`push\`    |
-| \`.sheet(isPresented:) { <Type>(\` / \`.sheet(item:) { <Type>(\`     | \`sheet\`   |
-| \`.fullScreenCover { <Type>(\`                                      | \`cover\`   |
-| \`navigationController?.pushViewController(<Type>(\`                | \`push\`    |
-| \`present(<Type>(\` / \`present(<instance of Type>\`                 | \`present\` |
-| \`TabView { ... <Type>(...) ... }\` (each child)                    | \`tab\`     |
-| Storyboard \`<segue destination="X" kind="show|push">\`             | \`push\`    |
-| Storyboard \`<segue destination="X" kind="modal|presentModally">\`  | \`sheet\`   |
-| Other storyboard \`<segue destination="X">\`                        | \`segue\`   |
-
-The \`from\` is the screen whose file you're scanning. The \`to\` is the type referenced. If the type isn't a screen you've already identified, drop the edge silently — don't invent a phantom card.
-
-If the navigation is triggered by a button/title with obvious text (\`Button("Sign in") { ... NavigationLink ... }\`), set the edge's \`label\` to that text (≤24 chars). Optional polish.
-
-### 7. One \`set_screen_flow\` call
-
-Build the payload and call once:
-
-\`\`\`json
-{
-  "screens": [...],
-  "edges": [...],
-  "options": { "append": false }
-}
-\`\`\`
-
-Don't dribble the diagram in via multiple \`add_elements\` — \`set_screen_flow\` runs the layered layout in one go and that's how it stays orderly.
-
-### 8. Verify
-
-\`screenshot_canvas\` immediately after writing. Look for:
-
-- Cards overlapping → call \`set_screen_flow\` again with \`options.cardWidth: 280\` (more horizontal room) or \`options.cardHeight: 180\` (more vertical room).
-- Diagram running off-screen → ask the user to zoom out (\`Cmd+0\`).
-- A card that's clearly miscategorized as a screen (e.g. a row component) → drop it from \`screens\` and re-call.
-- Missing edges → revisit the file with \`Read\` and check whether the navigation pattern matches one in §6. Add to \`edges\` and re-call.
-
-### 9. Tell the user what they got
-
-A one-sentence summary: *"Mapped 14 screens and 22 navigation edges. \`HomeView\` is the entry (highlighted in amber). Push edges are black; sheets blue; covers purple; tab links teal."*
-
-Mention what you couldn't classify — if there are 6 storyboard scenes you couldn't link to Swift code, say so. Partial maps are useful; pretending to be complete is not.
-
-### 10. Record it
-
-\`remember_note({ category: 'context', text: 'Mapped iOS app: N screens, M edges. Entry: <Name>.' })\` — future sessions will see this in \`tango-memory.md\` and won't re-scan unless the user asks.
-
-## Anti-patterns
-
-- Don't run \`xcodebuild\` for this — that's \`tango-ios-sim\`'s job. Mapping is read-only and doesn't need a built binary.
-- Don't recurse into nested types treating sub-views as screens. Your card count should look right at a glance — if you have 80 cards for a small app, you're picking up leaf components.
-- Don't include test targets, preview providers, or design-time \`.swift\` files (\`#Preview\`, \`PreviewProvider\`).
-- Don't try to render the *contents* of each screen on the cards — text-only cards are the bar. For one screen at a time with rendered UI, point the user at \`tango-swiftui\` instead.
-- Don't ask before scanning — once preconditions are met, just go. Asking before the first call adds latency for no value.
-- Don't \`clear_canvas\` without checking with the user first when the canvas already has content.
-
----
-
-This skill is generated by tango and overwritten on each server boot. To customize, fork it under a different name in \`.claude/skills/\` — tango won't touch other skills.
-`;
 
 const CLAUDE_MD_SENTINEL_START = '<!-- tango:start (managed by tango — do not edit) -->';
 const CLAUDE_MD_SENTINEL_END = '<!-- tango:end -->';
@@ -1147,24 +773,18 @@ export function mergeAgentsMd(
 }
 
 const TANGO_SKILL_MDS: Array<[name: string, body: string]> = [
-  ['tango-ui-sketch', UI_SKETCH_SKILL_MD],
   ['tango-ui-mock', UI_MOCK_SKILL_MD],
   ['tango-swiftui', SWIFTUI_SKILL_MD],
   ['tango-ios-sim', TANGO_IOS_SIM_SKILL_MD],
-  ['tango-ios-map', TANGO_IOS_MAP_SKILL_MD],
 ];
 
 const CODEX_SKILL_DESCRIPTIONS: Record<string, string> = {
-  'tango-ui-sketch':
-    'Sketch UI screens as Excalidraw wireframes on the Tango canvas. Use when the user asks to sketch wireframe draw lay out or design a UI screen page view or flow.',
   'tango-ui-mock':
-    'Build high fidelity shadcn and Tailwind UI mocks in Tango UI mode. Use when the user asks to prototype visualize or mock a UI screen page or flow as editable components instead of a wireframe.',
+    'Build high fidelity shadcn and Tailwind UI designs on the Tango canvas. Use when the user asks to sketch prototype visualize design or mock a UI screen page or flow as editable components.',
   'tango-swiftui':
-    'Round trip a SwiftUI view through the Tango canvas or UI mode. Use when the user mentions SwiftUI a Swift view Xcode or a .swift file with show render mock sketch save write generate or update intent.',
+    'Round trip a SwiftUI view through the Tango design canvas. Use when the user mentions SwiftUI a Swift view Xcode or a .swift file with show render mock sketch save write generate or update intent.',
   'tango-ios-sim':
     'Build install launch inspect drive and read logs for the workspace Xcode app on the booted iOS simulator via Tango MCP. Use for iOS Swift SwiftUI build run test simulator interaction and log prompts.',
-  'tango-ios-map':
-    'Map a whole iOS app into a screen flow diagram on the Tango canvas. Use when the user asks to show all screens map the app draw navigation diagram flows or visualize a Swift SwiftUI UIKit or Xcode app at app level.',
 };
 
 function codexSkillMd(name: string, body: string): string {
@@ -1295,8 +915,8 @@ export type EnsureResult =
 
 // Set up our managed bits in `workspace`. Returns soft errors for each
 // file we refused to write because it was malformed; we still write the
-// pieces we own (.claude/tango.md, design-scratch/) and the CLAUDE.md
-// sentinel block, so the workspace remains usable.
+// pieces we own (.claude/tango.md, skills) and the CLAUDE.md sentinel
+// block, so the workspace remains usable.
 //
 // This function does NOT update currentWorkspace; the caller (boot
 // resolution / setWorkspace) is responsible for that.
@@ -1310,28 +930,10 @@ export async function ensureWorkspace(
   await fs.mkdir(path.join(workspace, '.claude'), { recursive: true });
   await fs.mkdir(path.join(workspace, '.tango', 'bin'), { recursive: true });
   await fs.mkdir(path.join(workspace, '.agents', 'skills'), { recursive: true });
-  await fs.mkdir(path.join(workspace, 'design-scratch'), { recursive: true });
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-sketch'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-mock'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-swiftui'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-sim'),
-    { recursive: true },
-  );
-  await fs.mkdir(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-map'),
-    { recursive: true },
-  );
   for (const [name] of TANGO_SKILL_MDS) {
+    await fs.mkdir(path.join(workspace, '.claude', 'skills', name), {
+      recursive: true,
+    });
     await fs.mkdir(path.join(workspace, '.agents', 'skills', name), {
       recursive: true,
     });
@@ -1382,52 +984,16 @@ export async function ensureWorkspace(
     mergeAgentsMd(existingAgentsMd, detected, workspace),
   );
 
-  // .claude/skills/tango-ui-sketch/SKILL.md — wholly ours, always overwrite.
-  // Auto-discovered by Claude Code; gives terminal-Claude a tuned playbook for
-  // turning a UI (existing or proposed) into an Excalidraw wireframe.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-sketch', 'SKILL.md'),
-    UI_SKETCH_SKILL_MD,
-  );
-
-  // .claude/skills/tango-ui-mock/SKILL.md — wholly ours, always overwrite.
-  // Sibling skill that drives terminal-Claude through tango's high-fidelity
-  // "UI" mode (shadcn/Tailwind mock with drag/resize/text-edit).
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ui-mock', 'SKILL.md'),
-    UI_MOCK_SKILL_MD,
-  );
-
-  // .claude/skills/tango-swiftui/SKILL.md — wholly ours, always overwrite.
-  // Round-trips a SwiftUI View through tango's canvas (UI mock or sketch);
-  // edits the .swift file the user has selected. No new tango UI surfaces.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-swiftui', 'SKILL.md'),
-    SWIFTUI_SKILL_MD,
-  );
-
-  // .claude/skills/tango-ios-sim/SKILL.md — wholly ours, always overwrite.
-  // Drives the build / install / launch dev loop on the booted simulator.
-  // Available regardless of whether detectXcodeProject found anything; the
-  // skill's own first step is to call ios_status and bail out gracefully if
-  // the workspace has no Xcode project.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-sim', 'SKILL.md'),
-    TANGO_IOS_SIM_SKILL_MD,
-  );
-
-  // .claude/skills/tango-ios-map/SKILL.md — wholly ours, always overwrite.
-  // Drives terminal-Claude through scanning the workspace's Swift sources and
-  // calling `set_screen_flow` to render the macro screen-flow diagram.
-  // Available regardless of detection; the skill's first step is `ios_status`.
-  await writeIfChanged(
-    path.join(workspace, '.claude', 'skills', 'tango-ios-map', 'SKILL.md'),
-    TANGO_IOS_MAP_SKILL_MD,
-  );
-
-  // .agents/skills/*/SKILL.md — repo-scoped Codex skills. These mirror the
-  // Claude skill playbooks with Codex-facing paths and wording.
+  // .claude/skills/*/SKILL.md — wholly ours, always overwrite. Auto-discovered
+  // by Claude Code; tuned playbooks for the design canvas (tango-ui-mock), the
+  // SwiftUI round-trip (tango-swiftui), and the simulator dev loop
+  // (tango-ios-sim). The .agents mirror carries the same playbooks with
+  // Codex-facing paths and wording.
   for (const [name, body] of TANGO_SKILL_MDS) {
+    await writeIfChanged(
+      path.join(workspace, '.claude', 'skills', name, 'SKILL.md'),
+      body,
+    );
     await writeIfChanged(
       path.join(workspace, '.agents', 'skills', name, 'SKILL.md'),
       codexSkillMd(name, body),
@@ -1441,14 +1007,25 @@ export async function ensureWorkspace(
   await writeIfChanged(codexWrapperPath, codexWrapperSh());
   await fs.chmod(codexWrapperPath, 0o755);
 
-  // Best-effort cleanup of the previous skill name in workspaces that were
-  // ensured before the rename. It was wholly tango-managed, so it's safe to
-  // remove. Ignore any error (missing dir, permissions, user-modified) — the
-  // new skill is what we care about.
-  await fs.rm(
-    path.join(workspace, '.claude', 'skills', 'tango-codebase-sketch'),
-    { recursive: true, force: true },
-  ).catch(() => {});
+  // Best-effort cleanup of retired skills in workspaces that were ensured by
+  // older tango versions. They were wholly tango-managed, so removal is safe —
+  // and load-bearing: a stale skill keeps advertising deleted MCP tools to the
+  // terminal agent. Ignore any error (missing dir, permissions).
+  const RETIRED_SKILLS = [
+    'tango-codebase-sketch',
+    'tango-ui-sketch',
+    'tango-ios-map',
+  ];
+  for (const name of RETIRED_SKILLS) {
+    for (const tree of ['.claude', '.agents'] as const) {
+      await fs
+        .rm(path.join(workspace, tree, 'skills', name), {
+          recursive: true,
+          force: true,
+        })
+        .catch(() => {});
+    }
+  }
 
   // CLAUDE.md — sentinel block, preserve everything else.
   const claudeMdPath = path.join(workspace, 'CLAUDE.md');

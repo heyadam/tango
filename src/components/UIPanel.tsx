@@ -1,25 +1,21 @@
 'use client';
 
-// SSR-safe shell for "UI" mode. Owns the /ws/ui-mock socket and dynamic-imports
-// UIMockCanvas (react-moveable touches `window` at module load). Same pattern
-// as SketchPanel + DesignerCanvas.
+// The left panel: an SSR-safe shell around the design canvas. Owns the
+// /ws/ui-mock socket and dynamic-imports UIMockCanvas (react-moveable touches
+// `window` at module load).
 //
 // The Send action packages the current spec into a markdown handoff prompt
 // and submits it to the active terminal agent via terminalBus. The spec
 // JSON is the source of truth for what the user wants — the agent reads it and
-// translates the absolute-positioned mock into responsive Tailwind in the
+// translates the absolute-positioned design into responsive Tailwind in the
 // production codebase. The user's drag/resize tweaks are visible to the agent
 // as updated coords on its next `get_ui_mock` read.
 
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { RefreshCw, Send, Trash2 } from 'lucide-react';
+import { Frame, RefreshCw, Send, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
-import {
-  PanelHeaderLeftSlot,
-  PanelHeaderRightSlot,
-} from '@/lib/leftPanelSlots';
+import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
 import { uiMockStore } from '@/lib/uiMockStore';
 import { EMPTY_SPEC, type UISpec } from '@/lib/uiMockProtocol';
@@ -246,7 +242,7 @@ export default function UIPanel({ terminalAgent }: Props) {
     const spec = specRef.current;
     if (!spec.screens || spec.screens.length === 0) {
       setStatus(
-        `Mock is empty — ask ${terminalAgentMeta.shortLabel} to draft one first.`,
+        `Canvas is empty — ask ${terminalAgentMeta.shortLabel} to draft a design first.`,
       );
       return;
     }
@@ -280,60 +276,55 @@ export default function UIPanel({ terminalAgent }: Props) {
     setStatus('Cleared.');
   }, []);
 
-  const leftSlot = useContext(PanelHeaderLeftSlot);
-  const rightSlot = useContext(PanelHeaderRightSlot);
-
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      {leftSlot
-        ? createPortal(
-            <>
-              {load.status === 'ready' && screenCount > 0 && (
-                <span className="text-xs text-panel-header-foreground/80">
-                  {screenCount} screen{screenCount === 1 ? '' : 's'}
-                </span>
-              )}
-              {viewport && (
-                <span
-                  className="font-mono text-[10px] text-panel-header-foreground/60"
-                  title="Default frame size for new screens"
-                >
-                  {viewport.w}×{viewport.h}
-                </span>
-              )}
-            </>,
-            leftSlot,
-          )
-        : null}
-      {rightSlot
-        ? createPortal(
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearMock}
-                disabled={screenCount === 0}
-                className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+      <PanelHeader
+        leftSlot={
+          <>
+            <Frame className="size-3.5 text-panel-header-foreground/70" />
+            <span>Design</span>
+            {load.status === 'ready' && screenCount > 0 && (
+              <span className="text-xs text-panel-header-foreground/80">
+                {screenCount} screen{screenCount === 1 ? '' : 's'}
+              </span>
+            )}
+            {viewport && (
+              <span
+                className="font-mono text-[10px] text-panel-header-foreground/60"
+                title="Default frame size for new screens"
               >
-                <Trash2 className="size-3.5" />
-                Clear
-              </Button>
-              <Button
-                size="sm"
-                onClick={sendToClaude}
-                disabled={sendBusy || screenCount === 0}
-              >
-                {sendBusy ? (
-                  <RefreshCw className="size-3.5 animate-spin" />
-                ) : (
-                  <Send className="size-3.5" />
-                )}
-                {terminalAgentMeta.sendLabel}
-              </Button>
-            </>,
-            rightSlot,
-          )
-        : null}
+                {viewport.w}×{viewport.h}
+              </span>
+            )}
+          </>
+        }
+        rightSlot={
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearMock}
+              disabled={screenCount === 0}
+              className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+            >
+              <Trash2 className="size-3.5" />
+              Clear
+            </Button>
+            <Button
+              size="sm"
+              onClick={sendToClaude}
+              disabled={sendBusy || screenCount === 0}
+            >
+              {sendBusy ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Send className="size-3.5" />
+              )}
+              {terminalAgentMeta.sendLabel}
+            </Button>
+          </>
+        }
+      />
 
       <div ref={viewportRef} className="relative min-h-0 flex-1">
         {load.status === 'ready' && (
@@ -354,8 +345,8 @@ export default function UIPanel({ terminalAgent }: Props) {
   );
 }
 
-// Markdown handoff to the active terminal agent. Mirrors moodboard's pattern:
-// the JSON is the source of truth; the prose tells the agent what to do.
+// Markdown handoff to the active terminal agent. The JSON is the source of
+// truth; the prose tells the agent what to do.
 function buildHandoffPrompt(spec: UISpec): string {
   const screens = spec.screens
     .map(

@@ -62,8 +62,7 @@ export function createHub(): WSHub {
   return { sockets, attach, broadcast, pickOpen };
 }
 
-// Request/reply correlation for round-trip MCP tools (dom_inspect,
-// screenshot_canvas). Caller sends `id` over the wire and resolves/rejects
+// Request/reply correlation for round-trip tools over a WS hub. Caller sends `id` over the wire and resolves/rejects
 // when the matching reply arrives; a timer auto-rejects if it doesn't.
 export type PendingMap<T> = {
   register(opts: { timeoutMs: number; label: string }): {

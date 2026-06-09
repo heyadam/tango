@@ -68,7 +68,7 @@ export type UISpec = {
 
 // ── Wire protocol ────────────────────────────────────────────────────────
 
-// Server → browser. Mirrors canvasBridge's set/patch dichotomy: full replace
+// Server → browser. Full replace
 // for set_ui_mock / clear_ui_mock; appendScreen for add_ui_screen so we don't
 // re-broadcast the whole spec when only one screen was added.
 export type ServerSetMsg = { type: 'set'; spec: UISpec };

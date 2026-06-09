@@ -2,10 +2,10 @@
 //
 // One markdown file split into three managed sections via HTML-comment fences,
 // plus a fourth fence reserved for the user. We append events to `Recent`
-// synchronously (queued, atomic), and periodically rewrite `Summary` via an
-// LLM call when `Recent` gets large. Hooks (snapshot route, agent route,
-// remember_note MCP tool) call `appendEvent` / `recordNote` fire-and-forget;
-// they never await LLM work.
+// synchronously (queued, atomic); when `Recent` gets large, older entries are
+// folded verbatim into `Summary` (a deterministic move, no LLM involved).
+// Callers (remember_note MCP tool) call `appendEvent` / `recordNote`
+// fire-and-forget.
 //
 // Create-if-absent semantics: ensureMemory() leaves an existing file alone;
 // missing files get a fresh skeleton. Malformed files (no fences) get the
@@ -14,19 +14,17 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { generateText, openai, VISION_MODEL } from '@/lib/ai';
 import { getWorkspaceOrNull } from './workspace';
 
 const FILE_NAME = 'tango-memory.md';
 
-// Trigger summarization once Recent exceeds either of these.
+// Trigger a fold once Recent exceeds either of these.
 const RECENT_BYTES_THRESHOLD = 8 * 1024;
 const RECENT_ENTRIES_THRESHOLD = 30;
-// How many freshest Recent entries to keep verbatim after summarization.
+// How many freshest Recent entries to keep verbatim after a fold.
 const RECENT_KEEP_AFTER_SUMMARY = 5;
-
-const SUMMARIZATION_TIMEOUT_MS = 20_000;
-const SUMMARY_MAX_TOKENS = 800;
+// Byte cap on the Summary body; oldest archived lines are dropped first.
+const SUMMARY_MAX_BYTES = 16 * 1024;
 
 // Fence markers. The `v=` and `updated=` attributes on summary:start are
 // informational — we replace the whole block on rewrite, so attributes can
@@ -40,10 +38,10 @@ const USER_END = '<!-- tango:user:end -->';
 
 const HEADER = `# tango workspace memory
 
-This file is maintained by tango. The Summary and Recent sections are
-periodically rewritten by an LLM (the same OpenAI key as the controller
-agent). Anything inside the \`tango:user\` block at the bottom is preserved
-verbatim — put your own notes there.`;
+This file is maintained by tango. Events land in Recent; when Recent grows
+large, older entries move verbatim into Summary (oldest dropped once Summary
+exceeds its size cap). Anything inside the \`tango:user\` block at the bottom
+is preserved verbatim — put your own notes there.`;
 
 function summaryStartTag(updatedIso: string): string {
   return `<!-- tango:summary:start v=1 updated=${updatedIso} -->`;
@@ -70,10 +68,13 @@ ${USER_END}
 `;
 }
 
-export type MemoryEvent =
-  | { type: 'snapshot'; relPath: string; caption?: string }
-  | { type: 'agent_run'; goal: string; tools: string; outcome: string }
-  | { type: 'note'; category: 'decision' | 'context' | 'todo'; text: string };
+// Single variant today; `appendEvent` stays the seam for future event types
+// (e.g. an `export` event when Export & Run lands).
+export type MemoryEvent = {
+  type: 'note';
+  category: 'decision' | 'context' | 'todo';
+  text: string;
+};
 
 // ---- file I/O ---------------------------------------------------------------
 
@@ -208,26 +209,9 @@ function oneLine(s: string): string {
   return s.replace(/\s+/g, ' ').trim();
 }
 
-function truncate(s: string, n: number): string {
-  if (s.length <= n) return s;
-  return s.slice(0, Math.max(0, n - 1)).trimEnd() + '…';
-}
-
 /** @internal exported for tests */
 export function formatEntry(evt: MemoryEvent, ts: string): string {
-  switch (evt.type) {
-    case 'snapshot': {
-      const cap = evt.caption ? ` — "${oneLine(evt.caption)}"` : '';
-      return `- ${ts} [snapshot] ${evt.relPath}${cap}`;
-    }
-    case 'agent_run': {
-      const goal = truncate(oneLine(evt.goal), 120);
-      const outcome = truncate(oneLine(evt.outcome), 120) || '—';
-      return `- ${ts} [agent_run] "${goal}" → ${evt.tools || 'no tools'} → ${outcome}`;
-    }
-    case 'note':
-      return `- ${ts} [note/${evt.category}] ${oneLine(evt.text)}`;
-  }
+  return `- ${ts} [note/${evt.category}] ${oneLine(evt.text)}`;
 }
 
 /** @internal exported for tests */
@@ -249,10 +233,10 @@ function enqueue(task: () => Promise<void>): void {
   chain = chain.then(task, task).catch(() => {});
 }
 
-// Flag prevents stacking summarization passes on top of in-flight ones.
-// An append that lands while we're summarizing still goes to disk; the
-// summarize pass it would have triggered is skipped (the next append
-// after this one finishes will catch up).
+// Flag prevents stacking fold passes on top of in-flight ones. An append
+// that lands while we're folding still goes to disk; the fold pass it would
+// have triggered is skipped (the next append after this one finishes will
+// catch up).
 let summarizing = false;
 
 // ---- public surface ---------------------------------------------------------
@@ -316,19 +300,19 @@ async function doAppend(evt: MemoryEvent): Promise<void> {
   const next: Parsed = { ...parsed, recent: nextRecent };
   await atomicWrite(p, serialize(next, parsed.summary ? prevUpdated(raw) : nowIso()));
 
-  // Maybe summarize. If already in flight, skip — next append after it
-  // finishes will retrigger.
+  // Maybe fold. If already in flight, skip — next append after it finishes
+  // will retrigger.
   const recentBytes = Buffer.byteLength(nextRecent, 'utf8');
   const recentCount = countRecentEntries(nextRecent);
-  const shouldSummarize =
+  const shouldFold =
     !summarizing &&
     (recentBytes > RECENT_BYTES_THRESHOLD ||
       recentCount > RECENT_ENTRIES_THRESHOLD);
-  if (shouldSummarize) {
+  if (shouldFold) {
     summarizing = true;
     enqueue(async () => {
       try {
-        await summarizeOnce(p);
+        await foldOnce(p);
       } finally {
         summarizing = false;
       }
@@ -343,85 +327,65 @@ function prevUpdated(raw: string): string {
   return m ? m[1] : nowIso();
 }
 
-// ---- summarization ---------------------------------------------------------
+// ---- fold (deterministic summarization) -------------------------------------
 
-const SUMMARY_SYSTEM = `You're maintaining a rolling memory file for future terminal-agent sessions in this workspace. Merge the existing Summary with these new entries. Preserve verbatim: design decisions and user-stated constraints. Collapse routine UI activity into one-liner trends. Output Markdown only, no preamble. Cap ~600 words.`;
+// Move overflow Recent entries verbatim into the Summary body, capped at
+// SUMMARY_MAX_BYTES (oldest lines dropped first). Legacy free-text summaries
+// written by the old LLM pass are preserved above the archived lines.
+/** @internal exported for tests */
+export function foldIntoSummary(summaryBody: string, folded: string[]): string {
+  const kept = summaryBody
+    .split('\n')
+    .filter(
+      (l) =>
+        l.trim() !== '## Summary' && l.trim() !== '_No prior history yet._',
+    )
+    .join('\n')
+    .trim();
+  let body = kept ? `${kept}\n${folded.join('\n')}` : folded.join('\n');
+  // Trim from the head: the archive is chronological (oldest first), so
+  // dropping leading lines keeps the freshest context.
+  while (Buffer.byteLength(body, 'utf8') > SUMMARY_MAX_BYTES) {
+    const nl = body.indexOf('\n');
+    if (nl < 0) {
+      // Single oversized line — keep its tail. Entries are short, so this is
+      // a never-in-practice hard stop, not a precision concern.
+      body = body.slice(-SUMMARY_MAX_BYTES);
+      break;
+    }
+    body = body.slice(nl + 1);
+  }
+  return `\n## Summary\n\n${body}\n`;
+}
 
-async function summarizeOnce(p: string): Promise<void> {
+async function foldOnce(p: string): Promise<void> {
   const raw = await readUtf8OrNull(p);
   if (raw == null) return;
   const parsed = parseFile(raw);
   if (!parsed) return;
 
-  const lines = parsed.recent.split('\n');
-  const entryLines = lines.filter((l) => l.trim().startsWith('- '));
+  const entryLines = parsed.recent
+    .split('\n')
+    .filter((l) => l.trim().startsWith('- '));
   if (entryLines.length === 0) return;
 
   // Keep the freshest N entries raw, fold the rest.
   const keepCount = Math.min(RECENT_KEEP_AFTER_SUMMARY, entryLines.length);
   const kept = entryLines.slice(-keepCount);
   const folded = entryLines.slice(0, entryLines.length - keepCount);
-
-  if (folded.length === 0) return; // nothing to summarize
-
-  const userPrompt =
-    `## Existing Summary\n${parsed.summary.trim() || '_(empty)_'}\n\n## New Entries\n${folded.join('\n')}\n\nReturn the merged Summary as Markdown only.`;
-
-  let nextSummary: string;
-  try {
-    const result = await generateText({
-      model: openai(VISION_MODEL),
-      system: SUMMARY_SYSTEM,
-      prompt: userPrompt,
-      maxOutputTokens: SUMMARY_MAX_TOKENS,
-      abortSignal: AbortSignal.timeout(SUMMARIZATION_TIMEOUT_MS),
-      providerOptions: {
-        openai: { reasoningEffort: 'low' },
-      },
-    });
-    const text = (result.text ?? '').trim();
-    if (!text) {
-      console.error('[memory] summarization returned empty text — keeping recent entries');
-      return;
-    }
-    nextSummary = text;
-  } catch (err) {
-    console.error(
-      '[memory] summarization failed:',
-      err instanceof Error ? err.message : String(err),
-    );
-    return;
-  }
-
-  // Re-read in case more appends landed during the LLM call. Keep those —
-  // anything beyond the entries we folded is fresh and should remain raw.
-  const raw2 = await readUtf8OrNull(p);
-  if (raw2 == null) return;
-  const parsed2 = parseFile(raw2);
-  if (!parsed2) return;
-
-  const lines2 = parsed2.recent.split('\n');
-  const entries2 = lines2.filter((l) => l.trim().startsWith('- '));
-  // The folded set is a prefix of the entries we saw at LLM-call time. Drop
-  // exactly that many from the head of the current entries, regardless of
-  // whether new ones have been appended since.
-  const remaining = entries2.slice(folded.length);
-  const newRecent =
-    `\n## Recent\n` + (remaining.length ? '\n' + remaining.join('\n') + '\n' : '\n');
-
-  const newSummaryBody = `\n## Summary\n\n${nextSummary}\n`;
+  if (folded.length === 0) return; // nothing to fold
 
   const next: Parsed = {
-    ...parsed2,
-    summary: newSummaryBody,
-    recent: newRecent,
+    ...parsed,
+    summary: foldIntoSummary(parsed.summary, folded),
+    recent: `\n## Recent\n\n${kept.join('\n')}\n`,
   };
 
   try {
     await atomicWrite(p, serialize(next, nowIso()));
   } catch (err) {
     console.error(
-      '[memory] failed to write summarized file:',
+      '[memory] failed to write folded file:',
       err instanceof Error ? err.message : String(err),
     );
   }

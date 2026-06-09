@@ -18,8 +18,8 @@ import {
 } from '@/lib/uiMockOps';
 import type { UINode } from '@/lib/uiMockProtocol';
 
-// Authoritative server-side cache of the UI mock spec — sibling of
-// canvasBridge for the new "UI" mode. The browser is the source of truth for
+// Authoritative server-side cache of the design spec ("UI mock"). The
+// browser is the source of truth for
 // human edits (drag/resize/text snapshots ship up the WS); MCP tools are the
 // source of truth for AI edits (set/append helpers below). Last-writer-wins.
 

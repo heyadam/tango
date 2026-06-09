@@ -418,10 +418,6 @@ export default function WorkspaceDialog({
                   <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   .claude/settings.json
                 </li>
-                <li>
-                  <span className="text-muted-foreground">mkdir&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                  design-scratch/
-                </li>
               </ul>
             </details>
           </>

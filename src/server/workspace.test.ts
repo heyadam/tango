@@ -81,7 +81,7 @@ describe('mergeAgentsMd', () => {
     expect(out).toContain(AGENTS_SENTINEL_START);
     expect(out).toContain(AGENTS_SENTINEL_END);
     expect(out).toContain('Codex CLI');
-    expect(out).toContain('.agents/skills/tango-ui-sketch/SKILL.md');
+    expect(out).toContain('.agents/skills/tango-ui-mock/SKILL.md');
     expect(out).not.toContain('.claude/skills');
   });
 
@@ -294,18 +294,13 @@ describe('ensureWorkspace skill emission', () => {
     expect(body).toContain('Read flow');
     expect(body).toContain('Write flow');
 
-    // Both modes (UI mock + sketch) must be reachable from the skill.
-    expect(body).toContain('UI mock');
-    expect(body).toContain('sketch');
-
     // Mapping cheat sheets are the load-bearing knowledge for the round-trip.
     expect(body).toContain('SwiftUI → UINode');
     expect(body).toContain('UINode → SwiftUI');
 
-    // Disambiguation from the sibling skills must be explicit so they don't
+    // Disambiguation from the sibling skill must be explicit so it doesn't
     // steal SwiftUI prompts and vice versa.
     expect(body).toContain('tango-ui-mock');
-    expect(body).toContain('tango-ui-sketch');
 
     // Standard tango trailer marking the file as managed/overwritten.
     expect(body).toContain('overwritten on each server boot');
@@ -326,11 +321,9 @@ describe('ensureWorkspace skill emission', () => {
     const codexSkillsRoot = path.join(dir, '.agents', 'skills');
     const codexSkillNames = await fs.readdir(codexSkillsRoot);
     expect(codexSkillNames.sort()).toEqual([
-      'tango-ios-map',
       'tango-ios-sim',
       'tango-swiftui',
       'tango-ui-mock',
-      'tango-ui-sketch',
     ]);
     for (const name of codexSkillNames) {
       const emitted = await fs.readFile(

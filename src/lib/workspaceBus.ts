@@ -1,7 +1,7 @@
 // In-browser pubsub for "the active workspace changed." Subscribed to by
-// Terminal (close+reopen WS) and SketchPanel (clear local cache, close+reopen
-// canvas WS). Server-side state has already been swung by `setWorkspace` by
-// the time we publish here.
+// Terminal (close+reopen WS) and UIPanel (clear local cache, close+reopen
+// the design WS). Server-side state has already been swung by `setWorkspace`
+// by the time we publish here.
 
 export type WorkspaceChangedEvent = {
   path: string;

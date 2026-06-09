@@ -48,6 +48,7 @@ describe('PTY environment', () => {
     await writeExecutable(realCodex);
 
     const env = buildTerminalPtyEnv(workspace, 4321, {
+      NODE_ENV: 'test',
       PATH: realDir,
       SHELL: '/bin/zsh',
     });

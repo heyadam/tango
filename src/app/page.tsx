@@ -2,10 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import AgentCursorOverlay from '@/components/AgentCursorOverlay';
 import AppTopBar from '@/components/AppTopBar';
-import LeftPanel from '@/components/LeftPanel';
 import SimulatorPanel from '@/components/SimulatorPanel';
+import UIPanel from '@/components/UIPanel';
 import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
 import {
   DEFAULT_TERMINAL_AGENT,
@@ -14,19 +13,13 @@ import {
   type TerminalAgentId,
 } from '@/lib/terminalAgent';
 import { cn } from '@/lib/utils';
-import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
-const TransmitOverlay = dynamic(() => import('@/components/TransmitOverlay'), {
-  ssr: false,
-});
 
 function HomeBody() {
   const { current, openDialog } = useWorkspace();
-  const [agentOpen, setAgentOpen] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(true);
   const [simOpen, setSimOpen] = useState(false);
-  const [mode, setMode] = useState<WorkspaceMode>('sketch');
   const [terminalAgent, setTerminalAgent] = useState<TerminalAgentId>(
     DEFAULT_TERMINAL_AGENT,
   );
@@ -68,7 +61,6 @@ function HomeBody() {
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
       <AppTopBar
-        agentOpen={agentOpen}
         terminalOpen={terminalOpen}
         simOpen={simOpen}
         terminalAgent={terminalAgent}
@@ -76,7 +68,6 @@ function HomeBody() {
         workspacePath={current?.path ?? null}
         workspaceSource={current?.source ?? 'unset'}
         onOpenWorkspaceDialog={openDialog}
-        onToggleAgent={() => setAgentOpen((v) => !v)}
         onToggleTerminal={() => setTerminalOpen((v) => !v)}
         onToggleSim={() => setSimOpen((v) => !v)}
         onTerminalAgentChange={(agent) => {
@@ -86,12 +77,7 @@ function HomeBody() {
       <main className="flex min-h-0 flex-1">
         <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
-            <LeftPanel
-              agentSidebarOpen={agentOpen}
-              terminalAgent={terminalAgent}
-              mode={mode}
-              onModeChange={setMode}
-            />
+            <UIPanel terminalAgent={terminalAgent} />
           ) : (
             <UnsetPlaceholder />
           )}
@@ -124,8 +110,6 @@ function HomeBody() {
           {simOpen ? <SimulatorPanel /> : null}
         </aside>
       </main>
-      {agentOpen ? <AgentCursorOverlay /> : null}
-      <TransmitOverlay />
     </div>
   );
 }

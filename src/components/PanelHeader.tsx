@@ -16,12 +16,6 @@ type Props = {
   leftSlot?: React.ReactNode;
   centerSlot?: React.ReactNode;
   rightSlot?: React.ReactNode;
-  /**
-   * Refs to the slot wrappers, for consumers that need to portal into them
-   * (see [src/lib/leftPanelSlots.ts](src/lib/leftPanelSlots.ts)).
-   */
-  leftSlotRef?: React.Ref<HTMLDivElement>;
-  rightSlotRef?: React.Ref<HTMLDivElement>;
   className?: string;
 };
 
@@ -31,16 +25,9 @@ export default function PanelHeader({
   leftSlot,
   centerSlot,
   rightSlot,
-  leftSlotRef,
-  rightSlotRef,
   className,
 }: Props) {
-  const hasSlots =
-    leftSlot != null ||
-    centerSlot != null ||
-    rightSlot != null ||
-    leftSlotRef != null ||
-    rightSlotRef != null;
+  const hasSlots = leftSlot != null || centerSlot != null || rightSlot != null;
 
   return (
     <header
@@ -51,17 +38,11 @@ export default function PanelHeader({
     >
       {hasSlots ? (
         <>
-          <div
-            ref={leftSlotRef}
-            className="flex min-w-0 flex-1 items-center gap-2"
-          >
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             {leftSlot ?? <DefaultLabel Icon={Icon} title={title} />}
           </div>
           {centerSlot && <div className="shrink-0">{centerSlot}</div>}
-          <div
-            ref={rightSlotRef}
-            className="flex min-w-0 flex-1 items-center justify-end gap-2"
-          >
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
             {rightSlot}
           </div>
         </>

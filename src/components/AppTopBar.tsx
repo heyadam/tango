@@ -5,8 +5,6 @@ import {
   Folder,
   FolderOpen,
   Lock,
-  PanelLeftClose,
-  PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
   Smartphone,
@@ -28,7 +26,6 @@ import { cn } from '@/lib/utils';
 type WorkspaceSource = 'env' | 'persisted' | 'unset';
 
 type Props = {
-  agentOpen: boolean;
   terminalOpen: boolean;
   simOpen: boolean;
   terminalAgent: TerminalAgentId;
@@ -36,14 +33,12 @@ type Props = {
   workspacePath: string | null;
   workspaceSource: WorkspaceSource;
   onOpenWorkspaceDialog: () => void;
-  onToggleAgent: () => void;
   onToggleTerminal: () => void;
   onToggleSim: () => void;
   onTerminalAgentChange: (agent: TerminalAgentId) => void;
 };
 
 export default function AppTopBar({
-  agentOpen,
   terminalOpen,
   simOpen,
   terminalAgent,
@@ -51,7 +46,6 @@ export default function AppTopBar({
   workspacePath,
   workspaceSource,
   onOpenWorkspaceDialog,
-  onToggleAgent,
   onToggleTerminal,
   onToggleSim,
   onTerminalAgentChange,
@@ -61,20 +55,6 @@ export default function AppTopBar({
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-background px-2">
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={onToggleAgent}
-          aria-label={agentOpen ? 'Hide agent sidebar' : 'Show agent sidebar'}
-          aria-pressed={agentOpen}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          {agentOpen ? (
-            <PanelLeftClose className="size-4" />
-          ) : (
-            <PanelLeftOpen className="size-4" />
-          )}
-        </Button>
         <div className="flex items-center gap-1.5 font-serif text-sm font-semibold tracking-tight text-foreground">
           <TangoLogo className="size-5" />
           <span>tango</span>

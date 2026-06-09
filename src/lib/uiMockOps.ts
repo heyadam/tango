@@ -5,9 +5,8 @@
 //   - browser: UIMockCanvas calls these inside setSpec(prev => op(prev, …)).
 // Every function returns a NEW spec (never mutates its input) so React's
 // setSpec sees a fresh reference and the server cache stays referentially
-// honest. Validation collects ALL problems before throwing — mirrors
-// validateScreenFlowInput in screenFlow.ts, so callers get one useful error
-// instead of a fix-one-retry loop.
+// honest. Validation collects ALL problems before throwing, so callers get
+// one useful error instead of a fix-one-retry loop.
 
 import type { UINode, UISpec } from './uiMockProtocol';
 

@@ -208,10 +208,9 @@ export async function setWorkspace(
   }
 
   if (isSwitch) {
-    // Clear the canvas cache and broadcast an empty scene so any open browser
+    // Clear the design cache and broadcast an empty spec so any open browser
     // sees the reset before its terminal reconnects. These hooks live in
     // server.ts's module graph; we reach them via the cross-context registry.
-    callHook('resetCanvas');
     callHook('resetUiMock');
     callHook('broadcastWorkspaceChanged');
   }

@@ -1,4 +1,4 @@
-// Browser-side pub/sub seam for the UI mock, sibling of canvasBus.
+// Browser-side pub/sub seam for the design canvas.
 //
 // UIPanel owns the WebSocket to /ws/ui-mock and forwards:
 //   - server frames in:    _emitApply(msg) → UIMockCanvas applies via setSpec
