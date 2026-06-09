@@ -26,6 +26,12 @@ import {
 } from './uiMockBridge';
 import { describeLayers } from '@/lib/uiMockOps';
 import type { UINode, UIScreen, UISpec } from '@/lib/uiMockProtocol';
+import {
+  uiNodePatchSchema,
+  uiNodeSchema,
+  uiScreenSchema,
+  uiSpecSchema,
+} from '@/lib/uiMockSchema';
 import { recordNote } from './memory';
 import { getIosProject, getWorkspaceOrNull } from './workspace';
 import {
@@ -52,62 +58,8 @@ import {
 } from './iosSimControl';
 import { getSimStatus } from './sim';
 
-// UI mock spec — keep this aligned with src/lib/uiMockProtocol.ts. Strict
-// enum on `type` and required positioning so the terminal agent gets a useful validation
-// error instead of nodes silently rendering as `null`.
-const uiNodeTypeEnum = z.enum([
-  'div',
-  'text',
-  'heading',
-  'Button',
-  'Input',
-  'Textarea',
-  'Badge',
-  'Separator',
-  'Image',
-  'Icon',
-]);
-
-const uiNodeSchema = z.object({
-  id: z.string().min(1),
-  type: uiNodeTypeEnum,
-  x: z.number(),
-  y: z.number(),
-  width: z.number().positive(),
-  height: z.number().positive(),
-  text: z.string().optional(),
-  className: z.string().optional(),
-  style: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
-  props: z.record(z.string(), z.unknown()).optional(),
-});
-
-const uiScreenSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  frame: z.object({
-    w: z.number().int().positive(),
-    h: z.number().int().positive(),
-  }),
-  nodes: z.array(uiNodeSchema),
-});
-
-const uiSpecSchema = z.object({
-  screens: z.array(uiScreenSchema),
-});
-
-// Partial node for `update_ui_node` — every field of a node except `id`
-// (immutable). All optional so the terminal agent can patch just what changed.
-const uiNodePatchSchema = z.object({
-  type: uiNodeTypeEnum.optional(),
-  x: z.number().optional(),
-  y: z.number().optional(),
-  width: z.number().positive().optional(),
-  height: z.number().positive().optional(),
-  text: z.string().optional(),
-  className: z.string().optional(),
-  style: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
-  props: z.record(z.string(), z.unknown()).optional(),
-});
+// UISpec zod schemas live in src/lib/uiMockSchema.ts (shared with the
+// design-file persistence validator).
 
 // z-order operations for `reorder_ui_node`. front/back jump to top/bottom of
 // the screen's stack; forward/backward swap with the adjacent sibling.

@@ -2,7 +2,11 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { ensureMemory } from './memory';
-import { detectXcodeProject, type IosProjectStatus } from './iosBuild';
+import {
+  detectXcodeProject,
+  ensureTangoDir,
+  type IosProjectStatus,
+} from './iosBuild';
 
 // The directory the terminal agent operates in: where the in-app terminal
 // lands, and where `.mcp.json` and `.claude/tango.md` are managed so the
@@ -929,6 +933,9 @@ export async function ensureWorkspace(
   await fs.mkdir(workspace, { recursive: true });
   await fs.mkdir(path.join(workspace, '.claude'), { recursive: true });
   await fs.mkdir(path.join(workspace, '.tango', 'bin'), { recursive: true });
+  // Writes/migrates .tango/.gitignore so design.json (the persisted design
+  // spec) is committable while DerivedData/ and bin/ stay ignored.
+  await ensureTangoDir(workspace);
   await fs.mkdir(path.join(workspace, '.agents', 'skills'), { recursive: true });
   for (const [name] of TANGO_SKILL_MDS) {
     await fs.mkdir(path.join(workspace, '.claude', 'skills', name), {

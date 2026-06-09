@@ -10,12 +10,20 @@
 // Don't add new hooks here unless you've hit the dual-context problem. For
 // data, prefer reading from disk or environment.
 
+import type { UISpec } from '@/lib/uiMockProtocol';
+
 const HOOKS_KEY = '__tangoServerHooks__';
 
 export type ServerHooks = {
   broadcastWorkspaceChanged?: () => void;
   broadcastTerminalAgentChanged?: () => void;
   resetUiMock?: () => void;
+  // Read the live design-spec cache / active screen from the route-handler
+  // graph (registered by uiMockBridge in server.ts's graph).
+  getUiMockSpec?: () => UISpec;
+  getUiMockActiveScreen?: () => string | null;
+  // Number of connected /ws/preview clients (registered by previewBridge).
+  previewClientCount?: () => number;
 };
 
 function getHooks(): ServerHooks {
@@ -29,6 +37,14 @@ export function registerHook<K extends keyof ServerHooks>(
   fn: NonNullable<ServerHooks[K]>,
 ): void {
   getHooks()[name] = fn;
+}
+
+// Typed accessor for hooks that return values (the void-returning ones go
+// through callHook, which swallows errors).
+export function getHook<K extends keyof ServerHooks>(
+  name: K,
+): ServerHooks[K] | undefined {
+  return getHooks()[name];
 }
 
 export function callHook<K extends keyof ServerHooks>(name: K): void {

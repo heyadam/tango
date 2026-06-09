@@ -160,12 +160,16 @@ export async function runCommand(
     // closed. Used by `serve-sim type --stdin` so arbitrary text bypasses
     // argv (no option-flag / whitespace ambiguity). Omitted → stdin ignored.
     input?: string;
+    // Extra environment for the child, merged over process.env. Used for
+    // `SIMCTL_CHILD_*` vars that simctl forwards to launched sim processes.
+    env?: Record<string, string>;
   } = {},
 ): Promise<RunResult> {
   const start = Date.now();
   return new Promise((resolve) => {
     const child = spawn(cmd, args, {
       cwd: opts.cwd,
+      env: opts.env ? { ...process.env, ...opts.env } : process.env,
       stdio: [opts.input !== undefined ? 'pipe' : 'ignore', 'pipe', 'pipe'],
       // `detached: true` puts the child in its own process group, which lets
       // us SIGKILL the whole subtree on timeout — important for xcodebuild,
@@ -586,16 +590,24 @@ async function readBundleIdFromAppBundle(
   return id ? id : null;
 }
 
-async function ensureTangoDir(workspace: string): Promise<void> {
+// Targeted ignore list: build junk stays out of the user's git diff while
+// `.tango/design.json` (the persisted design spec) remains committable.
+const TANGO_GITIGNORE = 'DerivedData/\nbin/\n*.tmp\n*.invalid-*.json\n';
+
+export async function ensureTangoDir(workspace: string): Promise<void> {
   const dir = path.join(workspace, '.tango');
   await fs.mkdir(dir, { recursive: true });
-  // Keep the build cache out of the user's git diff. Best-effort — don't
-  // override an existing `.gitignore` they might have customized.
   const gi = path.join(dir, '.gitignore');
   try {
-    await fs.access(gi);
+    const existing = await fs.readFile(gi, 'utf8');
+    // Migrate only the exact blanket-ignore content older tango versions
+    // wrote (it would gitignore design.json). Anything else is user-
+    // customized — leave it alone.
+    if (existing === '*\n') {
+      await fs.writeFile(gi, TANGO_GITIGNORE).catch(() => {});
+    }
   } catch {
-    await fs.writeFile(gi, '*\n').catch(() => {});
+    await fs.writeFile(gi, TANGO_GITIGNORE).catch(() => {});
   }
 }
 

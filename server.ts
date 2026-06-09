@@ -2,7 +2,8 @@ import http from 'node:http';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
-import { attachUIMock } from './src/server/uiMockBridge';
+import { attachUIMock, hydrateUIMockFromDisk } from './src/server/uiMockBridge';
+import { flushPersistSync } from './src/server/uiMockPersist';
 import { mountMcp } from './src/server/mcp';
 import { startSimHelper, stopSimHelper } from './src/server/sim';
 import { ensureWorkspace, resolveWorkspaceAtBoot } from './src/server/workspace';
@@ -20,6 +21,9 @@ const port = Number(process.env.PORT ?? 3000);
 // .mcp.json on workspace selection. Set as early as possible — before we
 // import setWorkspace / ensureWorkspace via the API routes.
 process.env.TANGO_PORT = String(port);
+// Expose the tango repo root so route-graph code can find in-repo assets
+// (the preview-host Xcode project) regardless of process.cwd().
+process.env.TANGO_REPO_ROOT = import.meta.dirname;
 
 // Pin the project root to this file's directory instead of inheriting
 // process.cwd(). Launched from any other cwd (a git worktree, a parent dir,
@@ -46,6 +50,9 @@ app.prepare().then(async () => {
         ensure.errors,
       );
     }
+    // Restore the workspace's persisted design spec into the live cache so a
+    // server restart doesn't lose the canvas.
+    await hydrateUIMockFromDisk();
   }
 
   // Boot the iOS Simulator stream helper. No-op on non-darwin; failures
@@ -62,9 +69,11 @@ app.prepare().then(async () => {
   process.on('SIGINT', onShutdown);
   process.on('SIGTERM', onShutdown);
   // Belt-and-suspenders for tsx hot-reload and any path that exits without
-  // routing through SIGINT/SIGTERM. 'exit' is sync-only — stopSimHelper is sync.
+  // routing through SIGINT/SIGTERM. 'exit' is sync-only — stopSimHelper and
+  // flushPersistSync are both sync.
   process.on('exit', () => {
     stopSimHelper();
+    flushPersistSync();
   });
 
   const handle = app.getRequestHandler();

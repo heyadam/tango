@@ -1,6 +1,12 @@
 import type { WebSocket } from 'ws';
 import { registerHook } from './serverHooks';
 import { createHub } from './wsHub';
+import { getWorkspaceOrNull } from './workspace';
+import {
+  flushPendingPersist,
+  loadSpecFromDisk,
+  schedulePersist,
+} from './uiMockPersist';
 import {
   EMPTY_SPEC,
   type UIMockClientMsg,
@@ -22,6 +28,8 @@ import type { UINode } from '@/lib/uiMockProtocol';
 // browser is the source of truth for
 // human edits (drag/resize/text snapshots ship up the WS); MCP tools are the
 // source of truth for AI edits (set/append helpers below). Last-writer-wins.
+// The cache is persisted write-behind to <workspace>/.tango/design.json (see
+// uiMockPersist) and hydrated back at boot / workspace switch.
 
 let cache: UISpec = EMPTY_SPEC;
 // Live pixel size of the browser's UI panel render area, pushed up the WS by
@@ -33,15 +41,49 @@ let viewport: { w: number; h: number } | null = null;
 const hub = createHub();
 
 // Cleared by setWorkspace via the cross-context registry (route handlers live
-// in a different module graph; see serverHooks.ts).
+// in a different module graph; see serverHooks.ts). The workspace slot has
+// already been swung to the NEW workspace by the time this runs, so flush
+// (which writes pending specs to the workspaces captured at schedule time)
+// must come first, then hydrate reads the new workspace's file.
 registerHook('resetUiMock', () => {
+  flushPendingPersist();
   cache = { screens: [] };
   viewport = null;
   broadcast({ type: 'set', spec: cache });
+  void hydrateUIMockFromDisk();
 });
+
+// Route-handler-graph readers (Export & Run) reach the live cache through the
+// globalThis hook registry.
+registerHook('getUiMockSpec', () => cache);
 
 function broadcast(msg: UIMockServerMsg): void {
   hub.broadcast(msg);
+}
+
+// Single choke point for "the cache changed": optionally broadcast to
+// browsers, and always schedule the write-behind persist. The browser
+// snapshot path persists without broadcasting (other browsers keep
+// last-writer-wins semantics, unchanged).
+function cacheChanged(broadcastMsg?: UIMockServerMsg): void {
+  if (broadcastMsg) broadcast(broadcastMsg);
+  const ws = getWorkspaceOrNull();
+  if (ws) schedulePersist(ws, cache);
+}
+
+// Load the active workspace's persisted spec into the cache and tell every
+// connected browser. No-op when there's no workspace or no (valid) file.
+// Does NOT schedule a persist — hydration must not rewrite its own source.
+export async function hydrateUIMockFromDisk(): Promise<void> {
+  const ws = getWorkspaceOrNull();
+  if (!ws) return;
+  const spec = await loadSpecFromDisk(ws);
+  if (!spec) return;
+  // A switch could have raced the read; only apply if we're still on the
+  // workspace we read from.
+  if (getWorkspaceOrNull() !== ws) return;
+  cache = spec;
+  broadcast({ type: 'set', spec });
 }
 
 export function attachUIMock(ws: WebSocket): void {
@@ -50,6 +92,7 @@ export function attachUIMock(ws: WebSocket): void {
       const parsed = raw as UIMockClientMsg;
       if (parsed.type === 'snapshot' && parsed.spec) {
         cache = parsed.spec;
+        cacheChanged();
       } else if (parsed.type === 'viewport') {
         const w = Math.round(parsed.w);
         const h = Math.round(parsed.h);
@@ -83,12 +126,12 @@ export function getUIViewport(): { w: number; h: number } | null {
 
 export function setUIMockFromServer(spec: UISpec): void {
   cache = spec;
-  broadcast({ type: 'set', spec });
+  cacheChanged({ type: 'set', spec });
 }
 
 export function appendUIScreenFromServer(screen: UIScreen): void {
   cache = { ...cache, screens: [...cache.screens, screen] };
-  broadcast({ type: 'append_screen', screen });
+  cacheChanged({ type: 'append_screen', screen });
 }
 
 export function clearUIMockFromServer(): void {
