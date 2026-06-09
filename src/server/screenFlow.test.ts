@@ -4,6 +4,7 @@ import {
   type Screen,
   layoutScreenFlow,
   safeId,
+  screenFlowDiagnostics,
   screenFlowElements,
   validateScreenFlowInput,
 } from './screenFlow';
@@ -262,10 +263,10 @@ describe('validateScreenFlowInput', () => {
     ).toMatch(/Duplicate screen id: A/);
   });
 
-  it('rejects edges referencing unknown screens', () => {
+  it('treats edges referencing unknown screens as soft (not fatal)', () => {
     expect(
       validateScreenFlowInput([screen('A')], [edge('A', 'Ghost')]),
-    ).toMatch(/unknown screen Ghost/);
+    ).toBeNull();
   });
 
   it('rejects ids that collide after sanitization', () => {
@@ -289,15 +290,66 @@ describe('validateScreenFlowInput', () => {
     ).toMatch(/collide after sanitization/);
   });
 
-  it('collects multiple errors into one joined message', () => {
+  it('collects multiple fatal errors into one joined message', () => {
     const result = validateScreenFlowInput(
-      [screen('A')],
-      [edge('A', 'Ghost1'), edge('A', 'Ghost2'), edge('Ghost3', 'A')],
+      [screen('A'), screen('A'), screen('B/x'), screen('B.x')],
+      [],
     );
-    expect(result).toMatch(/3 validation errors/);
-    expect(result).toMatch(/Ghost1/);
-    expect(result).toMatch(/Ghost2/);
-    expect(result).toMatch(/Ghost3/);
+    expect(result).toMatch(/2 validation errors/);
+    expect(result).toMatch(/Duplicate screen id: A/);
+    expect(result).toMatch(/collide after sanitization/);
+  });
+});
+
+describe('screenFlowDiagnostics', () => {
+  it('returns empty arrays for a clean graph', () => {
+    const screens = [screen('A', { isEntry: true }), screen('B')];
+    const edges = [edge('A', 'B')];
+    const layout = layoutScreenFlow(screens, edges);
+    const diag = screenFlowDiagnostics(screens, edges, layout);
+    expect(diag.danglingEdges).toEqual([]);
+    expect(diag.layoutOverlaps).toEqual([]);
+  });
+
+  it('flags edges with unknown endpoints', () => {
+    const screens = [screen('A')];
+    const edges = [edge('A', 'Ghost'), edge('Phantom', 'A')];
+    const layout = layoutScreenFlow(screens, edges);
+    const diag = screenFlowDiagnostics(screens, edges, layout);
+    expect(diag.danglingEdges).toEqual([
+      { from: 'A', to: 'Ghost', reason: 'unknown_to' },
+      { from: 'Phantom', to: 'A', reason: 'unknown_from' },
+    ]);
+  });
+
+  it('flags self-loops', () => {
+    const screens = [screen('A')];
+    const edges = [edge('A', 'A')];
+    const layout = layoutScreenFlow(screens, edges);
+    const diag = screenFlowDiagnostics(screens, edges, layout);
+    expect(diag.danglingEdges).toEqual([
+      { from: 'A', to: 'A', reason: 'self_loop' },
+    ]);
+  });
+
+  it('detects bounding-box overlaps', () => {
+    const screens = [screen('A'), screen('B')];
+    const layout = new Map([
+      ['A', { x: 0, y: 0, w: 100, h: 100 }],
+      ['B', { x: 50, y: 50, w: 100, h: 100 }],
+    ]);
+    const diag = screenFlowDiagnostics(screens, [], layout);
+    expect(diag.layoutOverlaps).toEqual([{ a: 'A', b: 'B' }]);
+  });
+
+  it('treats touching boxes as non-overlapping', () => {
+    const screens = [screen('A'), screen('B')];
+    const layout = new Map([
+      ['A', { x: 0, y: 0, w: 100, h: 100 }],
+      ['B', { x: 100, y: 0, w: 100, h: 100 }],
+    ]);
+    const diag = screenFlowDiagnostics(screens, [], layout);
+    expect(diag.layoutOverlaps).toEqual([]);
   });
 });
 

@@ -421,19 +421,22 @@ export function screenFlowElements(
   return out;
 }
 
-// Validation: ids unique (raw AND sanitized), edges reference real screens.
-// Returns a joined error message string on failure, null on success — matches
-// the `toolErrorResult`-shaped return path in mcp.ts. The sanitized-id check
+// Fatal validation: ids unique (raw AND sanitized). Returns a joined error
+// message string on failure, null on success — matches the
+// `toolErrorResult`-shaped return path in mcp.ts. The sanitized-id check
 // catches the `A/B` vs `A.B` collision, where `safeId` collapses both to
 // `A_B` and Excalidraw would silently overwrite one card with the other.
 //
-// Collects all errors before returning so a 200-screen graph with five
-// missing-edge-endpoint typos surfaces all five in a single round-trip
-// instead of forcing Claude through five fix-and-retry cycles.
+// Edges that reference unknown screens are NOT fatal — they're surfaced as
+// soft diagnostics (`screenFlowDiagnostics().danglingEdges`) and silently
+// dropped by `layoutScreenFlow`. This lets the `scan_ios_app` tool emit
+// best-effort edge sets without forcing the model to pre-filter against the
+// screen list it just received.
 export function validateScreenFlowInput(
   screens: Screen[],
   edges: Edge[],
 ): string | null {
+  void edges;
   const errors: string[] = [];
   const seen = new Set<string>();
   const sanitized = new Map<string, string>();
@@ -453,19 +456,65 @@ export function validateScreenFlowInput(
     }
     sanitized.set(sid, s.id);
   }
-  for (const e of edges) {
-    if (!seen.has(e.from)) {
-      errors.push(
-        `Edge ${e.from} → ${e.to} references unknown screen ${e.from}`,
-      );
-    }
-    if (!seen.has(e.to)) {
-      errors.push(
-        `Edge ${e.from} → ${e.to} references unknown screen ${e.to}`,
-      );
-    }
-  }
   if (errors.length === 0) return null;
   if (errors.length === 1) return errors[0];
   return `${errors.length} validation errors:\n - ${errors.join('\n - ')}`;
+}
+
+export type ScreenFlowDiagnostics = {
+  danglingEdges: Array<{
+    from: string;
+    to: string;
+    reason: 'unknown_from' | 'unknown_to' | 'self_loop';
+  }>;
+  layoutOverlaps: Array<{ a: string; b: string }>;
+};
+
+// Soft diagnostics surfaced in the `set_screen_flow` success payload so the
+// model can decide whether to follow up with `screenshot_canvas` or re-call
+// with a different `cardWidth`/`cardHeight`. Empty arrays mean "you're done."
+export function screenFlowDiagnostics(
+  screens: Screen[],
+  edges: Edge[],
+  layout: Map<string, Box>,
+): ScreenFlowDiagnostics {
+  const ids = new Set(screens.map((s) => s.id));
+  const danglingEdges: ScreenFlowDiagnostics['danglingEdges'] = [];
+  for (const e of edges) {
+    if (e.from === e.to) {
+      danglingEdges.push({ from: e.from, to: e.to, reason: 'self_loop' });
+      continue;
+    }
+    if (!ids.has(e.from)) {
+      danglingEdges.push({ from: e.from, to: e.to, reason: 'unknown_from' });
+      continue;
+    }
+    if (!ids.has(e.to)) {
+      danglingEdges.push({ from: e.from, to: e.to, reason: 'unknown_to' });
+    }
+  }
+
+  const boxes: Array<{ id: string; box: Box }> = [];
+  for (const [id, box] of layout) boxes.push({ id, box });
+  const layoutOverlaps: ScreenFlowDiagnostics['layoutOverlaps'] = [];
+  for (let i = 0; i < boxes.length; i++) {
+    for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i];
+      const b = boxes[j];
+      if (boxesOverlap(a.box, b.box)) {
+        layoutOverlaps.push({ a: a.id, b: b.id });
+      }
+    }
+  }
+
+  return { danglingEdges, layoutOverlaps };
+}
+
+function boxesOverlap(a: Box, b: Box): boolean {
+  return (
+    a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y
+  );
 }
