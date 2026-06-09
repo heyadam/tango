@@ -48,6 +48,10 @@ import {
   type MoodboardSize,
 } from '@/lib/moodboardStore';
 import { terminalBus } from '@/lib/terminalBus';
+import {
+  TERMINAL_AGENTS,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 import { transmitBus } from '@/lib/transmitBus';
 import { cn } from '@/lib/utils';
 
@@ -163,7 +167,12 @@ function handoffPrompt(
 const subscribe = (cb: () => void) => moodboardStore.subscribe(cb);
 const getSnapshot = () => moodboardStore.getState();
 
-export default function MoodboardPanel() {
+type Props = {
+  terminalAgent: TerminalAgentId;
+};
+
+export default function MoodboardPanel({ terminalAgent }: Props) {
+  const terminalAgentMeta = TERMINAL_AGENTS[terminalAgent];
   const { session, busy, status, error } = useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -213,13 +222,15 @@ export default function MoodboardPanel() {
         label: selected.title,
       });
       terminalBus.submitToTerminal(handoffPrompt(relPath, selected));
-      setHandoffStatus(`Sent ${selected.title} to Claude.`);
+      setHandoffStatus(
+        `Sent ${selected.title} to ${terminalAgentMeta.shortLabel}.`,
+      );
     } catch (err) {
       setHandoffError(err instanceof Error ? err.message : String(err));
     } finally {
       setHandoffBusy(false);
     }
-  }, [handoffBusy, selected]);
+  }, [handoffBusy, selected, terminalAgentMeta.shortLabel]);
 
   const submit = useCallback(() => {
     const text = draft.trim();
@@ -334,7 +345,7 @@ export default function MoodboardPanel() {
                   ) : (
                     <Send className="size-3.5" />
                   )}
-                  Send to Claude
+                  {terminalAgentMeta.sendLabel}
                 </Button>
               </>,
               rightSlot,

@@ -12,6 +12,10 @@ import { canvasBus, sanitizeAppState, type ApplyMsg } from '@/lib/canvasBus';
 import type { ScreenshotRequestMsg } from '@/lib/canvasProtocol';
 import { PanelHeaderRightSlot } from '@/lib/leftPanelSlots';
 import { terminalBus } from '@/lib/terminalBus';
+import {
+  TERMINAL_AGENTS,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
 import type { DesignerHandles } from './DesignerCanvas';
@@ -43,8 +47,13 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export default function SketchPanel() {
+type Props = {
+  terminalAgent: TerminalAgentId;
+};
+
+export default function SketchPanel({ terminalAgent }: Props) {
   const handlesRef = useRef<DesignerHandles | null>(null);
+  const terminalAgentMeta = TERMINAL_AGENTS[terminalAgent];
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
   const [sendBusy, setSendBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -132,7 +141,7 @@ export default function SketchPanel() {
       const blob = await handles.getPng();
       const { relPath } = await writeSnapshot(blob);
       terminalBus.sendToTerminal(`# review design at ${relPath}\n`);
-      setStatus(`Sent ${relPath} to Claude.`);
+      setStatus(`Sent ${relPath} to ${terminalAgentMeta.shortLabel}.`);
     } catch (err) {
       setStatus(
         `Send failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -140,7 +149,7 @@ export default function SketchPanel() {
     } finally {
       setSendBusy(false);
     }
-  }, [sendBusy]);
+  }, [sendBusy, terminalAgentMeta.shortLabel]);
 
   // Open the canvas WS bridge. Locally-debounced snapshots from the canvas
   // (forwarded via canvasBus) ship up to the server cache; server frames apply
@@ -250,7 +259,7 @@ export default function SketchPanel() {
               ) : (
                 <Send className="size-3.5" />
               )}
-              Send to Claude
+              {terminalAgentMeta.sendLabel}
             </Button>,
             rightSlot,
           )

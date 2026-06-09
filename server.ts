@@ -8,7 +8,11 @@ import { attachUIMock } from './src/server/uiMockBridge';
 import { mountMcp } from './src/server/mcp';
 import { startSimHelper, stopSimHelper } from './src/server/sim';
 import { ensureWorkspace, resolveWorkspaceAtBoot } from './src/server/workspace';
-import { loadPersistedWorkspace } from './src/server/workspaceState';
+import {
+  _setTerminalAgentInternal,
+  loadPersistedTerminalAgent,
+  loadPersistedWorkspace,
+} from './src/server/workspaceState';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = process.env.HOST ?? 'localhost';
@@ -37,6 +41,7 @@ app.prepare().then(async () => {
   //   2. ~/.tango/state.json#lastWorkspace if it still exists
   //   3. null — picker will appear in the browser
   const resolved = await resolveWorkspaceAtBoot(loadPersistedWorkspace);
+  _setTerminalAgentInternal(await loadPersistedTerminalAgent());
   if (resolved.path) {
     const ensure = await ensureWorkspace(port, resolved.path);
     if (!ensure.ok) {
@@ -82,8 +87,9 @@ app.prepare().then(async () => {
   mountMcp(server);
 
   const wssTerminal = new WebSocketServer({ noServer: true });
-  wssTerminal.on('connection', (ws) => {
-    attachPty(ws);
+  wssTerminal.on('connection', (ws, req) => {
+    const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
+    attachPty(ws, url.searchParams.get('agent'));
   });
 
   const wssCanvas = new WebSocketServer({ noServer: true });

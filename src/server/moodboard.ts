@@ -2,8 +2,8 @@
 //
 // `saveMoodboardPng` writes a base64-encoded PNG into
 // `<workspace>/design-scratch/moodboard/` and returns the workspace-relative
-// path (so terminal-Claude, MCP tools, and tango-memory.md all reference the
-// same string).
+// path (so the terminal agent, MCP tools, and tango-memory.md all reference
+// the same string).
 //
 // `encodeStripePng` is a no-deps PNG encoder used by the seed route to make
 // dummy moodboard images out of a palette without calling OpenAI. RGB only,

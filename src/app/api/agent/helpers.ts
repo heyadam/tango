@@ -1,8 +1,9 @@
 import type { UIMessage } from 'ai';
 
 // The agent is a UI controller, not the brain. It must only use the
-// UI/terminal tools. Canvas mutation tools belong to terminal-Claude — exposing
-// them here lets gpt-5.5 short-circuit the delegation and do the work itself.
+// UI/terminal tools. Canvas mutation tools belong to the active terminal agent
+// — exposing them here lets gpt-5.5 short-circuit the delegation and do the
+// work itself.
 export const ALLOWED_TOOLS = new Set([
   'dom_inspect',
   'cursor_move',

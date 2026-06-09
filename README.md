@@ -1,8 +1,8 @@
 # tango
 
-A split-pane web app for collaborating with terminal-based coding agents. The left pane is an Excalidraw canvas (and other UI surfaces, over time); the right pane is a real interactive terminal running `claude --dangerously-skip-permissions` in your chosen workspace. An optional further-right sidebar mirrors a booted iOS Simulator via [serve-sim](https://github.com/EvanBacon/serve-sim) for tight feedback while building mobile UI. An in-process MCP server gives Claude tools to read and write the canvas, and a small gpt-5.5 controller agent in the toolbar can drive the visible UI on your behalf — moving the cursor, clicking buttons, and dispatching work to terminal-Claude.
+A split-pane web app for collaborating with terminal-based coding agents. The left pane is an Excalidraw canvas (and other UI surfaces, over time); the right pane is a real interactive terminal running the selected agent (`claude` by default, switchable to `codex`) in your chosen workspace. An optional further-right sidebar mirrors a booted iOS Simulator via [serve-sim](https://github.com/EvanBacon/serve-sim) for tight feedback while building mobile UI. An in-process MCP server gives the active terminal agent tools to read and write the canvas, and a small gpt-5.5 controller agent in the toolbar can drive the visible UI on your behalf — moving the cursor, clicking buttons, and dispatching work to the active terminal agent.
 
-The repo is **tango itself**. The directory tango operates on (where Claude's shell runs, where snapshots get written) is a separate workspace you pick from the in-app picker on first launch.
+The repo is **tango itself**. The directory tango operates on (where the terminal agent's shell runs, where snapshots get written) is a separate workspace you pick from the in-app picker on first launch.
 
 ## Stack
 
@@ -22,7 +22,7 @@ npm install        # postinstall fixes node-pty perms + symlinks .env.local
 npm run dev        # tsx server.ts on :3000
 ```
 
-Open http://localhost:3000. On first launch a blocking dialog asks you to pick a workspace directory — pick (or create) the folder you want Claude to operate in. After that the right pane spawns a terminal there and runs `claude`.
+Open http://localhost:3000. On first launch a blocking dialog asks you to pick a workspace directory — pick (or create) the folder you want the terminal agent to operate in. After that the right pane spawns a terminal there and runs the selected agent.
 
 Other scripts:
 
@@ -48,13 +48,13 @@ browser ──WS────►  /ws/agent-cursor  → attachAgentCursor        
                                 ↓                       ↓                   ↓
                           node-pty.spawn($SHELL)    scene cache         McpServer + tools
                           cwd: WORKSPACE_DIR        (canvasBridge)      (canvas + agent UI tools)
-                          auto-runs `claude`
+                          auto-runs selected agent
 ```
 
 Plus, on darwin, server boot also spawns `npx serve-sim` once and the right-most panel iframes its preview UI.
 
 - **Custom server** ([server.ts](server.ts)) hosts Next, three `WebSocketServer`s, and the MCP transport in one process. Required for `node-pty` and for the SDK's Node-typed transport — don't migrate to `next dev` or edge runtimes.
-- **MCP tools** ([src/server/mcp.ts](src/server/mcp.ts)) split into *canvas* (`get_canvas_state`, `set_canvas_state`, `add_elements`, `clear_canvas`, `screenshot_canvas`) and *agent UI* (`dom_inspect`, `cursor_move`, `cursor_click`, `cursor_type`, `terminal_type`). Terminal-Claude sees all of them; the controller agent sees only the agent UI subset (it's a controller, not the brain — it delegates creative work back into the terminal via `terminal_type`).
+- **MCP tools** ([src/server/mcp.ts](src/server/mcp.ts)) split into *canvas* (`get_canvas_state`, `set_canvas_state`, `add_elements`, `clear_canvas`, `screenshot_canvas`) and *agent UI* (`dom_inspect`, `cursor_move`, `cursor_click`, `cursor_type`, `terminal_type`). The active terminal agent sees all of them; the controller agent sees only the agent UI subset (it's a controller, not the brain — it delegates creative work back into the terminal via `terminal_type`).
 - **Designer canvas** is duplex: Excalidraw changes snapshot to the server every 500ms, and MCP tool writes broadcast back to all connected browsers as scene patches.
 - **Simulator sidebar** ([src/server/sim.ts](src/server/sim.ts), darwin only) mirrors a booted iOS Simulator. Server boot spawns `npx serve-sim`, parses the preview URL from its stdout, and the right-most aside iframes that URL inside a sandboxed frame. Best-effort: if `xcrun` or the package isn't available, the panel surfaces the error and the rest of tango is unaffected.
 
@@ -66,15 +66,21 @@ Resolution order at boot ([src/server/workspace.ts](src/server/workspace.ts)):
 2. `~/.tango/state.json#lastWorkspace` — last-picked, if it still exists.
 3. Unset — picker blocks the UI; PTY and snapshot routes refuse work until a workspace is chosen.
 
-Picking a workspace is non-destructive. Five things land in the chosen directory:
+Picking a workspace is non-destructive. Tango manages these files in the chosen directory:
 
 - `.claude/tango.md` — generated docs about the `tango-canvas` MCP tools (overwritten).
+- `.claude/skills/tango-*/SKILL.md` — Claude-facing Tango workflow skills (overwritten).
+- `.agents/skills/tango-*/SKILL.md` — Codex-facing Tango workflow skills (overwritten).
+- `.tango/bin/codex` — workspace-local Codex wrapper injected into Tango terminal `PATH` (overwritten).
 - `CLAUDE.md` — a 3-line sentinel block (`<!-- tango:start … -->`) is managed; everything outside is preserved byte-for-byte.
+- `AGENTS.md` — a `<!-- tango-codex:start … -->` sentinel block is managed; everything outside is preserved byte-for-byte.
 - `.mcp.json` — merged under `mcpServers['tango-canvas']`; refuses on malformed JSON.
 - `.claude/settings.json` — merged to add `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
-- `design-scratch/` — `mkdir -p`. PNGs from the canvas's "Send to Claude" button land here.
+- `design-scratch/` — `mkdir -p`. PNGs from the canvas's send-to-agent button land here.
 
 You can switch workspace mid-session via the pill in the top bar; the terminal and canvas tear down and reopen against the new cwd.
+
+You can switch the terminal agent from the top bar. Claude launches as `claude --dangerously-skip-permissions`; Codex launches with `gpt-5.5`, session-scoped `trust_level="trusted"` and `service_tier="fast"` overrides, the `tango-canvas` MCP URL, and bypassed approvals/sandbox flags for parity with the current Claude terminal flow. Tango also prepends `.tango/bin` to terminal `PATH`, so manually typing `codex` inside that terminal receives the same Tango MCP URL without editing global Codex config.
 
 ## Going deeper
 

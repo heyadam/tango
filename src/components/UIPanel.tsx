@@ -4,11 +4,11 @@
 // UIMockCanvas (react-moveable touches `window` at module load). Same pattern
 // as SketchPanel + DesignerCanvas.
 //
-// "Send to Claude" packages the current spec into a markdown handoff prompt
-// and submits it to the terminal-Claude session via terminalBus. The spec
-// JSON is the source of truth for what the user wants — Claude reads it and
+// The Send action packages the current spec into a markdown handoff prompt
+// and submits it to the active terminal agent via terminalBus. The spec
+// JSON is the source of truth for what the user wants — the agent reads it and
 // translates the absolute-positioned mock into responsive Tailwind in the
-// production codebase. The user's drag/resize tweaks are visible to Claude
+// production codebase. The user's drag/resize tweaks are visible to the agent
 // as updated coords on its next `get_ui_mock` read.
 
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -26,6 +26,10 @@ import { EMPTY_SPEC, type UISpec } from '@/lib/uiMockProtocol';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
 import { terminalBus } from '@/lib/terminalBus';
+import {
+  TERMINAL_AGENTS,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 
 const UIMockCanvas = dynamic(() => import('./UIMockCanvas'), {
   ssr: false,
@@ -45,7 +49,12 @@ type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; initialSpec: UISpec };
 
-export default function UIPanel() {
+type Props = {
+  terminalAgent: TerminalAgentId;
+};
+
+export default function UIPanel({ terminalAgent }: Props) {
+  const terminalAgentMeta = TERMINAL_AGENTS[terminalAgent];
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
   // Bumping this remounts UIMockCanvas (and re-runs the WS effect) so a
   // workspace switch starts from a clean slate.
@@ -57,7 +66,7 @@ export default function UIPanel() {
   // ref) because the toolbar is rendered by this component, not the canvas.
   const [screenCount, setScreenCount] = useState(0);
 
-  // Latest spec — kept in a ref so "Send to Claude" / "Clear" don't have to
+  // Latest spec — kept in a ref so Send / Clear don't have to
   // re-render to read it. Updated on every server `set` and every local
   // snapshot.
   const specRef = useRef<UISpec>(EMPTY_SPEC);
@@ -236,7 +245,9 @@ export default function UIPanel() {
     if (sendBusy) return;
     const spec = specRef.current;
     if (!spec.screens || spec.screens.length === 0) {
-      setStatus('Mock is empty — ask Claude to draft one first.');
+      setStatus(
+        `Mock is empty — ask ${terminalAgentMeta.shortLabel} to draft one first.`,
+      );
       return;
     }
     setSendBusy(true);
@@ -245,7 +256,7 @@ export default function UIPanel() {
       const handoff = buildHandoffPrompt(spec);
       terminalBus.submitToTerminal(handoff);
       setStatus(
-        `Sent ${spec.screens.length} screen${spec.screens.length === 1 ? '' : 's'} to Claude.`,
+        `Sent ${spec.screens.length} screen${spec.screens.length === 1 ? '' : 's'} to ${terminalAgentMeta.shortLabel}.`,
       );
     } catch (err) {
       setStatus(
@@ -254,7 +265,7 @@ export default function UIPanel() {
     } finally {
       setSendBusy(false);
     }
-  }, [sendBusy]);
+  }, [sendBusy, terminalAgentMeta.shortLabel]);
 
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
@@ -317,7 +328,7 @@ export default function UIPanel() {
                 ) : (
                   <Send className="size-3.5" />
                 )}
-                Send to Claude
+                {terminalAgentMeta.sendLabel}
               </Button>
             </>,
             rightSlot,
@@ -343,8 +354,8 @@ export default function UIPanel() {
   );
 }
 
-// Markdown handoff to terminal-Claude. Mirrors moodboard's pattern: the JSON
-// is the source of truth; the prose tells Claude what to do with it.
+// Markdown handoff to the active terminal agent. Mirrors moodboard's pattern:
+// the JSON is the source of truth; the prose tells the agent what to do.
 function buildHandoffPrompt(spec: UISpec): string {
   const screens = spec.screens
     .map(

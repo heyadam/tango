@@ -11,10 +11,12 @@ import {
   PanelHeaderLeftSlot,
   PanelHeaderRightSlot,
 } from '@/lib/leftPanelSlots';
+import type { TerminalAgentId } from '@/lib/terminalAgent';
 import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 type Props = {
   agentSidebarOpen: boolean;
+  terminalAgent: TerminalAgentId;
   mode: WorkspaceMode;
   onModeChange: (mode: WorkspaceMode) => void;
 };
@@ -27,6 +29,7 @@ const modes: Array<{ value: WorkspaceMode; label: string }> = [
 
 export default function LeftPanel({
   agentSidebarOpen,
+  terminalAgent,
   mode,
   onModeChange,
 }: Props) {
@@ -35,7 +38,7 @@ export default function LeftPanel({
 
   return (
     <div className="flex h-full w-full">
-      <AgentSidebar open={agentSidebarOpen} />
+      <AgentSidebar open={agentSidebarOpen} terminalAgent={terminalAgent} />
       <Tabs
         value={mode}
         onValueChange={(v) => onModeChange(v as WorkspaceMode)}
@@ -66,13 +69,13 @@ export default function LeftPanel({
           <PanelHeaderLeftSlot.Provider value={leftSlot}>
             <PanelHeaderRightSlot.Provider value={rightSlot}>
               <TabsContent value="sketch" className="h-full">
-                <SketchPanel />
+                <SketchPanel terminalAgent={terminalAgent} />
               </TabsContent>
               <TabsContent value="moodboard" className="h-full">
-                <MoodboardPanel />
+                <MoodboardPanel terminalAgent={terminalAgent} />
               </TabsContent>
               <TabsContent value="ui" className="h-full">
-                <UIPanel />
+                <UIPanel terminalAgent={terminalAgent} />
               </TabsContent>
             </PanelHeaderRightSlot.Provider>
           </PanelHeaderLeftSlot.Provider>

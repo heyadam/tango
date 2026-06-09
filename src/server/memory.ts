@@ -345,7 +345,7 @@ function prevUpdated(raw: string): string {
 
 // ---- summarization ---------------------------------------------------------
 
-const SUMMARY_SYSTEM = `You're maintaining a rolling memory file for future Claude Code sessions in this workspace. Merge the existing Summary with these new entries. Preserve verbatim: design decisions and user-stated constraints. Collapse routine UI activity into one-liner trends. Output Markdown only, no preamble. Cap ~600 words.`;
+const SUMMARY_SYSTEM = `You're maintaining a rolling memory file for future terminal-agent sessions in this workspace. Merge the existing Summary with these new entries. Preserve verbatim: design decisions and user-stated constraints. Collapse routine UI activity into one-liner trends. Output Markdown only, no preamble. Cap ~600 words.`;
 
 async function summarizeOnce(p: string): Promise<void> {
   const raw = await readUtf8OrNull(p);

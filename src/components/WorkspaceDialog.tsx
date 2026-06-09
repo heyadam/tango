@@ -222,7 +222,7 @@ export default function WorkspaceDialog({
     if (envLocked) {
       return 'Workspace is pinned by the TANGO_WORKSPACE environment variable. Unset it and reload to change folders.';
     }
-    return 'Tango will set up MCP and Claude tooling in this folder. Your existing CLAUDE.md and .mcp.json are preserved — we only manage a small sentinel block.';
+    return 'Tango will set up MCP and terminal-agent tooling in this folder. Existing CLAUDE.md, AGENTS.md, and .mcp.json content is preserved outside Tango-managed blocks.';
   }, [envLocked]);
 
   // Blocking dialogs ignore Radix's "user wants to close" signals (escape,
@@ -392,9 +392,22 @@ export default function WorkspaceDialog({
                   .claude/tango.md
                 </li>
                 <li>
+                  <span className="text-muted-foreground">overwrite&nbsp;</span>
+                  .agents/skills/tango-*/SKILL.md
+                </li>
+                <li>
+                  <span className="text-muted-foreground">overwrite&nbsp;</span>
+                  .tango/bin/codex
+                </li>
+                <li>
                   <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   CLAUDE.md
                   <span className="text-muted-foreground"> (3-line sentinel block)</span>
+                </li>
+                <li>
+                  <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  AGENTS.md
+                  <span className="text-muted-foreground"> (tango-codex sentinel block)</span>
                 </li>
                 <li>
                   <span className="text-muted-foreground">merge&nbsp;&nbsp;&nbsp;&nbsp;</span>

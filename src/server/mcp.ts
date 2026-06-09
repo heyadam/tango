@@ -21,15 +21,20 @@ import {
   setCanvasFromServer,
 } from './canvasBridge';
 import {
+  addUINodesFromServer,
   appendUIScreenFromServer,
   clearUIMockFromServer,
   getUIMock,
   getUIViewport,
+  removeUINodesFromServer,
+  reorderUINodeFromServer,
   setUIMockFromServer,
+  updateUINodeFromServer,
 } from './uiMockBridge';
+import { describeLayers } from '@/lib/uiMockOps';
 import { pushCursorCommand, requestInspect } from './agentCursorBridge';
 import type { CanvasElement } from '@/lib/canvasProtocol';
-import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
+import type { UINode, UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import {
   type Edge as FlowEdge,
   type Screen as FlowScreen,
@@ -69,7 +74,7 @@ const elementSchema = z.array(z.record(z.string(), z.unknown()));
 // client; we surface that as the tool result.
 
 // UI mock spec — keep this aligned with src/lib/uiMockProtocol.ts. Strict
-// enum on `type` and required positioning so Claude gets a useful validation
+// enum on `type` and required positioning so the terminal agent gets a useful validation
 // error instead of nodes silently rendering as `null`.
 const uiNodeTypeEnum = z.enum([
   'div',
@@ -111,9 +116,30 @@ const uiSpecSchema = z.object({
   screens: z.array(uiScreenSchema),
 });
 
+// Partial node for `update_ui_node` — every field of a node except `id`
+// (immutable). All optional so the terminal agent can patch just what changed.
+const uiNodePatchSchema = z.object({
+  type: uiNodeTypeEnum.optional(),
+  x: z.number().optional(),
+  y: z.number().optional(),
+  width: z.number().positive().optional(),
+  height: z.number().positive().optional(),
+  text: z.string().optional(),
+  className: z.string().optional(),
+  style: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
+  props: z.record(z.string(), z.unknown()).optional(),
+});
+
+// z-order operations for `reorder_ui_node`. front/back jump to top/bottom of
+// the screen's stack; forward/backward swap with the adjacent sibling.
+const reorderOpEnum = z.enum(['front', 'back', 'forward', 'backward']);
+
+const TANGO_MCP_INSTRUCTIONS =
+  'Tango is a split-pane app: the user sees the canvas/UI mock on the left and this terminal agent on the right. Use get_canvas_state/screenshot_canvas before visual edits, then add_elements or set_canvas_state for sketch work. Use get_ui_viewport/get_ui_mock/set_ui_mock for high-fidelity UI mocks. Use ios_status and ios_build_run after Swift edits when an iOS project is detected.';
+
 // Screen-flow spec — the input shape for `set_screen_flow`. Aligned with
 // `Screen` / `Edge` in src/server/screenFlow.ts. Strict enums on `kind` so
-// terminal-Claude gets a useful validation error for typos. Bounded fields
+// terminal-the terminal agent gets a useful validation error for typos. Bounded fields
 // keep the rendered card readable; `name.max(120)` accommodates real UIKit
 // `ViewController` names that routinely exceed 60 chars.
 const flowScreenSchema = z.object({
@@ -163,7 +189,7 @@ function toolErrorResult(toolName: string, err: unknown) {
 
 // Shared shape for `ios_build_run` early-exit errors — keeps the result
 // schema consistent with the orchestrator's own `{ok:false, stage, message,
-// errors}` returns so terminal-Claude doesn't have to parse two formats.
+// errors}` returns so the terminal agent does not have to parse two formats.
 function iosBuildErrorResult(
   stage: 'detect' | 'build' | 'install' | 'launch',
   message: string,
@@ -238,10 +264,13 @@ function controlResultToTool(
 }
 
 function buildServer(): McpServer {
-  const server = new McpServer({
-    name: 'tango-canvas',
-    version: '0.1.0',
-  });
+  const server = new McpServer(
+    {
+      name: 'tango-canvas',
+      version: '0.1.0',
+    },
+    { instructions: TANGO_MCP_INSTRUCTIONS },
+  );
 
   server.registerTool(
     'get_canvas_state',
@@ -388,8 +417,8 @@ function buildServer(): McpServer {
   );
 
   // UI mock tools. Sibling tool group to the canvas tools but for the "UI"
-  // mode panel — Claude writes a shadcn-based mock spec, the user drags/
-  // resizes/edits-text in the browser, and Claude reads the result back. The
+  // mode panel — the terminal agent writes a shadcn-based mock spec, the user drags/
+  // resizes/edits-text in the browser, and the terminal agent reads the result back. The
   // spec lives in uiMockBridge's in-memory cache and syncs to the browser
   // over /ws/ui-mock. Element shape matches `UISpec` in
   // src/lib/uiMockProtocol.ts.
@@ -498,6 +527,136 @@ function buildServer(): McpServer {
     },
   );
 
+  // Node-level UI mock tools. These operate on the LIVE server cache (the
+  // latest snapshot the browser pushed up), so they preserve the user's
+  // drag/resize/text tweaks to every node except the one being changed —
+  // unlike `set_ui_mock`, which replaces everything. Prefer these for
+  // incremental edits. z-order = node array order: later = rendered on top.
+
+  server.registerTool(
+    'get_ui_layers',
+    {
+      title: 'Inspect the UI mock layer hierarchy',
+      description:
+        "Returns a compact, z-ordered outline of the UI mock — each screen and, within it, its nodes listed from back to front with a `z` index (array order; higher `z` = rendered on top), `id`, `type`, a truncated `text`, and the bounding `rect`. This is the cheap way to see the layer structure and grab real node ids before calling `update_ui_node`, `remove_ui_node`, or `reorder_ui_node` (use `get_ui_mock` instead when you need the full styling/props of every node). Pass `screenId` to scope to one screen; omit it for all screens. An unknown `screenId` returns an empty `screens` array.",
+      inputSchema: {
+        screenId: z.string().optional(),
+      },
+    },
+    async ({ screenId }) => {
+      const layers = describeLayers(getUIMock(), screenId);
+      return {
+        content: [{ type: 'text', text: JSON.stringify(layers, null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
+    'add_ui_nodes',
+    {
+      title: 'Add nodes to a UI mock screen',
+      description:
+        "Appends one or more nodes to an existing screen (identified by `screenId`) WITHOUT touching the rest of the mock — operates on the live spec, so the user's drag/resize/text tweaks to other nodes survive. Prefer this over `set_ui_mock` whenever you're adding to an existing screen. New nodes land on TOP of the z-order (end of the screen's node list). Each node has a unique `id` (must not collide with any existing node), a `type` (div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` / `className` (theme-token Tailwind for visuals; layout classes are ignored) / `style` (React inline-style for off-theme colors) / `props` (Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName`, heading `level`). Call `get_ui_layers` or `get_ui_mock` first if you need the screen id or want to avoid overlapping existing nodes.",
+      inputSchema: {
+        screenId: z.string().min(1),
+        nodes: z.array(uiNodeSchema).min(1),
+      },
+    },
+    async ({ screenId, nodes }) => {
+      try {
+        addUINodesFromServer(screenId, nodes as UINode[]);
+        const screen = getUIMock().screens.find((s) => s.id === screenId);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Added ${nodes.length} node(s) to screen "${screenId}" (now ${screen?.nodes.length ?? '?'} node(s)).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('add_ui_nodes', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'update_ui_node',
+    {
+      title: 'Update a single UI mock node',
+      description:
+        "Shallow-merges a `patch` into one node, found by `nodeId` across all screens — operates on the live spec, so every other node's tweaks survive. Use this for targeted edits (move/resize a node, change its `text`, swap a Button `variant`, restyle via `className`/`style`) instead of replacing the whole spec with `set_ui_mock`. The patch may set any node field EXCEPT `id` (immutable): `type`, `x`, `y`, `width`, `height`, `text`, `className`, `style`, `props`. Omitted fields are left unchanged. Errors if the node id doesn't exist — call `get_ui_layers` first if unsure.",
+      inputSchema: {
+        nodeId: z.string().min(1),
+        patch: uiNodePatchSchema,
+      },
+    },
+    async ({ nodeId, patch }) => {
+      try {
+        updateUINodeFromServer(nodeId, patch);
+        return {
+          content: [
+            { type: 'text', text: `Updated node "${nodeId}".` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('update_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'remove_ui_node',
+    {
+      title: 'Remove UI mock node(s)',
+      description:
+        "Deletes one or more nodes by id (across any screen) from the live spec, leaving everything else intact. Pass `nodeIds` as an array. All-or-nothing: if ANY id doesn't exist the call fails and nothing is removed, so a typo can't silently drop the wrong node — call `get_ui_layers` first to confirm ids. To remove a whole screen, use `set_ui_mock` (there's no per-screen delete).",
+      inputSchema: {
+        nodeIds: z.array(z.string().min(1)).min(1),
+      },
+    },
+    async ({ nodeIds }) => {
+      try {
+        removeUINodesFromServer(nodeIds);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Removed ${nodeIds.length} node(s).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('remove_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'reorder_ui_node',
+    {
+      title: 'Reorder a UI mock node in the z-stack',
+      description:
+        "Changes a node's z-order (stacking) within its own screen. `op` is one of: `front` (move to top of the stack), `back` (move to bottom), `forward` (move up one — render above the next sibling), `backward` (move down one). z-order is the node array order: a node later in the list paints over earlier ones, so 'front' = end of the list. A move at a boundary (already on top/bottom) is a harmless no-op. Use `get_ui_layers` to see current stacking and ids. Errors if the node id doesn't exist.",
+      inputSchema: {
+        nodeId: z.string().min(1),
+        op: reorderOpEnum,
+      },
+    },
+    async ({ nodeId, op }) => {
+      try {
+        reorderUINodeFromServer(nodeId, op);
+        return {
+          content: [
+            { type: 'text', text: `Moved node "${nodeId}" ${op}.` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('reorder_ui_node', err);
+      }
+    },
+  );
+
   // Agent UI-control tools. These push commands over /ws/agent-cursor to the
   // browser; AgentCursorOverlay animates the cursor sprite and dispatches the
   // matching DOM events. `delivered: 0` means no browser is listening — the
@@ -508,7 +667,7 @@ function buildServer(): McpServer {
     {
       title: 'List interactive UI elements with their bounding rects',
       description:
-        'ALWAYS call this before cursor_move/cursor_click when you do not have an exact CSS selector. Returns the visible interactive elements on the page (buttons, links, inputs, things with role=button, etc.) with their accessible names, visible text, roles, and pixel rects. The returned `center: {x,y}` of the chosen element is what you pass to cursor_click — that hits the target precisely instead of guessing coordinates.\n\nPass `query` to fuzzy-match against accessible name / text / role (e.g. `query: "send to claude"`). Pass `selector` to scope the search to a region (defaults to document.body). `limit` caps the result count (default 30, max 100). Elements are ranked: exact name match > startsWith > contains; without a query, in-viewport elements come first.',
+        'ALWAYS call this before cursor_move/cursor_click when you do not have an exact CSS selector. Returns the visible interactive elements on the page (buttons, links, inputs, things with role=button, etc.) with their accessible names, visible text, roles, and pixel rects. The returned `center: {x,y}` of the chosen element is what you pass to cursor_click — that hits the target precisely instead of guessing coordinates.\n\nPass `query` to fuzzy-match against accessible name / text / role (e.g. `query: "send"`). Pass `selector` to scope the search to a region (defaults to document.body). `limit` caps the result count (default 30, max 100). Elements are ranked: exact name match > startsWith > contains; without a query, in-viewport elements come first.',
       inputSchema: {
         query: z.string().optional(),
         selector: z.string().optional(),
@@ -639,9 +798,9 @@ function buildServer(): McpServer {
 
   // iOS build / install / launch tools. Available regardless of whether the
   // workspace contains an Xcode project — `ios_status` returns `project.kind:
-  // 'none'` if not, and the skill (`tango-ios-sim`) tells terminal-Claude to
+  // 'none'` if not, and the skill (`tango-ios-sim`) tells the terminal agent to
   // bail out gracefully in that case. Not exposed to the controller agent's
-  // ALLOWED_TOOLS — these are terminal-Claude's domain (the controller
+  // ALLOWED_TOOLS — these are the terminal agent's domain (the controller
   // delegates via `terminal_type`).
 
   server.registerTool(
@@ -825,7 +984,7 @@ function buildServer(): McpServer {
           bundleId: resolvedBundleId,
           sinceSeconds,
         });
-        // Surface validator rejections structurally so terminal-Claude
+        // Surface validator rejections structurally so the terminal agent
         // doesn't mistake them for "no entries in the window."
         if (result.rejected) {
           return toolErrorResult(
@@ -846,7 +1005,7 @@ function buildServer(): McpServer {
 
   // iOS simulator *control* tools — drive the running app the user is watching
   // in the iframe (serve-sim CLI under the hood). Aim with `ios_inspect` first;
-  // coordinates everywhere are normalized 0..1. Terminal-Claude only; not in
+  // coordinates everywhere are normalized 0..1. Terminal-agent only; not in
   // the controller agent's ALLOWED_TOOLS (it can't see the simulator).
 
   server.registerTool(
@@ -1054,9 +1213,9 @@ function buildServer(): McpServer {
   server.registerTool(
     'terminal_type',
     {
-      title: 'Send a message to the terminal Claude session',
+      title: 'Send a message to the active terminal agent',
       description:
-        'Types text into the in-app xterm terminal AND presses Return to submit it. The terminal is running `claude --dangerously-skip-permissions` in the workspace, so this is the way you ask the terminal-Claude session to do something — it is your delegation channel. The Return is automatic; only set `submit: false` if you specifically want to seed the prompt buffer without sending it (rare).',
+        'Types text into the in-app xterm terminal AND presses Return to submit it. The terminal is running the selected agent CLI in the workspace, so this is the delegation channel for asking that agent to do work. The Return is automatic; only set `submit: false` if you specifically want to seed the prompt buffer without sending it (rare).',
       inputSchema: {
         text: z.string(),
         submit: z.boolean().optional().describe('Defaults to true. Set false only to seed the buffer without submitting.'),

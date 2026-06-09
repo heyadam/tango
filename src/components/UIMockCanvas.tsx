@@ -40,10 +40,26 @@ import type {
   OnResizeGroupStart,
   OnResizeStart,
 } from 'react-moveable';
+import { Layers, Plus } from 'lucide-react';
 import UIMockNode from './UIMockNode';
+import UIAddPalette from './UIAddPalette';
+import UILayersPanel from './UILayersPanel';
+import { Button } from './ui/button';
 import { uiMockBus } from '@/lib/uiMockBus';
 import type { ApplyMsg } from '@/lib/uiMockBus';
-import { EMPTY_SPEC, type UINode, type UISpec } from '@/lib/uiMockProtocol';
+import {
+  addNodesToScreen,
+  removeNodesFromSpec,
+  reorderNodeInSpec,
+  type ReorderOp,
+} from '@/lib/uiMockOps';
+import { NODE_DEFAULTS, makeNode } from '@/lib/uiMockDefaults';
+import {
+  EMPTY_SPEC,
+  type UINode,
+  type UINodeType,
+  type UISpec,
+} from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
 const SNAPSHOT_DEBOUNCE_MS = 250;
@@ -57,6 +73,9 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
   const [spec, setSpec] = useState<UISpec>(initialSpec ?? EMPTY_SPEC);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  // Floating overlay visibility — the Add palette and Layers panel.
+  const [addOpen, setAddOpen] = useState(false);
+  const [layersOpen, setLayersOpen] = useState(false);
 
   // Map<nodeId, wrapper-element> populated by callback refs on each rendered
   // node so we can hand react-moveable real DOM targets without re-querying.
@@ -216,6 +235,60 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
     }));
     clearSelection();
   }, [selectedIds, clearSelection]);
+
+  // ── Add / reorder / remove (Add palette + Layers panel) ────────────────
+  // These reuse the shared pure ops in uiMockOps and flow through the normal
+  // snapshot effect, so server-side Claude and the human edit the same way.
+  const addNodeOfType = useCallback(
+    (type: UINodeType) => {
+      const current = specRef.current;
+      if (current.screens.length === 0) return;
+      // Drop onto the screen that owns the current selection, else the first.
+      const target =
+        current.screens.find((s) =>
+          s.nodes.some((n) => selectedIds.includes(n.id)),
+        ) ?? current.screens[0];
+      const def = NODE_DEFAULTS[type];
+      // Stagger so repeated adds don't stack exactly; clamp inside the frame.
+      const stagger = (target.nodes.length % 6) * 24;
+      const x = Math.max(0, Math.min(24 + stagger, target.frame.w - def.width));
+      const y = Math.max(0, Math.min(24 + stagger, target.frame.h - def.height));
+      const node = makeNode(type, x, y);
+      try {
+        setSpec(addNodesToScreen(current, target.id, [node]));
+        setSelectedIds([node.id]);
+        setEditingId(null);
+      } catch {
+        // id collision is effectively impossible with a random uuid; ignore.
+      }
+    },
+    [selectedIds],
+  );
+
+  const reorderNode = useCallback((id: string, op: ReorderOp) => {
+    try {
+      setSpec(reorderNodeInSpec(specRef.current, id, op));
+    } catch {
+      // node vanished between render and click (server-driven set) — ignore.
+    }
+  }, []);
+
+  const removeNode = useCallback((id: string) => {
+    try {
+      setSpec(removeNodesFromSpec(specRef.current, [id]));
+      setSelectedIds((prev) => prev.filter((s) => s !== id));
+    } catch {
+      // already gone — ignore.
+    }
+  }, []);
+
+  const handleLayerSelect = useCallback(
+    (id: string, additive: boolean) => {
+      if (additive) addToSelection(id);
+      else selectOnly(id);
+    },
+    [addToSelection, selectOnly],
+  );
 
   // ── Keyboard ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -493,28 +566,31 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
   );
 
   // ── Render ────────────────────────────────────────────────────────────
-  if (spec.screens.length === 0) {
-    return <EmptyState />;
-  }
+  const isEmpty = spec.screens.length === 0;
 
   return (
-    <div
-      className="relative h-full w-full overflow-auto bg-background"
-      onPointerDown={(e) => {
-        // Clicks landing on the canvas background (not on a node wrapper)
-        // clear selection and exit text edit mode.
-        if (e.target === e.currentTarget) {
-          clearSelection();
-        }
-      }}
-    >
+    <div className="relative h-full w-full bg-background">
+      {/* Scrollable canvas surface. */}
       <div
-        className="relative flex items-start gap-20 p-10"
-        // Push min-height so the flex container can expand to fit the
-        // tallest frame even when the parent shrinks.
-        style={{ minHeight: 'min-content' }}
+        className="absolute inset-0 overflow-auto"
+        onPointerDown={(e) => {
+          // Clicks landing on the canvas background (not on a node wrapper)
+          // clear selection and exit text edit mode.
+          if (e.target === e.currentTarget) {
+            clearSelection();
+          }
+        }}
       >
-        {spec.screens.map((screen) => (
+        {isEmpty ? (
+          <EmptyState />
+        ) : (
+          <div
+            className="relative flex items-start gap-20 p-10"
+            // Push min-height so the flex container can expand to fit the
+            // tallest frame even when the parent shrinks.
+            style={{ minHeight: 'min-content' }}
+          >
+            {spec.screens.map((screen) => (
           <div key={screen.id} className="flex flex-col gap-2">
             <div className="text-xs font-medium text-foreground/90">
               {screen.title}
@@ -557,12 +633,13 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
               ))}
             </div>
           </div>
-        ))}
-      </div>
+            ))}
+          </div>
+        )}
 
-      {targetElements.length > 0 && (
-        <Moveable
-          ref={moveableRef}
+        {targetElements.length > 0 && (
+          <Moveable
+            ref={moveableRef}
           target={targetElements}
           draggable
           resizable
@@ -605,9 +682,60 @@ export default function UIMockCanvas({ initialSpec, onPersist }: Props) {
           onResizeEnd={onResizeEnd}
           onResizeGroupStart={onResizeGroupStart}
           onResizeGroup={onResizeGroup}
-          onResizeGroupEnd={onResizeGroupEnd}
-        />
-      )}
+            onResizeGroupEnd={onResizeGroupEnd}
+          />
+        )}
+      </div>
+
+      {/* Floating element/layer controls. The wrapper is click-through; only
+          the controls themselves capture pointer events, and they sit above
+          Moveable's handles. */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ zIndex: 4000 }}
+      >
+        <div className="pointer-events-auto absolute left-3 top-3">
+          {addOpen ? (
+            <UIAddPalette
+              onAdd={addNodeOfType}
+              onClose={() => setAddOpen(false)}
+              disabled={isEmpty}
+            />
+          ) : (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="shadow-md"
+              onClick={() => setAddOpen(true)}
+            >
+              <Plus className="size-3.5" />
+              Add
+            </Button>
+          )}
+        </div>
+        <div className="pointer-events-auto absolute bottom-3 right-3 top-3 flex items-start">
+          {layersOpen ? (
+            <UILayersPanel
+              screens={spec.screens}
+              selectedIds={selectedIds}
+              onSelect={handleLayerSelect}
+              onReorder={reorderNode}
+              onRemove={removeNode}
+              onClose={() => setLayersOpen(false)}
+            />
+          ) : (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="shadow-md"
+              onClick={() => setLayersOpen(true)}
+            >
+              <Layers className="size-3.5" />
+              Layers
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -727,11 +855,11 @@ function EmptyState() {
       <div className="max-w-md space-y-2">
         <p className="font-medium text-foreground">UI mock is empty.</p>
         <p>
-          Ask Claude in the terminal to{' '}
+          Ask the terminal agent to{' '}
           <span className="rounded bg-muted px-1 font-mono text-foreground/90">
             “mock my settings page as a UI”
           </span>{' '}
-          (or any other screen / flow). Claude will read your codebase and write
+          (or any other screen / flow). The agent will read your codebase and write
           a shadcn-based mock here that you can drag, resize, and edit, then
           send back as a reference for the real UI.
         </p>

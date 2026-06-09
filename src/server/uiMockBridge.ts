@@ -8,6 +8,15 @@ import {
   type UIScreen,
   type UISpec,
 } from '@/lib/uiMockProtocol';
+import {
+  addNodesToScreen,
+  removeNodesFromSpec,
+  reorderNodeInSpec,
+  updateNodeInSpec,
+  type NodePatch,
+  type ReorderOp,
+} from '@/lib/uiMockOps';
+import type { UINode } from '@/lib/uiMockProtocol';
 
 // Authoritative server-side cache of the UI mock spec — sibling of
 // canvasBridge for the new "UI" mode. The browser is the source of truth for
@@ -84,4 +93,27 @@ export function appendUIScreenFromServer(screen: UIScreen): void {
 
 export function clearUIMockFromServer(): void {
   setUIMockFromServer({ screens: [] });
+}
+
+// ── Node-level mutations ────────────────────────────────────────────────────
+// Each applies a pure op from uiMockOps to the LIVE cache (which reflects the
+// user's latest drag/resize/text snapshot) and re-broadcasts the whole spec
+// via setUIMockFromServer. Operating on the live cache — not a Claude-supplied
+// spec — is what preserves the user's tweaks to every other node. The ops
+// throw on bad input (unknown ids, collisions); MCP handlers surface that.
+
+export function addUINodesFromServer(screenId: string, nodes: UINode[]): void {
+  setUIMockFromServer(addNodesToScreen(cache, screenId, nodes));
+}
+
+export function updateUINodeFromServer(nodeId: string, patch: NodePatch): void {
+  setUIMockFromServer(updateNodeInSpec(cache, nodeId, patch));
+}
+
+export function removeUINodesFromServer(nodeIds: string[]): void {
+  setUIMockFromServer(removeNodesFromSpec(cache, nodeIds));
+}
+
+export function reorderUINodeFromServer(nodeId: string, op: ReorderOp): void {
+  setUIMockFromServer(reorderNodeInSpec(cache, nodeId, op));
 }

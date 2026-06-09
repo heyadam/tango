@@ -1,6 +1,6 @@
 // Browser-side pub/sub seam for the transmit-to-terminal scan effect.
 // Mirrors terminalBus / canvasBus. Fires when an image-bearing handoff
-// (today: MoodboardPanel "Send to Claude") goes to the terminal so
+// (today: MoodboardPanel's send-to-agent action) goes to the terminal so
 // TransmitOverlay can play a brief scan shader over the image.
 
 export type TransmitEvent = {

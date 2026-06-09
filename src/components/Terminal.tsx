@@ -7,16 +7,29 @@ import '@xterm/xterm/css/xterm.css';
 import { Code2 } from 'lucide-react';
 import PanelHeader from '@/components/PanelHeader';
 import { terminalBus } from '@/lib/terminalBus';
+import {
+  TERMINAL_AGENTS,
+  isTerminalAgentId,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 import { openWS } from '@/lib/wsClient';
 
-export default function Terminal() {
+type Props = {
+  terminalAgent: TerminalAgentId;
+  onTerminalAgentChanged: (agent: TerminalAgentId) => void;
+};
+
+export default function Terminal({
+  terminalAgent,
+  onTerminalAgentChanged,
+}: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   // Bumping this counter forces the effect below to re-run, which tears down
   // the existing xterm + WS and creates a fresh pair. Driven by the
-  // server-sent `workspace_changed` JSON frame on the same WS — that's the
+  // server-sent JSON control frames on the same WS — that's the
   // canonical signal so it works for every connected tab, not just the one
-  // that triggered the switch. (Don't add a workspaceBus subscription here —
-  // it would double-bump and re-kill the freshly-spawned `claude`.)
+  // that triggered the switch. (Don't add a workspaceBus subscription here;
+  // it would double-bump and re-kill the freshly-spawned terminal agent.)
   const [generation, setGeneration] = useState(0);
 
   useEffect(() => {
@@ -45,7 +58,7 @@ export default function Terminal() {
       // container has zero size on first paint; ResizeObserver will fix it
     }
 
-    const ws = openWS('/ws/terminal');
+    const ws = openWS(`/ws/terminal?agent=${encodeURIComponent(terminalAgent)}`);
     ws.binaryType = 'arraybuffer';
 
     const decoder = new TextDecoder('utf-8');
@@ -80,8 +93,8 @@ export default function Terminal() {
         return;
       }
       if (typeof data === 'string') {
-        // Server-sent JSON control frame on the same WS — currently only
-        // workspace_changed. Detected by trying to parse; everything else
+        // Server-sent JSON control frame on the same WS. Detected by trying
+        // to parse; everything else
         // is treated as terminal text.
         let parsed: unknown;
         try {
@@ -91,15 +104,27 @@ export default function Terminal() {
           terminalBus._emitOutput(data);
           return;
         }
-        if (
+        const frameType =
           parsed != null &&
           typeof parsed === 'object' &&
-          'type' in (parsed as Record<string, unknown>) &&
-          (parsed as { type: unknown }).type === 'workspace_changed'
-        ) {
+          'type' in (parsed as Record<string, unknown>)
+            ? (parsed as { type: unknown }).type
+            : null;
+        if (frameType === 'workspace_changed') {
           // Trigger a generation bump so this effect tears down and
           // re-runs, opening a fresh PTY in the new cwd.
           setGeneration((g) => g + 1);
+          return;
+        }
+        if (frameType === 'terminal_agent_changed') {
+          const next = (parsed as { agent?: unknown }).agent;
+          if (isTerminalAgentId(next)) {
+            if (next === terminalAgent) {
+              setGeneration((g) => g + 1);
+            } else {
+              onTerminalAgentChanged(next);
+            }
+          }
           return;
         }
         term.write(data);
@@ -145,11 +170,11 @@ export default function Terminal() {
       }
       term.dispose();
     };
-  }, [generation]);
+  }, [generation, onTerminalAgentChanged, terminalAgent]);
 
   return (
     <div className="flex h-full w-full flex-col">
-      <PanelHeader icon={Code2} title="Claude Code" />
+      <PanelHeader icon={Code2} title={TERMINAL_AGENTS[terminalAgent].label} />
       <div ref={containerRef} className="min-h-0 flex-1 bg-[#0a0a0a] p-2" />
     </div>
   );

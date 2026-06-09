@@ -1,7 +1,13 @@
 import * as pty from 'node-pty';
 import type { WebSocket } from 'ws';
 import { getWorkspaceOrNull } from './workspace';
+import { getTerminalAgent } from './workspaceState';
 import { registerHook } from './serverHooks';
+import { buildTerminalPtyEnv } from './ptyEnv';
+import {
+  terminalAgentFromQuery,
+  terminalAgentLaunchCommand,
+} from './terminalAgent';
 import { createHub } from './wsHub';
 
 type ResizeMessage = { type: 'resize'; cols: number; rows: number };
@@ -17,13 +23,17 @@ registerHook('broadcastWorkspaceChanged', () => {
   hub.broadcast({ type: 'workspace_changed' });
 });
 
+registerHook('broadcastTerminalAgentChanged', () => {
+  hub.broadcast({ type: 'terminal_agent_changed', agent: getTerminalAgent() });
+});
+
 const defaultShell = (): string => {
   if (process.env.SHELL) return process.env.SHELL;
   if (process.platform === 'win32') return 'powershell.exe';
   return '/bin/zsh';
 };
 
-export function attachPty(ws: WebSocket): void {
+export function attachPty(ws: WebSocket, requestedAgent?: unknown): void {
   const workspace = getWorkspaceOrNull();
   if (workspace == null) {
     // No workspace selected — refuse to spawn a shell into "nowhere." We send
@@ -48,25 +58,24 @@ export function attachPty(ws: WebSocket): void {
     return;
   }
   const shell = defaultShell();
+  const agent = terminalAgentFromQuery(requestedAgent) ?? getTerminalAgent();
+  const rawPort = Number(process.env.TANGO_PORT ?? process.env.PORT ?? 3000);
+  const port = Number.isFinite(rawPort) && rawPort > 0 ? rawPort : 3000;
   const ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-256color',
     cols: 80,
     rows: 24,
     cwd: workspace,
-    env: {
-      ...process.env,
-      TERM: 'xterm-256color',
-      COLORTERM: 'truecolor',
-    },
+    env: buildTerminalPtyEnv(workspace, port),
   });
 
   let alive = true;
   hub.attach(ws);
 
-  // Auto-launch claude on every fresh PTY. The shell still runs first (so
-  // .zshrc / login messages still apply), then this command queues into its
-  // stdin and executes once the prompt appears. \r is the TTY "Enter."
-  ptyProcess.write('claude --dangerously-skip-permissions\r');
+  // Auto-launch the selected terminal agent on every fresh PTY. The shell
+  // still runs first, then this command queues into stdin and executes once
+  // the prompt appears. \r is the TTY "Enter."
+  ptyProcess.write(`${terminalAgentLaunchCommand(agent, port)}\r`);
 
   const onDataDisposable = ptyProcess.onData((data) => {
     if (!alive) return;

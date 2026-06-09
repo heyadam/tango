@@ -127,9 +127,14 @@ Reach for these whenever the user asks for visual work — wireframes, diagrams,
 The same MCP server also exposes **UI mock tools** for tango's "UI" mode — a higher-fidelity surface where the user sees real shadcn/Tailwind components instead of an Excalidraw wireframe, and can drag/resize/text-edit them directly:
 
 - \`get_ui_mock\` — read the current shadcn-based UI mock spec (call this first; user tweaks live here)
+- \`get_ui_layers\` — read a compact, z-ordered outline of the mock (screens → nodes, back-to-front) to grab node ids before editing
 - \`get_ui_viewport\` — read the live pixel size of the user's UI panel; use it as the default frame size for new screens so the mock fills exactly what they see
 - \`set_ui_mock\` — replace the whole spec (one or more screens of absolutely-positioned nodes)
 - \`add_ui_screen\` — append a screen to an existing flow without touching the others
+- \`add_ui_nodes\` — add node(s) to one screen on the LIVE spec (preserves the user's other tweaks; prefer over \`set_ui_mock\` for incremental adds)
+- \`update_ui_node\` — patch a single node by id (move/resize/restyle/text) without replacing the whole spec
+- \`remove_ui_node\` — delete node(s) by id
+- \`reorder_ui_node\` — change a node's z-order within its screen (front/back/forward/backward)
 - \`clear_ui_mock\` — empty the spec
 
 For UI sketching ("sketch my UI", "wireframe this screen", "draw a layout for X"), follow the **\`tango-ui-sketch\`** skill at \`.claude/skills/tango-ui-sketch/SKILL.md\` — it turns a UI into an Excalidraw wireframe (structure, no pixels).
@@ -392,7 +397,7 @@ This is not a wireframe surface (use \`tango-ui-sketch\` for that). The mock ren
 
 ## Tools
 
-\`get_ui_mock\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
+\`get_ui_mock\`, \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
 
 \`\`\`ts
 type UISpec = { screens: UIScreen[] };
@@ -509,6 +514,16 @@ Always \`get_ui_mock\` first.
 - Has screens you want to keep? Use \`add_ui_screen\` to append.
 - The user explicitly asked to start over? \`clear_ui_mock\` then \`set_ui_mock\`. Confirm in chat first if it's not obvious from the prompt.
 
+**Incremental edits & layers.** Once a mock exists, prefer the node-level tools over re-sending the whole spec — they operate on the LIVE cache, so the user's drag/resize/text tweaks to every other node survive (\`set_ui_mock\` would clobber them):
+
+- \`get_ui_layers\` — compact z-ordered outline (screens → nodes back-to-front, each with \`z\`, \`id\`, \`type\`, \`text\`, \`rect\`). Cheap way to grab the right node id and see stacking; use \`get_ui_mock\` when you need full styling/props.
+- \`add_ui_nodes({ screenId, nodes })\` — drop new node(s) onto a screen; they land on top of the z-order. Ids must be unique across the whole mock.
+- \`update_ui_node({ nodeId, patch })\` — change one node's fields (any except \`id\`).
+- \`remove_ui_node({ nodeIds })\` — delete node(s); all-or-nothing on unknown ids.
+- \`reorder_ui_node({ nodeId, op })\` — \`front\`/\`back\`/\`forward\`/\`backward\` within the node's screen (later in the array = rendered on top).
+
+The user has the same controls in the panel (an Add palette and a Layers panel), so your edits and theirs converge on one spec.
+
 ### 7. Verify
 
 After writing, **call \`get_ui_mock\` and re-read the spec you just sent** — Claude can't see the rendered pixels, but the spec round-trip catches:
@@ -582,7 +597,7 @@ Both flows live in this terminal-Claude session. The user does not see SwiftUI b
 You'll combine your filesystem tools with tango's MCP tools:
 
 - **Filesystem (built-in)**: \`Read\` / \`Write\` / \`Edit\` / \`Glob\` for \`.swift\` files.
-- **UI mock (\`tango-canvas\` MCP)**: \`get_ui_mock\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`.
+- **UI mock (\`tango-canvas\` MCP)**: \`get_ui_mock\`, \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`.
 - **Sketch (\`tango-canvas\` MCP)**: \`get_canvas_state\`, \`set_canvas_state\`, \`add_elements\`, \`clear_canvas\`, \`screenshot_canvas\`. Element JSON matches Excalidraw's \`serializeAsJSON\` output — see \`.claude/skills/tango-ui-sketch/SKILL.md\` for the shape conventions and the wireframe palette.
 
 ## Pick the mode
@@ -1063,10 +1078,14 @@ This skill is generated by tango and overwritten on each server boot. To customi
 const CLAUDE_MD_SENTINEL_START = '<!-- tango:start (managed by tango — do not edit) -->';
 const CLAUDE_MD_SENTINEL_END = '<!-- tango:end -->';
 const CLAUDE_MD_BLOCK = `${CLAUDE_MD_SENTINEL_START}\n@.claude/tango.md\n${CLAUDE_MD_SENTINEL_END}`;
+const AGENTS_MD_SENTINEL_START = '<!-- tango-codex:start (managed by tango — do not edit) -->';
+const AGENTS_MD_SENTINEL_END = '<!-- tango-codex:end -->';
 
 // First match only — second-pass `ensureWorkspace` calls should be idempotent.
 // Multiline / dotall: `[\s\S]*?` non-greedy across lines.
 const SENTINEL_RE = /<!-- tango:start[\s\S]*?<!-- tango:end -->/;
+const AGENTS_SENTINEL_RE =
+  /<!-- tango-codex:start[\s\S]*?<!-- tango-codex:end -->/;
 
 export function mergeClaudeMd(existing: string | null): string {
   if (existing == null || existing === '') {
@@ -1080,6 +1099,85 @@ export function mergeClaudeMd(existing: string | null): string {
   // so we don't end up with three blank lines in a row.
   const trimmed = existing.replace(/\s*$/, '');
   return `${trimmed}\n\n${CLAUDE_MD_BLOCK}\n`;
+}
+
+function agentNeutralMarkdown(body: string): string {
+  return body
+    .replaceAll('Claude Code', 'Codex CLI')
+    .replaceAll('terminal-Claude', 'terminal Codex')
+    .replaceAll('Terminal-Claude', 'Terminal Codex')
+    .replaceAll("Claude's", "Codex's")
+    .replaceAll('Claude', 'Codex')
+    .replaceAll('.claude/skills/', '.agents/skills/')
+    .replaceAll('.claude/tango.md', 'AGENTS.md')
+    .replaceAll('`.claude/tango.md`', '`AGENTS.md`')
+    .replaceAll('CLAUDE.md', 'AGENTS.md');
+}
+
+function codexAgentsBlock(iosProject: IosProjectStatus, workspace: string): string {
+  const body = agentNeutralMarkdown(tangoMd(iosProject, workspace))
+    .replace(
+      "You're running inside the **tango** workspace.",
+      "You're running via Codex CLI inside the **tango** workspace.",
+    )
+    .replace(
+      /---\n\nThis file is generated by tango[\s\S]*$/,
+      [
+        '---',
+        '',
+        'This block is generated by tango. Project-specific Codex instructions belong outside the managed tango-codex block.',
+        '',
+      ].join('\n'),
+    );
+  return `${AGENTS_MD_SENTINEL_START}\n${body.trimEnd()}\n${AGENTS_MD_SENTINEL_END}`;
+}
+
+export function mergeAgentsMd(
+  existing: string | null,
+  iosProject: IosProjectStatus,
+  workspace: string,
+): string {
+  const block = codexAgentsBlock(iosProject, workspace);
+  if (existing == null || existing === '') return block + '\n';
+  if (AGENTS_SENTINEL_RE.test(existing)) {
+    return existing.replace(AGENTS_SENTINEL_RE, block);
+  }
+  const trimmed = existing.replace(/\s*$/, '');
+  return `${trimmed}\n\n${block}\n`;
+}
+
+const TANGO_SKILL_MDS: Array<[name: string, body: string]> = [
+  ['tango-ui-sketch', UI_SKETCH_SKILL_MD],
+  ['tango-ui-mock', UI_MOCK_SKILL_MD],
+  ['tango-swiftui', SWIFTUI_SKILL_MD],
+  ['tango-ios-sim', TANGO_IOS_SIM_SKILL_MD],
+  ['tango-ios-map', TANGO_IOS_MAP_SKILL_MD],
+];
+
+const CODEX_SKILL_DESCRIPTIONS: Record<string, string> = {
+  'tango-ui-sketch':
+    'Sketch UI screens as Excalidraw wireframes on the Tango canvas. Use when the user asks to sketch wireframe draw lay out or design a UI screen page view or flow.',
+  'tango-ui-mock':
+    'Build high fidelity shadcn and Tailwind UI mocks in Tango UI mode. Use when the user asks to prototype visualize or mock a UI screen page or flow as editable components instead of a wireframe.',
+  'tango-swiftui':
+    'Round trip a SwiftUI view through the Tango canvas or UI mode. Use when the user mentions SwiftUI a Swift view Xcode or a .swift file with show render mock sketch save write generate or update intent.',
+  'tango-ios-sim':
+    'Build install launch inspect drive and read logs for the workspace Xcode app on the booted iOS simulator via Tango MCP. Use for iOS Swift SwiftUI build run test simulator interaction and log prompts.',
+  'tango-ios-map':
+    'Map a whole iOS app into a screen flow diagram on the Tango canvas. Use when the user asks to show all screens map the app draw navigation diagram flows or visualize a Swift SwiftUI UIKit or Xcode app at app level.',
+};
+
+function codexSkillMd(name: string, body: string): string {
+  const neutral = agentNeutralMarkdown(body);
+  const markdownBody = neutral.replace(/^---\n[\s\S]*?\n---\n*/, '');
+  return [
+    '---',
+    `name: ${name}`,
+    `description: ${CODEX_SKILL_DESCRIPTIONS[name]}`,
+    '---',
+    '',
+    markdownBody,
+  ].join('\n');
 }
 
 export type MergeOk = { ok: true; next: string };
@@ -1146,6 +1244,50 @@ async function writeIfChanged(p: string, next: string): Promise<void> {
   }
 }
 
+function codexWrapperSh(): string {
+  return [
+    '#!/bin/sh',
+    'set -eu',
+    '',
+    'self_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"',
+    'real="${TANGO_CODEX_REAL_BIN:-}"',
+    'if [ -z "$real" ] || [ "$real" = "$0" ] || [ "$real" = "$self_dir/codex" ]; then',
+    '  real=""',
+    '  old_ifs="$IFS"',
+    '  search_path="${PATH:-}"',
+    '  IFS=:',
+    '  for dir in $search_path; do',
+    '    [ -z "$dir" ] && dir=.',
+    '    [ "$dir" = "$self_dir" ] && continue',
+    '    candidate="$dir/codex"',
+    '    if [ -x "$candidate" ] && [ ! -d "$candidate" ]; then',
+    '      real="$candidate"',
+    '      break',
+    '    fi',
+    '  done',
+    '  IFS="$old_ifs"',
+    'fi',
+    '',
+    'if [ -z "$real" ]; then',
+    '  echo "tango: real codex executable not found" >&2',
+    '  exit 127',
+    'fi',
+    '',
+    'mcp_url="${TANGO_MCP_URL:-}"',
+    'if [ -z "$mcp_url" ]; then',
+    '  echo "tango: TANGO_MCP_URL is not set" >&2',
+    '  exit 2',
+    'fi',
+    '',
+    'exec "$real" \\',
+    '  -c \'trust_level="trusted"\' \\',
+    '  -c \'service_tier="fast"\' \\',
+    '  -c "mcp_servers.tango-canvas.url=\\"$mcp_url\\"" \\',
+    '  "$@"',
+    '',
+  ].join('\n');
+}
+
 export type EnsureError = { file: string; reason: string };
 export type EnsureResult =
   | { ok: true }
@@ -1166,6 +1308,8 @@ export async function ensureWorkspace(
 
   await fs.mkdir(workspace, { recursive: true });
   await fs.mkdir(path.join(workspace, '.claude'), { recursive: true });
+  await fs.mkdir(path.join(workspace, '.tango', 'bin'), { recursive: true });
+  await fs.mkdir(path.join(workspace, '.agents', 'skills'), { recursive: true });
   await fs.mkdir(path.join(workspace, 'design-scratch'), { recursive: true });
   await fs.mkdir(
     path.join(workspace, '.claude', 'skills', 'tango-ui-sketch'),
@@ -1187,6 +1331,11 @@ export async function ensureWorkspace(
     path.join(workspace, '.claude', 'skills', 'tango-ios-map'),
     { recursive: true },
   );
+  for (const [name] of TANGO_SKILL_MDS) {
+    await fs.mkdir(path.join(workspace, '.agents', 'skills', name), {
+      recursive: true,
+    });
+  }
 
   // Mark detection in flight for this workspace, then reset the slot's
   // iOS state so MCP tools don't see a stale `detected` from the previous
@@ -1222,6 +1371,15 @@ export async function ensureWorkspace(
   await writeIfChanged(
     path.join(workspace, '.claude', 'tango.md'),
     tangoMd(detected, workspace),
+  );
+
+  // AGENTS.md — Codex reads this directly. Preserve user content outside our
+  // managed block, mirroring the CLAUDE.md sentinel strategy.
+  const agentsMdPath = path.join(workspace, 'AGENTS.md');
+  const existingAgentsMd = await readUtf8OrNull(agentsMdPath);
+  await writeIfChanged(
+    agentsMdPath,
+    mergeAgentsMd(existingAgentsMd, detected, workspace),
   );
 
   // .claude/skills/tango-ui-sketch/SKILL.md — wholly ours, always overwrite.
@@ -1266,6 +1424,22 @@ export async function ensureWorkspace(
     path.join(workspace, '.claude', 'skills', 'tango-ios-map', 'SKILL.md'),
     TANGO_IOS_MAP_SKILL_MD,
   );
+
+  // .agents/skills/*/SKILL.md — repo-scoped Codex skills. These mirror the
+  // Claude skill playbooks with Codex-facing paths and wording.
+  for (const [name, body] of TANGO_SKILL_MDS) {
+    await writeIfChanged(
+      path.join(workspace, '.agents', 'skills', name, 'SKILL.md'),
+      codexSkillMd(name, body),
+    );
+  }
+
+  // .tango/bin/codex — workspace-local wrapper injected at the front of PATH
+  // for Tango-owned PTYs. This covers users manually typing `codex`, while the
+  // direct auto-launch path still passes the same session-scoped overrides.
+  const codexWrapperPath = path.join(workspace, '.tango', 'bin', 'codex');
+  await writeIfChanged(codexWrapperPath, codexWrapperSh());
+  await fs.chmod(codexWrapperPath, 0o755);
 
   // Best-effort cleanup of the previous skill name in workspaces that were
   // ensured before the rename. It was wholly tango-managed, so it's safe to

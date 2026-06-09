@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Sparkles } from 'lucide-react';
@@ -24,19 +25,33 @@ import {
   PromptInputTools,
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input';
+import {
+  TERMINAL_AGENTS,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 import { cn } from '@/lib/utils';
 
 type Props = {
   open: boolean;
+  terminalAgent: TerminalAgentId;
 };
 
-export default function AgentSidebar({ open }: Props) {
+export default function AgentSidebar({ open, terminalAgent }: Props) {
   // Talk to the UI-controller agent (cursor_move / cursor_click / terminal_type
   // / dom_inspect MCP tools). The agent doesn't draft content itself — it
-  // delegates to terminal-Claude via terminal_type and visibly moves the
+  // delegates to the active terminal agent via terminal_type and visibly moves the
   // shared cursor through AgentCursorOverlay so the user can watch.
+  const terminalAgentMeta = TERMINAL_AGENTS[terminalAgent];
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: '/api/agent',
+        body: { terminalAgent },
+      }),
+    [terminalAgent],
+  );
   const { messages, sendMessage, status, stop } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/agent' }),
+    transport,
   });
 
   const handleSubmit = (msg: PromptInputMessage) => {
@@ -61,7 +76,7 @@ export default function AgentSidebar({ open }: Props) {
             {messages.length === 0 ? (
               <ConversationEmptyState
                 title="Talk to the agent"
-                description="Ask the agent to delegate work to Claude in the terminal."
+                description={`Ask the agent to delegate work to ${terminalAgentMeta.shortLabel} in the terminal.`}
                 icon={<Sparkles className="size-6" />}
               />
             ) : (
