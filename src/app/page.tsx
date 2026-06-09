@@ -84,21 +84,17 @@ function HomeBody() {
         }}
       />
       <main className="flex min-h-0 flex-1">
-        <section className="min-w-[400px] flex-1 bg-card">
-          {workspaceReady ? (
-            <UIPanel terminalAgent={terminalAgent} />
-          ) : current == null ? (
-            <PanelSkeleton withHeader />
-          ) : (
-            <UnsetPlaceholder />
-          )}
-        </section>
+        {/* Agent/terminal sidebar — sits left of the design canvas. The
+            children stay mounted while collapsed (the WS/PTY must survive),
+            so `inert` (not aria-hidden) is load-bearing: it also removes the
+            hidden textarea/buttons from the tab order and makes AgentPanel's
+            focus() on reconnect a no-op while hidden. */}
         <aside
-          aria-hidden={!terminalOpen}
+          inert={!terminalOpen}
           className={cn(
             'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
             terminalOpen
-              ? 'w-[35vw] min-w-[320px] border-l border-border'
+              ? 'w-[35vw] min-w-[320px] border-r border-border'
               : 'w-0',
           )}
         >
@@ -120,8 +116,17 @@ function HomeBody() {
             <TerminalPlaceholder terminalAgent={terminalAgent} />
           )}
         </aside>
+        <section className="min-w-[400px] flex-1 bg-card">
+          {workspaceReady ? (
+            <UIPanel terminalAgent={terminalAgent} />
+          ) : current == null ? (
+            <PanelSkeleton withHeader />
+          ) : (
+            <UnsetPlaceholder />
+          )}
+        </section>
         <aside
-          aria-hidden={!simOpen}
+          inert={!simOpen}
           className={cn(
             'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
             simOpen ? 'w-[420px] min-w-[360px] border-l border-border' : 'w-0',

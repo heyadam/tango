@@ -5,11 +5,12 @@ import {
   Folder,
   FolderOpen,
   Lock,
-  PanelRightClose,
-  PanelRightOpen,
+  PanelLeftClose,
+  PanelLeftOpen,
   Smartphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import TangoLogo from '@/components/TangoLogo';
 import {
   Tooltip,
@@ -66,9 +67,33 @@ export default function AppTopBar({
           source={workspaceSource}
           onClick={onOpenWorkspaceDialog}
         />
-      </div>
-
-      <div className="flex items-center justify-end gap-2">
+        <Separator
+          orientation="vertical"
+          className="mx-1 data-[orientation=vertical]:h-4"
+        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onToggleTerminal}
+              aria-label={
+                terminalOpen ? 'Hide agent sidebar' : 'Show agent sidebar'
+              }
+              aria-pressed={terminalOpen}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              {terminalOpen ? (
+                <PanelLeftClose className="size-4" />
+              ) : (
+                <PanelLeftOpen className="size-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {terminalOpen ? 'Hide agent sidebar' : 'Show agent sidebar'}
+          </TooltipContent>
+        </Tooltip>
         <TerminalAgentSwitch
           value={terminalAgent}
           onChange={onTerminalAgentChange}
@@ -77,22 +102,9 @@ export default function AppTopBar({
           <Code2 className="size-3.5 text-muted-foreground" />
           <span>{activeAgent.label}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={onToggleTerminal}
-          aria-label={
-            terminalOpen ? 'Hide terminal sidebar' : 'Show terminal sidebar'
-          }
-          aria-pressed={terminalOpen}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          {terminalOpen ? (
-            <PanelRightClose className="size-4" />
-          ) : (
-            <PanelRightOpen className="size-4" />
-          )}
-        </Button>
+      </div>
+
+      <div className="flex items-center justify-end gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

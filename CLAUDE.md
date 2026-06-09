@@ -149,6 +149,6 @@ The app uses a shadcn-style stack (Tailwind v4 + Radix + CVA + `cn()`).
 - [src/lib/specToSwiftUI.ts](src/lib/specToSwiftUI.ts) — deterministic codegen (golden-file tested)
 - [src/components/UIPanel.tsx](src/components/UIPanel.tsx) / [UIMockCanvas.tsx](src/components/UIMockCanvas.tsx) / [UIMockNode.tsx](src/components/UIMockNode.tsx) / [UIAddPalette.tsx](src/components/UIAddPalette.tsx) / [UILayersPanel.tsx](src/components/UILayersPanel.tsx) — the design canvas
 - [src/components/Terminal.tsx](src/components/Terminal.tsx) + [src/lib/terminalBus.ts](src/lib/terminalBus.ts) — xterm + bus seam
-- [src/app/page.tsx](src/app/page.tsx) — layout: design canvas | terminal | simulator
+- [src/app/page.tsx](src/app/page.tsx) — layout: agent | design canvas | simulator
 - [preview-host/](preview-host/) — the committed SwiftUI preview app (its README documents the wire protocol)
 - [scripts/fix-node-pty.js](scripts/fix-node-pty.js) — postinstall workaround
