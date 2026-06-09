@@ -513,7 +513,7 @@ function buildServer(): McpServer {
     {
       title: 'Launch the live design preview on the simulator',
       description:
-        "Builds (first run only, ~30–60s; warm runs ~2–4s), installs, and launches tango's preview-host app on the booted iOS simulator. Once running it renders the design spec live: every canvas edit — the user's drags, your set_ui_mock / update_ui_node calls — appears on the simulator in under a second with NO rebuild. xcodebuild is only needed again for `export_run` (real code). Idempotent: if the app is already running and connected this returns immediately. The result's `connected` tells you whether the app's WebSocket is attached; `running` + `connected: false` usually means the user closed the app — calling this again relaunches it. Pass `udid` only to target a specific simulator.",
+        "Builds (first run only, ~30–60s; warm runs ~2–4s), installs, and launches tango's preview-host app on the booted iOS simulator. Once running it renders the design spec live: every canvas edit — the user's drags, your set_ui_mock / update_ui_node calls — appears on the simulator in under a second with NO rebuild. xcodebuild is only needed again for `export_run` (real code). Idempotent: if the app is already running and connected this just brings it to the foreground (use it to get back to the preview after `export_run` launches the exported app over it). The result's `connected` tells you whether the app's WebSocket is attached; `running` + `connected: false` usually means the user closed the app — calling this again relaunches it. Pass `udid` only to target a specific simulator.",
       inputSchema: {
         udid: z.string().optional(),
       },

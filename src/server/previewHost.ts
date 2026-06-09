@@ -12,7 +12,7 @@
 
 import os from 'node:os';
 import path from 'node:path';
-import { runCommand } from './iosBuild';
+import { isSafeUdid, runCommand } from './iosBuild';
 import { resolveActiveUdid } from './iosBuild';
 import { getHook } from './serverHooks';
 
@@ -70,9 +70,10 @@ function derivedDataPath(): string {
 }
 
 // Idempotent: when the app is already running AND a /ws/preview client is
-// connected, this returns immediately. When it's running but disconnected
-// (user killed the app), the install is still present, so the relaunch path
-// is fast.
+// connected, this just brings it to the foreground — Export & Run launches
+// the user's app over it, so "Preview" must reclaim the screen, not no-op.
+// When it's running but disconnected (user killed the app), the install is
+// still present, so the relaunch path is fast.
 export async function startPreviewHost(opts?: {
   udid?: string;
 }): Promise<PreviewHostStatus> {
@@ -86,15 +87,31 @@ export async function startPreviewHost(opts?: {
   if (!root) {
     return fail('TANGO_REPO_ROOT is not set — run tango via its custom server');
   }
-
-  const connected = (getHook('previewClientCount')?.() ?? 0) > 0;
-  if (slot.status.phase === 'running' && connected) return slot.status;
+  if (opts?.udid !== undefined && !isSafeUdid(opts.udid)) {
+    return fail(`udid is not a valid simulator identifier: ${opts.udid.slice(0, 64)}`);
+  }
 
   const udid = await resolveActiveUdid(opts?.udid);
   if (!udid) {
     return fail(
       'no booted iOS simulator (boot one from Xcode → Open Developer Tool → Simulator)',
     );
+  }
+
+  // Fast path: app alive, socket attached, same simulator — it may still be
+  // backgrounded (e.g. export_run just foregrounded the exported app), so
+  // foreground it. `simctl launch` on an already-running process does not
+  // restart it (same pid comes back); it only activates it. If the launch
+  // fails (device rebooted, app uninstalled), fall through to the full
+  // build/install/launch path.
+  const connected = (getHook('previewClientCount')?.() ?? 0) > 0;
+  if (slot.status.phase === 'running' && connected && slot.status.udid === udid) {
+    const fg = await runCommand(
+      'xcrun',
+      ['simctl', 'launch', udid, PREVIEW_BUNDLE_ID],
+      { timeoutMs: 15_000 },
+    );
+    if (fg.exitCode === 0) return slot.status;
   }
 
   // Build. Incremental no-op when warm; ~30–60s once per machine when cold.

@@ -356,7 +356,11 @@ export default function UIPanel({ terminalAgent }: Props) {
   const startPreview = useCallback(async () => {
     if (previewBusy) return;
     setPreviewBusy(true);
-    setStatus('Starting preview… first run builds the preview app (~30–60s).');
+    setStatus(
+      previewStateRef.current === 'connected'
+        ? 'Bringing the preview to the foreground…'
+        : 'Starting preview… first run builds the preview app (~30–60s).',
+    );
     try {
       const res = await fetch('/api/preview/start', { method: 'POST' });
       if (!res.ok && res.status !== 409) {
