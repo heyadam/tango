@@ -19,7 +19,12 @@ const port = Number(process.env.PORT ?? 3000);
 // import setWorkspace / ensureWorkspace via the API routes.
 process.env.TANGO_PORT = String(port);
 
-const app = next({ dev, hostname, port });
+// Pin the project root to this file's directory instead of inheriting
+// process.cwd(). Launched from any other cwd (a git worktree, a parent dir,
+// an IDE task), an implicit `dir` makes Next — and the Tailwind/PostCSS CSS
+// pipeline — resolve `@import "tailwindcss"` from the wrong base and fail with
+// "Can't resolve 'tailwindcss' in <parent dir>".
+const app = next({ dev, hostname, port, dir: import.meta.dirname });
 
 const TERMINAL_PATH = '/ws/terminal';
 const CANVAS_PATH = '/ws/canvas';
