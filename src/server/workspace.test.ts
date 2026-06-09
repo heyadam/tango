@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {
   ensureWorkspace,
+  mergeAgentsMd,
   mergeClaudeMd,
   mergeMcpJson,
   mergeClaudeSettings,
@@ -12,6 +13,8 @@ import {
 const SENTINEL_START = '<!-- tango:start (managed by tango — do not edit) -->';
 const SENTINEL_END = '<!-- tango:end -->';
 const BLOCK = `${SENTINEL_START}\n@.claude/tango.md\n${SENTINEL_END}`;
+const AGENTS_SENTINEL_START = '<!-- tango-codex:start (managed by tango — do not edit) -->';
+const AGENTS_SENTINEL_END = '<!-- tango-codex:end -->';
 
 describe('mergeClaudeMd', () => {
   it('null input returns just the sentinel block', () => {
@@ -66,6 +69,38 @@ describe('mergeClaudeMd', () => {
     const two = `${SENTINEL_START}\nA\n${SENTINEL_END}\n\n${SENTINEL_START}\nB\n${SENTINEL_END}`;
     const out = mergeClaudeMd(two);
     expect(out).toBe(`${BLOCK}\n\n${SENTINEL_START}\nB\n${SENTINEL_END}`);
+  });
+});
+
+describe('mergeAgentsMd', () => {
+  const iosProject = { kind: 'none' } as const;
+  const workspace = '/tmp/tango-project';
+
+  it('null input returns a Codex managed block', () => {
+    const out = mergeAgentsMd(null, iosProject, workspace);
+    expect(out).toContain(AGENTS_SENTINEL_START);
+    expect(out).toContain(AGENTS_SENTINEL_END);
+    expect(out).toContain('Codex CLI');
+    expect(out).toContain('.agents/skills/tango-ui-mock/SKILL.md');
+    expect(out).not.toContain('.claude/skills');
+  });
+
+  it('preserves content outside the Codex sentinel block', () => {
+    const before = '# My agents\n\n';
+    const after = '\n\n## Project notes\nKeep this.';
+    const stale = `${before}${AGENTS_SENTINEL_START}\nstale\n${AGENTS_SENTINEL_END}${after}`;
+    const out = mergeAgentsMd(stale, iosProject, workspace);
+
+    expect(out.startsWith(before)).toBe(true);
+    expect(out.endsWith(after)).toBe(true);
+    expect(out).toContain('.agents/skills/tango-ui-mock/SKILL.md');
+    expect(out).not.toContain('stale');
+  });
+
+  it('is idempotent', () => {
+    const once = mergeAgentsMd('# Existing\n', iosProject, workspace);
+    const twice = mergeAgentsMd(once, iosProject, workspace);
+    expect(twice).toBe(once);
   });
 });
 
@@ -259,21 +294,60 @@ describe('ensureWorkspace skill emission', () => {
     expect(body).toContain('Read flow');
     expect(body).toContain('Write flow');
 
-    // Both modes (UI mock + sketch) must be reachable from the skill.
-    expect(body).toContain('UI mock');
-    expect(body).toContain('sketch');
-
     // Mapping cheat sheets are the load-bearing knowledge for the round-trip.
     expect(body).toContain('SwiftUI → UINode');
     expect(body).toContain('UINode → SwiftUI');
 
-    // Disambiguation from the sibling skills must be explicit so they don't
+    // Disambiguation from the sibling skill must be explicit so it doesn't
     // steal SwiftUI prompts and vice versa.
     expect(body).toContain('tango-ui-mock');
-    expect(body).toContain('tango-ui-sketch');
 
     // Standard tango trailer marking the file as managed/overwritten.
     expect(body).toContain('overwritten on each server boot');
+
+    const codexSkillPath = path.join(
+      dir,
+      '.agents',
+      'skills',
+      'tango-swiftui',
+      'SKILL.md',
+    );
+    const codexBody = await fs.readFile(codexSkillPath, 'utf8');
+    expect(codexBody).toMatch(/^---\nname: tango-swiftui\ndescription: /);
+    expect(codexBody).toContain('Codex');
+    expect(codexBody).toContain('.agents/skills/tango-ui-mock/SKILL.md');
+    expect(codexBody).not.toContain('.claude/skills');
+
+    const codexSkillsRoot = path.join(dir, '.agents', 'skills');
+    const codexSkillNames = await fs.readdir(codexSkillsRoot);
+    expect(codexSkillNames.sort()).toEqual([
+      'tango-ios-sim',
+      'tango-swiftui',
+      'tango-ui-import',
+      'tango-ui-mock',
+    ]);
+    for (const name of codexSkillNames) {
+      const emitted = await fs.readFile(
+        path.join(codexSkillsRoot, name, 'SKILL.md'),
+        'utf8',
+      );
+      const frontmatter = emitted.match(
+        /^---\nname: ([^\n]+)\ndescription: ([^\n]+)\n---\n/,
+      );
+      expect(frontmatter, name).not.toBeNull();
+      if (!frontmatter) continue;
+      expect(frontmatter[1]).toBe(name);
+      expect(frontmatter[2].length, name).toBeLessThanOrEqual(1024);
+      expect(frontmatter[2], name).not.toContain(':');
+    }
+
+    const codexWrapperPath = path.join(dir, '.tango', 'bin', 'codex');
+    const codexWrapper = await fs.readFile(codexWrapperPath, 'utf8');
+    expect(codexWrapper).toContain('TANGO_MCP_URL');
+    expect(codexWrapper).toContain('mcp_servers.tango-canvas.url');
+    expect(codexWrapper).toContain('trust_level="trusted"');
+    expect(codexWrapper).toContain('service_tier="fast"');
+    expect((await fs.stat(codexWrapperPath)).mode & 0o111).not.toBe(0);
   });
 
   it('points at tango-swiftui from the always-loaded tango.md', async () => {
@@ -284,17 +358,42 @@ describe('ensureWorkspace skill emission', () => {
     );
     expect(tangoMd).toContain('tango-swiftui');
     expect(tangoMd).toContain('.claude/skills/tango-swiftui/SKILL.md');
+
+    const agentsMd = await fs.readFile(path.join(dir, 'AGENTS.md'), 'utf8');
+    expect(agentsMd).toContain('tango-swiftui');
+    expect(agentsMd).toContain('.agents/skills/tango-swiftui/SKILL.md');
+    expect(agentsMd).toContain('tango-canvas');
+    expect(agentsMd).not.toContain('.claude/skills');
   });
 
   it('is idempotent — re-running ensure leaves the skill content unchanged', async () => {
     await ensureWorkspace(3000, dir);
     const skillPath = path.join(dir, '.claude', 'skills', 'tango-swiftui', 'SKILL.md');
+    const codexSkillPath = path.join(
+      dir,
+      '.agents',
+      'skills',
+      'tango-swiftui',
+      'SKILL.md',
+    );
+    const codexWrapperPath = path.join(dir, '.tango', 'bin', 'codex');
+    const agentsPath = path.join(dir, 'AGENTS.md');
     const first = await fs.readFile(skillPath, 'utf8');
+    const firstCodex = await fs.readFile(codexSkillPath, 'utf8');
+    const firstCodexWrapper = await fs.readFile(codexWrapperPath, 'utf8');
+    const firstAgents = await fs.readFile(agentsPath, 'utf8');
 
     const result = await ensureWorkspace(3000, dir);
     expect(result.ok).toBe(true);
 
     const second = await fs.readFile(skillPath, 'utf8');
+    const secondCodex = await fs.readFile(codexSkillPath, 'utf8');
+    const secondCodexWrapper = await fs.readFile(codexWrapperPath, 'utf8');
+    const secondAgents = await fs.readFile(agentsPath, 'utf8');
     expect(second).toBe(first);
+    expect(secondCodex).toBe(firstCodex);
+    expect(secondCodexWrapper).toBe(firstCodexWrapper);
+    expect(secondAgents).toBe(firstAgents);
+    expect((await fs.stat(codexWrapperPath)).mode & 0o111).not.toBe(0);
   });
 });

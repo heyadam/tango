@@ -2,7 +2,13 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { dryRunSetWorkspace } from './workspaceState';
+import {
+  _setTerminalAgentInternal,
+  dryRunSetWorkspace,
+  getTerminalAgent,
+  loadPersistedTerminalAgent,
+  setTerminalAgent,
+} from './workspaceState';
 import { _setWorkspaceInternal } from './workspace';
 
 // We test validatePath through dryRunSetWorkspace: it's the public surface that
@@ -26,6 +32,8 @@ afterEach(async () => {
   // Defensive: future cases that call setWorkspace would mutate the slot.
   // Keep the reset so test order doesn't matter.
   _setWorkspaceInternal(null, 'unset');
+  _setTerminalAgentInternal('claude');
+  delete process.env.TANGO_STATE_DIR;
 });
 
 async function mkTmpDir(): Promise<string> {
@@ -129,4 +137,58 @@ describe('dryRunSetWorkspace (validatePath)', () => {
       }
     },
   );
+});
+
+describe('terminal agent persisted state', () => {
+  async function useStateDir(): Promise<string> {
+    const dir = await mkTmpDir();
+    process.env.TANGO_STATE_DIR = dir;
+    return dir;
+  }
+
+  it('defaults to claude when the state file is absent', async () => {
+    await useStateDir();
+    expect(await loadPersistedTerminalAgent()).toBe('claude');
+  });
+
+  it('defaults to claude when the state file contains an invalid agent', async () => {
+    const dir = await useStateDir();
+    await fs.writeFile(
+      path.join(dir, 'state.json'),
+      JSON.stringify({ terminalAgent: 'bad' }),
+    );
+    expect(await loadPersistedTerminalAgent()).toBe('claude');
+  });
+
+  it('persists a valid terminal agent without clobbering lastWorkspace', async () => {
+    const dir = await useStateDir();
+    await fs.writeFile(
+      path.join(dir, 'state.json'),
+      JSON.stringify({ lastWorkspace: '/tmp/project' }),
+    );
+
+    const result = await setTerminalAgent('codex');
+
+    expect(result).toEqual({ ok: true, agent: 'codex' });
+    expect(getTerminalAgent()).toBe('codex');
+    const state = JSON.parse(
+      await fs.readFile(path.join(dir, 'state.json'), 'utf8'),
+    );
+    expect(state).toEqual({
+      lastWorkspace: '/tmp/project',
+      terminalAgent: 'codex',
+    });
+  });
+
+  it('rejects invalid terminal agents and leaves the current value unchanged', async () => {
+    await useStateDir();
+    _setTerminalAgentInternal('codex');
+
+    const result = await setTerminalAgent('bad');
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.code).toBe('invalid_agent');
+    expect(getTerminalAgent()).toBe('codex');
+  });
 });

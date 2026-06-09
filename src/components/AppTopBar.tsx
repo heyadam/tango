@@ -5,8 +5,6 @@ import {
   Folder,
   FolderOpen,
   Lock,
-  PanelLeftClose,
-  PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
   Smartphone,
@@ -18,52 +16,45 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  TERMINAL_AGENTS,
+  TERMINAL_AGENT_IDS,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 import { cn } from '@/lib/utils';
 
 type WorkspaceSource = 'env' | 'persisted' | 'unset';
 
 type Props = {
-  agentOpen: boolean;
-  claudeOpen: boolean;
+  terminalOpen: boolean;
   simOpen: boolean;
+  terminalAgent: TerminalAgentId;
   workspaceName: string | null;
   workspacePath: string | null;
   workspaceSource: WorkspaceSource;
   onOpenWorkspaceDialog: () => void;
-  onToggleAgent: () => void;
-  onToggleClaude: () => void;
+  onToggleTerminal: () => void;
   onToggleSim: () => void;
+  onTerminalAgentChange: (agent: TerminalAgentId) => void;
 };
 
 export default function AppTopBar({
-  agentOpen,
-  claudeOpen,
+  terminalOpen,
   simOpen,
+  terminalAgent,
   workspaceName,
   workspacePath,
   workspaceSource,
   onOpenWorkspaceDialog,
-  onToggleAgent,
-  onToggleClaude,
+  onToggleTerminal,
   onToggleSim,
+  onTerminalAgentChange,
 }: Props) {
+  const activeAgent = TERMINAL_AGENTS[terminalAgent];
+
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-background px-2">
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={onToggleAgent}
-          aria-label={agentOpen ? 'Hide agent sidebar' : 'Show agent sidebar'}
-          aria-pressed={agentOpen}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          {agentOpen ? (
-            <PanelLeftClose className="size-4" />
-          ) : (
-            <PanelLeftOpen className="size-4" />
-          )}
-        </Button>
         <div className="flex items-center gap-1.5 font-serif text-sm font-semibold tracking-tight text-foreground">
           <TangoLogo className="size-5" />
           <span>tango</span>
@@ -78,21 +69,25 @@ export default function AppTopBar({
       </div>
 
       <div className="flex items-center justify-end gap-2">
+        <TerminalAgentSwitch
+          value={terminalAgent}
+          onChange={onTerminalAgentChange}
+        />
         <div className="hidden items-center gap-1.5 text-xs font-medium text-foreground sm:flex">
           <Code2 className="size-3.5 text-muted-foreground" />
-          <span>Claude Code</span>
+          <span>{activeAgent.label}</span>
         </div>
         <Button
           variant="ghost"
           size="icon-sm"
-          onClick={onToggleClaude}
+          onClick={onToggleTerminal}
           aria-label={
-            claudeOpen ? 'Hide Claude Code sidebar' : 'Show Claude Code sidebar'
+            terminalOpen ? 'Hide terminal sidebar' : 'Show terminal sidebar'
           }
-          aria-pressed={claudeOpen}
+          aria-pressed={terminalOpen}
           className="text-muted-foreground hover:text-foreground"
         >
-          {claudeOpen ? (
+          {terminalOpen ? (
             <PanelRightClose className="size-4" />
           ) : (
             <PanelRightOpen className="size-4" />
@@ -120,6 +115,42 @@ export default function AppTopBar({
         </Tooltip>
       </div>
     </header>
+  );
+}
+
+function TerminalAgentSwitch({
+  value,
+  onChange,
+}: {
+  value: TerminalAgentId;
+  onChange: (agent: TerminalAgentId) => void;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label="Terminal agent"
+      className="hidden h-8 items-center rounded-md border border-border bg-muted p-0.5 sm:flex"
+    >
+      {TERMINAL_AGENT_IDS.map((id) => {
+        const active = id === value;
+        const meta = TERMINAL_AGENTS[id];
+        return (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onChange(id)}
+            aria-pressed={active}
+            className={cn(
+              'h-7 min-w-16 rounded px-2.5 text-xs font-medium text-muted-foreground transition-colors',
+              active && 'bg-background text-foreground shadow-sm',
+              !active && 'hover:text-foreground',
+            )}
+          >
+            {meta.shortLabel}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 

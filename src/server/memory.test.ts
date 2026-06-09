@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   parseFile,
   sliceBetween,
+  foldIntoSummary,
   formatEntry,
   countRecentEntries,
   rescueMalformed,
@@ -123,71 +124,63 @@ describe('serialize', () => {
 describe('formatEntry', () => {
   const ts = '2026-04-26 12:00';
 
-  it('formats a snapshot with caption', () => {
-    const out = formatEntry(
-      { type: 'snapshot', relPath: 'design-scratch/x.png', caption: 'A login form' },
-      ts,
-    );
-    expect(out).toBe(`- ${ts} [snapshot] design-scratch/x.png — "A login form"`);
-  });
-
-  it('formats a snapshot without caption', () => {
-    const out = formatEntry(
-      { type: 'snapshot', relPath: 'design-scratch/x.png' },
-      ts,
-    );
-    expect(out).toBe(`- ${ts} [snapshot] design-scratch/x.png`);
-  });
-
-  it('formats an agent_run', () => {
-    const out = formatEntry(
-      { type: 'agent_run', goal: 'add a button', tools: 'cursor_click', outcome: 'done' },
-      ts,
-    );
-    expect(out).toBe(`- ${ts} [agent_run] "add a button" → cursor_click → done`);
-  });
-
-  it('substitutes "no tools" when tools string is empty', () => {
-    const out = formatEntry(
-      { type: 'agent_run', goal: 'g', tools: '', outcome: 'o' },
-      ts,
-    );
-    expect(out).toContain('→ no tools →');
-  });
-
-  it('substitutes — when outcome is empty', () => {
-    const out = formatEntry(
-      { type: 'agent_run', goal: 'g', tools: 't', outcome: '' },
-      ts,
-    );
-    expect(out.endsWith('→ —')).toBe(true);
-  });
-
-  it('truncates long agent_run goals to 120 chars with ellipsis', () => {
-    const long = 'a'.repeat(200);
-    const out = formatEntry(
-      { type: 'agent_run', goal: long, tools: 't', outcome: 'o' },
-      ts,
-    );
-    const goalSegment = out.split('"')[1];
-    expect(goalSegment.length).toBe(120);
-    expect(goalSegment.endsWith('…')).toBe(true);
-  });
-
-  it('collapses whitespace in goal/caption (oneLine)', () => {
-    const out = formatEntry(
-      { type: 'agent_run', goal: 'a\n  b\t c', tools: 't', outcome: 'o' },
-      ts,
-    );
-    expect(out).toContain('"a b c"');
-  });
-
   it('formats a note with category', () => {
     const out = formatEntry(
       { type: 'note', category: 'decision', text: 'Use vitest' },
       ts,
     );
     expect(out).toBe(`- ${ts} [note/decision] Use vitest`);
+  });
+
+  it('collapses whitespace in note text (oneLine)', () => {
+    const out = formatEntry(
+      { type: 'note', category: 'context', text: 'a\n  b\t c' },
+      ts,
+    );
+    expect(out).toBe(`- ${ts} [note/context] a b c`);
+  });
+});
+
+describe('foldIntoSummary', () => {
+  const emptySummary = '\n## Summary\n\n_No prior history yet._\n';
+
+  it('moves folded entries verbatim into the summary body', () => {
+    const folded = [
+      '- 2026-04-26 [note/decision] one',
+      '- 2026-04-26 [note/context] two',
+    ];
+    const out = foldIntoSummary(emptySummary, folded);
+    expect(out).toBe(`\n## Summary\n\n${folded.join('\n')}\n`);
+  });
+
+  it('drops the empty-state placeholder', () => {
+    const out = foldIntoSummary(emptySummary, ['- entry']);
+    expect(out).not.toContain('No prior history yet');
+  });
+
+  it('preserves legacy free-text summaries above the archived lines', () => {
+    const legacy = '\n## Summary\n\nThe app is a todo list.\n';
+    const out = foldIntoSummary(legacy, ['- entry one']);
+    const body = out.replace('\n## Summary\n\n', '');
+    expect(body.indexOf('The app is a todo list.')).toBeLessThan(
+      body.indexOf('- entry one'),
+    );
+  });
+
+  it('appends to an existing archive across successive folds', () => {
+    const first = foldIntoSummary(emptySummary, ['- old-1']);
+    const second = foldIntoSummary(first, ['- old-2']);
+    const body = second.replace('\n## Summary\n\n', '').trimEnd();
+    expect(body.split('\n')).toEqual(['- old-1', '- old-2']);
+  });
+
+  it('drops the oldest lines once the byte cap is exceeded', () => {
+    const line = (i: number) => `- ${String(i).padStart(4, '0')} ${'x'.repeat(120)}`;
+    const folded = Array.from({ length: 200 }, (_, i) => line(i));
+    const out = foldIntoSummary(emptySummary, folded);
+    expect(Buffer.byteLength(out, 'utf8')).toBeLessThan(17 * 1024);
+    expect(out).not.toContain(line(0)); // oldest dropped
+    expect(out).toContain(line(199)); // newest kept
   });
 });
 

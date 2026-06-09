@@ -1,36 +1,53 @@
 'use client';
 
-// SSR-safe shell for "UI" mode. Owns the /ws/ui-mock socket and dynamic-imports
-// UIMockCanvas (react-moveable touches `window` at module load). Same pattern
-// as SketchPanel + DesignerCanvas.
+// The left panel: an SSR-safe shell around the design canvas. Owns the
+// /ws/ui-mock socket and dynamic-imports UIMockCanvas (react-moveable touches
+// `window` at module load).
 //
-// "Send to Claude" packages the current spec into a markdown handoff prompt
-// and submits it to the terminal-Claude session via terminalBus. The spec
-// JSON is the source of truth for what the user wants — Claude reads it and
-// translates the absolute-positioned mock into responsive Tailwind in the
-// production codebase. The user's drag/resize tweaks are visible to Claude
+// The Send action packages the current spec into a markdown handoff prompt
+// and submits it to the active terminal agent via terminalBus. The spec
+// JSON is the source of truth for what the user wants — the agent reads it and
+// translates the absolute-positioned design into responsive Tailwind in the
+// production codebase. The user's drag/resize tweaks are visible to the agent
 // as updated coords on its next `get_ui_mock` read.
 
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { RefreshCw, Send, Trash2 } from 'lucide-react';
-import { Button } from './ui/button';
 import {
-  PanelHeaderLeftSlot,
-  PanelHeaderRightSlot,
-} from '@/lib/leftPanelSlots';
+  FileDown,
+  Frame,
+  Play,
+  RefreshCw,
+  Rocket,
+  Send,
+  Trash2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { IMPORT_PROMPT } from '@/lib/uiImportPrompt';
+import { Button } from './ui/button';
+import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
 import { uiMockStore } from '@/lib/uiMockStore';
 import { EMPTY_SPEC, type UISpec } from '@/lib/uiMockProtocol';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
 import { terminalBus } from '@/lib/terminalBus';
+import {
+  TERMINAL_AGENTS,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 
 const UIMockCanvas = dynamic(() => import('./UIMockCanvas'), {
   ssr: false,
   loading: () => <div className="h-full w-full bg-background" />,
 });
+
+// Warm the canvas chunk in parallel with the workspace fetch instead of after
+// mount. The dynamic() above stays as the SSR boundary (react-moveable touches
+// `window` at module load).
+if (typeof window !== 'undefined') {
+  void import('./UIMockCanvas');
+}
 
 // Subtracted from the wrapper rect when reporting "viewport" to Claude so
 // the size is the largest frame that fits *without scrolling*. Mirrors
@@ -45,7 +62,12 @@ type LoadState =
   | { status: 'loading' }
   | { status: 'ready'; initialSpec: UISpec };
 
-export default function UIPanel() {
+type Props = {
+  terminalAgent: TerminalAgentId;
+};
+
+export default function UIPanel({ terminalAgent }: Props) {
+  const terminalAgentMeta = TERMINAL_AGENTS[terminalAgent];
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
   // Bumping this remounts UIMockCanvas (and re-runs the WS effect) so a
   // workspace switch starts from a clean slate.
@@ -57,7 +79,7 @@ export default function UIPanel() {
   // ref) because the toolbar is rendered by this component, not the canvas.
   const [screenCount, setScreenCount] = useState(0);
 
-  // Latest spec — kept in a ref so "Send to Claude" / "Clear" don't have to
+  // Latest spec — kept in a ref so Send / Clear don't have to
   // re-render to read it. Updated on every server `set` and every local
   // snapshot.
   const specRef = useRef<UISpec>(EMPTY_SPEC);
@@ -71,6 +93,9 @@ export default function UIPanel() {
   const wsRef = useRef<WebSocket | null>(null);
   // Last-sent {w,h} so we don't spam identical frames after no-op resizes.
   const lastSentViewport = useRef<{ w: number; h: number } | null>(null);
+  // Last reported working screen — resent on (re)connect so the preview host
+  // shows the right screen after a socket bounce.
+  const lastActiveScreen = useRef<string | null>(null);
   // Header caption.
   const [viewport, setViewport] = useState<{ w: number; h: number } | null>(
     null,
@@ -108,6 +133,20 @@ export default function UIPanel() {
     uiMockStore.save(spec);
   }, []);
 
+  // Working-screen reports from the canvas → server (drives the preview-host
+  // app's screen selection). Canvas already dedupes consecutive repeats.
+  const handleActiveScreen = useCallback((screenId: string) => {
+    lastActiveScreen.current = screenId;
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      try {
+        ws.send(JSON.stringify({ type: 'active_screen', screenId }));
+      } catch {
+        // socket dying — the open handler will resend on reconnect
+      }
+    }
+  }, []);
+
   // Open the WS bridge: outbound snapshots flow through uiMockBus from the
   // canvas; inbound apply messages go to the canvas via the same bus.
   useEffect(() => {
@@ -129,11 +168,24 @@ export default function UIPanel() {
     // a connected socket, so the first measurement would otherwise be lost.
     const sendCurrentViewport = () => {
       const last = lastSentViewport.current;
-      if (!last) return;
-      try {
-        ws.send(JSON.stringify({ type: 'viewport', w: last.w, h: last.h }));
-      } catch {
-        // socket dying — cleanup runs on close
+      if (last) {
+        try {
+          ws.send(JSON.stringify({ type: 'viewport', w: last.w, h: last.h }));
+        } catch {
+          // socket dying — cleanup runs on close
+        }
+      }
+      if (lastActiveScreen.current) {
+        try {
+          ws.send(
+            JSON.stringify({
+              type: 'active_screen',
+              screenId: lastActiveScreen.current,
+            }),
+          );
+        } catch {
+          // socket dying — cleanup runs on close
+        }
       }
     };
     if (ws.readyState === WebSocket.OPEN) {
@@ -236,7 +288,9 @@ export default function UIPanel() {
     if (sendBusy) return;
     const spec = specRef.current;
     if (!spec.screens || spec.screens.length === 0) {
-      setStatus('Mock is empty — ask Claude to draft one first.');
+      setStatus(
+        `Canvas is empty — ask ${terminalAgentMeta.shortLabel} to draft a design first.`,
+      );
       return;
     }
     setSendBusy(true);
@@ -245,7 +299,7 @@ export default function UIPanel() {
       const handoff = buildHandoffPrompt(spec);
       terminalBus.submitToTerminal(handoff);
       setStatus(
-        `Sent ${spec.screens.length} screen${spec.screens.length === 1 ? '' : 's'} to Claude.`,
+        `Sent ${spec.screens.length} screen${spec.screens.length === 1 ? '' : 's'} to ${terminalAgentMeta.shortLabel}.`,
       );
     } catch (err) {
       setStatus(
@@ -254,7 +308,182 @@ export default function UIPanel() {
     } finally {
       setSendBusy(false);
     }
-  }, [sendBusy]);
+  }, [sendBusy, terminalAgentMeta.shortLabel]);
+
+  // Live preview: the preview-host app on the simulator renders the design
+  // over /ws/preview. The dot tracks the lifecycle: gray = stopped, amber =
+  // building/launching, green = running + connected, red = running but its
+  // socket dropped (relaunch usually fixes it).
+  type PreviewUiState = 'stopped' | 'busy' | 'connected' | 'disconnected' | 'error';
+  const [previewState, setPreviewState] = useState<PreviewUiState>('stopped');
+  const [previewBusy, setPreviewBusy] = useState(false);
+  // The poll callback reads the latest state via a ref so the effect doesn't
+  // re-subscribe on every state change.
+  const previewStateRef = useRef<PreviewUiState>('stopped');
+  previewStateRef.current = previewState;
+
+  useEffect(() => {
+    let cancelled = false;
+    let timer: number | null = null;
+    const tick = async () => {
+      try {
+        const res = await fetch('/api/preview/status', { cache: 'no-store' });
+        const s = (await res.json()) as { phase: string; connected?: boolean };
+        if (cancelled) return;
+        if (s.phase === 'running') {
+          setPreviewState(s.connected ? 'connected' : 'disconnected');
+        } else if (s.phase === 'error') {
+          setPreviewState('error');
+        } else if (s.phase === 'stopped') {
+          setPreviewState('stopped');
+        } else {
+          setPreviewState('busy');
+        }
+      } catch {
+        if (!cancelled) setPreviewState('stopped');
+      }
+      if (cancelled) return;
+      timer = window.setTimeout(tick, previewStateRef.current === 'busy' ? 1000 : 5000);
+    };
+    void tick();
+    return () => {
+      cancelled = true;
+      if (timer != null) window.clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const startPreview = useCallback(async () => {
+    if (previewBusy) return;
+    setPreviewBusy(true);
+    setStatus('Starting preview… first run builds the preview app (~30–60s).');
+    try {
+      const res = await fetch('/api/preview/start', { method: 'POST' });
+      if (!res.ok && res.status !== 409) {
+        const body = (await res.json().catch(() => ({}))) as { reason?: string };
+        setStatus(`Preview failed to start: ${body.reason ?? `HTTP ${res.status}`}`);
+        return;
+      }
+      setPreviewState('busy');
+      // Poll until it settles so the status strip tells the story.
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 1000));
+        if (!mountedRef.current) return;
+        const s = (await (
+          await fetch('/api/preview/status', { cache: 'no-store' })
+        ).json()) as { phase: string; connected?: boolean; message?: string };
+        if (s.phase === 'running') {
+          setPreviewState(s.connected ? 'connected' : 'disconnected');
+          setStatus(
+            s.connected
+              ? 'Preview live — canvas edits now mirror to the simulator.'
+              : 'Preview app launched; waiting for it to connect…',
+          );
+          return;
+        }
+        if (s.phase === 'error') {
+          setPreviewState('error');
+          setStatus(`Preview failed: ${s.message ?? 'unknown error'}`);
+          return;
+        }
+      }
+    } catch (err) {
+      setStatus(
+        `Preview failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    } finally {
+      if (mountedRef.current) setPreviewBusy(false);
+    }
+  }, [previewBusy]);
+
+  // Export & Run: POST kicks the server-side pipeline (codegen → xcodebuild →
+  // install → launch), then poll the phase once a second — matches the
+  // SimulatorPanel polling pattern; phases are coarse and build-dominated, so
+  // SSE would buy nothing.
+  const [exporting, setExporting] = useState(false);
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const exportAndRun = useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    setStatus('Exporting…');
+    const startedAt = Date.now();
+    try {
+      const kick = await fetch('/api/ios/export-run', { method: 'POST' });
+      if (!kick.ok) {
+        const body = (await kick.json().catch(() => ({}))) as {
+          reason?: string;
+        };
+        setStatus(`Export blocked: ${body.reason ?? `HTTP ${kick.status}`}`);
+        return;
+      }
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 1000));
+        if (!mountedRef.current) return;
+        const res = await fetch('/api/ios/export-run', { cache: 'no-store' });
+        const s = (await res.json()) as {
+          phase: string;
+          stage?: string;
+          message?: string;
+          errors?: string[];
+          bundleId?: string;
+          durationMs?: number;
+          inclusion?: string;
+        };
+        if (s.phase === 'done') {
+          const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+          const manual =
+            s.inclusion === 'manual-add-required'
+              ? ' — one-time setup: drag TangoGenerated/ into your Xcode target'
+              : '';
+          setStatus(`Launched ${s.bundleId ?? 'app'} in ${secs}s.${manual}`);
+          return;
+        }
+        if (s.phase === 'error') {
+          const detail = s.errors && s.errors.length > 0 ? ` — ${s.errors[0]}` : '';
+          setStatus(`Export failed (${s.stage}): ${s.message}${detail}`);
+          return;
+        }
+        if (s.phase === 'idle') {
+          setStatus('Export ended unexpectedly.');
+          return;
+        }
+        const labels: Record<string, string> = {
+          generating: 'Generating SwiftUI',
+          writing: 'Writing files',
+          building: 'Building',
+          installing: 'Installing',
+          launching: 'Launching',
+        };
+        setStatus(
+          `${labels[s.phase] ?? s.phase}… ${Math.round((Date.now() - startedAt) / 1000)}s`,
+        );
+      }
+    } catch (err) {
+      setStatus(
+        `Export failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    } finally {
+      if (mountedRef.current) setExporting(false);
+    }
+  }, [exporting]);
+
+  // Import from code: hand the terminal agent a crafted prompt; it reads the
+  // workspace's SwiftUI and writes the design via set_ui_mock. Agent-mediated
+  // by design — parsing arbitrary hand-written SwiftUI deterministically is
+  // brittle; the deterministic direction is export (Export & Run).
+  const importFromCode = useCallback(() => {
+    terminalBus.submitToTerminal(IMPORT_PROMPT);
+    setStatus(
+      `Asked ${terminalAgentMeta.shortLabel} to import the workspace's SwiftUI screens.`,
+    );
+  }, [terminalAgentMeta.shortLabel]);
 
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
@@ -269,60 +498,115 @@ export default function UIPanel() {
     setStatus('Cleared.');
   }, []);
 
-  const leftSlot = useContext(PanelHeaderLeftSlot);
-  const rightSlot = useContext(PanelHeaderRightSlot);
-
   return (
     <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      {leftSlot
-        ? createPortal(
-            <>
-              {load.status === 'ready' && screenCount > 0 && (
-                <span className="text-xs text-panel-header-foreground/80">
-                  {screenCount} screen{screenCount === 1 ? '' : 's'}
-                </span>
-              )}
-              {viewport && (
-                <span
-                  className="font-mono text-[10px] text-panel-header-foreground/60"
-                  title="Default frame size for new screens"
-                >
-                  {viewport.w}×{viewport.h}
-                </span>
-              )}
-            </>,
-            leftSlot,
-          )
-        : null}
-      {rightSlot
-        ? createPortal(
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearMock}
-                disabled={screenCount === 0}
-                className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+      <PanelHeader
+        leftSlot={
+          <>
+            <Frame className="size-3.5 text-panel-header-foreground/70" />
+            <span>Design</span>
+            {load.status === 'ready' && screenCount > 0 && (
+              <span className="text-xs text-panel-header-foreground/80">
+                {screenCount} screen{screenCount === 1 ? '' : 's'}
+              </span>
+            )}
+            {viewport && (
+              <span
+                className="font-mono text-[10px] text-panel-header-foreground/60"
+                title="Default frame size for new screens"
               >
-                <Trash2 className="size-3.5" />
-                Clear
-              </Button>
-              <Button
-                size="sm"
-                onClick={sendToClaude}
-                disabled={sendBusy || screenCount === 0}
-              >
-                {sendBusy ? (
-                  <RefreshCw className="size-3.5 animate-spin" />
-                ) : (
-                  <Send className="size-3.5" />
+                {viewport.w}×{viewport.h}
+              </span>
+            )}
+          </>
+        }
+        rightSlot={
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={importFromCode}
+              title="Ask the terminal agent to read this workspace's SwiftUI screens onto the canvas"
+              className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+            >
+              <FileDown className="size-3.5" />
+              Import
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearMock}
+              disabled={screenCount === 0}
+              className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+            >
+              <Trash2 className="size-3.5" />
+              Clear
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                void startPreview();
+              }}
+              disabled={previewBusy}
+              title={
+                previewState === 'connected'
+                  ? 'Preview live — canvas edits mirror to the simulator in real time'
+                  : previewState === 'disconnected'
+                    ? 'Preview app lost its connection — click to relaunch'
+                    : 'Launch the live preview app on the booted simulator (first run builds it once, ~30–60s)'
+              }
+              className="text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'size-2 rounded-full',
+                  previewState === 'connected' && 'bg-secondary',
+                  previewState === 'disconnected' && 'bg-destructive',
+                  previewState === 'error' && 'bg-destructive',
+                  previewState === 'busy' && 'animate-pulse bg-warning',
+                  previewState === 'stopped' && 'bg-panel-header-foreground/30',
                 )}
-                Send to Claude
-              </Button>
-            </>,
-            rightSlot,
-          )
-        : null}
+              />
+              {previewBusy ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Play className="size-3.5" />
+              )}
+              Preview
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                void exportAndRun();
+              }}
+              disabled={exporting || screenCount === 0}
+              title="Generate SwiftUI into TangoGenerated/, build, and launch on the simulator"
+            >
+              {exporting ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Rocket className="size-3.5" />
+              )}
+              Export &amp; Run
+            </Button>
+            <Button
+              size="sm"
+              onClick={sendToClaude}
+              disabled={sendBusy || screenCount === 0}
+            >
+              {sendBusy ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Send className="size-3.5" />
+              )}
+              {terminalAgentMeta.sendLabel}
+            </Button>
+          </>
+        }
+      />
 
       <div ref={viewportRef} className="relative min-h-0 flex-1">
         {load.status === 'ready' && (
@@ -330,6 +614,7 @@ export default function UIPanel() {
             key={generation}
             initialSpec={load.initialSpec}
             onPersist={persist}
+            onActiveScreen={handleActiveScreen}
           />
         )}
       </div>
@@ -343,8 +628,8 @@ export default function UIPanel() {
   );
 }
 
-// Markdown handoff to terminal-Claude. Mirrors moodboard's pattern: the JSON
-// is the source of truth; the prose tells Claude what to do with it.
+// Markdown handoff to the active terminal agent. The JSON is the source of
+// truth; the prose tells the agent what to do.
 function buildHandoffPrompt(spec: UISpec): string {
   const screens = spec.screens
     .map(

@@ -2,9 +2,9 @@
 // NOT under app/api/.../route.ts, because the Streamable HTTP transport wants
 // Node IncomingMessage/ServerResponse, not Web Fetch Request/Response.
 //
-// Tools live alongside canvasBridge in the same Node process so they can read
-// and write the scene cache without IPC. The browser is told about scene
-// changes via the /ws/canvas bridge.
+// Tools live alongside uiMockBridge in the same Node process so they can read
+// and write the design-spec cache without IPC. The browser is told about spec
+// changes via the /ws/ui-mock bridge.
 
 import { randomUUID } from 'node:crypto';
 import type http from 'node:http';
@@ -14,124 +14,61 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import {
-  appendElementsFromServer,
-  clearCanvasFromServer,
-  getCanvasState,
-  requestScreenshot,
-  setCanvasFromServer,
-} from './canvasBridge';
-import {
+  addUINodesFromServer,
   appendUIScreenFromServer,
   clearUIMockFromServer,
   getUIMock,
   getUIViewport,
+  removeUINodesFromServer,
+  reorderUINodeFromServer,
   setUIMockFromServer,
+  updateUINodeFromServer,
 } from './uiMockBridge';
-import { pushCursorCommand, requestInspect } from './agentCursorBridge';
-import type { CanvasElement } from '@/lib/canvasProtocol';
-import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
+import { describeLayers } from '@/lib/uiMockOps';
+import type { UINode, UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import {
-  type Edge as FlowEdge,
-  type Screen as FlowScreen,
-  layoutScreenFlow,
-  screenFlowElements,
-  validateScreenFlowInput,
-} from './screenFlow';
+  uiNodePatchSchema,
+  uiNodeSchema,
+  uiScreenSchema,
+  uiSpecSchema,
+} from '@/lib/uiMockSchema';
 import { recordNote } from './memory';
+import { resolveBuildProject, runExportAndRun } from './iosExport';
+import { getPreviewHostStatus, startPreviewHost } from './previewHost';
 import { getIosProject, getWorkspaceOrNull } from './workspace';
 import {
   iosBuildRun,
   iosLogsRecent,
+  isSafeUdid,
   listBootedDevices,
   readActiveDeviceFromServeSim,
+  resolveActiveUdid,
 } from './iosBuild';
+import {
+  type ControlResult,
+  fetchAxSnapshot,
+  iosButton,
+  iosGesture,
+  iosRotate,
+  iosTap,
+  iosType,
+  isValidButtonName,
+  isValidOrientation,
+  ROTATE_ORIENTATIONS,
+  toInspectResult,
+  validateNormalized,
+} from './iosSimControl';
 import { getSimStatus } from './sim';
 
-const elementSchema = z.array(z.record(z.string(), z.unknown()));
-// Permissive Zod shape — we don't reproduce Excalidraw's element schema here.
-// Excalidraw will reject malformed elements at updateScene() time on the
-// client; we surface that as the tool result.
+// UISpec zod schemas live in src/lib/uiMockSchema.ts (shared with the
+// design-file persistence validator).
 
-// UI mock spec — keep this aligned with src/lib/uiMockProtocol.ts. Strict
-// enum on `type` and required positioning so Claude gets a useful validation
-// error instead of nodes silently rendering as `null`.
-const uiNodeTypeEnum = z.enum([
-  'div',
-  'text',
-  'heading',
-  'Button',
-  'Input',
-  'Textarea',
-  'Badge',
-  'Separator',
-  'Image',
-  'Icon',
-]);
+// z-order operations for `reorder_ui_node`. front/back jump to top/bottom of
+// the screen's stack; forward/backward swap with the adjacent sibling.
+const reorderOpEnum = z.enum(['front', 'back', 'forward', 'backward']);
 
-const uiNodeSchema = z.object({
-  id: z.string().min(1),
-  type: uiNodeTypeEnum,
-  x: z.number(),
-  y: z.number(),
-  width: z.number().positive(),
-  height: z.number().positive(),
-  text: z.string().optional(),
-  className: z.string().optional(),
-  style: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
-  props: z.record(z.string(), z.unknown()).optional(),
-});
-
-const uiScreenSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  frame: z.object({
-    w: z.number().int().positive(),
-    h: z.number().int().positive(),
-  }),
-  nodes: z.array(uiNodeSchema),
-});
-
-const uiSpecSchema = z.object({
-  screens: z.array(uiScreenSchema),
-});
-
-// Screen-flow spec — the input shape for `set_screen_flow`. Aligned with
-// `Screen` / `Edge` in src/server/screenFlow.ts. Strict enums on `kind` so
-// terminal-Claude gets a useful validation error for typos. Bounded fields
-// keep the rendered card readable; `name.max(120)` accommodates real UIKit
-// `ViewController` names that routinely exceed 60 chars.
-const flowScreenSchema = z.object({
-  id: z.string().min(1).max(120),
-  name: z.string().min(1).max(120),
-  kind: z.enum(['swiftui', 'uikit', 'storyboard']),
-  filePath: z.string().max(240).optional(),
-  summary: z.string().max(120).optional(),
-  isEntry: z.boolean().optional(),
-});
-
-const flowEdgeSchema = z.object({
-  from: z.string().min(1).max(120),
-  to: z.string().min(1).max(120),
-  kind: z.enum(['push', 'sheet', 'cover', 'present', 'segue', 'tab']),
-  // Cap matches the in-card truncation budget — kept in sync so Claude
-  // can't silently lose chars to a render-time `slice` that the schema
-  // didn't warn about.
-  label: z.string().max(24).optional(),
-});
-
-const flowOptionsSchema = z
-  .object({
-    append: z.boolean().optional(),
-    cardWidth: z.number().int().min(120).max(800).optional(),
-    cardHeight: z.number().int().min(80).max(600).optional(),
-    origin: z
-      .object({
-        x: z.number().min(-10000).max(10000),
-        y: z.number().min(-10000).max(10000),
-      })
-      .optional(),
-  })
-  .optional();
+const TANGO_MCP_INSTRUCTIONS =
+  'Tango is a split-pane app: the user sees a direct-manipulation design canvas on the left (a spec of screens with absolutely-positioned nodes — the "UI mock") and this terminal agent on the right. Use get_ui_viewport/get_ui_mock before proposing designs, then set_ui_mock/add_ui_screen for fresh work and add_ui_nodes/update_ui_node/remove_ui_node/reorder_ui_node for incremental edits that preserve the user\'s manual tweaks. Use ios_status and ios_build_run after Swift edits when an iOS project is detected, and the ios_* control tools to drive the running app.';
 
 function toolErrorResult(toolName: string, err: unknown) {
   return {
@@ -147,7 +84,7 @@ function toolErrorResult(toolName: string, err: unknown) {
 
 // Shared shape for `ios_build_run` early-exit errors — keeps the result
 // schema consistent with the orchestrator's own `{ok:false, stage, message,
-// errors}` returns so terminal-Claude doesn't have to parse two formats.
+// errors}` returns so the terminal agent does not have to parse two formats.
 function iosBuildErrorResult(
   stage: 'detect' | 'build' | 'install' | 'launch',
   message: string,
@@ -166,169 +103,82 @@ function iosBuildErrorResult(
   };
 }
 
+// Shared preflight for the `ios_*` simulator-control tools: serve-sim must be
+// streaming a device, and we need a udid to drive. Returns the resolved udid +
+// serve-sim base url, or a ready-to-return error result. Keeps the readiness /
+// resolution boilerplate out of each tool handler.
+async function resolveControlTarget(
+  toolName: string,
+  udid: string | undefined,
+): Promise<
+  | { ok: true; udid: string; simUrl: string }
+  | { ok: false; result: ReturnType<typeof toolErrorResult> }
+> {
+  const sim = getSimStatus();
+  if (sim.phase !== 'ready') {
+    const why = sim.phase === 'error' ? sim.message : sim.phase;
+    return {
+      ok: false,
+      result: toolErrorResult(
+        toolName,
+        new Error(`simulator preview not ready (serve-sim: ${why})`),
+      ),
+    };
+  }
+  if (udid !== undefined && !isSafeUdid(udid)) {
+    return {
+      ok: false,
+      result: toolErrorResult(
+        toolName,
+        new Error(`udid is not a valid simulator identifier: ${udid.slice(0, 64)}`),
+      ),
+    };
+  }
+  const resolved = await resolveActiveUdid(udid);
+  if (!resolved) {
+    return {
+      ok: false,
+      result: toolErrorResult(
+        toolName,
+        new Error('no booted iOS simulator to drive'),
+      ),
+    };
+  }
+  return { ok: true, udid: resolved, simUrl: sim.url };
+}
+
+// Map a serve-sim ControlResult to an MCP tool result: a failure becomes an
+// error result carrying serve-sim's message; success returns `successText`.
+function controlResultToTool(
+  toolName: string,
+  r: ControlResult,
+  successText: string,
+) {
+  if (!r.ok) return toolErrorResult(toolName, new Error(r.message));
+  return { content: [{ type: 'text' as const, text: successText }] };
+}
+
 function buildServer(): McpServer {
-  const server = new McpServer({
-    name: 'tango-canvas',
-    version: '0.1.0',
-  });
-
-  server.registerTool(
-    'get_canvas_state',
+  const server = new McpServer(
     {
-      title: 'Read the canvas',
-      description:
-        'Returns the current Excalidraw scene. `elements` is the array shape produced by the `elements` field of `serializeAsJSON`. `fileKeys` lists the IDs of any embedded image files in the scene; the binary file bytes themselves are not inlined to keep the response small.',
+      name: 'tango-canvas',
+      version: '0.1.0',
     },
-    async () => {
-      const { elements, appState, files } = getCanvasState();
-      const payload = {
-        elements,
-        appState,
-        fileKeys: Object.keys(files),
-      };
-      return {
-        content: [{ type: 'text', text: JSON.stringify(payload, null, 2) }],
-      };
-    },
+    { instructions: TANGO_MCP_INSTRUCTIONS },
   );
 
-  server.registerTool(
-    'set_canvas_state',
-    {
-      title: 'Replace the canvas',
-      description:
-        'Replaces the entire canvas with the provided elements. `elements` must match the shape of the `elements` field returned by `get_canvas_state`. Call `get_canvas_state` first if you need to see the current scene shape. Useful for proposing wireframes or full-screen redesigns.',
-      inputSchema: {
-        elements: elementSchema,
-        appState: z.record(z.string(), z.unknown()).optional(),
-      },
-    },
-    async ({ elements, appState }) => {
-      setCanvasFromServer(elements as CanvasElement[], appState);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Replaced canvas with ${elements.length} element(s).`,
-          },
-        ],
-      };
-    },
-  );
-
-  server.registerTool(
-    'add_elements',
-    {
-      title: 'Append to the canvas',
-      description:
-        'Appends new elements to the existing canvas without disturbing what is already there. `elements` must match the shape of the `elements` field returned by `get_canvas_state`. Useful for adding annotations, callouts, or new shapes alongside existing work.',
-      inputSchema: {
-        elements: elementSchema,
-      },
-    },
-    async ({ elements }) => {
-      appendElementsFromServer(elements as CanvasElement[]);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Appended ${elements.length} element(s) to the canvas.`,
-          },
-        ],
-      };
-    },
-  );
-
-  server.registerTool(
-    'clear_canvas',
-    {
-      title: 'Clear the canvas',
-      description: 'Empties the canvas. Existing app state and embedded files are preserved.',
-    },
-    async () => {
-      clearCanvasFromServer();
-      return { content: [{ type: 'text', text: 'Canvas cleared.' }] };
-    },
-  );
-
-  server.registerTool(
-    'screenshot_canvas',
-    {
-      title: 'See the canvas',
-      description:
-        "Returns the current Excalidraw canvas as a rendered image (vs. `get_canvas_state`'s scene JSON), so you can actually see what the user has drawn — including embedded screenshots whose bytes `get_canvas_state` strips. Reflects the live browser canvas at call time, with no debounce window. Safe to call in a loop. Defaults to a JPEG ~1024px on the longest side, which is plenty for vision and keeps round-trips fast; pass `maxDim` (up to 4096) for more detail or a smaller value for faster polling, and `quality` (0.1–1) to tune JPEG compression.",
-      inputSchema: {
-        maxDim: z.number().int().positive().max(4096).optional(),
-        quality: z.number().min(0.1).max(1).optional(),
-      },
-    },
-    async ({ maxDim, quality }) => {
-      try {
-        const { mime, data } = await requestScreenshot({ maxDim, quality });
-        return {
-          content: [{ type: 'image', data, mimeType: mime }],
-        };
-      } catch (err) {
-        return toolErrorResult('screenshot_canvas', err);
-      }
-    },
-  );
-
-  server.registerTool(
-    'set_screen_flow',
-    {
-      title: 'Render an app screen-flow diagram',
-      description:
-        "Render an app's screens + navigation as a Figma-style flow diagram on the Excalidraw canvas. Hand it a parsed graph: `screens` (each with stable `id`, `name` ≤120 chars, `kind`: 'swiftui' | 'uikit' | 'storyboard', optional `filePath`, `summary` ≤120 chars, and `isEntry` for the launch screen) plus `edges` connecting screen ids by navigation `kind` ('push' | 'sheet' | 'cover' | 'present' | 'segue' | 'tab', with optional `label` ≤24 chars). The tool runs a layered BFS layout (entries on top, children below), draws each screen as a rounded card with title + meta + summary, and connects them with kind-colored arrows. Defaults to replacing the canvas; pass `options.append: true` to add alongside existing content — when appending, also pass `options.origin: {x, y}` pointing at empty space (call `get_canvas_state` first to find a free area), or the new diagram lands on top of the existing one at the default `(200, 200)`. Use this once with the full graph rather than dribbling elements in via `add_elements`. Designed for the `tango-ios-map` skill.",
-      inputSchema: {
-        screens: z.array(flowScreenSchema).min(1).max(300),
-        edges: z.array(flowEdgeSchema).max(3000),
-        options: flowOptionsSchema,
-      },
-    },
-    async ({ screens, edges, options }) => {
-      const screenList = screens as FlowScreen[];
-      const edgeList = edges as FlowEdge[];
-      const validation = validateScreenFlowInput(screenList, edgeList);
-      if (validation) {
-        return toolErrorResult('set_screen_flow', new Error(validation));
-      }
-      const layout = layoutScreenFlow(screenList, edgeList, {
-        cardWidth: options?.cardWidth,
-        cardHeight: options?.cardHeight,
-        originX: options?.origin?.x,
-        originY: options?.origin?.y,
-      });
-      const elements = screenFlowElements(screenList, edgeList, layout);
-      if (options?.append) {
-        appendElementsFromServer(elements);
-      } else {
-        setCanvasFromServer(elements);
-      }
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Rendered ${screenList.length} screen(s), ${edgeList.length} edge(s) on the canvas.`,
-          },
-        ],
-      };
-    },
-  );
-
-  // UI mock tools. Sibling tool group to the canvas tools but for the "UI"
-  // mode panel — Claude writes a shadcn-based mock spec, the user drags/
-  // resizes/edits-text in the browser, and Claude reads the result back. The
-  // spec lives in uiMockBridge's in-memory cache and syncs to the browser
-  // over /ws/ui-mock. Element shape matches `UISpec` in
-  // src/lib/uiMockProtocol.ts.
+  // UI mock tools — the design surface in the left pane. The terminal agent
+  // writes a shadcn-based spec, the user drags/resizes/edits-text in the
+  // browser, and the terminal agent reads the result back. The spec lives in
+  // uiMockBridge's in-memory cache and syncs to the browser over /ws/ui-mock.
+  // Element shape matches `UISpec` in src/lib/uiMockProtocol.ts.
 
   server.registerTool(
     'get_ui_mock',
     {
       title: 'Read the UI mock',
       description:
-        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind prototype shown in the left pane when the workspace is in 'UI' mode. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Empty `screens` array means nothing has been mocked yet.",
+        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Empty `screens` array means nothing has been mocked yet.",
     },
     async () => {
       const spec = getUIMock();
@@ -343,7 +193,7 @@ function buildServer(): McpServer {
     {
       title: 'Read the UI panel viewport size',
       description:
-        "Returns the live pixel size of the largest frame that fits without scrolling in the user's UI mode panel — already adjusted for the canvas's padding and per-screen title row. Call this BEFORE `set_ui_mock` / `add_ui_screen` when the user wants a mock that fills their current screen (the common case — anything other than an explicit mobile/tablet request). Use the returned `{w, h}` as the screen's frame size so the mock matches exactly what they see. Returns `{w: null, h: null}` if no measurement is available yet (no browser open this session, or right after a workspace switch before the new tab has measured) — fall back to 1280×800 in that case.",
+        "Returns the live pixel size of the largest frame that fits without scrolling in the user's design panel — already adjusted for the canvas's padding and per-screen title row. Call this BEFORE `set_ui_mock` / `add_ui_screen` when the user wants a mock that fills their current screen (the common case — anything other than an explicit mobile/tablet request). Use the returned `{w, h}` as the screen's frame size so the mock matches exactly what they see. Returns `{w: null, h: null}` if no measurement is available yet (no browser open this session, or right after a workspace switch before the new tab has measured) — fall back to 1280×800 in that case.",
     },
     async () => {
       const v = getUIViewport();
@@ -427,151 +277,140 @@ function buildServer(): McpServer {
     },
   );
 
-  // Agent UI-control tools. These push commands over /ws/agent-cursor to the
-  // browser; AgentCursorOverlay animates the cursor sprite and dispatches the
-  // matching DOM events. `delivered: 0` means no browser is listening — the
-  // model should surface that to the user rather than retry blindly.
+  // Node-level UI mock tools. These operate on the LIVE server cache (the
+  // latest snapshot the browser pushed up), so they preserve the user's
+  // drag/resize/text tweaks to every node except the one being changed —
+  // unlike `set_ui_mock`, which replaces everything. Prefer these for
+  // incremental edits. z-order = node array order: later = rendered on top.
 
   server.registerTool(
-    'dom_inspect',
+    'get_ui_layers',
     {
-      title: 'List interactive UI elements with their bounding rects',
+      title: 'Inspect the UI mock layer hierarchy',
       description:
-        'ALWAYS call this before cursor_move/cursor_click when you do not have an exact CSS selector. Returns the visible interactive elements on the page (buttons, links, inputs, things with role=button, etc.) with their accessible names, visible text, roles, and pixel rects. The returned `center: {x,y}` of the chosen element is what you pass to cursor_click — that hits the target precisely instead of guessing coordinates.\n\nPass `query` to fuzzy-match against accessible name / text / role (e.g. `query: "send to claude"`). Pass `selector` to scope the search to a region (defaults to document.body). `limit` caps the result count (default 30, max 100). Elements are ranked: exact name match > startsWith > contains; without a query, in-viewport elements come first.',
+        "Returns a compact, z-ordered outline of the UI mock — each screen and, within it, its nodes listed from back to front with a `z` index (array order; higher `z` = rendered on top), `id`, `type`, a truncated `text`, and the bounding `rect`. This is the cheap way to see the layer structure and grab real node ids before calling `update_ui_node`, `remove_ui_node`, or `reorder_ui_node` (use `get_ui_mock` instead when you need the full styling/props of every node). Pass `screenId` to scope to one screen; omit it for all screens. An unknown `screenId` returns an empty `screens` array.",
       inputSchema: {
-        query: z.string().optional(),
-        selector: z.string().optional(),
-        limit: z.number().int().positive().max(100).optional(),
+        screenId: z.string().optional(),
       },
     },
-    async ({ query, selector, limit }) => {
+    async ({ screenId }) => {
+      const layers = describeLayers(getUIMock(), screenId);
+      return {
+        content: [{ type: 'text', text: JSON.stringify(layers, null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
+    'add_ui_nodes',
+    {
+      title: 'Add nodes to a UI mock screen',
+      description:
+        "Appends one or more nodes to an existing screen (identified by `screenId`) WITHOUT touching the rest of the mock — operates on the live spec, so the user's drag/resize/text tweaks to other nodes survive. Prefer this over `set_ui_mock` whenever you're adding to an existing screen. New nodes land on TOP of the z-order (end of the screen's node list). Each node has a unique `id` (must not collide with any existing node), a `type` (div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` / `className` (theme-token Tailwind for visuals; layout classes are ignored) / `style` (React inline-style for off-theme colors) / `props` (Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName`, heading `level`). Call `get_ui_layers` or `get_ui_mock` first if you need the screen id or want to avoid overlapping existing nodes.",
+      inputSchema: {
+        screenId: z.string().min(1),
+        nodes: z.array(uiNodeSchema).min(1),
+      },
+    },
+    async ({ screenId, nodes }) => {
       try {
-        const result = await requestInspect({ query, selector, limit });
+        addUINodesFromServer(screenId, nodes as UINode[]);
+        const screen = getUIMock().screens.find((s) => s.id === screenId);
         return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          content: [
+            {
+              type: 'text',
+              text: `Added ${nodes.length} node(s) to screen "${screenId}" (now ${screen?.nodes.length ?? '?'} node(s)).`,
+            },
+          ],
         };
       } catch (err) {
-        return toolErrorResult('dom_inspect', err);
+        return toolErrorResult('add_ui_nodes', err);
       }
     },
   );
 
   server.registerTool(
-    'cursor_move',
+    'update_ui_node',
     {
-      title: 'Move the agent cursor',
+      title: 'Update a single UI mock node',
       description:
-        'Smoothly moves the on-screen agent cursor to a target. Pass `selector` (CSS selector — preferred) OR a `x`/`y` viewport coordinate pair. `durationMs` controls the animation length (default 350ms). Use this to draw the user\'s eye before clicking, or just to inspect a region.',
+        "Shallow-merges a `patch` into one node, found by `nodeId` across all screens — operates on the live spec, so every other node's tweaks survive. Use this for targeted edits (move/resize a node, change its `text`, swap a Button `variant`, restyle via `className`/`style`) instead of replacing the whole spec with `set_ui_mock`. The patch may set any node field EXCEPT `id` (immutable): `type`, `x`, `y`, `width`, `height`, `text`, `className`, `style`, `props`. Omitted fields are left unchanged. Errors if the node id doesn't exist — call `get_ui_layers` first if unsure.",
       inputSchema: {
-        selector: z.string().optional(),
-        x: z.number().optional(),
-        y: z.number().optional(),
-        durationMs: z.number().int().positive().max(5000).optional(),
+        nodeId: z.string().min(1),
+        patch: uiNodePatchSchema,
       },
     },
-    async ({ selector, x, y, durationMs }) => {
-      if (!selector && (typeof x !== 'number' || typeof y !== 'number')) {
+    async ({ nodeId, patch }) => {
+      try {
+        updateUINodeFromServer(nodeId, patch);
         return {
-          isError: true,
+          content: [
+            { type: 'text', text: `Updated node "${nodeId}".` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('update_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'remove_ui_node',
+    {
+      title: 'Remove UI mock node(s)',
+      description:
+        "Deletes one or more nodes by id (across any screen) from the live spec, leaving everything else intact. Pass `nodeIds` as an array. All-or-nothing: if ANY id doesn't exist the call fails and nothing is removed, so a typo can't silently drop the wrong node — call `get_ui_layers` first to confirm ids. To remove a whole screen, use `set_ui_mock` (there's no per-screen delete).",
+      inputSchema: {
+        nodeIds: z.array(z.string().min(1)).min(1),
+      },
+    },
+    async ({ nodeIds }) => {
+      try {
+        removeUINodesFromServer(nodeIds);
+        return {
           content: [
             {
               type: 'text',
-              text: 'cursor_move requires either `selector` or both `x` and `y`.',
+              text: `Removed ${nodeIds.length} node(s).`,
             },
           ],
         };
+      } catch (err) {
+        return toolErrorResult('remove_ui_node', err);
       }
-      const { delivered } = pushCursorCommand({
-        type: 'move',
-        selector,
-        x,
-        y,
-        durationMs,
-      });
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `cursor_move dispatched to ${delivered} client(s).`,
-          },
-        ],
-      };
     },
   );
 
   server.registerTool(
-    'cursor_click',
+    'reorder_ui_node',
     {
-      title: 'Click at the agent cursor target',
+      title: 'Reorder a UI mock node in the z-stack',
       description:
-        'Moves the agent cursor to the target and dispatches a real DOM click (`mousedown`/`mouseup`/`click`). Pass `selector` (CSS selector — preferred) OR `x`/`y`. `button` defaults to "left". The click fires on whatever element is at that point, so React handlers fire normally.',
+        "Changes a node's z-order (stacking) within its own screen. `op` is one of: `front` (move to top of the stack), `back` (move to bottom), `forward` (move up one — render above the next sibling), `backward` (move down one). z-order is the node array order: a node later in the list paints over earlier ones, so 'front' = end of the list. A move at a boundary (already on top/bottom) is a harmless no-op. Use `get_ui_layers` to see current stacking and ids. Errors if the node id doesn't exist.",
       inputSchema: {
-        selector: z.string().optional(),
-        x: z.number().optional(),
-        y: z.number().optional(),
-        button: z.enum(['left', 'right']).optional(),
+        nodeId: z.string().min(1),
+        op: reorderOpEnum,
       },
     },
-    async ({ selector, x, y, button }) => {
-      if (!selector && (typeof x !== 'number' || typeof y !== 'number')) {
+    async ({ nodeId, op }) => {
+      try {
+        reorderUINodeFromServer(nodeId, op);
         return {
-          isError: true,
           content: [
-            {
-              type: 'text',
-              text: 'cursor_click requires either `selector` or both `x` and `y`.',
-            },
+            { type: 'text', text: `Moved node "${nodeId}" ${op}.` },
           ],
         };
+      } catch (err) {
+        return toolErrorResult('reorder_ui_node', err);
       }
-      const { delivered } = pushCursorCommand({
-        type: 'click',
-        selector,
-        x,
-        y,
-        button,
-      });
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `cursor_click dispatched to ${delivered} client(s).`,
-          },
-        ],
-      };
-    },
-  );
-
-  server.registerTool(
-    'cursor_type',
-    {
-      title: 'Type into a focusable element',
-      description:
-        'Types text into a target element. If `selector` is given the element is focused first; otherwise the currently-focused element receives the input. Best for HTML inputs and textareas. For typing into the in-app terminal, use `terminal_type` instead — it speaks directly to the PTY.',
-      inputSchema: {
-        text: z.string(),
-        selector: z.string().optional(),
-      },
-    },
-    async ({ text, selector }) => {
-      const { delivered } = pushCursorCommand({ type: 'type', text, selector });
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `cursor_type dispatched ${text.length} char(s) to ${delivered} client(s).`,
-          },
-        ],
-      };
     },
   );
 
   // iOS build / install / launch tools. Available regardless of whether the
   // workspace contains an Xcode project — `ios_status` returns `project.kind:
-  // 'none'` if not, and the skill (`tango-ios-sim`) tells terminal-Claude to
-  // bail out gracefully in that case. Not exposed to the controller agent's
-  // ALLOWED_TOOLS — these are terminal-Claude's domain (the controller
-  // delegates via `terminal_type`).
+  // 'none'` if not, and the skill (`tango-ios-sim`) tells the terminal agent to
+  // bail out gracefully in that case.
 
   server.registerTool(
     'ios_status',
@@ -632,75 +471,19 @@ function buildServer(): McpServer {
             new Error('no workspace selected'),
           );
         }
-        const projectStatus = getIosProject();
-        if (projectStatus.kind === 'none') {
-          return iosBuildErrorResult(
-            'detect',
-            'no Xcode project detected in this workspace (need a *.xcodeproj or *.xcworkspace at depth ≤ 3)',
-          );
+        // Shared resolution with Export & Run (iosExport.ts) — handles the
+        // none/error/ambiguous cases and the duplicate-scheme trap (two
+        // projects sharing a scheme name would otherwise silently build the
+        // wrong codebase).
+        const projectResult = resolveBuildProject(scheme);
+        if (!projectResult.ok) {
+          return iosBuildErrorResult('detect', projectResult.message);
         }
-        if (projectStatus.kind === 'error') {
-          return iosBuildErrorResult('detect', projectStatus.message);
-        }
-        if (projectStatus.kind === 'ambiguous' && !scheme) {
-          return iosBuildErrorResult(
-            'detect',
-            'multiple Xcode projects detected; pass an explicit `scheme` matching one of the candidates (call `ios_status` to see them)',
-          );
-        }
+        const project = projectResult.project;
 
-        // Resolve the project to build. For ambiguous, find the candidate(s)
-        // whose schemes include the requested scheme. Two projects can share
-        // a scheme name (common: a generic `App` scheme in both an old and
-        // new project, or a tooling project alongside the main one) — in
-        // that case pick-first would silently build the wrong codebase, so
-        // we error and ask the user to disambiguate by renaming.
-        let project;
-        if (projectStatus.kind === 'detected') {
-          project = projectStatus.project;
-        } else {
-          const matches = projectStatus.candidates.filter((c) =>
-            c.schemes.includes(scheme!),
-          );
-          if (matches.length === 0) {
-            return iosBuildErrorResult(
-              'detect',
-              `scheme "${scheme}" not found in any detected Xcode project`,
-            );
-          }
-          if (matches.length > 1) {
-            const paths = matches
-              .map((m) => m.projectPath)
-              .join(', ');
-            return iosBuildErrorResult(
-              'detect',
-              `scheme "${scheme}" matches multiple Xcode projects (${paths}); rename the scheme in one of them or remove the unwanted project from the workspace to disambiguate`,
-            );
-          }
-          const match = matches[0];
-          project = {
-            projectPath: match.projectPath,
-            projectKind: match.projectKind,
-            scheme: scheme!,
-            bundleId: null,
-            configurations: ['Debug', 'Release'],
-          };
-        }
-
-        // Resolve the device. If the caller passed a udid, use it. Otherwise
-        // prefer the simulator serve-sim is showing; fall back to the first
-        // booted device.
-        let resolvedUdid = udid ?? null;
-        if (!resolvedUdid) {
-          const sim = getSimStatus();
-          if (sim.phase === 'ready') {
-            resolvedUdid = await readActiveDeviceFromServeSim(sim.url);
-          }
-        }
-        if (!resolvedUdid) {
-          const booted = await listBootedDevices();
-          if (booted.length > 0) resolvedUdid = booted[0].udid;
-        }
+        // Resolve the device (explicit udid → serve-sim's active device →
+        // first booted). See `resolveActiveUdid` in iosBuild.ts.
+        const resolvedUdid = await resolveActiveUdid(udid);
         if (!resolvedUdid) {
           return iosBuildErrorResult(
             'detect',
@@ -721,6 +504,57 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('ios_build_run', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'preview_start',
+    {
+      title: 'Launch the live design preview on the simulator',
+      description:
+        "Builds (first run only, ~30–60s; warm runs ~2–4s), installs, and launches tango's preview-host app on the booted iOS simulator. Once running it renders the design spec live: every canvas edit — the user's drags, your set_ui_mock / update_ui_node calls — appears on the simulator in under a second with NO rebuild. xcodebuild is only needed again for `export_run` (real code). Idempotent: if the app is already running and connected this returns immediately. The result's `connected` tells you whether the app's WebSocket is attached; `running` + `connected: false` usually means the user closed the app — calling this again relaunches it. Pass `udid` only to target a specific simulator.",
+      inputSchema: {
+        udid: z.string().optional(),
+      },
+    },
+    async ({ udid }) => {
+      try {
+        await startPreviewHost({ udid });
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(getPreviewHostStatus(), null, 2),
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('preview_start', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'export_run',
+    {
+      title: 'Export the design to SwiftUI and run it on the simulator',
+      description:
+        "Deterministically generates SwiftUI from the current design spec into `TangoGenerated/` inside the detected Xcode project, then builds, installs, and launches on the booted simulator — the no-LLM fast path from canvas to running app. One file per screen (`Tango<Name>Screen`), plus `TangoGeneratedRootView` (a TabView over all screens) to embed wherever the design should appear. Files under `TangoGenerated/` are tango-owned: regenerated on every export, never hand-edit them — to change those screens, change the design and re-export. Inputs are all optional and mirror `ios_build_run` (`scheme`, `udid`, `configuration`). The result includes `inclusion`: `'fs-synced'` means the project picks the folder up automatically (Xcode 16 filesystem-synchronized groups); `'manual-add-required'` means the user must drag `TangoGenerated/` into their target in Xcode once — tell them so. Fails fast when the design is empty or no simulator is booted.",
+      inputSchema: {
+        scheme: z.string().optional(),
+        udid: z.string().optional(),
+        configuration: z.enum(['Debug', 'Release']).optional(),
+      },
+    },
+    async ({ scheme, udid, configuration }) => {
+      try {
+        const state = await runExportAndRun({ scheme, udid, configuration });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(state, null, 2) }],
+        };
+      } catch (err) {
+        return toolErrorResult('export_run', err);
       }
     },
   );
@@ -753,17 +587,7 @@ function buildServer(): McpServer {
             ),
           );
         }
-        let resolvedUdid = udid ?? null;
-        if (!resolvedUdid) {
-          const sim = getSimStatus();
-          if (sim.phase === 'ready') {
-            resolvedUdid = await readActiveDeviceFromServeSim(sim.url);
-          }
-        }
-        if (!resolvedUdid) {
-          const booted = await listBootedDevices();
-          if (booted.length > 0) resolvedUdid = booted[0].udid;
-        }
+        const resolvedUdid = await resolveActiveUdid(udid);
         if (!resolvedUdid) {
           return toolErrorResult(
             'ios_logs_recent',
@@ -775,7 +599,7 @@ function buildServer(): McpServer {
           bundleId: resolvedBundleId,
           sinceSeconds,
         });
-        // Surface validator rejections structurally so terminal-Claude
+        // Surface validator rejections structurally so the terminal agent
         // doesn't mistake them for "no entries in the window."
         if (result.rejected) {
           return toolErrorResult(
@@ -790,6 +614,189 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('ios_logs_recent', err);
+      }
+    },
+  );
+
+  // iOS simulator *control* tools — drive the running app the user is watching
+  // in the iframe (serve-sim CLI under the hood). Aim with `ios_inspect` first;
+  // coordinates everywhere are normalized 0..1. Terminal-agent only; not in
+  // the controller agent's ALLOWED_TOOLS (it can't see the simulator).
+
+  server.registerTool(
+    'ios_inspect',
+    {
+      title: 'Inspect the simulator screen (accessibility tree)',
+      description:
+        "Returns serve-sim's accessibility snapshot of whatever the booted simulator is currently showing: `screen` ({width, height} in device points) and `elements` — each with `label`, `value`, `role`, `type`, `enabled`, a pixel `frame`, and a `centerNorm` {x, y} in normalized 0..1 coords ready to hand straight to `ios_tap`. This is how you AIM: you can't see the simulator's pixels, so call `ios_inspect` to find a control by its label/role, then tap its `centerNorm` — don't guess coordinates. If accessibility is momentarily unavailable the result carries an `errors` array; retry shortly. Pass `udid` only to target a specific simulator (defaults to the one serve-sim is streaming).",
+      inputSchema: {
+        udid: z.string().optional(),
+      },
+    },
+    async ({ udid }) => {
+      try {
+        const target = await resolveControlTarget('ios_inspect', udid);
+        if (!target.ok) return target.result;
+        const snapshot = await fetchAxSnapshot(target.simUrl, target.udid);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(toInspectResult(snapshot), null, 2),
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('ios_inspect', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_tap',
+    {
+      title: 'Tap the simulator screen',
+      description:
+        "Tap the booted iOS simulator once at normalized coordinates `x`, `y` (0..1; 0,0 = top-left, 1,1 = bottom-right). Find the target first with `ios_inspect` and pass the element's `centerNorm`. Pass `udid` only to override the simulator serve-sim is streaming.",
+      inputSchema: {
+        x: z.number(),
+        y: z.number(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ x, y, udid }) => {
+      try {
+        const v = validateNormalized(x, y);
+        if (!v.ok) return toolErrorResult('ios_tap', new Error(v.reason));
+        const target = await resolveControlTarget('ios_tap', udid);
+        if (!target.ok) return target.result;
+        const r = await iosTap(target.udid, x, y);
+        return controlResultToTool('ios_tap', r, `Tapped (${x}, ${y}).`);
+      } catch (err) {
+        return toolErrorResult('ios_tap', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_gesture',
+    {
+      title: 'Swipe / drag on the simulator',
+      description:
+        "Drag on the booted simulator from (`fromX`, `fromY`) to (`toX`, `toY`), all normalized 0..1 (0,0 = top-left, 1,1 = bottom-right). Use for swipes (scroll a list, swipe between pages, pull to refresh) and drags. The touch travels from → to: to swipe up, start at a larger y and end at a smaller y (e.g. from {0.5, 0.8} to {0.5, 0.2}). Aim endpoints with `ios_inspect` `centerNorm` values where possible. Note: each touch frame is a separate serve-sim call, so very fast continuous drags may register imperfectly. Pass `udid` only to override the active simulator.",
+      inputSchema: {
+        fromX: z.number(),
+        fromY: z.number(),
+        toX: z.number(),
+        toY: z.number(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ fromX, fromY, toX, toY, udid }) => {
+      try {
+        const a = validateNormalized(fromX, fromY);
+        if (!a.ok) return toolErrorResult('ios_gesture', new Error(`from: ${a.reason}`));
+        const b = validateNormalized(toX, toY);
+        if (!b.ok) return toolErrorResult('ios_gesture', new Error(`to: ${b.reason}`));
+        const target = await resolveControlTarget('ios_gesture', udid);
+        if (!target.ok) return target.result;
+        const r = await iosGesture(target.udid, fromX, fromY, toX, toY);
+        return controlResultToTool(
+          'ios_gesture',
+          r,
+          `Swiped (${fromX}, ${fromY}) → (${toX}, ${toY}).`,
+        );
+      } catch (err) {
+        return toolErrorResult('ios_gesture', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_button',
+    {
+      title: 'Press a simulator hardware button',
+      description:
+        "Press a hardware button on the booted simulator. `name` defaults to `home`; other names depend on the simulator (commonly `lock`, `siri`, `side`) and serve-sim validates them — an unsupported name comes back as an error. Use `home` to go to the home screen, `lock` to lock/wake. Pass `udid` only to override the active simulator.",
+      inputSchema: {
+        name: z.string().optional(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ name, udid }) => {
+      try {
+        const button = name ?? 'home';
+        if (!isValidButtonName(button)) {
+          return toolErrorResult(
+            'ios_button',
+            new Error(
+              `invalid button name "${button.slice(0, 32)}" — expected a lowercase token like "home", "lock", "siri", "side"`,
+            ),
+          );
+        }
+        const target = await resolveControlTarget('ios_button', udid);
+        if (!target.ok) return target.result;
+        const r = await iosButton(target.udid, button);
+        return controlResultToTool('ios_button', r, `Pressed "${button}".`);
+      } catch (err) {
+        return toolErrorResult('ios_button', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_type',
+    {
+      title: 'Type text into the simulator',
+      description:
+        "Type `text` into the booted simulator's currently focused field (US keyboard only). Tap the field first with `ios_tap` so it has focus. Sends the literal characters; it does not press Return — submit by tapping the submit control or pressing a button. Pass `udid` only to override the active simulator.",
+      inputSchema: {
+        text: z.string().min(1).max(2000),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ text, udid }) => {
+      try {
+        const target = await resolveControlTarget('ios_type', udid);
+        if (!target.ok) return target.result;
+        const r = await iosType(target.udid, text);
+        return controlResultToTool(
+          'ios_type',
+          r,
+          `Typed ${text.length} character(s).`,
+        );
+      } catch (err) {
+        return toolErrorResult('ios_type', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ios_rotate',
+    {
+      title: 'Rotate the simulator',
+      description: `Set the booted simulator's orientation. \`orientation\` is one of: ${ROTATE_ORIENTATIONS.join(', ')}. Pass \`udid\` only to override the active simulator.`,
+      inputSchema: {
+        orientation: z.string(),
+        udid: z.string().optional(),
+      },
+    },
+    async ({ orientation, udid }) => {
+      try {
+        if (!isValidOrientation(orientation)) {
+          return toolErrorResult(
+            'ios_rotate',
+            new Error(
+              `invalid orientation "${orientation.slice(0, 32)}" — expected one of: ${ROTATE_ORIENTATIONS.join(', ')}`,
+            ),
+          );
+        }
+        const target = await resolveControlTarget('ios_rotate', udid);
+        if (!target.ok) return target.result;
+        const r = await iosRotate(target.udid, orientation);
+        return controlResultToTool('ios_rotate', r, `Rotated to ${orientation}.`);
+      } catch (err) {
+        return toolErrorResult('ios_rotate', err);
       }
     },
   );
@@ -812,35 +819,6 @@ function buildServer(): McpServer {
           {
             type: 'text',
             text: `Recorded ${category} note in tango-memory.md.`,
-          },
-        ],
-      };
-    },
-  );
-
-  server.registerTool(
-    'terminal_type',
-    {
-      title: 'Send a message to the terminal Claude session',
-      description:
-        'Types text into the in-app xterm terminal AND presses Return to submit it. The terminal is running `claude --dangerously-skip-permissions` in the workspace, so this is the way you ask the terminal-Claude session to do something — it is your delegation channel. The Return is automatic; only set `submit: false` if you specifically want to seed the prompt buffer without sending it (rare).',
-      inputSchema: {
-        text: z.string(),
-        submit: z.boolean().optional().describe('Defaults to true. Set false only to seed the buffer without submitting.'),
-      },
-    },
-    async ({ text, submit }) => {
-      const willSubmit = submit !== false;
-      const { delivered } = pushCursorCommand({
-        type: 'terminal_type',
-        text,
-        submit: willSubmit,
-      });
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `terminal_type dispatched ${text.length} char(s) (submit=${willSubmit}) to ${delivered} client(s).`,
           },
         ],
       };

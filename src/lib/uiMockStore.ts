@@ -1,4 +1,4 @@
-// localStorage-backed cache of the UI mock spec — sibling of sketchStore.
+// localStorage-backed cache of the design spec.
 // Survives a refresh; the server cache in uiMockBridge is the cross-process
 // source of truth and overwrites this on (re)connect.
 

@@ -68,7 +68,7 @@ export type UISpec = {
 
 // ── Wire protocol ────────────────────────────────────────────────────────
 
-// Server → browser. Mirrors canvasBridge's set/patch dichotomy: full replace
+// Server → browser. Full replace
 // for set_ui_mock / clear_ui_mock; appendScreen for add_ui_screen so we don't
 // re-broadcast the whole spec when only one screen was added.
 export type ServerSetMsg = { type: 'set'; spec: UISpec };
@@ -83,6 +83,13 @@ export type ClientSnapshotMsg = { type: 'snapshot'; spec: UISpec };
 // MCP tool so new screens default to "exactly what fits the user's pane"
 // instead of a hardcoded 1280×800.
 export type ClientViewportMsg = { type: 'viewport'; w: number; h: number };
-export type UIMockClientMsg = ClientSnapshotMsg | ClientViewportMsg;
+// Browser → server. Which screen the user is working in (last selected node's
+// screen, or last clicked frame). Drives which screen the preview-host app
+// shows on the simulator.
+export type ClientActiveScreenMsg = { type: 'active_screen'; screenId: string };
+export type UIMockClientMsg =
+  | ClientSnapshotMsg
+  | ClientViewportMsg
+  | ClientActiveScreenMsg;
 
 export const EMPTY_SPEC: UISpec = { screens: [] };

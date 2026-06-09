@@ -9,6 +9,11 @@ import {
   type EnsureError,
 } from './workspace';
 import { callHook } from './serverHooks';
+import {
+  DEFAULT_TERMINAL_AGENT,
+  isTerminalAgentId,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 
 // User-level state file that survives across server restarts. Lives at
 // ~/.tango/state.json so it's outside any workspace and not subject to a
@@ -17,10 +22,27 @@ import { callHook } from './serverHooks';
 
 type StateFile = {
   lastWorkspace: string | null;
+  terminalAgent?: TerminalAgentId;
 };
 
+type TerminalAgentSlot = {
+  current: TerminalAgentId;
+};
+
+const TERMINAL_AGENT_SLOT_KEY = '__tangoTerminalAgentSlot__';
+
+function getTerminalAgentSlot(): TerminalAgentSlot {
+  const g = globalThis as typeof globalThis & {
+    [TERMINAL_AGENT_SLOT_KEY]?: TerminalAgentSlot;
+  };
+  if (!g[TERMINAL_AGENT_SLOT_KEY]) {
+    g[TERMINAL_AGENT_SLOT_KEY] = { current: DEFAULT_TERMINAL_AGENT };
+  }
+  return g[TERMINAL_AGENT_SLOT_KEY];
+}
+
 function stateDir(): string {
-  return path.join(os.homedir(), '.tango');
+  return process.env.TANGO_STATE_DIR ?? path.join(os.homedir(), '.tango');
 }
 
 function statePath(): string {
@@ -28,27 +50,63 @@ function statePath(): string {
 }
 
 export async function loadPersistedWorkspace(): Promise<string | null> {
-  let raw: string;
-  try {
-    raw = await fs.readFile(statePath(), 'utf8');
-  } catch {
-    return null;
-  }
-  try {
-    const parsed = JSON.parse(raw) as Partial<StateFile>;
-    if (typeof parsed.lastWorkspace === 'string' && parsed.lastWorkspace !== '') {
-      return parsed.lastWorkspace;
-    }
-  } catch {
-    // malformed — treat as unset; the picker will rewrite on next select
+  const parsed = await readStateFile();
+  if (typeof parsed.lastWorkspace === 'string' && parsed.lastWorkspace !== '') {
+    return parsed.lastWorkspace;
   }
   return null;
 }
 
-async function persistWorkspace(absPath: string | null): Promise<void> {
+export async function loadPersistedTerminalAgent(): Promise<TerminalAgentId> {
+  const parsed = await readStateFile();
+  return isTerminalAgentId(parsed.terminalAgent)
+    ? parsed.terminalAgent
+    : DEFAULT_TERMINAL_AGENT;
+}
+
+export function getTerminalAgent(): TerminalAgentId {
+  return getTerminalAgentSlot().current;
+}
+
+export function _setTerminalAgentInternal(agent: TerminalAgentId): void {
+  getTerminalAgentSlot().current = agent;
+}
+
+async function readStateFile(): Promise<Partial<StateFile>> {
+  let raw: string;
+  try {
+    raw = await fs.readFile(statePath(), 'utf8');
+  } catch {
+    return {};
+  }
+  try {
+    const parsed = JSON.parse(raw) as Partial<StateFile>;
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch {
+    // malformed — treat as unset; the picker will rewrite on next select
+  }
+  return {};
+}
+
+async function persistState(patch: Partial<StateFile>): Promise<void> {
   await fs.mkdir(stateDir(), { recursive: true });
-  const next: StateFile = { lastWorkspace: absPath };
+  const current = await readStateFile();
+  const next: StateFile = {
+    lastWorkspace:
+      typeof current.lastWorkspace === 'string' ? current.lastWorkspace : null,
+    terminalAgent: isTerminalAgentId(current.terminalAgent)
+      ? current.terminalAgent
+      : undefined,
+    ...patch,
+  };
+  if (!isTerminalAgentId(next.terminalAgent)) {
+    delete next.terminalAgent;
+  }
   await fs.writeFile(statePath(), JSON.stringify(next, null, 2) + '\n');
+}
+
+async function persistWorkspace(absPath: string | null): Promise<void> {
+  await persistState({ lastWorkspace: absPath });
 }
 
 export type SetWorkspaceOk = {
@@ -150,10 +208,9 @@ export async function setWorkspace(
   }
 
   if (isSwitch) {
-    // Clear the canvas cache and broadcast an empty scene so any open browser
+    // Clear the design cache and broadcast an empty spec so any open browser
     // sees the reset before its terminal reconnects. These hooks live in
     // server.ts's module graph; we reach them via the cross-context registry.
-    callHook('resetCanvas');
     callHook('resetUiMock');
     callHook('broadcastWorkspaceChanged');
   }
@@ -162,4 +219,30 @@ export async function setWorkspace(
     return { ok: true, path: abs };
   }
   return { ok: true, path: abs, errors: ensureResult.errors };
+}
+
+export type SetTerminalAgentResult =
+  | { ok: true; agent: TerminalAgentId }
+  | { ok: false; code: 'invalid_agent'; reason: string };
+
+export async function setTerminalAgent(
+  input: unknown,
+): Promise<SetTerminalAgentResult> {
+  if (!isTerminalAgentId(input)) {
+    return {
+      ok: false,
+      code: 'invalid_agent',
+      reason: 'agent must be "claude" or "codex"',
+    };
+  }
+
+  _setTerminalAgentInternal(input);
+  try {
+    await persistState({ terminalAgent: input });
+  } catch (err) {
+    // Persistence failure is non-fatal for the current process.
+    console.warn('tango: failed to persist terminal agent state', err);
+  }
+  callHook('broadcastTerminalAgentChanged');
+  return { ok: true, agent: input };
 }

@@ -1,63 +1,115 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import AgentCursorOverlay from '@/components/AgentCursorOverlay';
 import AppTopBar from '@/components/AppTopBar';
-import LeftPanel from '@/components/LeftPanel';
 import SimulatorPanel from '@/components/SimulatorPanel';
+import UIPanel from '@/components/UIPanel';
 import WorkspaceGate, { useWorkspace } from '@/components/WorkspaceGate';
+import {
+  DEFAULT_TERMINAL_AGENT,
+  TERMINAL_AGENTS,
+  isTerminalAgentId,
+  type TerminalAgentId,
+} from '@/lib/terminalAgent';
 import { cn } from '@/lib/utils';
-import type { WorkspaceMode } from '@/lib/workspaceMode';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
-const TransmitOverlay = dynamic(() => import('@/components/TransmitOverlay'), {
-  ssr: false,
-});
+
+// Kick the chunk download immediately on page load instead of waiting for the
+// workspace fetch to resolve and the component to mount — the dynamic() above
+// stays as the SSR boundary (xterm dies on SSR), this just warms the cache.
+if (typeof window !== 'undefined') {
+  void import('@/components/Terminal');
+}
 
 function HomeBody() {
   const { current, openDialog } = useWorkspace();
-  const [agentOpen, setAgentOpen] = useState(false);
-  const [claudeOpen, setClaudeOpen] = useState(true);
+  const [terminalOpen, setTerminalOpen] = useState(true);
   const [simOpen, setSimOpen] = useState(false);
-  const [mode, setMode] = useState<WorkspaceMode>('sketch');
+  const [terminalAgent, setTerminalAgent] = useState<TerminalAgentId>(
+    DEFAULT_TERMINAL_AGENT,
+  );
 
   const workspaceReady = current != null && current.path != null;
+
+  const refreshTerminalAgent = useCallback(async () => {
+    try {
+      const res = await fetch('/api/terminal-agent', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const body = (await res.json()) as { agent?: unknown };
+      if (isTerminalAgentId(body.agent)) setTerminalAgent(body.agent);
+    } catch {
+      setTerminalAgent(DEFAULT_TERMINAL_AGENT);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshTerminalAgent();
+  }, [refreshTerminalAgent]);
+
+  const persistTerminalAgent = useCallback(
+    async (next: TerminalAgentId) => {
+      setTerminalAgent(next);
+      try {
+        const res = await fetch('/api/terminal-agent', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ agent: next }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      } catch {
+        void refreshTerminalAgent();
+      }
+    },
+    [refreshTerminalAgent],
+  );
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
       <AppTopBar
-        agentOpen={agentOpen}
-        claudeOpen={claudeOpen}
+        terminalOpen={terminalOpen}
         simOpen={simOpen}
+        terminalAgent={terminalAgent}
         workspaceName={current?.name ?? null}
         workspacePath={current?.path ?? null}
         workspaceSource={current?.source ?? 'unset'}
         onOpenWorkspaceDialog={openDialog}
-        onToggleAgent={() => setAgentOpen((v) => !v)}
-        onToggleClaude={() => setClaudeOpen((v) => !v)}
+        onToggleTerminal={() => setTerminalOpen((v) => !v)}
         onToggleSim={() => setSimOpen((v) => !v)}
+        onTerminalAgentChange={(agent) => {
+          void persistTerminalAgent(agent);
+        }}
       />
       <main className="flex min-h-0 flex-1">
         <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
-            <LeftPanel
-              agentSidebarOpen={agentOpen}
-              mode={mode}
-              onModeChange={setMode}
-            />
+            <UIPanel terminalAgent={terminalAgent} />
+          ) : current == null ? (
+            <PanelSkeleton withHeader />
           ) : (
             <UnsetPlaceholder />
           )}
         </section>
         <aside
-          aria-hidden={!claudeOpen}
+          aria-hidden={!terminalOpen}
           className={cn(
             'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
-            claudeOpen ? 'w-[35vw] min-w-[320px] border-l border-border' : 'w-0',
+            terminalOpen
+              ? 'w-[35vw] min-w-[320px] border-l border-border'
+              : 'w-0',
           )}
         >
-          {workspaceReady ? <Terminal /> : <TerminalPlaceholder />}
+          {workspaceReady ? (
+            <Terminal
+              terminalAgent={terminalAgent}
+              onTerminalAgentChanged={setTerminalAgent}
+            />
+          ) : current == null ? (
+            <PanelSkeleton />
+          ) : (
+            <TerminalPlaceholder terminalAgent={terminalAgent} />
+          )}
         </aside>
         <aside
           aria-hidden={!simOpen}
@@ -69,8 +121,6 @@ function HomeBody() {
           {simOpen ? <SimulatorPanel /> : null}
         </aside>
       </main>
-      {agentOpen ? <AgentCursorOverlay /> : null}
-      <TransmitOverlay />
     </div>
   );
 }
@@ -83,10 +133,31 @@ function UnsetPlaceholder() {
   );
 }
 
-function TerminalPlaceholder() {
+// Shown while the initial /api/workspace/current fetch is in flight, so first
+// paint reads as a loading app rather than empty panes.
+function PanelSkeleton({ withHeader = false }: { withHeader?: boolean }) {
+  return (
+    <div className="flex h-full w-full flex-col">
+      {withHeader && (
+        <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border px-3">
+          <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+        </div>
+      )}
+      <div className="flex min-h-0 flex-1 items-start gap-4 p-6">
+        <div className="h-2/3 w-full max-w-md animate-pulse rounded-lg bg-muted" />
+      </div>
+    </div>
+  );
+}
+
+function TerminalPlaceholder({
+  terminalAgent,
+}: {
+  terminalAgent: TerminalAgentId;
+}) {
   return (
     <div className="flex h-full w-full items-center justify-center bg-background px-4 text-center text-xs text-muted-foreground/60">
-      Claude will start once a workspace is selected.
+      {TERMINAL_AGENTS[terminalAgent].placeholder}
     </div>
   );
 }
