@@ -4,9 +4,13 @@ import {
   appendScreenToSpec,
   describeLayers,
   duplicateScreenInSpec,
+  groupNodesInSpec,
+  moveNodeInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
+  renameGroupInSpec,
   reorderNodeInSpec,
+  ungroupNodesInSpec,
   updateNodeInSpec,
   updateNodesInSpec,
   updateScreenInSpec,
@@ -424,5 +428,143 @@ describe('describeLayers', () => {
     const out = describeLayers(spec([withSource, screen('B', [node('b1')])]));
     expect(out.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
     expect('sourceFile' in out.screens[1]).toBe(false);
+  });
+});
+
+describe('groupNodesInSpec', () => {
+  it('tags members, registers the group, and makes members z-contiguous', () => {
+    // a1 and a3 grouped: block lands where a3 (topmost member) sat.
+    const next = groupNodesInSpec(fixture(), 'A', ['a1', 'a3']);
+    const a = next.screens[0];
+    expect(a.nodes.map((n) => n.id)).toEqual(['a2', 'a1', 'a3']);
+    expect(a.nodes.find((n) => n.id === 'a1')!.group).toBe('group-1');
+    expect(a.nodes.find((n) => n.id === 'a3')!.group).toBe('group-1');
+    expect(a.nodes.find((n) => n.id === 'a2')!.group).toBeUndefined();
+    expect(a.groups).toEqual([{ id: 'group-1', name: 'Group 1' }]);
+  });
+
+  it('honors explicit id/name and rejects taken ids', () => {
+    const next = groupNodesInSpec(fixture(), 'A', ['a1', 'a2'], {
+      id: 'hero',
+      name: 'Hero section',
+    });
+    expect(next.screens[0].groups).toEqual([{ id: 'hero', name: 'Hero section' }]);
+    expect(() =>
+      groupNodesInSpec(next, 'A', ['a3'], { id: 'hero' }),
+    ).toThrow(/already exists/);
+  });
+
+  it('regrouping steals members and prunes the emptied group', () => {
+    let s = groupNodesInSpec(fixture(), 'A', ['a1', 'a2']);
+    s = groupNodesInSpec(s, 'A', ['a1', 'a2', 'a3']);
+    const a = s.screens[0];
+    // The fresh id is allocated before the emptied group-1 prunes away, so
+    // exactly one group survives and every node belongs to it.
+    expect(a.groups).toHaveLength(1);
+    const id = a.groups![0].id;
+    expect(a.nodes.every((n) => n.group === id)).toBe(true);
+  });
+
+  it('collects errors for off-screen nodes', () => {
+    expect(() => groupNodesInSpec(fixture(), 'A', ['a1', 'b1'])).toThrow(
+      /Node not on screen A: b1/,
+    );
+    expect(() => groupNodesInSpec(fixture(), 'Z', ['a1'])).toThrow(
+      /Unknown screen id: Z/,
+    );
+  });
+
+  it('keeps other screens identity-equal', () => {
+    const before = fixture();
+    const next = groupNodesInSpec(before, 'A', ['a1']);
+    expect(next.screens[1]).toBe(before.screens[1]);
+  });
+});
+
+describe('ungroupNodesInSpec', () => {
+  it('strips tags, removes the registry entry, keeps z order', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1', 'a3']);
+    const next = ungroupNodesInSpec(grouped, 'group-1');
+    const a = next.screens[0];
+    expect(a.nodes.map((n) => n.id)).toEqual(['a2', 'a1', 'a3']);
+    expect(a.nodes.every((n) => n.group === undefined)).toBe(true);
+    expect(a.groups).toBeUndefined();
+  });
+
+  it('errors on unknown group', () => {
+    expect(() => ungroupNodesInSpec(fixture(), 'nope')).toThrow(/Unknown group/);
+  });
+});
+
+describe('renameGroupInSpec', () => {
+  it('renames and trims', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1'], { id: 'g' });
+    const next = renameGroupInSpec(grouped, 'g', '  Header  ');
+    expect(next.screens[0].groups).toEqual([{ id: 'g', name: 'Header' }]);
+  });
+
+  it('rejects empty names and unknown groups', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1'], { id: 'g' });
+    expect(() => renameGroupInSpec(grouped, 'g', '   ')).toThrow(/empty/);
+    expect(() => renameGroupInSpec(grouped, 'zz', 'x')).toThrow(/Unknown group/);
+  });
+});
+
+describe('moveNodeInSpec', () => {
+  it('moves to an explicit index, clamped', () => {
+    const next = moveNodeInSpec(fixture(), 'a3', 0);
+    expect(next.screens[0].nodes.map((n) => n.id)).toEqual(['a3', 'a1', 'a2']);
+    const clamped = moveNodeInSpec(fixture(), 'a1', 99);
+    expect(clamped.screens[0].nodes.map((n) => n.id)).toEqual(['a2', 'a3', 'a1']);
+  });
+
+  it('joins a group with group: string and leaves with null', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1', 'a2'], { id: 'g' });
+    const joined = moveNodeInSpec(grouped, 'a3', 1, 'g');
+    expect(joined.screens[0].nodes.find((n) => n.id === 'a3')!.group).toBe('g');
+
+    const left = moveNodeInSpec(joined, 'a1', 2, null);
+    expect(left.screens[0].nodes.find((n) => n.id === 'a1')!.group).toBeUndefined();
+  });
+
+  it('prunes a group emptied by the last member leaving', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1'], { id: 'g' });
+    const next = moveNodeInSpec(grouped, 'a1', 0, null);
+    expect(next.screens[0].groups).toBeUndefined();
+  });
+
+  it('errors on unknown node or unknown target group', () => {
+    expect(() => moveNodeInSpec(fixture(), 'zz', 0)).toThrow(/Unknown node/);
+    expect(() => moveNodeInSpec(fixture(), 'a1', 0, 'g')).toThrow(/Unknown group/);
+  });
+});
+
+describe('groups across other ops', () => {
+  it('removeNodesFromSpec prunes groups that lost all members', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1', 'a3'], { id: 'g' });
+    const next = removeNodesFromSpec(grouped, ['a1', 'a3']);
+    expect(next.screens[0].groups).toBeUndefined();
+  });
+
+  it('duplicateScreenInSpec carries groups and member tags', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1', 'a2'], {
+      id: 'g',
+      name: 'Pair',
+    });
+    const next = duplicateScreenInSpec(grouped, 'A', 'A2');
+    const dup = next.screens[2];
+    expect(dup.groups).toEqual([{ id: 'g', name: 'Pair' }]);
+    expect(dup.nodes.find((n) => n.id === 'A2-a1')!.group).toBe('g');
+  });
+
+  it('describeLayers surfaces groups and member tags', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1'], {
+      id: 'g',
+      name: 'Solo',
+    });
+    const out = describeLayers(grouped, 'A');
+    expect(out.screens[0].groups).toEqual([{ id: 'g', name: 'Solo' }]);
+    expect(out.screens[0].layers.find((l) => l.id === 'a1')!.group).toBe('g');
+    expect('group' in out.screens[0].layers.find((l) => l.id === 'a2')!).toBe(false);
   });
 });

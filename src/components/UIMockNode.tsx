@@ -25,6 +25,9 @@ import { Separator } from './ui/separator';
 import { Textarea } from './ui/textarea';
 import { cn } from '@/lib/utils';
 import type { UINode } from '@/lib/uiMockProtocol';
+import { resolveNode } from '@/lib/uiResolve';
+import type { Gradient, RGBA } from '@/lib/themeColors';
+import { TANGO_THEME } from '@/lib/themeColors';
 
 // Layout-affecting CSS keys the renderer drops from `node.style`. Coords are
 // the source of truth for layout (same policy as `className` ignoring
@@ -318,10 +321,174 @@ export default memo(function UIMockNode({
       );
     }
 
+    case 'rect':
+    case 'ellipse':
+    case 'line':
+    case 'arrow':
+    case 'triangle':
+    case 'star':
+      return <ShapeNode node={node} />;
+
     default:
       return null;
   }
 });
+
+// ── vector shapes ──────────────────────────────────────────────────────────
+// Shape types render as SVG driven by resolveNode() — the same resolved style
+// and pixel-space points the SwiftUI codegen and the preview host consume, so
+// the canvas literally cannot drift from export/preview. `className`/`style`
+// are deliberately NOT applied to the DOM here: the resolver already folded
+// them in (fill = bg channel, stroke = border channel).
+
+function cssRgba(c: RGBA): string {
+  return `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`;
+}
+
+// Same UnitPoint math as the codegen's gradientPoints(): CSS angle, 0deg = to
+// top, clockwise — expressed in objectBoundingBox coords.
+function gradientCoords(g: Gradient) {
+  const rad = (g.angleDeg * Math.PI) / 180;
+  const dx = Math.sin(rad);
+  const dy = -Math.cos(rad);
+  return {
+    x1: 0.5 - dx / 2,
+    y1: 0.5 - dy / 2,
+    x2: 0.5 + dx / 2,
+    y2: 0.5 + dy / 2,
+  };
+}
+
+function ShapeNode({ node }: { node: UINode }) {
+  const r = resolveNode(node);
+  const s = r.style;
+  const w = node.width;
+  const h = node.height;
+
+  const gradientId = s.gradient ? `tango-grad-${node.id}` : null;
+  const hasFill = Boolean(s.gradient || (s.backgroundColor && s.backgroundColor.a > 0));
+  const fill = gradientId
+    ? `url(#${gradientId})`
+    : hasFill
+      ? cssRgba(s.backgroundColor!)
+      : 'none';
+  const strokeWidth = s.borderWidth && s.borderWidth > 0 ? s.borderWidth : 0;
+  const stroke = strokeWidth > 0 ? cssRgba(s.borderColor ?? TANGO_THEME.border) : undefined;
+  const dash = s.borderDashed ? '4' : undefined;
+  // Rect/ellipse strokes draw INSIDE the box (SwiftUI strokeBorder semantics):
+  // SVG strokes straddle the path, so inset the geometry by half the width.
+  const inset = strokeWidth / 2;
+
+  const svgStyle: CSSProperties = {};
+  if (s.opacity !== undefined) svgStyle.opacity = s.opacity;
+  if (s.shadow) {
+    svgStyle.filter = `drop-shadow(0 ${s.shadow.y}px ${s.shadow.radius}px rgba(0, 0, 0, ${s.shadow.alpha}))`;
+  }
+
+  const toPointsAttr = (pts: Array<{ x: number; y: number }>) =>
+    pts.map((p) => `${p.x},${p.y}`).join(' ');
+
+  let body: ReactNode = null;
+  switch (r.kind) {
+    case 'box': {
+      // rx > half-size clamps to a capsule in SVG — same shape Capsule()
+      // produces in the SwiftUI render paths.
+      const radius = Math.max(0, (s.cornerRadius ?? 0) - inset);
+      body = (
+        <rect
+          x={inset}
+          y={inset}
+          width={Math.max(0, w - strokeWidth)}
+          height={Math.max(0, h - strokeWidth)}
+          rx={radius}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={strokeWidth || undefined}
+          strokeDasharray={dash}
+        />
+      );
+      break;
+    }
+    case 'ellipse':
+      body = (
+        <ellipse
+          cx={w / 2}
+          cy={h / 2}
+          rx={Math.max(0, (w - strokeWidth) / 2)}
+          ry={Math.max(0, (h - strokeWidth) / 2)}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={strokeWidth || undefined}
+          strokeDasharray={dash}
+        />
+      );
+      break;
+    case 'polygon':
+      body = (
+        <polygon
+          points={toPointsAttr(r.shapePoints ?? [])}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={strokeWidth || undefined}
+          strokeDasharray={dash}
+          strokeLinejoin="round"
+        />
+      );
+      break;
+    case 'line':
+      body = (
+        <>
+          <polyline
+            points={toPointsAttr(r.shapePoints ?? [])}
+            fill="none"
+            stroke={stroke}
+            strokeWidth={strokeWidth || undefined}
+            strokeDasharray={dash}
+            strokeLinecap="round"
+          />
+          {r.arrowHead && (
+            <polyline
+              points={toPointsAttr(r.arrowHead)}
+              fill="none"
+              stroke={stroke}
+              strokeWidth={strokeWidth || undefined}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
+        </>
+      );
+      break;
+    default:
+      body = null;
+  }
+
+  return (
+    // viewBox + 100% size: mid-resize the wrapper's inline width stretches
+    // the drawing live (Figma-like); on commit node.width/height catch up and
+    // strokes return to their true width. overflow-visible keeps edge strokes
+    // and arrow wings from clipping at the bounding box.
+    <svg
+      className="h-full w-full overflow-visible"
+      viewBox={`0 0 ${w} ${h}`}
+      preserveAspectRatio="none"
+      style={svgStyle}
+      aria-label={node.type}
+      role="img"
+    >
+      {s.gradient && gradientId && (
+        <defs>
+          <linearGradient id={gradientId} {...gradientCoords(s.gradient)}>
+            {s.gradient.stops.map((stop, i) => (
+              <stop key={i} offset={stop.at} stopColor={cssRgba(stop.color)} />
+            ))}
+          </linearGradient>
+        </defs>
+      )}
+      {body}
+    </svg>
+  );
+}
 
 function Editable({
   isEditing,

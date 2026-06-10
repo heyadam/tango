@@ -7,10 +7,22 @@
 // looks the way it would in production. Keep this list aligned with what's in
 // `src/components/ui/`. New types: extend the union, the renderer switch, and
 // the skill doc — Claude should not produce a type the renderer doesn't know.
+//
+// Lowercase types are primitives (layout, content, and vector shapes);
+// Capitalized types are shadcn components. The shape types (rect/ellipse/
+// line/arrow/triangle/star) style through two channels: fill = the background
+// channel (`bg-*` / style.backgroundColor), stroke = the border channel
+// (`border-*` / style.borderWidth) — see uiResolve.
 export type UINodeType =
   | 'div'
   | 'text'
   | 'heading'
+  | 'rect'
+  | 'ellipse'
+  | 'line'
+  | 'arrow'
+  | 'triangle'
+  | 'star'
   | 'Button'
   | 'Input'
   | 'Textarea'
@@ -18,6 +30,11 @@ export type UINodeType =
   | 'Separator'
   | 'Image'
   | 'Icon';
+
+// Compass direction a line/arrow points toward inside its bounding box
+// (`props.end`). Diagonals run corner-to-corner; the axis values center the
+// segment on the box's midline. The arrowhead (arrow type) sits at the `end`.
+export type LineEnd = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 
 // Every node is absolutely positioned inside its screen frame. Coordinates
 // are pixels in the frame's local coordinate space. No nesting in v1 — sibling
@@ -48,8 +65,22 @@ export type UINode = {
   // same policy as `className`.
   style?: Record<string, string | number>;
   // Component-specific props. shadcn variant/size for Button & Badge; src for
-  // Image; iconName (lucide) for Icon; level (1|2|3) for heading; etc.
+  // Image; iconName (lucide) for Icon; level (1|2|3) for heading; end
+  // (LineEnd compass) for line/arrow; points (3–12) for star; etc.
   props?: Record<string, unknown>;
+  // Editor-level group membership — the id of a group in the owning screen's
+  // `groups` registry. Groups are an organization/selection aid (the layers
+  // tree nests them, the canvas selects them as one); they NEVER change
+  // rendering or export — the node list stays flat. Managed by the group ops
+  // in uiMockOps (which keep members z-contiguous and prune empty groups).
+  group?: string;
+};
+
+// A named group of nodes within one screen. Registry lives on the screen so
+// names survive membership churn; membership lives on the nodes (`group`).
+export type UIGroup = {
+  id: string;
+  name: string;
 };
 
 export type UIScreen = {
@@ -60,6 +91,8 @@ export type UIScreen = {
   // resize coordinates are always in this native frame space.
   frame: { w: number; h: number };
   nodes: UINode[];
+  // Editor-level groups (see UIGroup). Optional and absent when empty.
+  groups?: UIGroup[];
   // Workspace-relative Swift source this screen was imported from (provenance
   // only). The export target is NEVER stored — always derived live via
   // screenFileNames() in specToSwiftUI.ts (order-dependent dedupe).

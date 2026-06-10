@@ -387,6 +387,78 @@ function emitIcon(node: ResolvedNode): string {
   );
 }
 
+// ── vector shapes ──────────────────────────────────────────────────────────
+// Geometry arrives pre-computed in pixel coords on the ResolvedNode
+// (shapeGeometry via uiResolve) — emit the literal points, never re-derive.
+
+function fillExpr(s: ResolvedStyle): string {
+  if (s.gradient) return swiftGradient(s.gradient);
+  return isVisible(s.backgroundColor) ? swiftColor(s.backgroundColor) : 'Color.clear';
+}
+
+// Open or closed Path literal from pixel points.
+function pathExpr(points: Array<{ x: number; y: number }>, close: boolean): string {
+  const lines = points.map((p, i) =>
+    i === 0
+      ? `p.move(to: CGPoint(x: ${fmt(p.x)}, y: ${fmt(p.y)}))`
+      : `p.addLine(to: CGPoint(x: ${fmt(p.x)}, y: ${fmt(p.y)}))`,
+  );
+  if (close) lines.push('p.closeSubpath()');
+  return `Path { p in\n${indent(lines.join('\n'), 1)}\n}`;
+}
+
+function lineStrokeStyle(s: ResolvedStyle): string {
+  const width = fmt(s.borderWidth ?? 2);
+  const dash = s.borderDashed ? ', dash: [4]' : '';
+  return `StrokeStyle(lineWidth: ${width}, lineCap: .round, lineJoin: .round${dash})`;
+}
+
+function emitEllipse(node: ResolvedNode): string {
+  const s = node.style;
+  const stroke =
+    s.borderWidth && s.borderWidth > 0
+      ? `.overlay(Ellipse().strokeBorder(${swiftColor(s.borderColor ?? TANGO_THEME.border)}, ${
+          s.borderDashed
+            ? `style: StrokeStyle(lineWidth: ${fmt(s.borderWidth)}, dash: [4])`
+            : `lineWidth: ${fmt(s.borderWidth)}`
+        }))`
+      : null;
+  return withModifiers(`Ellipse()\n  .fill(${fillExpr(s)})`, [
+    stroke,
+    shadowModifier(s),
+    frameModifier(node),
+  ]);
+}
+
+function emitPolygon(node: ResolvedNode): string {
+  const s = node.style;
+  const points = node.shapePoints ?? [];
+  const stroke =
+    s.borderWidth && s.borderWidth > 0
+      ? `.overlay(${pathExpr(points, true)}.stroke(${swiftColor(s.borderColor ?? TANGO_THEME.border)}, style: ${lineStrokeStyle(s)}))`
+      : null;
+  return withModifiers(`${pathExpr(points, true)}\n  .fill(${fillExpr(s)})`, [
+    stroke,
+    shadowModifier(s),
+    frameModifier(node),
+  ]);
+}
+
+function emitLine(node: ResolvedNode): string {
+  const s = node.style;
+  const color = swiftColor(s.borderColor ?? TANGO_THEME.foreground);
+  const stroke = `.stroke(${color}, style: ${lineStrokeStyle(s)})`;
+  const segment = `${pathExpr(node.shapePoints ?? [], false)}\n  ${stroke}`;
+  if (!node.arrowHead) {
+    return withModifiers(segment, [shadowModifier(s), frameModifier(node)]);
+  }
+  // Arrowhead strokes solid even on dashed lines (a dashed V reads as noise).
+  const headStroke = `.stroke(${color}, style: StrokeStyle(lineWidth: ${fmt(s.borderWidth ?? 2)}, lineCap: .round, lineJoin: .round))`;
+  const head = `${pathExpr(node.arrowHead, false)}\n  ${headStroke}`;
+  const base = `ZStack(alignment: .topLeading) {\n${indent(segment, 1)}\n${indent(head, 1)}\n}`;
+  return withModifiers(base, [shadowModifier(s), frameModifier(node)]);
+}
+
 function emitNode(node: ResolvedNode): string {
   let expr: string;
   switch (node.kind) {
@@ -416,6 +488,15 @@ function emitNode(node: ResolvedNode): string {
       break;
     case 'icon':
       expr = emitIcon(node);
+      break;
+    case 'ellipse':
+      expr = emitEllipse(node);
+      break;
+    case 'polygon':
+      expr = emitPolygon(node);
+      break;
+    case 'line':
+      expr = emitLine(node);
       break;
     default:
       expr = emitBox(node);

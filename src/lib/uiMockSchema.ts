@@ -11,6 +11,12 @@ export const uiNodeTypeEnum = z.enum([
   'div',
   'text',
   'heading',
+  'rect',
+  'ellipse',
+  'line',
+  'arrow',
+  'triangle',
+  'star',
   'Button',
   'Input',
   'Textarea',
@@ -31,6 +37,12 @@ export const uiNodeSchema = z.object({
   className: z.string().optional(),
   style: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
   props: z.record(z.string(), z.unknown()).optional(),
+  group: z.string().min(1).optional(),
+});
+
+export const uiGroupSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
 });
 
 export const uiScreenSchema = z.object({
@@ -41,6 +53,7 @@ export const uiScreenSchema = z.object({
     h: z.number().int().positive(),
   }),
   nodes: z.array(uiNodeSchema),
+  groups: z.array(uiGroupSchema).optional(),
   sourceFile: z.string().min(1).optional(),
 });
 

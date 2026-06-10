@@ -132,6 +132,8 @@ You're running inside the **tango** workspace. The user is viewing a direct-mani
 - \`remove_ui_node\` — delete node(s) by id
 - \`remove_ui_screen\` — delete one screen (and its nodes) without touching the others; prefer over \`set_ui_mock\` for discarding variations
 - \`reorder_ui_node\` — change a node's z-order within its screen (front/back/forward/backward)
+- \`group_ui_nodes\` — group nodes on one screen (editor-level: layers-tree nesting + group selection; never affects rendering/export)
+- \`ungroup_ui_nodes\` / \`rename_ui_group\` — dissolve or rename a group
 - \`clear_ui_mock\` — empty the spec
 
 For UI design work ("mock my UI", "show me what the X screen would look like", "prototype this flow", "sketch a layout for Y"), follow the **\`tango-ui-mock\`** skill at \`.claude/skills/tango-ui-mock/SKILL.md\` — it transcribes a real production UI (or a described one) into the design surface, where the user can drag, resize, and edit text, and then ship the tweaks back as a reference for the production codebase.
@@ -228,11 +230,11 @@ You're inside a tango workspace. The left pane is a fixed-frame design canvas wh
 
 For **SwiftUI** workspaces there are two no-LLM shortcuts you should know about (and mention to the user when relevant): \`preview_start\` launches a native live preview of the design on the booted simulator (sub-second updates, no rebuild), and \`export_run\` deterministically generates SwiftUI from the design into \`TangoGenerated/\` and builds/launches it. Files under \`TangoGenerated/\` are tango-owned — regenerated on every export, never hand-edit them. If \`export_run\` reports \`embedded: false\`, no user Swift shows the generated views yet — offer to embed \`TangoGeneratedRootView()\` in the app's entry point.
 
-The canvas renders real shadcn primitives — Button, Input, Badge, Separator, Textarea — plus layout primitives (\`div\`, \`text\`, \`heading\`, \`Image\`, \`Icon\`). For a deliberately low-fidelity wireframe look, use muted \`div\` boxes and placeholder \`text\` nodes instead of fully-styled components.
+The canvas renders real shadcn primitives — Button, Input, Badge, Separator, Textarea — plus layout primitives (\`div\`, \`text\`, \`heading\`, \`Image\`, \`Icon\`) and vector shape primitives (\`rect\`, \`ellipse\`, \`line\`, \`arrow\`, \`triangle\`, \`star\`). For a deliberately low-fidelity wireframe look, use muted \`div\` boxes and placeholder \`text\` nodes instead of fully-styled components. Shapes style through two channels: fill = the background channel (\`bg-*\` / \`style.backgroundColor\`), stroke = the border channel (\`border-*\` color + \`border-N\` width, \`border-dashed\`).
 
 ## Tools
 
-\`get_ui_mock\` (pass \`screenId\` to read one screen — cheaper), \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`duplicate_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\`, \`update_ui_screen\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
+\`get_ui_mock\` (pass \`screenId\` to read one screen — cheaper), \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`duplicate_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\`, \`update_ui_screen\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
 
 \`\`\`ts
 type UISpec = { screens: UIScreen[] };
@@ -246,7 +248,8 @@ type UIScreen = {
 type UINode = {
   id: string;          // stable
   type: 'div' | 'text' | 'heading' | 'Button' | 'Input' | 'Textarea'
-       | 'Badge' | 'Separator' | 'Image' | 'Icon';
+       | 'Badge' | 'Separator' | 'Image' | 'Icon'
+       | 'rect' | 'ellipse' | 'line' | 'arrow' | 'triangle' | 'star';
   x: number; y: number;
   width: number; height: number;
   text?: string;
@@ -259,11 +262,18 @@ type UINode = {
     // Image:     src: string  (data URLs ok; otherwise a placeholder is shown)
     // Icon:      iconName: string  (a lucide-react export name, PascalCase)
     // heading:   level: 1 | 2 | 3
+    // line/arrow: end: 'n'|'ne'|'e'|'se'|'s'|'sw'|'w'|'nw'  (direction the
+    //            segment points inside its box; the arrowhead sits at the end;
+    //            diagonals run corner-to-corner, axis values center on the
+    //            midline — default 'e')
+    // star:      points: 3–12  (default 5)
   };
 };
 \`\`\`
 
 \`sourceFile\` is import provenance: the workspace-relative Swift file the screen was imported from. Set it only when the screen mirrors a real file, and preserve it when re-emitting an existing screen. Export filenames are always derived from the screen id at export time — never stored, so don't try to record them here.
+
+Screens may also carry \`groups\` (\`[{id, name}]\`) with member nodes tagged \`group: '<id>'\` — editor-level grouping shown in the user's layers tree (the canvas selects a group as one unit). Groups never affect rendering or export. Manage them ONLY through \`group_ui_nodes\` / \`ungroup_ui_nodes\` / \`rename_ui_group\` (they keep members z-contiguous and prune emptied groups); preserve existing \`group\` tags when patching nodes, and use semantic names ("Header", "Task row") when the user asks you to organize layers.
 
 ## Screen variations
 
@@ -310,6 +320,8 @@ Multi-screen flows: separate \`UIScreen\` objects, one per screen. The panel til
 | Body copy / list row  | \`text\`     | use \`className\` for size/color |
 | Section title         | \`heading\`  | \`props.level\`: 1 (page), 2 (section), 3 (subsection) |
 | Card / panel surface  | \`div\`      | \`className\` for \`bg-card border rounded-lg shadow-sm\` etc. |
+| Decorative / diagram shape | \`rect\` \`ellipse\` \`triangle\` \`star\` | fill via \`bg-*\`, stroke via \`border-*\` + \`border-N\` |
+| Connector / annotation | \`line\` \`arrow\` | \`props.end\` for direction; stroke color/width via \`border-*\` |
 
 ### 4. Default sizes (good starting points)
 
@@ -367,8 +379,9 @@ Always \`get_ui_mock\` first.
 - \`remove_ui_node({ nodeIds })\` — delete node(s); all-or-nothing on unknown ids.
 - \`remove_ui_screen({ screenId })\` — delete a whole screen; the safe rejection path for unwanted variations.
 - \`reorder_ui_node({ nodeId, op })\` — \`front\`/\`back\`/\`forward\`/\`backward\` within the node's screen (later in the array = rendered on top).
+- \`group_ui_nodes({ screenId, nodeIds, id?, name? })\` — editor-level group (layers-tree nesting + one-click selection for the user; never changes rendering). Use semantic names ("Header", "Task row"). \`ungroup_ui_nodes({ groupId })\` dissolves; \`rename_ui_group({ groupId, name })\` renames. \`get_ui_layers\` shows current groups.
 
-The user has the same controls in the panel (an Add palette and a Layers panel), so your edits and theirs converge on one spec.
+The user has the same controls in the panel (an Add palette, draw tools, and a design sidebar with a layers tree + inspector), so your edits and theirs converge on one spec.
 
 ### 7. Verify
 
@@ -442,9 +455,9 @@ Both flows live in this terminal-Claude session. The user does not see SwiftUI b
 You'll combine your filesystem tools with tango's MCP tools:
 
 - **Filesystem (built-in)**: \`Read\` / \`Write\` / \`Edit\` / \`Glob\` for \`.swift\` files.
-- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\` (\`screenId\` filter for one screen), \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`duplicate_ui_screen\` (instant copy — duplicate-then-patch is the fast variation path), \`update_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\` (bulk patches in one call), \`remove_ui_node\`, \`reorder_ui_node\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance); export filenames are always derived (\`Tango<Pascal(id)>Screen.swift\`, order-dependent dedupe), never stored.
+- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\` (\`screenId\` filter for one screen), \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`duplicate_ui_screen\` (instant copy — duplicate-then-patch is the fast variation path), \`update_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\` (bulk patches in one call), \`remove_ui_node\`, \`reorder_ui_node\`, and editor-level grouping (\`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\` — layers-tree organization, never rendering). Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[], groups?}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance); export filenames are always derived (\`Tango<Pascal(id)>Screen.swift\`, order-dependent dedupe), never stored.
 
-For SwiftUI that uses heavy custom drawing (\`Path\`, \`Canvas\`, complex \`GeometryReader\` math) the node types can't represent, render the closest structural approximation (a \`div\` placeholder with a label) and tell the user what was approximated.
+Simple vector drawing maps to the shape node types: \`Rectangle\`/\`RoundedRectangle\` → \`rect\`, \`Circle\`/\`Ellipse\` → \`ellipse\`, straight two-point \`Path\`s → \`line\`/\`arrow\`, and \`triangle\`/\`star\` for the matching polygons. For heavier custom drawing (\`Canvas\`, multi-segment \`Path\`s, complex \`GeometryReader\` math) the node types can't represent, render the closest structural approximation (a \`div\` placeholder with a label) and tell the user what was approximated.
 
 ## Read flow (\`.swift\` → tango)
 
@@ -550,6 +563,9 @@ Don't run \`xcodebuild\` — out of scope for this skill. But do sanity-check yo
 | \`Image(systemName: "xyz")\`                             | \`Icon\`                     | \`props.iconName\` = best lucide-react match. Common: \`gear\`→\`Settings\`, \`magnifyingglass\`→\`Search\`, \`chevron.right\`→\`ChevronRight\`, \`plus\`→\`Plus\`, \`xmark\`→\`X\`, \`trash\`→\`Trash2\`, \`bell\`→\`Bell\`, \`house\`→\`Home\`, \`person\`→\`User\`. On miss, closest visual match. |
 | \`Image("asset")\` / \`AsyncImage(url:)\`                  | \`Image\`                    | \`props.src\` if it's a URL; otherwise omit and the renderer shows a placeholder. |
 | \`Capsule().background(…)\` with text overlay            | \`Badge\`                    | \`props.variant\` per fill / border style.                              |
+| \`Rectangle()\` / \`RoundedRectangle(cornerRadius:)\`      | \`rect\`                     | Fill → \`bg-*\` (theme) or \`style.backgroundColor\` (off-theme); \`.stroke\`/\`.strokeBorder\` → \`border-*\` + \`border-N\`; cornerRadius → \`rounded-*\`. |
+| \`Circle()\` / \`Ellipse()\`                               | \`ellipse\`                  | Same fill/stroke channels. \`Capsule()\` with no text → \`rect\` + \`rounded-full\`. |
+| Straight 2-point \`Path\` (move + addLine)               | \`line\` / \`arrow\`           | \`props.end\` from the segment direction; stroke width → \`border-N\`, dash → \`border-dashed\`. Arrowhead strokes → \`arrow\`. |
 | \`Toggle\`, \`Picker\`, \`Slider\`, \`Stepper\`, \`DatePicker\`, \`ColorPicker\`, \`ProgressView\` | \`Button\` (placeholder)   | UI mock can't represent these natively. Use \`text\` = \`"<ViewName>: <label>"\` (e.g. \`Toggle: Notifications\`). On writeback, restore the original SwiftUI from a hint stashed via \`remember_note\`, else leave a \`// TODO: <ViewName>\` and ask the user. |
 | \`List\` / \`ForEach\` row                                 | \`div\` per row + child nodes | Flatten the rows. Add a \`Separator\` between them if the SwiftUI used \`.listStyle(.plain)\`. |
 | \`VStack\` / \`HStack\` / \`ZStack\` / \`Group\` / \`ScrollView\` / \`Form\` / \`Section\` | (none — container)         | Containers don't emit nodes; their children do, with positions inferred from the container axis. |

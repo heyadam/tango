@@ -276,8 +276,11 @@ Default 390×844 (iPhone). Use 820×1180 when the source is iPad-only (Navigatio
 | Image(systemName:) | Icon | props.iconName = closest lucide-react name (gear→Settings, magnifyingglass→Search, chevron.right→ChevronRight, plus→Plus, xmark→X, trash→Trash2, bell→Bell, house→Home, person→User) |
 | Image / AsyncImage | Image | props.src only for real URLs |
 | Capsule with text overlay | Badge | |
+| Rectangle / RoundedRectangle | rect | fill → bg-* or style.backgroundColor; .stroke/.strokeBorder → border-* + border-N; cornerRadius → rounded-* |
+| Circle / Ellipse | ellipse | same fill/stroke channels; bare Capsule (no text) → rect + rounded-full |
+| Straight 2-point Path (move + addLine) | line (or arrow if it has arrowhead strokes) | props.end from segment direction (n/ne/e/se/s/sw/w/nw); stroke width → border-N, dash → border-dashed |
 | Toggle/Picker/Slider/Stepper/DatePicker/ProgressView | Button placeholder | text = "<ViewName>: <label>" |
-| Custom drawing (Path, Canvas, GeometryReader math) | div placeholder | text = a short label naming what it approximates |
+| Heavier custom drawing (multi-segment Path, Canvas, GeometryReader math) | div placeholder | text = a short label naming what it approximates |
 
 ## Styling
 
@@ -290,7 +293,7 @@ Files under TangoGenerated/ are tango's own previous exports of canvas designs (
 - One screen per Tango<Name>Screen file. The header comment \`tango:generated v=1 screen=<id>\` carries the original screen id — reuse it verbatim. The doc comment \`/// <Title> — WxH\` carries the screen title and frame size.
 - Coordinates are LITERAL, not inferred: \`.frame(width: W, height: H)\` + \`.offset(x: X, y: Y)\` map directly to node width/height/x/y. Copy the numbers exactly; do not re-derive layout.
 - \`Color(tangoR: R, g: G, b: B, a: A)\` is an exact RGB color — convert to hex in the node's \`style\` (e.g. {"color":"#0A1235"}, {"background":"#F5EEE0"}).
-- Reverse the node mapping table: Text with a Capsule fill/overlay → Badge; RoundedRectangle cards → div; Image(systemName:) → Icon (map the SF Symbol back to the closest lucide name); \`.font(.system(size:weight:))\` ≥ 22 with bold/serif → heading.
+- Reverse the node mapping table: Text with a Capsule fill/overlay → Badge; RoundedRectangle cards (with child content) → div; standalone Rectangle/RoundedRectangle → rect and Ellipse() → ellipse; a Path stroke of one straight segment → line (with an arrowhead V-path → arrow, props.end from direction); the polygon Paths emitted for triangle/star nodes → triangle / star (props.points = outer-point count); Image(systemName:) → Icon (map the SF Symbol back to the closest lucide name); \`.font(.system(size:weight:))\` ≥ 22 with bold/serif → heading.
 - Ignore container wrappers (\`ZStack(alignment: .topLeading)\`, \`Group {}\`) — they exist only for SwiftUI's ViewBuilder limits.
 - When re-importing a TangoGenerated screen, omit \`source_file\` unless you know the original user source — the canvas keeps the screen's prior provenance when it is omitted.
 

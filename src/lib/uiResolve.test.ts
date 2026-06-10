@@ -247,6 +247,78 @@ describe('resolveNode content mapping', () => {
   });
 });
 
+describe('shape nodes', () => {
+  it('rect resolves to the box kind with a solid muted fill', () => {
+    const r = resolveNode(node({ type: 'rect' }));
+    expect(r.kind).toBe('box');
+    expect(r.style.backgroundColor).toEqual(TANGO_THEME.muted);
+    expect(r.style.borderWidth).toBeUndefined();
+    expect(r.shapePoints).toBeUndefined();
+  });
+
+  it('ellipse keeps its own kind so renderers use a true ellipse', () => {
+    const r = resolveNode(node({ type: 'ellipse' }));
+    expect(r.kind).toBe('ellipse');
+    expect(r.style.backgroundColor).toEqual(TANGO_THEME.muted);
+  });
+
+  it('line carries pixel-space points honoring props.end', () => {
+    const r = resolveNode(node({ type: 'line', width: 100, height: 10 }));
+    expect(r.kind).toBe('line');
+    expect(r.shapePoints).toEqual([
+      { x: 0, y: 5 },
+      { x: 100, y: 5 },
+    ]);
+    expect(r.arrowHead).toBeUndefined();
+    expect(r.style.borderWidth).toBe(2);
+    expect(r.style.borderColor).toEqual(TANGO_THEME.foreground);
+
+    const diag = resolveNode(
+      node({ type: 'line', width: 80, height: 60, props: { end: 'ne' } }),
+    );
+    expect(diag.shapePoints).toEqual([
+      { x: 0, y: 60 },
+      { x: 80, y: 0 },
+    ]);
+  });
+
+  it('arrow adds an arrowhead at the end, sized by stroke width', () => {
+    const r = resolveNode(
+      node({ type: 'arrow', width: 100, height: 10, className: 'border-4' }),
+    );
+    expect(r.kind).toBe('line');
+    expect(r.arrowHead).toHaveLength(3);
+    expect(r.arrowHead![1]).toEqual({ x: 100, y: 5 });
+    // border-4 → 4px stroke → 16px wings.
+    const [w1, tip] = r.arrowHead!;
+    expect(Math.hypot(tip.x - w1.x, tip.y - w1.y)).toBeCloseTo(16, 1);
+  });
+
+  it('stroke channel rides border classes, fill rides bg classes', () => {
+    const r = resolveNode(
+      node({ type: 'triangle', className: 'bg-primary border-2 border-destructive' }),
+    );
+    expect(r.kind).toBe('polygon');
+    expect(r.style.backgroundColor).toEqual(TANGO_THEME.primary);
+    expect(r.style.borderWidth).toBe(2);
+    expect(r.style.borderColor).toEqual(TANGO_THEME.destructive);
+    expect(r.shapePoints).toEqual([
+      { x: 50, y: 0 },
+      { x: 100, y: 40 },
+      { x: 0, y: 40 },
+    ]);
+  });
+
+  it('star honors props.points and clamps junk', () => {
+    expect(
+      resolveNode(node({ type: 'star', props: { points: 6 } })).shapePoints,
+    ).toHaveLength(12);
+    expect(
+      resolveNode(node({ type: 'star', props: { points: 'lots' } })).shapePoints,
+    ).toHaveLength(10);
+  });
+});
+
 describe('resolveSpec', () => {
   it('resolves every screen and node, preserving order', () => {
     const spec: UISpec = {

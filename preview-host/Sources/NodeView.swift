@@ -30,6 +30,12 @@ struct NodeView: View {
             imageBody
         case "icon":
             iconBody
+        case "ellipse":
+            ellipseBody
+        case "polygon":
+            polygonBody
+        case "line":
+            lineBody
         default:
             unknownBody
         }
@@ -184,6 +190,88 @@ struct NodeView: View {
             .resizable()
             .scaledToFit()
             .foregroundColor(style.textColor?.color ?? .primary)
+    }
+
+    // ── vector shapes ──────────────────────────────────────────────────────
+    // Geometry arrives as pre-computed pixel points (shapePoints/arrowHead) —
+    // plot verbatim; the math lives in tango's resolver.
+
+    private func path(_ points: [WirePoint], close: Bool) -> Path {
+        Path { p in
+            guard let first = points.first else { return }
+            p.move(to: CGPoint(x: first.x, y: first.y))
+            for pt in points.dropFirst() {
+                p.addLine(to: CGPoint(x: pt.x, y: pt.y))
+            }
+            if close { p.closeSubpath() }
+        }
+    }
+
+    private var lineStrokeStyle: StrokeStyle {
+        StrokeStyle(
+            lineWidth: style.borderWidth ?? 2,
+            lineCap: .round,
+            lineJoin: .round,
+            dash: (style.borderDashed ?? false) ? [4] : []
+        )
+    }
+
+    private var ellipseBody: some View {
+        Ellipse()
+            .fill(fillStyle)
+            .overlay(ellipseBorder)
+            .shadowIfAny(style.shadow)
+    }
+
+    @ViewBuilder
+    private var ellipseBorder: some View {
+        if let width = style.borderWidth, width > 0 {
+            Ellipse().strokeBorder(
+                style.borderColor?.color ?? Color.gray,
+                style: StrokeStyle(
+                    lineWidth: width,
+                    dash: (style.borderDashed ?? false) ? [4] : []
+                )
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var polygonBody: some View {
+        let ring = path(node.shapePoints ?? [], close: true)
+        ring
+            .fill(fillStyle)
+            .overlay {
+                if (style.borderWidth ?? 0) > 0 {
+                    ring.stroke(
+                        style.borderColor?.color ?? Color.gray,
+                        style: lineStrokeStyle
+                    )
+                }
+            }
+            .shadowIfAny(style.shadow)
+    }
+
+    @ViewBuilder
+    private var lineBody: some View {
+        let color = style.borderColor?.color ?? Color.primary
+        ZStack(alignment: .topLeading) {
+            path(node.shapePoints ?? [], close: false)
+                .stroke(color, style: lineStrokeStyle)
+            if let head = node.arrowHead {
+                // Arrowhead strokes solid even on dashed lines.
+                path(head, close: false)
+                    .stroke(
+                        color,
+                        style: StrokeStyle(
+                            lineWidth: style.borderWidth ?? 2,
+                            lineCap: .round,
+                            lineJoin: .round
+                        )
+                    )
+            }
+        }
+        .shadowIfAny(style.shadow)
     }
 
     private var unknownBody: some View {

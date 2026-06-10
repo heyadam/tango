@@ -17,6 +17,7 @@ import dynamic from 'next/dynamic';
 import {
   FileDown,
   Frame,
+  PanelRight,
   Play,
   RefreshCw,
   Rocket,
@@ -73,6 +74,15 @@ type Props = {
 export default function UIPanel({ terminalAgent }: Props) {
   const terminalAgentMeta = TERMINAL_AGENTS[terminalAgent];
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
+  // Right design sidebar (layers tree + inspector). UIPanel owns the layout
+  // (the canvas's viewport measurement must exclude the sidebar) and hands
+  // the container element down; UIMockCanvas portals the content into it —
+  // its spec/selection state stays where it lives.
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarEl, setSidebarEl] = useState<HTMLDivElement | null>(null);
+  const sidebarRef = useCallback((el: HTMLDivElement | null) => {
+    setSidebarEl(el);
+  }, []);
   // Bumping this remounts UIMockCanvas (and re-runs the WS effect) so a
   // workspace switch starts from a clean slate.
   const [generation, setGeneration] = useState(0);
@@ -676,17 +686,39 @@ export default function UIPanel({ terminalAgent }: Props) {
               )}
               {terminalAgentMeta.sendLabel}
             </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen((o) => !o)}
+              title={sidebarOpen ? 'Hide design sidebar' : 'Show design sidebar'}
+              aria-pressed={sidebarOpen}
+              className={cn(
+                'text-panel-header-foreground/80 hover:bg-panel-header-foreground/10 hover:text-panel-header-foreground',
+                sidebarOpen && 'text-panel-header-foreground',
+              )}
+            >
+              <PanelRight className="size-3.5" />
+            </Button>
           </>
         }
       />
 
-      <div ref={viewportRef} className="relative min-h-0 flex-1">
-        {load.status === 'ready' && (
-          <UIMockCanvas
-            key={generation}
-            initialSpec={load.initialSpec}
-            onPersist={persist}
-            onActiveScreen={handleActiveScreen}
+      <div className="flex min-h-0 flex-1">
+        <div ref={viewportRef} className="relative min-h-0 min-w-0 flex-1">
+          {load.status === 'ready' && (
+            <UIMockCanvas
+              key={generation}
+              initialSpec={load.initialSpec}
+              onPersist={persist}
+              onActiveScreen={handleActiveScreen}
+              sidebarContainer={sidebarOpen ? sidebarEl : null}
+            />
+          )}
+        </div>
+        {sidebarOpen && (
+          <div
+            ref={sidebarRef}
+            className="w-64 shrink-0 overflow-hidden border-l border-border bg-card"
           />
         )}
       </div>
