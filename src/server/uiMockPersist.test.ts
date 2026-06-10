@@ -42,6 +42,15 @@ describe('serializeSpecFile / parseSpecFile', () => {
     expect(parseSpecFile(serializeSpecFile(SPEC, SAVED_AT))).toEqual(SPEC);
   });
 
+  it('round-trips a screen sourceFile intact', () => {
+    const withSource: UISpec = {
+      screens: [{ ...SPEC.screens[0], sourceFile: 'MyApp/LoginView.swift' }],
+    };
+    const loaded = parseSpecFile(serializeSpecFile(withSource, SAVED_AT));
+    expect(loaded).toEqual(withSource);
+    expect(loaded?.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
+  });
+
   it('emits a versioned envelope with trailing newline', () => {
     const raw = serializeSpecFile(SPEC, SAVED_AT);
     expect(raw.endsWith('\n')).toBe(true);

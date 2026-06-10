@@ -4,10 +4,20 @@
 // visual group so the transcript reads as turns, not a tool-call log.
 // Browser-safe and side-effect free — unit tested in agentTranscript.test.ts.
 
-export type ToolItem = { kind: 'tool'; name: string; detail: string };
+// pending: the model is still composing this tool call's input (tool_pending
+// frame); the item is replaced by the real one when the tool_use frame lands.
+// progressChars: cumulative input chars composed so far (tool_progress).
+export type ToolItem = {
+  kind: 'tool';
+  name: string;
+  detail: string;
+  pending?: boolean;
+  progressChars?: number;
+};
 
 export type TranscriptItem =
   | { kind: 'user'; text: string }
+  | { kind: 'task'; label: string; prompt: string }
   | { kind: 'assistant'; text: string; streaming: boolean }
   | ToolItem
   | { kind: 'meta'; text: string }

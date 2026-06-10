@@ -16,6 +16,11 @@ const tool = (name: string, detail = ''): ToolItem => ({
   name,
   detail,
 });
+const task = (label: string, prompt: string): TranscriptItem => ({
+  kind: 'task',
+  label,
+  prompt,
+});
 
 describe('groupTranscript', () => {
   it('returns an empty list for an empty transcript', () => {
@@ -71,6 +76,23 @@ describe('groupTranscript', () => {
     expect(group.items[0]).toBe(t1);
     expect(group.items[1]).toBe(t2);
     expect(items).toEqual([t1, t2]);
+  });
+
+  it('passes task items through by reference', () => {
+    const t = task('3 variations · Login', 'Call get_ui_mock…');
+    const entries = groupTranscript([user('go'), t]);
+    expect(entries[1]).toBe(t);
+  });
+
+  it('splits a tool run on a task item', () => {
+    const t = task('Make it pop · Login', 'In screen "login"…');
+    const entries = groupTranscript([tool('get_ui_mock'), t, tool('add_ui_screen', 'login-v1')]);
+    expect(entries).toEqual([
+      { kind: 'tools', items: [tool('get_ui_mock')] },
+      t,
+      { kind: 'tools', items: [tool('add_ui_screen', 'login-v1')] },
+    ]);
+    expect(entries[1]).toBe(t);
   });
 
   it('handles a transcript that ends mid tool run', () => {

@@ -15,10 +15,13 @@ import type { WebSocket } from 'ws';
 import {
   query,
   startup,
+  type EffortLevel,
   type Options,
   type Query,
   type SDKMessage,
   type SDKUserMessage,
+  type SettingSource,
+  type ThinkingConfig,
   type WarmQuery,
 } from '@anthropic-ai/claude-agent-sdk';
 import type { AgentClientMsg, AgentServerMsg } from '@/lib/agentProtocol';
@@ -95,7 +98,34 @@ async function buildOptions(workspace: string): Promise<Options> {
     // Sonnet 4.6 by default: the interactive loop favors speed and cost over
     // peak capability. Override per-machine with TANGO_AGENT_MODEL.
     model: process.env.TANGO_AGENT_MODEL ?? 'claude-sonnet-4-6',
+    // The design loop wants snap over deliberation: low effort cuts the
+    // minutes-long thinking stretches before the first canvas mutation.
+    // Override per-machine with TANGO_AGENT_EFFORT (low|medium|high|max).
+    effort: agentEffort(),
+    // Extended thinking off by default: thinking tokens stream at a crawl on
+    // subscription accounts (~12-30 tok/s measured) — a single think block
+    // cost 3+ minutes before the first canvas edit, and benchmarks show the
+    // variations flow runs 5x faster without it (109s vs 578s, same tool
+    // sequence). TANGO_AGENT_THINKING=adaptive restores it.
+    ...(process.env.TANGO_AGENT_THINKING === 'adaptive'
+      ? {}
+      : { thinking: { type: 'disabled' } satisfies ThinkingConfig }),
+    // Workspace-scoped settings only: the user's global ~/.claude plugins,
+    // hooks, and skills don't belong in the embedded design agent (they
+    // bloat every turn and fire foreign hooks). Workspace CLAUDE.md /
+    // tango.md / .claude/skills still load. TANGO_AGENT_SETTINGS=all reverts.
+    ...(process.env.TANGO_AGENT_SETTINGS === 'all'
+      ? {}
+      : { settingSources: ['project', 'local'] satisfies SettingSource[] }),
   };
+}
+
+function agentEffort(): EffortLevel {
+  const raw = process.env.TANGO_AGENT_EFFORT;
+  if (raw === 'low' || raw === 'medium' || raw === 'high' || raw === 'max') {
+    return raw;
+  }
+  return 'low';
 }
 
 // ── Warm spare ──────────────────────────────────────────────────────────────
@@ -220,7 +250,10 @@ export function attachAgent(ws: WebSocket): void {
       const msg = parsed as AgentClientMsg;
       if (msg.type === 'user_message' && typeof msg.text === 'string') {
         const text = msg.text.trim();
-        if (text.length > 0) input.push(userMessage(text));
+        if (text.length > 0) {
+          if (timing.turnStart === 0) timing.turnStart = Date.now();
+          input.push(userMessage(text));
+        }
         return;
       }
       if (msg.type === 'interrupt') {
@@ -245,6 +278,28 @@ export function attachAgent(ws: WebSocket): void {
   // content_block_stop can tell a text block from a tool_use block.
   const blockTypes = new Map<number, string>();
 
+  // Turn-timing diagnostics: time-to-first-stream-event and per-tool-call
+  // composition time (start→stop of a tool_use block — the dominant cost for
+  // large design payloads). Logged once per turn on `result`.
+  const timing = {
+    turnStart: 0,
+    firstEvent: 0,
+    blockStart: new Map<number, number>(),
+    blockName: new Map<number, string>(),
+    toolCompose: [] as Array<{ name: string; ms: number }>,
+  };
+  // Streaming tool-input progress (chars composed for the current tool block),
+  // throttled so a multi-minute composition emits ~2 frames/second at most.
+  let composeChars = 0;
+  let lastProgressAt = 0;
+  const resetTiming = (): void => {
+    timing.turnStart = 0;
+    timing.firstEvent = 0;
+    timing.blockStart.clear();
+    timing.blockName.clear();
+    timing.toolCompose = [];
+  };
+
   const handleMessage = (msg: SDKMessage): void => {
     switch (msg.type) {
       case 'system': {
@@ -258,9 +313,20 @@ export function attachAgent(ws: WebSocket): void {
       }
       case 'stream_event': {
         if (msg.parent_tool_use_id) return;
+        if (timing.firstEvent === 0) timing.firstEvent = Date.now();
         const ev = msg.event;
         if (ev.type === 'content_block_start') {
           blockTypes.set(ev.index, ev.content_block.type);
+          if (ev.content_block.type === 'tool_use') {
+            timing.blockStart.set(ev.index, Date.now());
+            timing.blockName.set(ev.index, ev.content_block.name);
+            composeChars = 0;
+            lastProgressAt = 0;
+            send({
+              type: 'tool_pending',
+              name: displayToolName(ev.content_block.name),
+            });
+          }
           return;
         }
         if (ev.type === 'content_block_delta' && ev.delta.type === 'text_delta') {
@@ -268,10 +334,29 @@ export function attachAgent(ws: WebSocket): void {
           return;
         }
         if (
-          ev.type === 'content_block_stop' &&
-          blockTypes.get(ev.index) === 'text'
+          ev.type === 'content_block_delta' &&
+          ev.delta.type === 'input_json_delta'
         ) {
-          send({ type: 'text_done' });
+          composeChars += ev.delta.partial_json.length;
+          const now = Date.now();
+          if (now - lastProgressAt >= 500) {
+            lastProgressAt = now;
+            send({ type: 'tool_progress', chars: composeChars });
+          }
+          return;
+        }
+        if (ev.type === 'content_block_stop') {
+          if (blockTypes.get(ev.index) === 'text') {
+            send({ type: 'text_done' });
+          } else if (blockTypes.get(ev.index) === 'tool_use') {
+            const start = timing.blockStart.get(ev.index);
+            if (start !== undefined) {
+              timing.toolCompose.push({
+                name: displayToolName(timing.blockName.get(ev.index) ?? '?'),
+                ms: Date.now() - start,
+              });
+            }
+          }
         }
         return;
       }
@@ -300,6 +385,21 @@ export function attachAgent(ws: WebSocket): void {
             : '';
         if (msg.subtype !== 'success') {
           console.warn('[agent] turn failed:', msg.subtype, detail);
+        }
+        {
+          const ttft =
+            timing.turnStart > 0 && timing.firstEvent > 0
+              ? timing.firstEvent - timing.turnStart
+              : null;
+          const compose = timing.toolCompose
+            .map((t) => `${t.name} ${t.ms}ms`)
+            .join(', ');
+          console.log(
+            `[agent timing] turn ${msg.duration_ms}ms` +
+              (ttft !== null ? ` ttft ${ttft}ms` : '') +
+              ` tools[${timing.toolCompose.length}]${compose ? ` ${compose}` : ''}`,
+          );
+          resetTiming();
         }
         send({
           type: 'turn_done',

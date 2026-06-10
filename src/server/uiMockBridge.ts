@@ -17,9 +17,14 @@ import {
 } from '@/lib/uiMockProtocol';
 import {
   addNodesToScreen,
+  appendScreenToSpec,
+  duplicateScreenInSpec,
   removeNodesFromSpec,
+  removeScreenFromSpec,
   reorderNodeInSpec,
   updateNodeInSpec,
+  updateNodesInSpec,
+  updateScreenInSpec,
   type NodePatch,
   type ReorderOp,
 } from '@/lib/uiMockOps';
@@ -166,9 +171,33 @@ export function setUIMockFromServer(spec: UISpec): void {
   cacheChanged({ type: 'set', spec });
 }
 
+// Validated append (duplicate screen id, intra-screen node dupes, global
+// node-id collisions) — throws to the MCP handler's toolErrorResult so
+// add_ui_screen fails loudly instead of corrupting the spec.
 export function appendUIScreenFromServer(screen: UIScreen): void {
-  cache = { ...cache, screens: [...cache.screens, screen] };
+  cache = appendScreenToSpec(cache, screen);
   cacheChanged({ type: 'append_screen', screen });
+}
+
+export function removeUIScreenFromServer(screenId: string): void {
+  setUIMockFromServer(removeScreenFromSpec(cache, screenId));
+}
+
+export function duplicateUIScreenFromServer(
+  screenId: string,
+  newScreenId: string,
+  newTitle?: string,
+): void {
+  setUIMockFromServer(
+    duplicateScreenInSpec(cache, screenId, newScreenId, newTitle),
+  );
+}
+
+export function updateUIScreenFromServer(
+  screenId: string,
+  patch: { title?: string; frame?: { w: number; h: number } },
+): void {
+  setUIMockFromServer(updateScreenInSpec(cache, screenId, patch));
 }
 
 export function clearUIMockFromServer(): void {
@@ -188,6 +217,12 @@ export function addUINodesFromServer(screenId: string, nodes: UINode[]): void {
 
 export function updateUINodeFromServer(nodeId: string, patch: NodePatch): void {
   setUIMockFromServer(updateNodeInSpec(cache, nodeId, patch));
+}
+
+export function updateUINodesFromServer(
+  patches: Array<{ nodeId: string; patch: NodePatch }>,
+): void {
+  setUIMockFromServer(updateNodesInSpec(cache, patches));
 }
 
 export function removeUINodesFromServer(nodeIds: string[]): void {

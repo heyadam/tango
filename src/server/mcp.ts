@@ -17,12 +17,16 @@ import {
   addUINodesFromServer,
   appendUIScreenFromServer,
   clearUIMockFromServer,
+  duplicateUIScreenFromServer,
   getUIMock,
   getUIViewport,
   removeUINodesFromServer,
+  removeUIScreenFromServer,
   reorderUINodeFromServer,
   setUIMockFromServer,
   updateUINodeFromServer,
+  updateUINodesFromServer,
+  updateUIScreenFromServer,
 } from './uiMockBridge';
 import { describeLayers } from '@/lib/uiMockOps';
 import type { UINode, UIScreen, UISpec } from '@/lib/uiMockProtocol';
@@ -178,12 +182,18 @@ function buildServer(): McpServer {
     {
       title: 'Read the UI mock',
       description:
-        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Empty `screens` array means nothing has been mocked yet.",
+        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Pass `screenId` to read just one screen (much smaller — prefer it whenever the task concerns a single screen; unknown ids return an empty `screens` array). Empty `screens` array means nothing has been mocked yet.",
+      inputSchema: {
+        screenId: z.string().min(1).optional(),
+      },
     },
-    async () => {
+    async ({ screenId }) => {
       const spec = getUIMock();
+      const out: UISpec = screenId
+        ? { ...spec, screens: spec.screens.filter((s) => s.id === screenId) }
+        : spec;
       return {
-        content: [{ type: 'text', text: JSON.stringify(spec, null, 2) }],
+        content: [{ type: 'text', text: JSON.stringify(out, null, 2) }],
       };
     },
   );
@@ -210,7 +220,7 @@ function buildServer(): McpServer {
     {
       title: 'Replace the UI mock',
       description:
-        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals using THEME tokens — `bg-card`, `text-muted-foreground`, etc.; layout-affecting classes are ignored, coords win), `style` (React inline-style object — use this for colors outside the app's theme palette like exact brand hex, gradients, and custom shadows; arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className` because the JIT only scans source files at build time, so off-theme color fidelity must come through `style`), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow.",
+        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals using THEME tokens — `bg-card`, `text-muted-foreground`, etc.; layout-affecting classes are ignored, coords win), `style` (React inline-style object — use this for colors outside the app's theme palette like exact brand hex, gradients, and custom shadows; arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className` because the JIT only scans source files at build time, so off-theme color fidelity must come through `style`), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow. Screens may carry an optional `sourceFile` (import provenance) — preserve it when echoing a spec back.",
       inputSchema: {
         spec: uiSpecSchema,
       },
@@ -242,7 +252,7 @@ function buildServer(): McpServer {
     {
       title: 'Append a screen to the UI mock',
       description:
-        "Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions; for a brand-new flow, default the frame to the user's current panel size from `get_ui_viewport` (use 360×720 for explicit mobile, 768×1024 for explicit tablet).",
+        "Appends one screen to the existing UI mock without disturbing other screens. Use this when iterating on a flow (auth → onboarding → dashboard) or adding a variant alongside existing work. The `screen` shape matches one element of `spec.screens` in `set_ui_mock`. Call `get_ui_mock` first if you need to align the new screen with existing frame sizes or naming conventions; for a brand-new flow, default the frame to the user's current panel size from `get_ui_viewport` (use 360×720 for explicit mobile, 768×1024 for explicit tablet). The screen id and every node id must be globally unique across the whole mock — this is enforced; the call errors listing every collision. Screens may carry an optional `sourceFile` (workspace-relative Swift file the screen was imported from) — set it only when the screen mirrors a real file, and preserve it when re-emitting an existing screen.",
       inputSchema: {
         screen: uiScreenSchema,
       },
@@ -356,11 +366,45 @@ function buildServer(): McpServer {
   );
 
   server.registerTool(
+    'update_ui_nodes',
+    {
+      title: 'Update many UI mock nodes in one call',
+      description:
+        "Bulk version of `update_ui_node`: applies many small patches in ONE call — the cheap delta path for restyles, rearranges, and divergence after `duplicate_ui_screen` (emit only the fields that change, never regenerate whole nodes or screens). Each entry shallow-merges `patch` into the node found by `nodeId`; the same patch rules as `update_ui_node` apply (`id` immutable, omitted fields unchanged). All-or-nothing: unknown ids fail the whole call, listing every one. Patches to the same node merge in order.",
+      inputSchema: {
+        patches: z
+          .array(
+            z.object({
+              nodeId: z.string().min(1),
+              patch: uiNodePatchSchema,
+            }),
+          )
+          .min(1),
+      },
+    },
+    async ({ patches }) => {
+      try {
+        updateUINodesFromServer(patches);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Updated ${patches.length} node patch(es).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('update_ui_nodes', err);
+      }
+    },
+  );
+
+  server.registerTool(
     'remove_ui_node',
     {
       title: 'Remove UI mock node(s)',
       description:
-        "Deletes one or more nodes by id (across any screen) from the live spec, leaving everything else intact. Pass `nodeIds` as an array. All-or-nothing: if ANY id doesn't exist the call fails and nothing is removed, so a typo can't silently drop the wrong node — call `get_ui_layers` first to confirm ids. To remove a whole screen, use `set_ui_mock` (there's no per-screen delete).",
+        "Deletes one or more nodes by id (across any screen) from the live spec, leaving everything else intact. Pass `nodeIds` as an array. All-or-nothing: if ANY id doesn't exist the call fails and nothing is removed, so a typo can't silently drop the wrong node — call `get_ui_layers` first to confirm ids. To remove a whole screen, use `remove_ui_screen`.",
       inputSchema: {
         nodeIds: z.array(z.string().min(1)).min(1),
       },
@@ -378,6 +422,93 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('remove_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'duplicate_ui_screen',
+    {
+      title: 'Duplicate a screen in the UI mock',
+      description:
+        "Copies an existing screen to a new screen appended at the end — the FAST first step for variations and iterations: the copy appears on the user's canvas instantly, then you diverge it with a few `update_ui_nodes` patches instead of regenerating every node. Node ids are remapped automatically (`<sourceId>-` prefixes become `<newScreenId>-`, others get `<newScreenId>-` prepended) and `sourceFile` is not copied. `newScreenId` must be globally unique (convention: `<sourceId>-v1`, `-v2`, …); `newTitle` defaults to \"<source title> copy\". Errors list every id collision.",
+      inputSchema: {
+        screenId: z.string().min(1),
+        newScreenId: z.string().min(1),
+        newTitle: z.string().min(1).optional(),
+      },
+    },
+    async ({ screenId, newScreenId, newTitle }) => {
+      try {
+        duplicateUIScreenFromServer(screenId, newScreenId, newTitle);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Duplicated screen "${screenId}" as "${newScreenId}". Diverge it with update_ui_nodes (node ids now carry the "${newScreenId}-" prefix).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('duplicate_ui_screen', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'update_ui_screen',
+    {
+      title: 'Update a screen’s title or frame',
+      description:
+        'Patches screen-level fields (`title`, `frame`) of one screen without touching its nodes or any other screen. The screen `id` is immutable (export filenames and the simulator preview are keyed on it). Errors if the screen id does not exist.',
+      inputSchema: {
+        screenId: z.string().min(1),
+        title: z.string().min(1).optional(),
+        frame: z
+          .object({ w: z.number().positive(), h: z.number().positive() })
+          .optional(),
+      },
+    },
+    async ({ screenId, title, frame }) => {
+      if (title === undefined && frame === undefined) {
+        return toolErrorResult(
+          'update_ui_screen',
+          new Error('Provide at least one of `title` or `frame`.'),
+        );
+      }
+      try {
+        updateUIScreenFromServer(screenId, { title, frame });
+        return {
+          content: [
+            { type: 'text', text: `Updated screen "${screenId}".` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('update_ui_screen', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'remove_ui_screen',
+    {
+      title: 'Remove a screen from the UI mock',
+      description:
+        'Deletes one screen (and all its nodes) from the live spec, leaving every other screen untouched — the safe way to discard a rejected variation or clean up, instead of `set_ui_mock` (whole-spec replace, which risks clobbering concurrent user edits). Errors if the screen id does not exist — call `get_ui_layers` first to confirm ids.',
+      inputSchema: {
+        screenId: z.string().min(1),
+      },
+    },
+    async ({ screenId }) => {
+      try {
+        removeUIScreenFromServer(screenId);
+        return {
+          content: [
+            { type: 'text', text: `Removed screen "${screenId}".` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('remove_ui_screen', err);
       }
     },
   );

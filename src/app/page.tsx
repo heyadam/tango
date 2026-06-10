@@ -14,6 +14,7 @@ import {
   isTerminalAgentId,
   type TerminalAgentId,
 } from '@/lib/terminalAgent';
+import { terminalBus } from '@/lib/terminalBus';
 import { cn } from '@/lib/utils';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
@@ -49,6 +50,11 @@ function HomeBody() {
   useEffect(() => {
     void refreshTerminalAgent();
   }, [refreshTerminalAgent]);
+
+  // Canvas tasks auto-expand a collapsed sidebar: the agent panel stays
+  // mounted while collapsed (so delivery already works) — this makes the
+  // result visible, including AgentPanel's 'not connected' error row.
+  useEffect(() => terminalBus.onTaskSubmitted(() => setTerminalOpen(true)), []);
 
   const persistTerminalAgent = useCallback(
     async (next: TerminalAgentId) => {

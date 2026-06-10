@@ -50,9 +50,10 @@ import type {
   OnResizeGroupStart,
   OnResizeStart,
 } from 'react-moveable';
-import { Layers, Maximize, Minus, Plus } from 'lucide-react';
+import { Check, Layers, Maximize, Minus, Plus, Sparkles } from 'lucide-react';
 import UIMockNode from './UIMockNode';
 import UIAddPalette from './UIAddPalette';
+import UIAIPopout from './UIAIPopout';
 import UILayersPanel from './UILayersPanel';
 import { Button } from './ui/button';
 import { uiMockBus } from '@/lib/uiMockBus';
@@ -60,9 +61,12 @@ import type { ApplyMsg } from '@/lib/uiMockBus';
 import {
   addNodesToScreen,
   removeNodesFromSpec,
+  removeScreenFromSpec,
   reorderNodeInSpec,
   type ReorderOp,
 } from '@/lib/uiMockOps';
+import { screenFileNames } from '@/lib/specToSwiftUI';
+import type { AgentTask } from '@/lib/terminalBus';
 import { NODE_DEFAULTS, makeNode } from '@/lib/uiMockDefaults';
 import {
   MAX_ZOOM,
@@ -85,6 +89,14 @@ import { cn } from '@/lib/utils';
 
 const SNAPSHOT_DEBOUNCE_MS = 250;
 
+// AI sparkle/card geometry for the clamp/flip math — all in untransformed
+// wrapper coords (the floating layer is screen-space, constant size at any
+// zoom). The card height is an estimate; only the flip heuristic uses it.
+const AI_SPARKLE_PX = 28;
+const AI_CARD_W = 288;
+const AI_CARD_H = 220;
+const AI_MARGIN = 8;
+
 type Props = {
   initialSpec: UISpec;
   onPersist: (spec: UISpec) => void;
@@ -105,16 +117,51 @@ export default function UIMockCanvas({
   // Floating overlay visibility — the Add palette and Layers panel.
   const [addOpen, setAddOpen] = useState(false);
   const [layersOpen, setLayersOpen] = useState(false);
+  // The user's working screen, lifted to state for display (title-row tint,
+  // layers-panel highlight, screen-scope sparkle anchor). The wire report
+  // stays deduped through lastActiveScreen below.
+  const [activeScreenId, setActiveScreenId] = useState<string | null>(null);
+  // The AI popout (sparkle → card) and its screen-space anchor positions.
+  const [popout, setPopout] = useState<{ scope: AgentTask['scope'] } | null>(
+    null,
+  );
+  const [aiPos, setAiPos] = useState<{
+    sparkle: { left: number; top: number } | null;
+    card: { left: number; top: number } | null;
+  }>({ sparkle: null, card: null });
+  // Bumped (debounced) when the wrapper resizes — sidebar expand/collapse,
+  // window resize — so the clamp/flip math above re-runs against fresh bounds.
+  const [wrapperEpoch, setWrapperEpoch] = useState(0);
+  // Server-applied (agent) changes flash briefly so the user can see exactly
+  // what the agent touched as edits stream in.
+  const [pulse, setPulse] = useState<{
+    nodes: Set<string>;
+    screens: Set<string>;
+  }>(() => ({ nodes: new Set(), screens: new Set() }));
+  const pulseTimer = useRef<number | null>(null);
 
   // Map<nodeId, wrapper-element> populated by callback refs on each rendered
   // node so we can hand react-moveable real DOM targets without re-querying.
   const nodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  // Map<screenId, frame-element> — same pattern, for the screen-scope sparkle
+  // anchor (never querySelector).
+  const screenRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const moveableRef = useRef<Moveable | null>(null);
+  // The relative root div — the coordinate space of the floating layer.
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  // The sparkle/popout island, hidden imperatively during gestures (no
+  // setState mid-drag — the [spec]-keyed anchoring effect re-positions on
+  // commit).
+  const aiIslandRef = useRef<HTMLDivElement | null>(null);
 
   // Latest spec snapshot for callbacks closing over stale refs (e.g. drag-end
   // handlers that fire long after they were attached).
   const specRef = useRef(spec);
   specRef.current = spec;
+
+  // Same pattern for selection, so the popout openers stay dep-free.
+  const selectedIdsRef = useRef(selectedIds);
+  selectedIdsRef.current = selectedIds;
 
   // Origin geometry stashed at drag/resize start, keyed by node id. The end
   // handlers commit `origin + delta` rather than reading the live spec —
@@ -144,8 +191,38 @@ export default function UIMockCanvas({
 
   // ── Server → browser apply ─────────────────────────────────────────────
   useEffect(() => {
-    return uiMockBus._onApply((msg: ApplyMsg) => {
+    const flashPulse = (nodes: Set<string>, screens: Set<string>): void => {
+      if (nodes.size === 0 && screens.size === 0) return;
+      setPulse({ nodes, screens });
+      if (pulseTimer.current !== null) window.clearTimeout(pulseTimer.current);
+      pulseTimer.current = window.setTimeout(() => {
+        pulseTimer.current = null;
+        setPulse({ nodes: new Set(), screens: new Set() });
+      }, 1100);
+    };
+    const unsubscribe = uiMockBus._onApply((msg: ApplyMsg) => {
       if (msg.type === 'set') {
+        // Diff against the outgoing spec so agent-touched nodes/screens flash.
+        const prev = specRef.current;
+        const prevNodes = new Map<string, UINode>();
+        for (const s of prev.screens) for (const n of s.nodes) prevNodes.set(n.id, n);
+        const prevScreens = new Set(prev.screens.map((s) => s.id));
+        const pulseNodes = new Set<string>();
+        const pulseScreens = new Set<string>();
+        for (const s of msg.spec.screens) {
+          if (!prevScreens.has(s.id)) {
+            pulseScreens.add(s.id);
+            continue;
+          }
+          for (const n of s.nodes) {
+            const old = prevNodes.get(n.id);
+            if (!old) pulseNodes.add(n.id);
+            else if (old !== n && JSON.stringify(old) !== JSON.stringify(n)) {
+              pulseNodes.add(n.id);
+            }
+          }
+        }
+        flashPulse(pulseNodes, pulseScreens);
         skipNextSnapshot.current = true;
         setSpec(msg.spec);
         // Drop selection that no longer exists in the new spec.
@@ -158,6 +235,7 @@ export default function UIMockCanvas({
         });
         setEditingId(null);
       } else if (msg.type === 'append_screen') {
+        flashPulse(new Set(), new Set([msg.screen.id]));
         skipNextSnapshot.current = true;
         setSpec((prev) => ({
           ...prev,
@@ -165,6 +243,10 @@ export default function UIMockCanvas({
         }));
       }
     });
+    return () => {
+      unsubscribe();
+      if (pulseTimer.current !== null) window.clearTimeout(pulseTimer.current);
+    };
   }, []);
 
   // ── Browser → server snapshot (debounced) ──────────────────────────────
@@ -197,12 +279,34 @@ export default function UIMockCanvas({
   const lastActiveScreen = useRef<string | null>(null);
   const reportActiveScreen = useCallback(
     (screenId: string) => {
+      // Display state updates unconditionally (React bails out on identical
+      // values); the ref gates only the upstream wire report — otherwise the
+      // [spec]-keyed default effect below desyncs the two on screen removal.
+      setActiveScreenId(screenId);
       if (screenId === lastActiveScreen.current) return;
       lastActiveScreen.current = screenId;
       onActiveScreen?.(screenId);
     },
     [onActiveScreen],
   );
+
+  // Display default for activeScreenId (mirrors the server's
+  // reconcileActiveScreen): first screen when unset or pruned, null when
+  // empty. Never reports upstream; the dedupe ref is cleared when its screen
+  // vanished so a later re-add with the same id can fire the wire report.
+  useEffect(() => {
+    if (
+      lastActiveScreen.current &&
+      !spec.screens.some((s) => s.id === lastActiveScreen.current)
+    ) {
+      lastActiveScreen.current = null;
+    }
+    setActiveScreenId((prev) => {
+      if (spec.screens.length === 0) return null;
+      if (prev && spec.screens.some((s) => s.id === prev)) return prev;
+      return spec.screens[0].id;
+    });
+  }, [spec]);
   const reportActiveScreenOfNode = useCallback(
     (nodeId: string) => {
       const screen = specRef.current.screens.find((s) =>
@@ -356,6 +460,82 @@ export default function UIMockCanvas({
     [addToSelection, selectOnly],
   );
 
+  // ── AI popout (sparkle → card) ────────────────────────────────────────
+  // All useCallback-stable: they're passed to UILayersPanel and read live
+  // state through refs, so opening the popout never churns NodeWrapper props.
+  const closePopout = useCallback(() => setPopout(null), []);
+
+  const openPopoutForSelection = useCallback(() => {
+    const ids = selectedIdsRef.current;
+    if (ids.length === 0) return;
+    const screen = specRef.current.screens.find((s) =>
+      s.nodes.some((n) => n.id === ids[0]),
+    );
+    if (!screen) return;
+    // A shift-click selection can span screens; scope only the nodes that
+    // live on the resolved screen so the label and prompt never lie.
+    const onScreen = ids.filter((id) =>
+      screen.nodes.some((n) => n.id === id),
+    );
+    setPopout({
+      scope: {
+        kind: 'nodes',
+        screenId: screen.id,
+        screenTitle: screen.title,
+        nodeIds: onScreen,
+      },
+    });
+  }, []);
+
+  const openPopoutForScreen = useCallback(
+    (screenId: string) => {
+      const screen = specRef.current.screens.find((s) => s.id === screenId);
+      if (!screen) return;
+      clearSelection();
+      reportActiveScreen(screenId);
+      setPopout({
+        scope: { kind: 'screen', screenId, screenTitle: screen.title },
+      });
+    },
+    [clearSelection, reportActiveScreen],
+  );
+
+  const selectScreen = useCallback(
+    (screenId: string) => {
+      clearSelection();
+      reportActiveScreen(screenId);
+    },
+    [clearSelection, reportActiveScreen],
+  );
+
+  const removeScreen = useCallback((screenId: string) => {
+    try {
+      const next = removeScreenFromSpec(specRef.current, screenId);
+      setSpec(next);
+      setSelectedIds((prev) =>
+        prev.filter((id) =>
+          next.screens.some((s) => s.nodes.some((n) => n.id === id)),
+        ),
+      );
+    } catch {
+      // already gone — ignore.
+    }
+  }, []);
+
+  // Close the popout when a server-driven spec change prunes its anchor
+  // (e.g. the agent replaced the spec mid-prompt).
+  useEffect(() => {
+    if (!popout) return;
+    const { scope } = popout;
+    const anchorGone =
+      scope.kind === 'screen'
+        ? !spec.screens.some((s) => s.id === scope.screenId)
+        : !(scope.nodeIds ?? []).some((id) =>
+            spec.screens.some((s) => s.nodes.some((n) => n.id === id)),
+          );
+    if (anchorGone) setPopout(null);
+  }, [spec, popout]);
+
   // ── Keyboard ──────────────────────────────────────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -363,6 +543,13 @@ export default function UIMockCanvas({
       if (editingId) return;
       const target = e.target as HTMLElement | null;
       if (target && (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      // Escape closes the popout first, the selection second. (With focus in
+      // the popout's textarea the typing-target guard above returns early and
+      // the popout's own onKeyDown handles it.)
+      if (e.key === 'Escape' && popout) {
+        setPopout(null);
         return;
       }
       if (e.key === 'Backspace' || e.key === 'Delete') {
@@ -376,7 +563,7 @@ export default function UIMockCanvas({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [editingId, selectedIds.length, deleteSelected, clearSelection]);
+  }, [editingId, selectedIds.length, deleteSelected, clearSelection, popout]);
 
   // ── Camera (pan / zoom) ───────────────────────────────────────────────
   // View-only: the content layer renders under translate+scale. Never enters
@@ -586,6 +773,107 @@ export default function UIMockCanvas({
     moveableRef.current?.updateRect();
   }, [camera]);
 
+  // Re-anchor when the wrapper itself resizes (debounced, mirroring the
+  // Terminal fit observer's cadence).
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    let timer: number | null = null;
+    const ro = new ResizeObserver(() => {
+      if (timer !== null) window.clearTimeout(timer);
+      timer = window.setTimeout(() => setWrapperEpoch((e) => e + 1), 50);
+    });
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      if (timer !== null) window.clearTimeout(timer);
+    };
+  }, []);
+
+  // ── AI island anchoring ───────────────────────────────────────────────
+  // Wrapper-relative rects via getBoundingClientRect, so the sparkle/card
+  // track the camera at constant size. Anchor: the popout's own scope while
+  // open; otherwise the selection's union bbox, else the active screen.
+  // Sparkle sits at the anchor's top-right (+8px up/right); the card opens at
+  // the sparkle and flips left/above when it would clip the wrapper.
+  useLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    const wrapperRect = wrapper.getBoundingClientRect();
+
+    type Rect = { top: number; right: number };
+    const unionRect = (ids: string[]): Rect | null => {
+      let top = Infinity;
+      let right = -Infinity;
+      let found = false;
+      for (const id of ids) {
+        const el = nodeRefs.current.get(id);
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        top = Math.min(top, r.top);
+        right = Math.max(right, r.right);
+        found = true;
+      }
+      return found ? { top, right } : null;
+    };
+    const screenRect = (id: string): Rect | null => {
+      const el = screenRefs.current.get(id);
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { top: r.top, right: r.right };
+    };
+
+    let anchor: Rect | null = null;
+    if (popout) {
+      anchor =
+        popout.scope.kind === 'nodes'
+          ? unionRect(popout.scope.nodeIds ?? [])
+          : screenRect(popout.scope.screenId);
+    } else if (selectedIds.length > 0) {
+      anchor = unionRect(selectedIds);
+    } else if (activeScreenId) {
+      anchor = screenRect(activeScreenId);
+    }
+    if (!anchor) {
+      setAiPos({ sparkle: null, card: null });
+      return;
+    }
+
+    const clamp = (v: number, lo: number, hi: number) =>
+      Math.min(Math.max(v, lo), Math.max(lo, hi));
+    const right = anchor.right - wrapperRect.left;
+    const top = anchor.top - wrapperRect.top;
+    const sparkle = {
+      left: clamp(
+        right + 8,
+        AI_MARGIN,
+        wrapperRect.width - AI_SPARKLE_PX - AI_MARGIN,
+      ),
+      top: clamp(
+        top - 8,
+        AI_MARGIN,
+        wrapperRect.height - AI_SPARKLE_PX - AI_MARGIN,
+      ),
+    };
+    let cardLeft = sparkle.left;
+    let cardTop = sparkle.top;
+    if (cardLeft + AI_CARD_W > wrapperRect.width - AI_MARGIN) {
+      cardLeft = sparkle.left + AI_SPARKLE_PX - AI_CARD_W;
+    }
+    if (cardTop + AI_CARD_H > wrapperRect.height - AI_MARGIN) {
+      cardTop = sparkle.top + AI_SPARKLE_PX - AI_CARD_H;
+    }
+    const card = {
+      left: clamp(cardLeft, AI_MARGIN, wrapperRect.width - AI_CARD_W - AI_MARGIN),
+      top: clamp(cardTop, AI_MARGIN, wrapperRect.height - AI_CARD_H - AI_MARGIN),
+    };
+    setAiPos({ sparkle, card });
+  }, [camera, spec, selectedIds, popout, activeScreenId, wrapperEpoch]);
+
+  // screenId → derived export filename for the title-row chip. Derived live —
+  // the export target is order-dependent and never stored on the spec.
+  const screenFiles = useMemo(() => screenFileNames(spec), [spec]);
+
   // ── Moveable target list ──────────────────────────────────────────────
   // We rebuild on every render keyed by selectedIds; React → DOM reconciliation
   // has settled by the time Moveable reads its `target` prop.
@@ -644,9 +932,20 @@ export default function UIMockCanvas({
     }
   };
 
+  // The AI island hides for the duration of a gesture — imperatively, no
+  // setState mid-drag; the [spec]-keyed anchoring effect re-positions on
+  // commit.
+  const hideAiIsland = () => {
+    if (aiIslandRef.current) aiIslandRef.current.style.visibility = 'hidden';
+  };
+  const showAiIsland = () => {
+    if (aiIslandRef.current) aiIslandRef.current.style.visibility = '';
+  };
+
   const onDragStart = useCallback(
     (e: OnDragStart) => {
       gestureActiveRef.current = true;
+      hideAiIsland();
       const id = (e.target as HTMLElement).getAttribute('data-mock-id');
       if (id) stashOrigin(id);
     },
@@ -660,6 +959,7 @@ export default function UIMockCanvas({
   const onDragEnd = useCallback(
     (e: OnDragEnd) => {
       gestureActiveRef.current = false;
+      showAiIsland();
       const target = e.target as HTMLElement;
       const id = target.getAttribute('data-mock-id');
       if (!id) {
@@ -688,6 +988,7 @@ export default function UIMockCanvas({
   const onDragGroupStart = useCallback(
     (e: OnDragGroupStart) => {
       gestureActiveRef.current = true;
+      hideAiIsland();
       for (const ev of e.events) {
         const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
         if (id) stashOrigin(id);
@@ -705,6 +1006,7 @@ export default function UIMockCanvas({
   const onDragGroupEnd = useCallback(
     (e: OnDragGroupEnd) => {
       gestureActiveRef.current = false;
+      showAiIsland();
       const patches = new Map<string, Partial<UINode>>();
       for (const ev of e.events) {
         const target = ev.target as HTMLElement;
@@ -733,6 +1035,7 @@ export default function UIMockCanvas({
   const onResizeStart = useCallback(
     (e: OnResizeStart) => {
       gestureActiveRef.current = true;
+      hideAiIsland();
       const id = (e.target as HTMLElement).getAttribute('data-mock-id');
       if (id) stashOrigin(id);
     },
@@ -748,6 +1051,7 @@ export default function UIMockCanvas({
   const onResizeEnd = useCallback(
     (e: OnResizeEnd) => {
       gestureActiveRef.current = false;
+      showAiIsland();
       const target = e.target as HTMLElement;
       const id = target.getAttribute('data-mock-id');
       if (!id) {
@@ -790,6 +1094,7 @@ export default function UIMockCanvas({
   const onResizeGroupStart = useCallback(
     (e: OnResizeGroupStart) => {
       gestureActiveRef.current = true;
+      hideAiIsland();
       for (const ev of e.events) {
         const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
         if (id) stashOrigin(id);
@@ -809,6 +1114,7 @@ export default function UIMockCanvas({
   const onResizeGroupEnd = useCallback(
     (e: OnResizeGroupEnd) => {
       gestureActiveRef.current = false;
+      showAiIsland();
       const patches = new Map<string, Partial<UINode>>();
       for (const ev of e.events) {
         const target = ev.target as HTMLElement;
@@ -852,6 +1158,7 @@ export default function UIMockCanvas({
 
   return (
     <div
+      ref={wrapperRef}
       className="relative h-full w-full bg-background"
       onPointerEnter={() => {
         pointerOverRef.current = true;
@@ -896,14 +1203,36 @@ export default function UIMockCanvas({
           >
             {spec.screens.map((screen) => (
           <div key={screen.id} className="flex flex-col gap-2">
-            <div className="text-xs font-medium text-foreground/90">
+            {/* This row must stay single-line: FRAME_INSET_Y in UIPanel.tsx
+                mirrors its ~24px height. */}
+            <div
+              className={cn(
+                'cursor-pointer whitespace-nowrap text-xs font-medium hover:text-foreground',
+                screen.id === activeScreenId
+                  ? 'text-foreground'
+                  : 'text-foreground/90',
+              )}
+              onPointerDown={() => selectScreen(screen.id)}
+            >
               {screen.title}
               <span className="ml-2 font-mono text-[10px] text-muted-foreground">
                 {screen.frame.w}×{screen.frame.h}
               </span>
+              <ScreenFileChip
+                sourceFile={screen.sourceFile}
+                exportName={screenFiles.get(screen.id)!}
+              />
             </div>
             <div
-              className="relative bg-background"
+              ref={(el) => {
+                if (el) screenRefs.current.set(screen.id, el);
+                else screenRefs.current.delete(screen.id);
+              }}
+              className={cn(
+                'relative bg-background',
+                pulse.screens.has(screen.id) &&
+                  'outline outline-2 outline-primary/70',
+              )}
               data-screen-id={screen.id}
               style={{
                 width: screen.frame.w,
@@ -927,6 +1256,7 @@ export default function UIMockCanvas({
                   key={node.id}
                   node={node}
                   isSelected={selectedIds.includes(node.id)}
+                  isPulsing={pulse.nodes.has(node.id)}
                   isEditing={editingId === node.id}
                   refsMap={nodeRefs}
                   onSelectOnly={selectOnly}
@@ -1037,6 +1367,37 @@ export default function UIMockCanvas({
             </Button>
           )}
         </div>
+        {/* AI sparkle/popout island. Zero-size at the layer origin so its
+            absolutely-positioned children land in wrapper coords; one ref so
+            gestures can hide the whole thing imperatively. */}
+        <div ref={aiIslandRef} className="pointer-events-auto absolute left-0 top-0">
+          {!popout &&
+            !editingId &&
+            aiPos.sparkle &&
+            (selectedIds.length > 0 ||
+              (selectedIds.length === 0 && activeScreenId && !isEmpty)) && (
+              <button
+                type="button"
+                aria-label="Ask AI"
+                className="absolute flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition hover:scale-105"
+                style={{ left: aiPos.sparkle.left, top: aiPos.sparkle.top }}
+                onClick={() =>
+                  selectedIdsRef.current.length > 0
+                    ? openPopoutForSelection()
+                    : openPopoutForScreen(activeScreenId!)
+                }
+              >
+                <Sparkles className="size-3.5" />
+              </button>
+            )}
+          {popout && aiPos.card && (
+            <UIAIPopout
+              scope={popout.scope}
+              position={aiPos.card}
+              onClose={closePopout}
+            />
+          )}
+        </div>
         <div className="pointer-events-auto absolute bottom-3 left-3">
           <ZoomControls
             zoom={camera.zoom}
@@ -1051,9 +1412,13 @@ export default function UIMockCanvas({
             <UILayersPanel
               screens={spec.screens}
               selectedIds={selectedIds}
+              activeScreenId={activeScreenId}
               onSelect={handleLayerSelect}
               onReorder={reorderNode}
               onRemove={removeNode}
+              onSelectScreen={selectScreen}
+              onAiForScreen={openPopoutForScreen}
+              onRemoveScreen={removeScreen}
               onClose={() => setLayersOpen(false)}
             />
           ) : (
@@ -1079,6 +1444,7 @@ export default function UIMockCanvas({
 const NodeWrapper = memo(function NodeWrapper({
   node,
   isSelected,
+  isPulsing,
   isEditing,
   refsMap,
   onSelectOnly,
@@ -1089,6 +1455,7 @@ const NodeWrapper = memo(function NodeWrapper({
 }: {
   node: UINode;
   isSelected: boolean;
+  isPulsing: boolean;
   isEditing: boolean;
   refsMap: RefObject<Map<string, HTMLDivElement>>;
   onSelectOnly: (id: string) => void;
@@ -1157,6 +1524,7 @@ const NodeWrapper = memo(function NodeWrapper({
       className={cn(
         'box-border',
         isSelected && 'ring-1 ring-ring/50',
+        isPulsing && 'outline outline-2 outline-primary/70',
       )}
       style={style}
       onPointerDown={onPointerDown}
@@ -1171,6 +1539,61 @@ const NodeWrapper = memo(function NodeWrapper({
     </div>
   );
 });
+
+// Directional provenance chip in the screen title row: '↓ <basename>' when
+// the screen was imported from a Swift source, else '↑ <TypeName>.swift' (the
+// derived export target). Click copies the relevant workspace-relative path.
+// Renders inside the transformed title row, so it scales with zoom — accepted
+// (informational only; all triggers live in screen space).
+function ScreenFileChip({
+  sourceFile,
+  exportName,
+}: {
+  sourceFile?: string;
+  exportName: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<number | null>(null);
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  return (
+    <button
+      type="button"
+      className="ml-2 inline-flex max-w-40 items-center gap-0.5 truncate align-bottom font-mono text-[10px] text-muted-foreground hover:text-foreground"
+      title={`Imported from: ${sourceFile ?? '—'}\nExports to: TangoGenerated/${exportName}`}
+      // Keep the copy click from also activating the screen via the row.
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={() => {
+        void navigator.clipboard.writeText(
+          sourceFile ?? `TangoGenerated/${exportName}`,
+        );
+        setCopied(true);
+        if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+        timerRef.current = window.setTimeout(() => setCopied(false), 1200);
+      }}
+    >
+      {copied ? (
+        <>
+          <Check className="size-3" />
+          copied
+        </>
+      ) : sourceFile ? (
+        `↓ ${basename(sourceFile)}`
+      ) : (
+        `↑ ${exportName}`
+      )}
+    </button>
+  );
+}
+
+function basename(path: string): string {
+  const i = path.lastIndexOf('/');
+  return i === -1 ? path : path.slice(i + 1);
+}
 
 // Shared guard for the window-level key listeners: don't hijack keys headed
 // for a text edit or a focused control (space activates a focused button).

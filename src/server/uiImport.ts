@@ -163,13 +163,19 @@ export async function findSwiftFiles(
 
 // Pure, tested: replace the screen with the same id, or append. Imported
 // screens never disturb other screens (the user's existing work survives).
+// A replacement that omits sourceFile keeps the prior screen's provenance
+// (re-emits and TangoGenerated round-trips don't re-state the user source).
 export function applyEmittedScreen(current: UISpec, screen: UIScreen): UISpec {
   const idx = current.screens.findIndex((s) => s.id === screen.id);
   if (idx === -1) {
     return { screens: [...current.screens, screen] };
   }
   const screens = current.screens.slice();
-  screens[idx] = screen;
+  const prior = screens[idx];
+  screens[idx] =
+    screen.sourceFile === undefined && prior.sourceFile !== undefined
+      ? { ...screen, sourceFile: prior.sourceFile }
+      : screen;
   return { screens };
 }
 
@@ -286,11 +292,12 @@ Files under TangoGenerated/ are tango's own previous exports of canvas designs (
 - \`Color(tangoR: R, g: G, b: B, a: A)\` is an exact RGB color — convert to hex in the node's \`style\` (e.g. {"color":"#0A1235"}, {"background":"#F5EEE0"}).
 - Reverse the node mapping table: Text with a Capsule fill/overlay → Badge; RoundedRectangle cards → div; Image(systemName:) → Icon (map the SF Symbol back to the closest lucide name); \`.font(.system(size:weight:))\` ≥ 22 with bold/serif → heading.
 - Ignore container wrappers (\`ZStack(alignment: .topLeading)\`, \`Group {}\`) — they exist only for SwiftUI's ViewBuilder limits.
+- When re-importing a TangoGenerated screen, omit \`source_file\` unless you know the original user source — the canvas keeps the screen's prior provenance when it is omitted.
 
 ## Procedure
 
 1. From the provided file lists, pick the likely screen sources (App roots, *View/*Screen files, TangoGenerated screen files). Read the @main App entry early — screens reachable from it are what the app actually shows, and they must be imported. Read several files per turn — request multiple read_swift_file calls in one response.
-2. Emit each screen as soon as it's translated; don't batch them at the end. Screen id and title = the View's type name (e.g. "OnboardingView"). Prefix node ids with the screen id (e.g. "onboardingview-title") so ids stay unique across the canvas.
+2. Emit each screen as soon as it's translated; don't batch them at the end. Screen id and title = the View's type name (e.g. "OnboardingView"). Prefix node ids with the screen id (e.g. "onboardingview-title") so ids stay unique across the canvas. Always pass \`source_file\` for user sources — the workspace-relative path of the file you translated the screen from, copied from the file list; omit it for TangoGenerated files (see the round-trip rules).
 3. If emit_screen returns a validation error, fix the screen and re-emit it. If it returns LAYOUT WARNINGS (clipped text, out-of-frame nodes), treat them as defects: correct the coordinates and re-emit the screen with the same id before moving on.
 4. Don't re-read files you've seen; don't read files that are clearly not screens (models, extensions, networking).
 5. When every screen is emitted, reply with a one-paragraph summary naming the imported screens. Do not ask follow-up questions — finish the import autonomously.`;
@@ -322,6 +329,11 @@ function buildTools(): Anthropic.Tool[] {
         type: 'object',
         properties: {
           screen: z.toJSONSchema(uiScreenSchema) as Record<string, unknown>,
+          source_file: {
+            type: 'string',
+            description:
+              'Workspace-relative path of the Swift file this screen was translated from — copy it from the provided file list.',
+          },
         },
         required: ['screen'],
       } as Anthropic.Tool['input_schema'],
@@ -525,13 +537,33 @@ export async function runUiImport(
           true,
         );
       }
-      const screen = parsed.data as UIScreen;
-      const dup = findDuplicateNodeId(screen);
+      // The server is the sole provenance authority: strip any model-embedded
+      // screen.sourceFile and only stamp the allowlist-validated source_file
+      // param. Omitting it preserves the prior screen's provenance on replace
+      // (see applyEmittedScreen).
+      const { sourceFile: _modelEmbedded, ...screenBase } =
+        parsed.data as UIScreen;
+      const dup = findDuplicateNodeId(screenBase);
       if (dup) {
         return result(
-          `screen "${screen.id}" has duplicate node id "${dup}" — node ids must be unique`,
+          `screen "${screenBase.id}" has duplicate node id "${dup}" — node ids must be unique`,
           true,
         );
+      }
+      const src = (block.input as { source_file?: unknown }).source_file;
+      let screen: UIScreen = screenBase;
+      let note: string | null = null;
+      if (typeof src === 'string') {
+        if (isGeneratedScreenPath(src)) {
+          // TangoGenerated paths are tango's own exports, not provenance —
+          // treat as omitted so applyEmittedScreen keeps the prior source.
+          note =
+            'note: TangoGenerated paths are exports, not provenance — keeping the prior sourceFile';
+        } else if (fileSet.has(src)) {
+          screen = { ...screenBase, sourceFile: src };
+        } else {
+          note = `note: source_file "${src}" is not in the provided file list — provenance not recorded`;
+        }
       }
       try {
         const current = deps.getSpec() ?? { screens: [] };
@@ -547,11 +579,11 @@ export async function runUiImport(
       const warnings = lintScreen(screen);
       if (warnings.length > 0) {
         return result(
-          `Imported screen "${screen.id}" (${screen.nodes.length} nodes) WITH LAYOUT WARNINGS — fix these and re-emit the screen with the same id:\n- ${warnings.join('\n- ')}`,
+          `Imported screen "${screen.id}" (${screen.nodes.length} nodes) WITH LAYOUT WARNINGS — fix these and re-emit the screen with the same id:\n- ${warnings.join('\n- ')}${note ? `\n${note}` : ''}`,
         );
       }
       return result(
-        `Imported screen "${screen.id}" (${screen.nodes.length} nodes).`,
+        `Imported screen "${screen.id}" (${screen.nodes.length} nodes).${note ? ` ${note}` : ''}`,
       );
     }
 

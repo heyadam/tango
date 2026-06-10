@@ -22,6 +22,7 @@ import {
   ArrowDown,
   ArrowUp,
   Bot,
+  ChevronDown,
   CircleAlert,
   Eye,
   FilePen,
@@ -44,7 +45,7 @@ import PanelHeader from '@/components/PanelHeader';
 import AgentMarkdown from '@/components/AgentMarkdown';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { terminalBus } from '@/lib/terminalBus';
+import { terminalBus, type AgentTask } from '@/lib/terminalBus';
 import {
   createSubmitBuffer,
   type AgentServerMsg,
@@ -78,6 +79,19 @@ const EXAMPLE_PROMPTS = [
 
 // Considered pinned to the bottom while within this many px of it.
 const PIN_THRESHOLD_PX = 48;
+
+// Drops trailing pending tool items — they're placeholders for a tool call
+// whose input was still streaming, superseded by the real tool_use frame (or
+// abandoned when the turn ends). Identity-preserving when nothing to strip.
+function stripTrailingPending(items: TranscriptItem[]): TranscriptItem[] {
+  let end = items.length;
+  while (end > 0) {
+    const it = items[end - 1];
+    if (it.kind === 'tool' && it.pending) end -= 1;
+    else break;
+  }
+  return end === items.length ? items : items.slice(0, end);
+}
 
 // Per-tool icon. Names arrive as display names (the bridge applies
 // displayToolName before sending), so MCP tools match on their bare name.
@@ -200,6 +214,33 @@ export default function AgentPanel({
     [closeStreamingBubble],
   );
 
+  // Canvas-originated tasks (terminalBus.submitTask): same flow as submit()
+  // but the optimistic append is a 'task' card carrying the scope label, with
+  // the full prompt behind a disclosure instead of a wall-of-text user bubble.
+  const submitTaskItem = useCallback(
+    (task: AgentTask) => {
+      const ws = wsRef.current;
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        setItems((prev) => [
+          ...prev,
+          { kind: 'error', text: 'not connected — message not sent' },
+        ]);
+        return;
+      }
+      closeStreamingBubble();
+      setItems((prev) => [
+        ...prev,
+        { kind: 'task', label: task.label, prompt: task.prompt },
+      ]);
+      pinnedRef.current = true;
+      setJumpVisible(false);
+      setBusy(true);
+      setStatusText(null);
+      ws.send(JSON.stringify({ type: 'user_message', text: task.prompt }));
+    },
+    [closeStreamingBubble],
+  );
+
   const interrupt = useCallback(() => {
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -246,9 +287,25 @@ export default function AgentPanel({
         case 'text_done':
           closeStreamingBubble();
           return;
-        case 'tool_use':
+        case 'tool_pending':
           setItems((prev) => [
             ...prev,
+            { kind: 'tool', name: msg.name, detail: '', pending: true },
+          ]);
+          return;
+        case 'tool_progress':
+          setItems((prev) => {
+            const last = prev[prev.length - 1];
+            if (!last || last.kind !== 'tool' || !last.pending) return prev;
+            return [
+              ...prev.slice(0, -1),
+              { ...last, progressChars: msg.chars },
+            ];
+          });
+          return;
+        case 'tool_use':
+          setItems((prev) => [
+            ...stripTrailingPending(prev),
             { kind: 'tool', name: msg.name, detail: msg.detail },
           ]);
           return;
@@ -256,6 +313,7 @@ export default function AgentPanel({
           closeStreamingBubble();
           setBusy(false);
           setStatusText(null);
+          setItems(stripTrailingPending);
           if (!msg.ok && msg.error) {
             setItems((prev) => [
               ...prev,
@@ -279,7 +337,10 @@ export default function AgentPanel({
         case 'error':
           closeStreamingBubble();
           setBusy(false);
-          setItems((prev) => [...prev, { kind: 'error', text: msg.message }]);
+          setItems((prev) => [
+            ...stripTrailingPending(prev),
+            { kind: 'error', text: msg.message },
+          ]);
           return;
         case 'workspace_changed':
           setGeneration((g) => g + 1);
@@ -333,6 +394,20 @@ export default function AgentPanel({
     const buffer = createSubmitBuffer(submit);
     return terminalBus._onSend((chunk) => buffer.push(chunk));
   }, [submit]);
+
+  // Structured canvas tasks arrive whole — no buffer needed.
+  useEffect(() => terminalBus._onTask(submitTaskItem), [submitTaskItem]);
+
+  // Presentational agent-state channel for the canvas popout. Idempotent
+  // last-value writes, so the Strict-Mode double-mount is harmless.
+  useEffect(() => {
+    terminalBus._setAgentState({
+      kind: 'tango',
+      busy,
+      connected: connState === 'open',
+    });
+  }, [busy, connState]);
+  useEffect(() => () => terminalBus._setAgentState({ kind: 'none' }), []);
 
   // Smart auto-scroll: follow the stream only while the user is pinned to the
   // bottom; otherwise surface the jump-to-latest pill. Instant scrolling —
@@ -564,6 +639,49 @@ function EmptyState({ onPick }: { onPick: (text: string) => void }) {
   );
 }
 
+// A canvas-originated task: compact card showing the scope label with the
+// full prompt behind a chevron disclosure. Lives outside TranscriptRow
+// because the expanded state is a hook and TranscriptRow early-returns.
+const TaskRow = memo(function TaskRow({
+  item,
+}: {
+  item: { kind: 'task'; label: string; prompt: string };
+}) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="max-w-[85%] self-end rounded-lg border border-primary/20 bg-primary/5 px-3 py-1.5 duration-200 animate-in fade-in slide-in-from-bottom-1">
+      <div className="flex items-center gap-1.5">
+        <Sparkles className="size-3 shrink-0 text-primary" />
+        <span className="min-w-0 truncate text-sm font-medium text-foreground">
+          {item.label}
+        </span>
+        <span className="shrink-0 rounded bg-secondary px-1 py-px text-[10px] text-secondary-foreground">
+          canvas
+        </span>
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-label="Show prompt"
+          className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ChevronDown
+            className={cn(
+              'size-3 transition-transform',
+              expanded && 'rotate-180',
+            )}
+          />
+        </button>
+      </div>
+      {expanded && (
+        <div className="mt-1 max-h-40 overflow-auto font-mono text-[11px] whitespace-pre-wrap text-muted-foreground">
+          {item.prompt}
+        </div>
+      )}
+    </div>
+  );
+});
+
 // Non-tool rows. memo works because groupTranscript passes these through by
 // reference — only the streaming assistant bubble changes identity per delta.
 const TranscriptRow = memo(function TranscriptRow({
@@ -594,6 +712,10 @@ const TranscriptRow = memo(function TranscriptRow({
         {item.text}
       </div>
     );
+  }
+  // Before the error fallthrough — an unhandled kind renders as an error row.
+  if (item.kind === 'task') {
+    return <TaskRow item={item} />;
   }
   return (
     <div
@@ -653,10 +775,18 @@ const ToolRow = memo(function ToolRow({
         <Icon className="size-3 shrink-0" />
       )}
       <span className="shrink-0 font-medium">{item.name}</span>
-      {item.detail && (
-        <span className="min-w-0 truncate font-mono text-[11px] text-muted-foreground/70">
-          {item.detail}
+      {item.pending ? (
+        <span className="min-w-0 truncate text-[11px] italic text-muted-foreground/70">
+          {item.progressChars
+            ? `preparing… ${(item.progressChars / 1000).toFixed(1)}k chars`
+            : 'preparing…'}
         </span>
+      ) : (
+        item.detail && (
+          <span className="min-w-0 truncate font-mono text-[11px] text-muted-foreground/70">
+            {item.detail}
+          </span>
+        )
       )}
     </div>
   );
