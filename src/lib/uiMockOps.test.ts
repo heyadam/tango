@@ -4,6 +4,7 @@ import {
   appendScreenToSpec,
   describeLayers,
   duplicateScreenInSpec,
+  findNodeInSpec,
   groupNodesInSpec,
   moveNodeInSpec,
   removeNodesFromSpec,
@@ -566,5 +567,12 @@ describe('groups across other ops', () => {
     expect(out.screens[0].groups).toEqual([{ id: 'g', name: 'Solo' }]);
     expect(out.screens[0].layers.find((l) => l.id === 'a1')!.group).toBe('g');
     expect('group' in out.screens[0].layers.find((l) => l.id === 'a2')!).toBe(false);
+  });
+});
+
+describe('findNodeInSpec', () => {
+  it('finds across screens and returns null when absent', () => {
+    expect(findNodeInSpec(fixture(), 'b1')!.id).toBe('b1');
+    expect(findNodeInSpec(fixture(), 'zz')).toBeNull();
   });
 });
