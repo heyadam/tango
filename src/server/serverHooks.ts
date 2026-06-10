@@ -31,6 +31,11 @@ export type ServerHooks = {
   // Routes through uiMockBridge's cacheChanged() so browsers, the preview
   // host, and the write-behind persist all see the change.
   setUiMockSpec?: (spec: UISpec) => void;
+  // Adopt a browser-supplied snapshot from the route-handler graph (Export &
+  // Run POSTs the canvas's CURRENT spec so a pending 250ms snapshot debounce
+  // can never make an export read stale state). Validates + applies with the
+  // same semantics as a /ws/ui-mock snapshot frame.
+  adoptUiSnapshot?: (raw: unknown) => { ok: true } | { ok: false; error: string };
   // Number of connected /ws/preview clients (registered by previewBridge).
   previewClientCount?: () => number;
   // (Re)point the source-sync watcher at the current workspace (registered by

@@ -23,6 +23,8 @@ import {
   duplicateScreenInSpec,
   groupNodesInSpec,
   instantiateComponentInSpec,
+  moveGroupInSpec,
+  moveNodeInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
   renameGroupInSpec,
@@ -84,6 +86,31 @@ registerHook('getUiMockActiveScreen', () => activeScreenId);
 // Route-handler-graph writer (the fast import engine) — full broadcast
 // semantics, same as an MCP set_ui_mock.
 registerHook('setUiMockSpec', (spec) => setUIMockFromServer(spec));
+// Route-handler-graph snapshot adoption (Export & Run's POSTed spec) — same
+// validation + merge policy as a /ws/ui-mock snapshot frame.
+registerHook('adoptUiSnapshot', (raw) => adoptClientSnapshot(raw));
+
+// Validate + adopt a browser snapshot. Shared by the WS frame handler and the
+// adoptUiSnapshot hook: the cache fans out to the preview host and the
+// write-behind persist, so a malformed client payload is rejected loudly and
+// the last good spec stays. Screens come from the snapshot (the browser is
+// the source of truth for human edits); the design library follows
+// adoptSnapshotSpec's cache-wins policy.
+function adoptClientSnapshot(
+  raw: unknown,
+): { ok: true } | { ok: false; error: string } {
+  const checked = uiSpecSchema.safeParse(raw);
+  if (!checked.success) {
+    const error = checked.error.issues
+      .slice(0, 3)
+      .map((i) => `${i.path.join('.')}: ${i.message}`)
+      .join('; ');
+    return { ok: false, error };
+  }
+  cache = adoptSnapshotSpec(cache, checked.data as UISpec);
+  cacheChanged();
+  return { ok: true };
+}
 
 function broadcast(msg: UIMockServerMsg): void {
   hub.broadcast(msg);
@@ -157,27 +184,10 @@ export function attachUIMock(ws: WebSocket): void {
     onMessage: (raw) => {
       const parsed = raw as UIMockClientMsg;
       if (parsed.type === 'snapshot' && parsed.spec) {
-        // Validate before accepting: the cache fans out to the preview host
-        // and the write-behind persist, so a malformed client snapshot would
-        // poison both. Reject loudly and keep the last good spec.
-        const checked = uiSpecSchema.safeParse(parsed.spec);
-        if (!checked.success) {
-          console.warn(
-            '[ui-mock] rejected invalid snapshot:',
-            checked.error.issues
-              .slice(0, 3)
-              .map((i) => `${i.path.join('.')}: ${i.message}`)
-              .join('; '),
-          );
-          return;
+        const adopted = adoptClientSnapshot(parsed.spec);
+        if (!adopted.ok) {
+          console.warn('[ui-mock] rejected invalid snapshot:', adopted.error);
         }
-        // Snapshots describe SCREENS (the browser's editing surface). The
-        // design library is server/import-owned: the cache's copy wins even
-        // when the snapshot INCLUDES one (a stale tab mid-debounce after an
-        // import would otherwise revert the fresh library); a client copy
-        // only fills a library-less cache (localStorage restore).
-        cache = adoptSnapshotSpec(cache, checked.data as UISpec);
-        cacheChanged();
       } else if (parsed.type === 'viewport') {
         const w = Math.round(parsed.w);
         const h = Math.round(parsed.h);
@@ -299,6 +309,25 @@ export function removeUINodesFromServer(nodeIds: string[]): void {
 
 export function reorderUINodeFromServer(nodeId: string, op: ReorderOp): void {
   setUIMockFromServer(reorderNodeInSpec(cache, nodeId, op));
+}
+
+export function moveUINodeFromServer(
+  nodeId: string,
+  targetIndex: number,
+  group?: string | null,
+  targetScreenId?: string,
+): void {
+  setUIMockFromServer(
+    moveNodeInSpec(cache, nodeId, targetIndex, group, targetScreenId),
+  );
+}
+
+export function moveUIGroupFromServer(
+  groupId: string,
+  targetIndex: number,
+  targetScreenId?: string,
+): void {
+  setUIMockFromServer(moveGroupInSpec(cache, groupId, targetIndex, targetScreenId));
 }
 
 export function groupUINodesFromServer(

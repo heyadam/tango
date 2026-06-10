@@ -13,11 +13,12 @@ import { MAX_ZOOM, MIN_ZOOM } from '@/lib/uiCanvasCamera';
 import type { SourceSyncStatus, UINodeType } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
-// Directional provenance chip in the screen title row: '↓ <basename>' when
-// the screen was imported from a Swift source, else '↑ <TypeName>.swift' (the
-// derived export target). Click copies the relevant workspace-relative path.
-// When the source-sync watcher reports the linked file changed since import,
-// the chip goes warning-tinted ('stale'); a deleted source reads 'missing'.
+// Provenance chip in the screen title row: '↕ <basename>' when the screen is
+// linked to a Swift source (import reads it, Export & Run writes the View's
+// body back in place), else '↑ <TypeName>.swift' (the file Export & Run will
+// create). Click copies the relevant workspace-relative path. When the
+// source-sync watcher reports the linked file changed since import, the chip
+// goes warning-tinted ('stale'); a deleted source reads 'missing'.
 // Renders inside the transformed title row, so it scales with zoom — accepted
 // (informational only; all triggers live in screen space).
 export function ScreenFileChip({
@@ -55,13 +56,15 @@ export function ScreenFileChip({
             ? 'text-destructive/80 line-through'
             : 'text-muted-foreground hover:text-foreground',
       )}
-      title={`Imported from: ${sourceFile ?? '—'}\nExports to: TangoGenerated/${exportName}${syncNote}`}
+      title={
+        sourceFile
+          ? `Linked to ${sourceFile}\nImport reads it; Export & Run rewrites the View's body in place.${syncNote}`
+          : `No source file yet — Export & Run creates ${exportName} at the app source root.`
+      }
       // Keep the copy click from also activating the screen via the row.
       onPointerDown={(e) => e.stopPropagation()}
       onClick={() => {
-        void navigator.clipboard.writeText(
-          sourceFile ?? `TangoGenerated/${exportName}`,
-        );
+        void navigator.clipboard.writeText(sourceFile ?? exportName);
         setCopied(true);
         if (timerRef.current !== null) window.clearTimeout(timerRef.current);
         timerRef.current = window.setTimeout(() => setCopied(false), 1200);
@@ -79,7 +82,7 @@ export function ScreenFileChip({
           copied
         </>
       ) : sourceFile ? (
-        `↓ ${basename(sourceFile)}`
+        `↕ ${basename(sourceFile)}`
       ) : (
         `↑ ${exportName}`
       )}

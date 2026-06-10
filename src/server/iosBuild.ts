@@ -592,7 +592,17 @@ async function readBundleIdFromAppBundle(
 
 // Targeted ignore list: build junk stays out of the user's git diff while
 // `.tango/design.json` (the persisted design spec) remains committable.
-const TANGO_GITIGNORE = 'DerivedData/\nbin/\n*.tmp\n*.invalid-*.json\n';
+// export-backup/ holds the pre-export originals of files the in-place export
+// modified — local-machine insurance, never something to commit.
+const TANGO_GITIGNORE =
+  'DerivedData/\nbin/\nexport-backup/\n*.tmp\n*.invalid-*.json\n';
+
+// Exact contents earlier tango versions wrote — safe to migrate. Anything
+// else is user-customized; leave it alone.
+const LEGACY_TANGO_GITIGNORES = new Set([
+  '*\n', // blanket ignore (would gitignore design.json)
+  'DerivedData/\nbin/\n*.tmp\n*.invalid-*.json\n', // pre-export-backup list
+]);
 
 export async function ensureTangoDir(workspace: string): Promise<void> {
   const dir = path.join(workspace, '.tango');
@@ -600,10 +610,7 @@ export async function ensureTangoDir(workspace: string): Promise<void> {
   const gi = path.join(dir, '.gitignore');
   try {
     const existing = await fs.readFile(gi, 'utf8');
-    // Migrate only the exact blanket-ignore content older tango versions
-    // wrote (it would gitignore design.json). Anything else is user-
-    // customized — leave it alone.
-    if (existing === '*\n') {
+    if (LEGACY_TANGO_GITIGNORES.has(existing)) {
       await fs.writeFile(gi, TANGO_GITIGNORE).catch(() => {});
     }
   } catch {

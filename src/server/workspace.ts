@@ -133,6 +133,8 @@ You're running inside the **tango** workspace. The user is viewing a direct-mani
 - \`remove_ui_node\` — delete node(s) by id
 - \`remove_ui_screen\` — delete one screen (and its nodes) without touching the others; prefer over \`set_ui_mock\` for discarding variations
 - \`reorder_ui_node\` — change a node's z-order within its screen (front/back/forward/backward)
+- \`move_ui_node\` — place a node at an exact z-index, join/leave a group, or move it to another screen (the precise hierarchy move; coords clamp into the destination frame)
+- \`move_ui_group\` — move a whole group block to an exact z-index or onto another screen (members keep relative order and internal layout)
 - \`group_ui_nodes\` — group nodes on one screen (editor-level: layers-tree nesting + group selection; never affects rendering/export)
 - \`ungroup_ui_nodes\` / \`rename_ui_group\` — dissolve or rename a group
 - \`clear_ui_mock\` — empty the spec (screens only; the imported design library survives)
@@ -153,9 +155,9 @@ The fast path from design to running app, end to end:
 1. **Import** — you read the workspace's Swift screens and write the design via \`set_ui_mock\` (the \`tango-ui-import\` skill; agent-mediated).
 2. **Edit** — the user manipulates the canvas directly; you make incremental edits with the node tools.
 3. **Live preview** — the \`preview_start\` tool launches tango's preview-host app on the booted simulator; it renders the design natively and mirrors every canvas edit in under a second, NO rebuild.
-4. **Export** — the \`export_run\` tool deterministically generates SwiftUI into \`TangoGenerated/\` inside the detected Xcode project and builds/installs/launches it. No LLM in that path — you only intervene when the user wants generated screens woven into their hand-written code. Generated views render nothing until user code references them: if the result reports \`embedded: false\`, offer to wire \`TangoGeneratedRootView()\` into the app (e.g. in place of the template \`ContentView()\`) — that edit is yours to make, not tango's.
+4. **Export** — the \`export_run\` tool deterministically writes the design INTO the user's SwiftUI sources and builds/installs/launches. No LLM in that path. Screens imported from a source file get that View struct's \`var body\` replaced in place (nothing outside the body braces is touched), so the running app shows the design with no wiring step. Canvas-born screens get a new \`<Name>Screen.swift\` at the app source root — the result reports them as \`created\`; offer to wire \`<Name>Screen()\` into the user's navigation (that edit is yours to make, not tango's). Screens whose source file was hand-edited since import are \`skipped\` with a reason — relay it (the fix is the screen's refresh-import, then export again).
 
-**Ownership rule:** files under \`TangoGenerated/\` are tango-owned — overwritten on every export; never hand-edit them; to change those screens, change the design and re-export. Hand-written screens that have been **imported** become design-owned for their *look*: apply design changes back to those files when the user sends the design to you — don't redesign them ad hoc in Swift.
+**Ownership rule:** an exported \`var body\` opens with a \`// tango:body v=1 screen=<id>\` marker — that BODY is design-owned: regenerated on every export, never hand-edit it (to change it, change the design and re-export). Everything else in the file — properties, functions, other types — stays the user's (or yours, when asked). Pre-export originals of every modified file live under \`.tango/export-backup/\` until the next export. Hand-written screens that have been **imported** become design-owned for their *look*: apply design changes back to those files when the user sends the design to you — don't redesign them ad hoc in Swift.
 
 `;
 
@@ -232,13 +234,13 @@ You're inside a tango workspace. The left pane is a fixed-frame design canvas wh
 1. **Down**: turn a production UI (existing in the codebase, or described by the user) into a mock spec that visualizes it.
 2. **Up**: when the user has tweaked the mock and pinged you (typically by clicking "Send to Claude" — you'll see a markdown handoff in the terminal), read the current spec via \`get_ui_mock\` and translate the deltas into responsive Tailwind / shadcn changes in the production source.
 
-For **SwiftUI** workspaces there are two no-LLM shortcuts you should know about (and mention to the user when relevant): \`preview_start\` launches a native live preview of the design on the booted simulator (sub-second updates, no rebuild), and \`export_run\` deterministically generates SwiftUI from the design into \`TangoGenerated/\` and builds/launches it. Files under \`TangoGenerated/\` are tango-owned — regenerated on every export, never hand-edit them. If \`export_run\` reports \`embedded: false\`, no user Swift shows the generated views yet — offer to embed \`TangoGeneratedRootView()\` in the app's entry point.
+For **SwiftUI** workspaces there are two no-LLM shortcuts you should know about (and mention to the user when relevant): \`preview_start\` launches a native live preview of the design on the booted simulator (sub-second updates, no rebuild), and \`export_run\` deterministically writes the design into the user's own SwiftUI sources (an imported screen's View gets its \`var body\` replaced in place — marked \`// tango:body\`, design-owned, never hand-edit; the rest of the file stays the user's) and builds/launches it. Canvas-born screens come back \`created\` as new \`<Name>Screen.swift\` files — offer to wire them into the app's navigation.
 
 The canvas renders real shadcn primitives — Button, Input, Badge, Separator, Textarea — plus layout primitives (\`div\`, \`text\`, \`heading\`, \`Image\`, \`Icon\`) and vector shape primitives (\`rect\`, \`ellipse\`, \`line\`, \`arrow\`, \`triangle\`, \`star\`). For a deliberately low-fidelity wireframe look, use muted \`div\` boxes and placeholder \`text\` nodes instead of fully-styled components. Shapes style through two channels: fill = the background channel (\`bg-*\` / \`style.backgroundColor\`), stroke = the border channel (\`border-*\` color + \`border-N\` width, \`border-dashed\`).
 
 ## Tools
 
-\`get_ui_mock\` (pass \`screenId\` to read one screen — cheaper), \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`duplicate_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\`, \`update_ui_screen\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\`, \`clear_ui_mock\`, plus the design library: \`get_design_library\`, \`set_design_library\`, \`insert_ui_component\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
+\`get_ui_mock\` (pass \`screenId\` to read one screen — cheaper), \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`duplicate_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\`, \`update_ui_screen\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`move_ui_node\`, \`move_ui_group\`, \`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\`, \`clear_ui_mock\`, plus the design library: \`get_design_library\`, \`set_design_library\`, \`insert_ui_component\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
 
 \`\`\`ts
 type UISpec = {
@@ -392,6 +394,8 @@ Always \`get_ui_mock\` first.
 - \`remove_ui_node({ nodeIds })\` — delete node(s); all-or-nothing on unknown ids.
 - \`remove_ui_screen({ screenId })\` — delete a whole screen; the safe rejection path for unwanted variations.
 - \`reorder_ui_node({ nodeId, op })\` — \`front\`/\`back\`/\`forward\`/\`backward\` within the node's screen (later in the array = rendered on top).
+- \`move_ui_node({ nodeId, targetIndex, group?, targetScreenId? })\` — precise hierarchy move: exact z-index, join (\`group\` id) / leave (\`null\`) a group, and/or move to another screen (coords clamp into the destination frame).
+- \`move_ui_group({ groupId, targetIndex, targetScreenId? })\` — move a whole group block in the z-stack or onto another screen (members keep relative order and internal layout).
 - \`group_ui_nodes({ screenId, nodeIds, id?, name? })\` — editor-level group (layers-tree nesting + one-click selection for the user; never changes rendering). Use semantic names ("Header", "Task row"). \`ungroup_ui_nodes({ groupId })\` dissolves; \`rename_ui_group({ groupId, name })\` renames. \`get_ui_layers\` shows current groups.
 
 The user has the same controls in the panel (an Add palette, draw tools, and a design sidebar with a layers tree + inspector), so your edits and theirs converge on one spec.
@@ -468,7 +472,7 @@ Both flows live in this terminal-Claude session. The user does not see SwiftUI b
 You'll combine your filesystem tools with tango's MCP tools:
 
 - **Filesystem (built-in)**: \`Read\` / \`Write\` / \`Edit\` / \`Glob\` for \`.swift\` files.
-- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\` (\`screenId\` filter for one screen), \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`duplicate_ui_screen\` (instant copy — duplicate-then-patch is the fast variation path), \`update_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\` (bulk patches in one call), \`remove_ui_node\`, \`reorder_ui_node\`, and editor-level grouping (\`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\` — layers-tree organization, never rendering), plus the design library (\`get_design_library\`, \`set_design_library\`, \`insert_ui_component\` — imported tokens/component templates; prefer them when styling). Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[], groups?}], designSystem?, components?}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance); export filenames are always derived (\`Tango<Pascal(id)>Screen.swift\`, order-dependent dedupe), never stored.
+- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\` (\`screenId\` filter for one screen), \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`duplicate_ui_screen\` (instant copy — duplicate-then-patch is the fast variation path), \`update_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\` (bulk patches in one call), \`remove_ui_node\`, \`reorder_ui_node\`, \`move_ui_node\` / \`move_ui_group\` (exact z-index, group membership, cross-screen moves), and editor-level grouping (\`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\` — layers-tree organization, never rendering), plus the design library (\`get_design_library\`, \`set_design_library\`, \`insert_ui_component\` — imported tokens/component templates; prefer them when styling). Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[], groups?}], designSystem?, components?}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance) — \`export_run\` rewrites THAT View's body in place; screens without one export as new \`<Pascal(id)>Screen.swift\` files (derived live, never stored).
 
 Simple vector drawing maps to the shape node types: \`Rectangle\`/\`RoundedRectangle\` → \`rect\`, \`Circle\`/\`Ellipse\` → \`ellipse\`, straight two-point \`Path\`s → \`line\`/\`arrow\`, and \`triangle\`/\`star\` for the matching polygons. For heavier custom drawing (\`Canvas\`, multi-segment \`Path\`s, complex \`GeometryReader\` math) the node types can't represent, render the closest structural approximation (a \`div\` placeholder with a label) and tell the user what was approximated.
 
@@ -520,6 +524,14 @@ Immediately re-read the spec via \`get_ui_mock\` and check:
 Fix and re-push. Don't tell the user "rendered" until the spec round-trips clean.
 
 ## Write flow (tango → \`.swift\`)
+
+**Prefer \`export_run\` for plain "make the code match the design" asks** — it
+deterministically replaces each linked View's \`var body\` in place (marked
+\`// tango:body\`, absolutely-positioned, backed up to \`.tango/export-backup/\`)
+and builds/launches, no LLM. Walk this flow yourself only when the user wants
+*responsive, idiomatic* SwiftUI (inferred VStack/HStack containers, semantic
+colors) instead of the deterministic positional export — and tell them the
+trade before you start.
 
 ### 1. Identify the target file
 
@@ -790,14 +802,16 @@ restyle them — then iterate with the live preview and export back via
 - \`Pods/\`, \`.build/\`, \`DerivedData/\`, \`.swiftpm/\`, \`build/\`, \`.tango/\`
 - \`*Tests*\`, \`Preview Content/\`, \`#Preview\` bodies, \`PreviewProvider\`s
 
-\`TangoGenerated/\` is a special case: it's tango's own earlier exports of canvas
-designs. Skip it when the canvas already has those screens (the canvas is the
-source of truth). But when the canvas LOST them (cleared, fresh checkout) and
-especially when the app's \`@main\` entry renders \`TangoGeneratedRootView\`,
-re-import the \`Tango<Name>Screen.swift\` files at full fidelity — their
-\`.frame(width:height:).offset(x:y:)\` coords are literal node geometry, the
-\`tango:generated … screen=<id>\` header is the original screen id, and the
-\`/// <Title> — WxH\` doc comment is the title + frame. Skip
+**Previously exported bodies are literal.** A View whose \`var body\` opens with
+\`// tango:body v=1 screen=<id>\` is tango's own earlier export of a canvas
+screen: re-import it at FULL fidelity — \`.frame(width:height:).offset(x:y:)\`
+coords are literal node geometry (copy the numbers, don't re-derive layout),
+\`Color(red:green:blue:opacity:)\` literals are exact sRGB (×255 → hex), the
+marker's \`screen=<id>\` is the canvas screen id to reuse verbatim, and the
+\`/// <Title> — WxH\` doc comment is the title + frame. The same applies to
+legacy \`TangoGenerated/Tango<Name>Screen.swift\` files (the retired export
+folder; its \`tango:generated … screen=<id>\` header carries the id) — re-import
+those only when the canvas lost their screens, and skip
 \`TangoSupport.swift\` / \`TangoGeneratedIndex.swift\` (plumbing).
 
 A "screen" is a top-level \`struct X: View\` that represents a full screen —
@@ -862,9 +876,10 @@ what you recorded. Then
 
 After import, the canvas is the design source of truth for these screens'
 *look*. The user edits visually; you apply design changes back when they send
-the design to you — don't redesign imported screens ad hoc in Swift. Files
-under \`TangoGenerated/\` are tango-owned and regenerated on every
-\`export_run\` — never hand-edit those.
+the design to you — don't redesign imported screens ad hoc in Swift. A
+\`var body\` opening with \`// tango:body\` is design-owned and regenerated by
+every \`export_run\` — never hand-edit one; the rest of those files stays
+the user's.
 
 ---
 

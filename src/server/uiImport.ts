@@ -302,16 +302,18 @@ Default 390×844 (iPhone). Use 820×1180 when the source is iPad-only (Navigatio
 
 Theme-aligned colors go in \`className\` using semantic tokens only (text-foreground, text-muted-foreground, bg-card, bg-muted, bg-accent, border-border). Off-theme colors (exact hex, gradients, shadows) go in the \`style\` object (e.g. {"color":"#0E7C66"}) — never as arbitrary-value Tailwind classes. Fonts: .headline → "text-lg font-semibold", .caption → "text-xs text-muted-foreground".
 
-## TangoGenerated round-trip
+## Tango-exported bodies (round-trip)
 
-Files under TangoGenerated/ are tango's own previous exports of canvas designs ("tango:generated" header). When the canvas no longer has those screens, re-import them at FULL fidelity — and when the app's @main entry renders TangoGeneratedRootView, they are the app's actual UI and importing them is the priority:
+Tango's Export & Run writes designs back into the sources deterministically: a View whose \`var body\` opens with the comment \`tango:body v=1 screen=<id>\` is a previous export of a canvas screen. Re-import such screens at FULL fidelity — the body is literal geometry, not hand-written layout:
 
-- One screen per Tango<Name>Screen file. The header comment \`tango:generated v=1 screen=<id>\` carries the original screen id — reuse it verbatim. The doc comment \`/// <Title> — WxH\` carries the screen title and frame size.
+- The marker's \`screen=<id>\` is the original canvas screen id — reuse it verbatim. The doc comment \`/// <Title> — WxH\` carries the screen title and frame size.
 - Coordinates are LITERAL, not inferred: \`.frame(width: W, height: H)\` + \`.offset(x: X, y: Y)\` map directly to node width/height/x/y. Copy the numbers exactly; do not re-derive layout.
-- \`Color(tangoR: R, g: G, b: B, a: A)\` is an exact RGB color — convert to hex in the node's \`style\` (e.g. {"color":"#0A1235"}, {"background":"#F5EEE0"}).
+- \`Color(red: R, green: G, blue: B, opacity: A)\` literals are exact sRGB in 0–1 (multiply by 255 → hex for the node's \`style\`, e.g. {"color":"#0A1235"}); legacy exports may use \`Color(tangoR: R, g: G, b: B, a: A)\` with 0–255 channels — same conversion.
 - Reverse the node mapping table: Text with a Capsule fill/overlay → Badge; RoundedRectangle cards (with child content) → div; standalone Rectangle/RoundedRectangle → rect and Ellipse() → ellipse; a Path stroke of one straight segment → line (with an arrowhead V-path → arrow, props.end from direction); the polygon Paths emitted for triangle/star nodes → triangle / star (props.points = outer-point count); Image(systemName:) → Icon (map the SF Symbol back to the closest lucide name); \`.font(.system(size:weight:))\` ≥ 22 with bold/serif → heading.
 - Ignore container wrappers (\`ZStack(alignment: .topLeading)\`, \`Group {}\`) — they exist only for SwiftUI's ViewBuilder limits.
-- When re-importing a TangoGenerated screen, omit \`source_file\` unless you know the original user source — the canvas keeps the screen's prior provenance when it is omitted.
+- A tango:body marked View in a USER source file is normal provenance — pass \`source_file\` as usual.
+
+Files under TangoGenerated/ are the RETIRED export folder's output ("tango:generated" header, Tango<Name>Screen structs) — the same literal-coordinate rules apply. Re-import one only when the canvas no longer has its screen, and omit \`source_file\` for those paths (they are exports, not provenance — the canvas keeps the screen's prior source when it is omitted).
 
 ## Design system & shared components
 

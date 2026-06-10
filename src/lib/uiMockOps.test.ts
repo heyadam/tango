@@ -11,7 +11,9 @@ import {
   findNodeInSpec,
   groupNodesInSpec,
   instantiateComponentInSpec,
+  moveGroupInSpec,
   moveNodeInSpec,
+  normalizeScreenGroups,
   removeNodesFromSpec,
   removeScreenFromSpec,
   renameGroupInSpec,
@@ -548,6 +550,327 @@ describe('moveNodeInSpec', () => {
   it('errors on unknown node or unknown target group', () => {
     expect(() => moveNodeInSpec(fixture(), 'zz', 0)).toThrow(/Unknown node/);
     expect(() => moveNodeInSpec(fixture(), 'a1', 0, 'g')).toThrow(/Unknown group/);
+  });
+
+  it('re-coalesces a group fractured by the landing index', () => {
+    const a: UIScreen = {
+      ...screen('A', [
+        node('g1', { group: 'g' }),
+        node('g2', { group: 'g' }),
+        node('x'),
+        node('y'),
+      ]),
+      groups: [{ id: 'g', name: 'Pair' }],
+    };
+    // Joining g at the very top would strand y between the block and the
+    // moved node — the block re-coalesces anchored at its topmost member.
+    const next = moveNodeInSpec(spec([a]), 'x', 3, 'g');
+    expect(next.screens[0].nodes.map((n) => n.id)).toEqual(['y', 'g1', 'g2', 'x']);
+    expect(
+      next.screens[0].nodes.filter((n) => n.group === 'g').map((n) => n.id),
+    ).toEqual(['g1', 'g2', 'x']);
+  });
+});
+
+describe('moveNodeInSpec across screens', () => {
+  it('moves the node and inserts at the clamped target index', () => {
+    const next = moveNodeInSpec(fixture(), 'a2', 1, undefined, 'B');
+    expect(next.screens[0].nodes.map((n) => n.id)).toEqual(['a1', 'a3']);
+    expect(next.screens[1].nodes.map((n) => n.id)).toEqual(['b1', 'a2']);
+    const clamped = moveNodeInSpec(fixture(), 'a2', 99, undefined, 'B');
+    expect(clamped.screens[1].nodes.map((n) => n.id)).toEqual(['b1', 'a2']);
+    const bottom = moveNodeInSpec(fixture(), 'a2', -5, undefined, 'B');
+    expect(bottom.screens[1].nodes.map((n) => n.id)).toEqual(['a2', 'b1']);
+  });
+
+  it('treats targetScreenId equal to the own screen as a same-screen move', () => {
+    const next = moveNodeInSpec(fixture(), 'a3', 0, undefined, 'A');
+    expect(next.screens[0].nodes.map((n) => n.id)).toEqual(['a3', 'a1', 'a2']);
+    expect(next.screens[1].nodes.map((n) => n.id)).toEqual(['b1']);
+  });
+
+  it('strips the old screen group tag (undefined and null alike)', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1', 'a2'], { id: 'g' });
+    const moved = moveNodeInSpec(grouped, 'a1', 0, undefined, 'B');
+    expect(
+      moved.screens[1].nodes.find((n) => n.id === 'a1')!.group,
+    ).toBeUndefined();
+    // a2 stays behind and keeps the group alive on the source screen.
+    expect(moved.screens[0].nodes.find((n) => n.id === 'a2')!.group).toBe('g');
+    const movedNull = moveNodeInSpec(grouped, 'a1', 0, null, 'B');
+    expect(
+      movedNull.screens[1].nodes.find((n) => n.id === 'a1')!.group,
+    ).toBeUndefined();
+  });
+
+  it('prunes the source group when its last member leaves', () => {
+    const grouped = groupNodesInSpec(fixture(), 'A', ['a1'], { id: 'g' });
+    const next = moveNodeInSpec(grouped, 'a1', 0, undefined, 'B');
+    expect(next.screens[0].groups).toBeUndefined();
+  });
+
+  it('joins a group on the target screen', () => {
+    const grouped = groupNodesInSpec(fixture(), 'B', ['b1'], { id: 'bg' });
+    const next = moveNodeInSpec(grouped, 'a1', 1, 'bg', 'B');
+    expect(next.screens[1].nodes.find((n) => n.id === 'a1')!.group).toBe('bg');
+    expect(next.screens[1].nodes.map((n) => n.id)).toEqual(['b1', 'a1']);
+  });
+
+  it('re-coalesces the target group when the landing index would fracture it', () => {
+    const b: UIScreen = {
+      ...screen('B', [
+        node('b1', { group: 'bg' }),
+        node('b2', { group: 'bg' }),
+        node('b3'),
+      ]),
+      groups: [{ id: 'bg', name: 'Pair' }],
+    };
+    const next = moveNodeInSpec(
+      spec([screen('A', [node('a1')]), b]),
+      'a1',
+      3,
+      'bg',
+      'B',
+    );
+    expect(next.screens[1].nodes.map((n) => n.id)).toEqual([
+      'b3',
+      'b1',
+      'b2',
+      'a1',
+    ]);
+  });
+
+  it('clamps coordinates into the target frame', () => {
+    const input = spec([
+      screen('A', [node('a1', { x: 700, y: 550 })]),
+      { ...screen('B'), frame: { w: 200, h: 100 } },
+    ]);
+    const next = moveNodeInSpec(input, 'a1', 0, undefined, 'B');
+    expect(next.screens[1].nodes[0]).toMatchObject({ x: 100, y: 60 });
+  });
+
+  it('clamps to 0 when the node is bigger than the frame', () => {
+    const input = spec([
+      screen('A', [node('a1', { x: 50, y: 30, width: 300, height: 200 })]),
+      { ...screen('B'), frame: { w: 200, h: 100 } },
+    ]);
+    const next = moveNodeInSpec(input, 'a1', 0, undefined, 'B');
+    expect(next.screens[1].nodes[0]).toMatchObject({ x: 0, y: 0 });
+  });
+
+  it('throws on an unknown target screen or unknown target group', () => {
+    expect(() => moveNodeInSpec(fixture(), 'a1', 0, undefined, 'Z')).toThrow(
+      /Unknown screen id: Z/,
+    );
+    expect(() => moveNodeInSpec(fixture(), 'a1', 0, 'g', 'B')).toThrow(
+      /Unknown group id on screen B: g/,
+    );
+  });
+
+  it('keeps untouched screens identity-equal', () => {
+    const input = spec([
+      screen('A', [node('a1'), node('a2')]),
+      screen('B', [node('b1')]),
+      screen('C', [node('c1')]),
+    ]);
+    const next = moveNodeInSpec(input, 'a1', 0, undefined, 'B');
+    expect(next.screens[2]).toBe(input.screens[2]);
+  });
+});
+
+describe('moveGroupInSpec', () => {
+  const groupedFixture = (): UISpec =>
+    spec([
+      {
+        ...screen('A', [
+          node('a1'),
+          node('g1', { group: 'g' }),
+          node('g2', { group: 'g' }),
+          node('a2'),
+        ]),
+        groups: [{ id: 'g', name: 'Pair' }],
+      },
+      screen('B', [node('b1')]),
+    ]);
+
+  it('reorders the block within its screen, members staying in order', () => {
+    const toBottom = moveGroupInSpec(groupedFixture(), 'g', 0);
+    expect(toBottom.screens[0].nodes.map((n) => n.id)).toEqual([
+      'g1',
+      'g2',
+      'a1',
+      'a2',
+    ]);
+    const toTop = moveGroupInSpec(groupedFixture(), 'g', 99);
+    expect(toTop.screens[0].nodes.map((n) => n.id)).toEqual([
+      'a1',
+      'a2',
+      'g1',
+      'g2',
+    ]);
+  });
+
+  it('reorders relative to another group block', () => {
+    const input = spec([
+      {
+        ...screen('A', [
+          node('p1', { group: 'p' }),
+          node('p2', { group: 'p' }),
+          node('q1', { group: 'q' }),
+        ]),
+        groups: [
+          { id: 'p', name: 'P' },
+          { id: 'q', name: 'Q' },
+        ],
+      },
+    ]);
+    const next = moveGroupInSpec(input, 'p', 1);
+    expect(next.screens[0].nodes.map((n) => n.id)).toEqual(['q1', 'p1', 'p2']);
+  });
+
+  it('moves the block to another screen with its registry entry', () => {
+    const next = moveGroupInSpec(groupedFixture(), 'g', 1, 'B');
+    expect(next.screens[0].nodes.map((n) => n.id)).toEqual(['a1', 'a2']);
+    expect(next.screens[0].groups).toBeUndefined();
+    expect(next.screens[1].nodes.map((n) => n.id)).toEqual(['b1', 'g1', 'g2']);
+    expect(next.screens[1].groups).toEqual([{ id: 'g', name: 'Pair' }]);
+    expect(
+      next.screens[1].nodes.filter((n) => n.group === 'g').map((n) => n.id),
+    ).toEqual(['g1', 'g2']);
+  });
+
+  it('mints a fresh id (keeping the name) on a target-side id collision', () => {
+    const input = spec([
+      {
+        ...screen('A', [node('a1', { group: 'group-1' })]),
+        groups: [{ id: 'group-1', name: 'Pair' }],
+      },
+      {
+        ...screen('B', [node('b1', { group: 'group-1' })]),
+        groups: [{ id: 'group-1', name: 'Other' }],
+      },
+    ]);
+    const next = moveGroupInSpec(input, 'group-1', 1, 'B');
+    expect(next.screens[1].groups).toEqual([
+      { id: 'group-1', name: 'Other' },
+      { id: 'group-2', name: 'Pair' },
+    ]);
+    expect(next.screens[1].nodes.find((n) => n.id === 'a1')!.group).toBe(
+      'group-2',
+    );
+    expect(next.screens[1].nodes.find((n) => n.id === 'b1')!.group).toBe(
+      'group-1',
+    );
+  });
+
+  it('shifts all members by one common delta to fit the target frame', () => {
+    const input = spec([
+      {
+        ...screen('A', [
+          node('g1', { x: 600, y: 20, group: 'g' }),
+          node('g2', { x: 700, y: 50, group: 'g' }),
+        ]),
+        groups: [{ id: 'g', name: 'Pair' }],
+      },
+      { ...screen('B'), frame: { w: 200, h: 100 } },
+    ]);
+    const next = moveGroupInSpec(input, 'g', 0, 'B');
+    const [g1, g2] = next.screens[1].nodes;
+    // Box origin (600, 20) clamps to (0, 20); internal 100px offset survives.
+    expect(g1).toMatchObject({ x: 0, y: 20 });
+    expect(g2).toMatchObject({ x: 100, y: 50 });
+  });
+
+  it('clamps the box origin to 0 when the box is bigger than the frame', () => {
+    const input = spec([
+      {
+        ...screen('A', [node('g1', { x: 100, y: 200, width: 300, group: 'g' })]),
+        groups: [{ id: 'g', name: 'Big' }],
+      },
+      { ...screen('B'), frame: { w: 200, h: 100 } },
+    ]);
+    const next = moveGroupInSpec(input, 'g', 0, 'B');
+    expect(next.screens[1].nodes[0]).toMatchObject({ x: 0, y: 60 });
+  });
+
+  it('throws on unknown group or unknown target screen', () => {
+    expect(() => moveGroupInSpec(fixture(), 'nope', 0)).toThrow(
+      /Unknown group id: nope/,
+    );
+    expect(() => moveGroupInSpec(groupedFixture(), 'g', 0, 'Z')).toThrow(
+      /Unknown screen id: Z/,
+    );
+  });
+
+  it('keeps untouched screens identity-equal', () => {
+    const input = spec([
+      groupedFixture().screens[0],
+      screen('B', [node('b1')]),
+      screen('C', [node('c1')]),
+    ]);
+    const next = moveGroupInSpec(input, 'g', 0, 'B');
+    expect(next.screens[2]).toBe(input.screens[2]);
+    const same = moveGroupInSpec(input, 'g', 0);
+    expect(same.screens[1]).toBe(input.screens[1]);
+    expect(same.screens[2]).toBe(input.screens[2]);
+  });
+});
+
+describe('normalizeScreenGroups', () => {
+  it('returns the same reference when the screen is already clean', () => {
+    const clean: UIScreen = {
+      ...screen('A', [
+        node('a1'),
+        node('g1', { group: 'g' }),
+        node('g2', { group: 'g' }),
+      ]),
+      groups: [{ id: 'g', name: 'Pair' }],
+    };
+    expect(normalizeScreenGroups(clean)).toBe(clean);
+    const ungrouped = screen('A', [node('a1')]);
+    expect(normalizeScreenGroups(ungrouped)).toBe(ungrouped);
+  });
+
+  it('re-coalesces fractured members anchored at the topmost member', () => {
+    const fractured: UIScreen = {
+      ...screen('A', [
+        node('g1', { group: 'g' }),
+        node('x'),
+        node('g2', { group: 'g' }),
+        node('y'),
+      ]),
+      groups: [{ id: 'g', name: 'Pair' }],
+    };
+    const next = normalizeScreenGroups(fractured);
+    // Block lands where g2 (topmost member) sat among the non-members.
+    expect(next.nodes.map((n) => n.id)).toEqual(['x', 'g1', 'g2', 'y']);
+  });
+
+  it('strips orphan tags and prunes empty registry entries', () => {
+    const dirty: UIScreen = {
+      ...screen('A', [node('a1', { group: 'ghost' }), node('a2')]),
+      groups: [{ id: 'empty', name: 'Empty' }],
+    };
+    const next = normalizeScreenGroups(dirty);
+    expect(next.nodes.find((n) => n.id === 'a1')!.group).toBeUndefined();
+    expect(next.groups).toBeUndefined();
+  });
+
+  it('repairs multiple groups in registry order', () => {
+    const fractured: UIScreen = {
+      ...screen('A', [
+        node('p1', { group: 'p' }),
+        node('q1', { group: 'q' }),
+        node('p2', { group: 'p' }),
+        node('q2', { group: 'q' }),
+      ]),
+      groups: [
+        { id: 'p', name: 'P' },
+        { id: 'q', name: 'Q' },
+      ],
+    };
+    const next = normalizeScreenGroups(fractured);
+    expect(next.nodes.map((n) => n.id)).toEqual(['p1', 'p2', 'q1', 'q2']);
   });
 });
 

@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
+  emitScreenBody,
+  emitScreenFile,
   fmt,
+  fmtChannel,
   screenFileNames,
   screenTypeName,
-  specToSwiftUI,
+  structCandidates,
   swiftStringLiteral,
 } from './specToSwiftUI';
+import { resolveSpec } from './uiResolve';
+import { BODY_MARKER } from './swiftScan';
 import type { UINode, UISpec } from './uiMockProtocol';
 
 function node(partial: Partial<UINode> & Pick<UINode, 'id' | 'type'>): UINode {
@@ -76,6 +81,18 @@ const TWO_SCREEN_FLOW: UISpec = {
   ],
 };
 
+// id → {screen file content} the way the export pipeline assembles new files.
+function emitFiles(spec: UISpec): Map<string, string> {
+  const resolved = resolveSpec(spec);
+  const names = screenFileNames(spec);
+  const out = new Map<string, string>();
+  for (const screen of resolved.screens) {
+    const file = names.get(screen.id)!;
+    out.set(file, emitScreenFile(screen, file.replace(/\.swift$/, '')));
+  }
+  return out;
+}
+
 describe('swiftStringLiteral', () => {
   it('escapes quotes, backslashes, and newlines', () => {
     expect(swiftStringLiteral('a "b" \\ c\nd')).toBe('"a \\"b\\" \\\\ c\\nd"');
@@ -96,79 +113,127 @@ describe('fmt', () => {
   });
 });
 
+describe('fmtChannel', () => {
+  it('maps 8-bit channels onto exact-enough 0–1 literals', () => {
+    expect(fmtChannel(0)).toBe('0');
+    expect(fmtChannel(255)).toBe('1');
+    expect(fmtChannel(34)).toBe('0.13333');
+    expect(fmtChannel(128)).toBe('0.50196');
+  });
+
+  it('round-trips every 8-bit value distinctly', () => {
+    const seen = new Set<string>();
+    for (let i = 0; i <= 255; i += 1) seen.add(fmtChannel(i));
+    expect(seen.size).toBe(256);
+  });
+});
+
 describe('screenTypeName', () => {
-  it('pascal-cases ids with a Tango prefix and Screen suffix', () => {
-    expect(screenTypeName('login', new Set())).toBe('TangoLoginScreen');
-    expect(screenTypeName('user-profile', new Set())).toBe('TangoUserProfileScreen');
+  it('pascal-cases ids with a Screen suffix (no Tango prefix)', () => {
+    expect(screenTypeName('login', new Set())).toBe('LoginScreen');
+    expect(screenTypeName('user-profile', new Set())).toBe('UserProfileScreen');
   });
 
   it('keeps existing View/Screen suffixes', () => {
-    expect(screenTypeName('OnboardingView', new Set())).toBe('TangoOnboardingView');
+    expect(screenTypeName('OnboardingView', new Set())).toBe('OnboardingView');
   });
 
-  it('dedupes deterministically', () => {
-    const taken = new Set<string>();
-    expect(screenTypeName('login', taken)).toBe('TangoLoginScreen');
-    expect(screenTypeName('login', taken)).toBe('TangoLoginScreen2');
-    expect(screenTypeName('login', taken)).toBe('TangoLoginScreen3');
+  it('dedupes deterministically against a caller-seeded taken set', () => {
+    const taken = new Set<string>(['LoginScreen']);
+    expect(screenTypeName('login', taken)).toBe('LoginScreen2');
+    expect(screenTypeName('login', taken)).toBe('LoginScreen3');
   });
 
   it('survives ids with no usable characters', () => {
-    expect(screenTypeName('---', new Set())).toBe('TangoScreen');
+    expect(screenTypeName('---', new Set())).toBe('Screen');
   });
 });
 
 describe('screenFileNames', () => {
-  it('matches the screen .swift paths specToSwiftUI emits for the golden fixtures', () => {
-    for (const spec of [KITCHEN_SINK, TWO_SCREEN_FLOW]) {
-      const names = screenFileNames(spec);
-      const emitted = specToSwiftUI(spec).files.map((f) => f.path);
-      expect(emitted).toEqual([
-        'TangoSupport.swift',
-        ...spec.screens.map((s) => names.get(s.id)!),
-        'TangoGeneratedIndex.swift',
-      ]);
-    }
+  it('derives the new-file target per screen', () => {
+    const names = screenFileNames(TWO_SCREEN_FLOW);
+    expect(names.get('login')).toBe('LoginScreen.swift');
+    expect(names.get('dashboard')).toBe('DashboardScreen.swift');
+  });
+
+  it('seeds taken with identifier-shaped screen ids (linked struct names)', () => {
+    const names = screenFileNames({
+      screens: [
+        { id: 'LoginScreen', title: 'Login', frame: { w: 390, h: 844 }, nodes: [], sourceFile: 'App/Login.swift' },
+        { id: 'login-screen', title: 'Login 2', frame: { w: 390, h: 844 }, nodes: [] },
+      ],
+    });
+    // The unlinked screen must not claim the linked screen's struct name.
+    expect(names.get('login-screen')).toBe('LoginScreen2.swift');
   });
 
   it('dedupes collisions in spec order: reversing screen order swaps the suffix', () => {
     const a = { id: 'login-screen', title: 'Login', frame: { w: 390, h: 844 }, nodes: [] };
     const b = { id: 'login_screen', title: 'Login 2', frame: { w: 390, h: 844 }, nodes: [] };
     const forward = screenFileNames({ screens: [a, b] });
-    expect(forward.get('login-screen')).toBe('TangoLoginScreen.swift');
-    expect(forward.get('login_screen')).toBe('TangoLoginScreen2.swift');
+    expect(forward.get('login-screen')).toBe('LoginScreen.swift');
+    expect(forward.get('login_screen')).toBe('LoginScreen2.swift');
     const reversed = screenFileNames({ screens: [b, a] });
-    expect(reversed.get('login_screen')).toBe('TangoLoginScreen.swift');
-    expect(reversed.get('login-screen')).toBe('TangoLoginScreen2.swift');
+    expect(reversed.get('login_screen')).toBe('LoginScreen.swift');
+    expect(reversed.get('login-screen')).toBe('LoginScreen2.swift');
   });
 });
 
-describe('specToSwiftUI', () => {
-  it('is deterministic: two runs produce byte-identical files', () => {
-    const a = specToSwiftUI(KITCHEN_SINK);
-    const b = specToSwiftUI(KITCHEN_SINK);
-    expect(a.files.length).toBe(b.files.length);
-    for (let i = 0; i < a.files.length; i += 1) {
-      expect(a.files[i].path).toBe(b.files[i].path);
-      expect(a.files[i].content).toBe(b.files[i].content);
-    }
+describe('structCandidates', () => {
+  it('tries the exact id first (import names screens after the View type)', () => {
+    expect(
+      structCandidates({ id: 'TodoListView', title: 'TodoListView' }),
+    ).toEqual(['TodoListView']);
   });
 
-  it('emits support + one file per screen + index, in order', () => {
-    const { files } = specToSwiftUI(TWO_SCREEN_FLOW);
-    expect(files.map((f) => f.path)).toEqual([
-      'TangoSupport.swift',
-      'TangoLoginScreen.swift',
-      'TangoDashboardScreen.swift',
-      'TangoGeneratedIndex.swift',
+  it('falls back to PascalCase(id) and the title for renamed screens', () => {
+    expect(structCandidates({ id: 'todo-list', title: 'TodoListView' })).toEqual([
+      'TodoList',
+      'TodoListView',
     ]);
   });
 
-  it('marks every file with the tango:generated header', () => {
-    const { files } = specToSwiftUI(TWO_SCREEN_FLOW);
-    for (const f of files) {
-      expect(f.content.split('\n')[1]).toContain('tango:generated v=1');
-    }
+  it('filters non-identifier titles', () => {
+    expect(structCandidates({ id: 'todo-list', title: 'My Tasks!' })).toEqual([
+      'TodoList',
+    ]);
+  });
+});
+
+describe('emitScreenBody', () => {
+  const body = () => emitScreenBody(resolveSpec(KITCHEN_SINK).screens[0]);
+
+  it('is deterministic', () => {
+    expect(body()).toBe(body());
+  });
+
+  it('opens with the tango:body marker carrying the screen id', () => {
+    const first = body().split('\n')[0];
+    expect(first).toContain(BODY_MARKER);
+    expect(first).toContain('screen=kitchen-sink');
+    expect(first.startsWith('//')).toBe(true);
+  });
+
+  it('uses the shared layout convention: ZStack + frame().offset(), never .position()', () => {
+    const b = body();
+    expect(b).toContain('ZStack(alignment: .topLeading) {');
+    expect(b).toContain('.frame(width: 390, height: 844, alignment: .topLeading)');
+    expect(b).toContain('.offset(x: 24, y: 700)');
+    expect(b).not.toContain('.position(');
+    expect(b.endsWith('.clipped()')).toBe(true);
+  });
+
+  it('emits self-contained sRGB color literals (no support-file helper)', () => {
+    const b = body();
+    expect(b).toContain('Color(red: ');
+    expect(b).not.toContain('tangoR');
+  });
+
+  it('renders an empty screen as EmptyView()', () => {
+    const empty = resolveSpec({
+      screens: [{ id: 'e', title: 'E', frame: { w: 100, h: 100 }, nodes: [] }],
+    }).screens[0];
+    expect(emitScreenBody(empty)).toContain('EmptyView()');
   });
 
   it('chunks >10 nodes into Groups so ViewBuilder compiles', () => {
@@ -184,56 +249,72 @@ describe('specToSwiftUI', () => {
         },
       ],
     };
-    const { files } = specToSwiftUI(many);
-    const screen = files[1].content;
-    expect(screen).toContain('Group {');
+    const b = emitScreenBody(resolveSpec(many).screens[0]);
     // 23 nodes → 3 groups of ≤10 at the top level.
-    expect(screen.match(/Group \{/g)!.length).toBe(3);
+    expect(b.match(/Group \{/g)!.length).toBe(3);
+  });
+
+  it('emits shape geometry as literal points, never re-derived', () => {
+    const b = emitScreenBody(resolveSpec(SHAPES).screens[0]);
+    // The horizontal line's resolved midline points.
+    expect(b).toContain('p.move(to: CGPoint(x: 0, y: 4))');
+    expect(b).toContain('p.addLine(to: CGPoint(x: 200, y: 4))');
+    // Triangle closes its ring.
+    expect(b).toContain('p.closeSubpath()');
+    // Ellipse is a true Ellipse, not a capsule.
+    expect(b).toContain('Ellipse()');
+    expect(b).not.toContain('.position(');
+  });
+});
+
+describe('emitScreenFile', () => {
+  it('wraps exactly emitScreenBody inside the struct (creation == later splice)', () => {
+    const screen = resolveSpec(TWO_SCREEN_FLOW).screens[0];
+    const file = emitScreenFile(screen, 'LoginScreen');
+    const indented = emitScreenBody(screen)
+      .split('\n')
+      .map((l) => (l.length > 0 ? `    ${l}` : l))
+      .join('\n');
+    expect(file).toContain(`var body: some View {\n${indented}\n  }`);
+  });
+
+  it('declares the struct, a #Preview, and no DO-NOT-EDIT whole-file claim', () => {
+    const screen = resolveSpec(TWO_SCREEN_FLOW).screens[1];
+    const file = emitScreenFile(screen, 'DashboardScreen');
+    expect(file).toContain('struct DashboardScreen: View {');
+    expect(file).toContain('#Preview {\n  DashboardScreen()\n}');
+    expect(file).not.toContain('tango:generated');
+    expect(file).not.toContain('DO NOT EDIT');
+  });
+
+  it('is deterministic: two runs produce byte-identical files', () => {
+    const a = emitFiles(KITCHEN_SINK);
+    const b = emitFiles(KITCHEN_SINK);
+    expect([...a.keys()]).toEqual([...b.keys()]);
+    for (const [path, content] of a) expect(content).toBe(b.get(path));
   });
 
   it('matches the kitchen-sink golden files', async () => {
-    const { files } = specToSwiftUI(KITCHEN_SINK);
-    for (const f of files) {
-      await expect(f.content).toMatchFileSnapshot(
-        `__snapshots__/specToSwiftUI/kitchen-sink/${f.path}`,
+    for (const [path, content] of emitFiles(KITCHEN_SINK)) {
+      await expect(content).toMatchFileSnapshot(
+        `__snapshots__/specToSwiftUI/kitchen-sink/${path}`,
       );
     }
   });
 
   it('matches the two-screen-flow golden files', async () => {
-    const { files } = specToSwiftUI(TWO_SCREEN_FLOW);
-    for (const f of files) {
-      await expect(f.content).toMatchFileSnapshot(
-        `__snapshots__/specToSwiftUI/two-screen-flow/${f.path}`,
+    for (const [path, content] of emitFiles(TWO_SCREEN_FLOW)) {
+      await expect(content).toMatchFileSnapshot(
+        `__snapshots__/specToSwiftUI/two-screen-flow/${path}`,
       );
     }
   });
 
   it('matches the shapes golden files', async () => {
-    const { files } = specToSwiftUI(SHAPES);
-    for (const f of files) {
-      await expect(f.content).toMatchFileSnapshot(
-        `__snapshots__/specToSwiftUI/shapes/${f.path}`,
+    for (const [path, content] of emitFiles(SHAPES)) {
+      await expect(content).toMatchFileSnapshot(
+        `__snapshots__/specToSwiftUI/shapes/${path}`,
       );
     }
-  });
-
-  it('emits shape geometry as literal points, never re-derived', () => {
-    const { files } = specToSwiftUI(SHAPES);
-    const screen = files[1].content;
-    // The horizontal line's resolved midline points.
-    expect(screen).toContain('p.move(to: CGPoint(x: 0, y: 4))');
-    expect(screen).toContain('p.addLine(to: CGPoint(x: 200, y: 4))');
-    // Triangle closes its ring.
-    expect(screen).toContain('p.closeSubpath()');
-    // Ellipse is a true Ellipse, not a capsule.
-    expect(screen).toContain('Ellipse()');
-    expect(screen).not.toContain('.position(');
-  });
-
-  it('uses frame().offset() — never center-based .position()', () => {
-    const { files } = specToSwiftUI(KITCHEN_SINK);
-    expect(files[1].content).not.toContain('.position(');
-    expect(files[1].content).toContain('.offset(x: 24, y: 700)');
   });
 });
