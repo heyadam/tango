@@ -6,7 +6,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getExportRunState,
   runExportAndRun,
+  type ExportFs,
 } from './iosExport';
+import { hashSource } from './sourceHash';
 import {
   _setIosProjectInternal,
   _setWorkspaceInternal,
@@ -14,15 +16,26 @@ import {
 import type { UISpec } from '@/lib/uiMockProtocol';
 import type { IosProject } from './iosBuild';
 
+const CONTENT_VIEW = `import SwiftUI
+
+struct S1View: View {
+  var body: some View {
+    Text("hand-written")
+  }
+}
+`;
+
 const SPEC: UISpec = {
   screens: [
     {
-      id: 's1',
-      title: 'S1',
+      id: 'S1View',
+      title: 'S1View',
       frame: { w: 100, h: 100 },
       nodes: [
         { id: 'n1', type: 'text', x: 0, y: 0, width: 10, height: 10, text: 'x' },
       ],
+      sourceFile: 'MyApp/ContentView.swift',
+      sourceHash: hashSource(CONTENT_VIEW),
     },
   ],
 };
@@ -35,9 +48,49 @@ const PROJECT: IosProject = {
   configurations: ['Debug', 'Release'],
 };
 
+function memFs(initial: Record<string, string>) {
+  const files = new Map<string, string>(Object.entries(initial));
+  const fsx: ExportFs = {
+    readFile: async (p) => {
+      const v = files.get(p);
+      if (v === undefined) throw new Error(`ENOENT: ${p}`);
+      return v;
+    },
+    writeFile: async (p, c) => {
+      files.set(p, c);
+    },
+    exists: async (p) =>
+      files.has(p) || [...files.keys()].some((k) => k.startsWith(`${p}/`)),
+    readdir: async (p) => {
+      const prefix = `${p}/`;
+      const out = new Map<string, boolean>();
+      for (const k of files.keys()) {
+        if (!k.startsWith(prefix)) continue;
+        const rest = k.slice(prefix.length);
+        out.set(rest.split('/')[0], out.get(rest.split('/')[0]) || rest.includes('/'));
+      }
+      return [...out].map(([name, dir]) => ({ name, dir, file: !dir }));
+    },
+    unlink: async (p) => {
+      files.delete(p);
+    },
+    rmdirIfEmpty: async () => {},
+    rmrf: async (p) => {
+      const prefix = `${p}/`;
+      for (const k of [...files.keys()]) {
+        if (k === p || k.startsWith(prefix)) files.delete(k);
+      }
+    },
+  };
+  return { files, fsx };
+}
+
 function deps(overrides: Partial<Parameters<typeof runExportAndRun>[1]> = {}) {
+  const mem = memFs({ '/repo/MyApp/ContentView.swift': CONTENT_VIEW });
   return {
+    files: mem.files,
     getSpec: () => SPEC,
+    setSpec: vi.fn(),
     buildRun: vi.fn(async () => ({
       ok: true as const,
       bundleId: 'com.example.app',
@@ -46,12 +99,11 @@ function deps(overrides: Partial<Parameters<typeof runExportAndRun>[1]> = {}) {
       durationMs: 1000,
     })),
     resolveUdid: vi.fn(async () => 'UDID-1'),
-    resolveDir: vi.fn(async () => ({
-      dir: '/repo/MyApp/TangoGenerated',
+    resolveRoot: vi.fn(async () => ({
+      sourceRoot: '/repo/MyApp',
       inclusion: 'fs-synced' as const,
     })),
-    writeFiles: vi.fn(async () => {}),
-    checkEmbedded: vi.fn(async () => true),
+    fsx: mem.fsx,
     ...overrides,
   };
 }
@@ -65,54 +117,38 @@ describe('runExportAndRun', () => {
   afterEach(() => {
     _setWorkspaceInternal(null, 'unset');
     _setIosProjectInternal({ kind: 'none' });
-    // Drain any active state so tests don't leak into each other.
   });
 
-  it('runs the full pipeline to done', async () => {
+  it('runs the full pipeline to done: splice → restamp → build → launch', async () => {
     const d = deps();
     const state = await runExportAndRun({}, d);
     expect(state.phase).toBe('done');
     if (state.phase !== 'done') return;
     expect(state.bundleId).toBe('com.example.app');
     expect(state.inclusion).toBe('fs-synced');
-    expect(state.fileCount).toBe(3); // support + 1 screen + index
-    expect(d.writeFiles).toHaveBeenCalledWith(
-      '/repo/MyApp/TangoGenerated',
-      expect.any(Array),
-    );
+    expect(state.results).toEqual([
+      {
+        screenId: 'S1View',
+        file: 'MyApp/ContentView.swift',
+        struct: 'S1View',
+        action: 'updated',
+      },
+    ]);
+    // The user's source got the spliced body…
+    const next = d.files.get('/repo/MyApp/ContentView.swift')!;
+    expect(next).toContain('tango:body');
+    expect(next).not.toContain('hand-written');
+    // …and provenance was restamped on the live spec before the build.
+    const setSpec = d.setSpec as ReturnType<typeof vi.fn>;
+    expect(setSpec).toHaveBeenCalledTimes(1);
+    const restamped = setSpec.mock.calls[0][0] as UISpec;
+    expect(restamped.screens[0].sourceHash).toBe(hashSource(next));
     expect(d.buildRun).toHaveBeenCalledWith(
       '/repo',
       PROJECT,
       expect.objectContaining({ udid: 'UDID-1', bringForeground: true }),
     );
     expect(getExportRunState()).toEqual(state);
-    expect(state.embedded).toBe(true);
-    // The scan runs against the project's parent dir with every embeddable
-    // type name (root view + per-screen views).
-    expect(d.checkEmbedded).toHaveBeenCalledWith(
-      '/repo',
-      expect.arrayContaining(['TangoGeneratedRootView']),
-    );
-  });
-
-  it('reports embedded=false when no user source references the views', async () => {
-    const d = deps({ checkEmbedded: vi.fn(async () => false) });
-    const state = await runExportAndRun({}, d);
-    expect(state.phase).toBe('done');
-    if (state.phase !== 'done') return;
-    expect(state.embedded).toBe(false);
-  });
-
-  it('treats an embed-scan crash as embedded (warning suppressed, export still done)', async () => {
-    const d = deps({
-      checkEmbedded: vi.fn(async () => {
-        throw new Error('EACCES');
-      }),
-    });
-    const state = await runExportAndRun({}, d);
-    expect(state.phase).toBe('done');
-    if (state.phase !== 'done') return;
-    expect(state.embedded).toBe(true);
   });
 
   it('fails on an empty spec without touching the toolchain', async () => {
@@ -120,7 +156,6 @@ describe('runExportAndRun', () => {
     const state = await runExportAndRun({}, d);
     expect(state).toMatchObject({ phase: 'error', stage: 'spec' });
     expect(d.buildRun).not.toHaveBeenCalled();
-    expect(d.writeFiles).not.toHaveBeenCalled();
   });
 
   it('fails when no workspace is selected', async () => {
@@ -150,24 +185,36 @@ describe('runExportAndRun', () => {
     expect(resolved.phase).toBe('done');
   });
 
-  it('fails when no simulator is booted', async () => {
+  it('fails when no simulator is booted, after writing but before building', async () => {
     const d = deps({ resolveUdid: vi.fn(async () => null) });
     const state = await runExportAndRun({}, d);
     expect(state).toMatchObject({ phase: 'error', stage: 'detect' });
     expect(d.buildRun).not.toHaveBeenCalled();
   });
 
+  it('fails with stage=write when every screen is skipped, listing reasons', async () => {
+    const d = deps();
+    // Hand-edit the source so the stale guard skips the only screen.
+    d.files.set('/repo/MyApp/ContentView.swift', `${CONTENT_VIEW}\n// edited`);
+    const state = await runExportAndRun({}, d);
+    expect(state).toMatchObject({ phase: 'error', stage: 'write' });
+    if (state.phase !== 'error') return;
+    expect(state.errors[0]).toContain('S1View');
+    expect(state.errors[0]).toContain('refresh');
+    expect(d.buildRun).not.toHaveBeenCalled();
+    expect(d.setSpec).not.toHaveBeenCalled();
+  });
+
   it('surfaces write failures as stage=write', async () => {
-    const d = deps({
-      writeFiles: vi.fn(async () => {
-        throw new Error('EACCES');
-      }),
-    });
+    const d = deps();
+    d.fsx.writeFile = async () => {
+      throw new Error('EACCES');
+    };
     const state = await runExportAndRun({}, d);
     expect(state).toMatchObject({ phase: 'error', stage: 'write', message: 'EACCES' });
   });
 
-  it('maps build failures through with their stage and errors', async () => {
+  it('maps build failures through with their stage, errors, and the backup hint', async () => {
     const d = deps({
       buildRun: vi.fn(async () => ({
         ok: false as const,
@@ -182,6 +229,8 @@ describe('runExportAndRun', () => {
       stage: 'build',
       errors: ["error: cannot find 'foo' in scope"],
     });
+    if (state.phase !== 'error') return;
+    expect(state.message).toContain('export-backup');
   });
 
   it('refuses to start while another run is active', async () => {

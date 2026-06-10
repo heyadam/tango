@@ -22,6 +22,8 @@ import {
   getUIViewport,
   groupUINodesFromServer,
   insertUIComponentFromServer,
+  moveUIGroupFromServer,
+  moveUINodeFromServer,
   removeUINodesFromServer,
   removeUIScreenFromServer,
   renameUIGroupFromServer,
@@ -566,6 +568,66 @@ function buildServer(): McpServer {
   );
 
   server.registerTool(
+    'move_ui_node',
+    {
+      title: 'Move a UI mock node to an exact z-index, group, or screen',
+      description:
+        "Precise layer-hierarchy move (what the layers panel's drag-and-drop uses): places one node at an exact z `targetIndex`, optionally changing group membership and/or screen. `targetIndex` is interpreted AFTER the node is removed from its old slot and is clamped (0 = back, large = front). `group`: a group id JOINS that group (it must exist on the destination screen — group members are kept z-contiguous, so the final index may shift to keep the block intact), `null` LEAVES any group, omitted keeps current membership (same-screen moves only; cross-screen moves always shed the old screen's group). `targetScreenId` moves the node to another screen — its x/y are clamped into the destination frame. Use `get_ui_layers` for current indices/ids. Errors: unknown node/screen/group.",
+      inputSchema: {
+        nodeId: z.string().min(1),
+        targetIndex: z.number().int(),
+        group: z.string().min(1).nullable().optional(),
+        targetScreenId: z.string().min(1).optional(),
+      },
+    },
+    async ({ nodeId, targetIndex, group, targetScreenId }) => {
+      try {
+        moveUINodeFromServer(nodeId, targetIndex, group, targetScreenId);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Moved node "${nodeId}" to index ${targetIndex}${targetScreenId ? ` on "${targetScreenId}"` : ''}.`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('move_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'move_ui_group',
+    {
+      title: 'Move a whole UI mock group in the z-stack or to another screen',
+      description:
+        "Moves an entire group BLOCK (all members, preserving their relative order) to a z `targetIndex` within its screen, or onto another screen via `targetScreenId`. `screenId` is the screen the group currently lives on — REQUIRED because group ids are only unique per screen ('group-1' commonly exists on several screens). The index is interpreted after the members are removed and addresses where the block's bottom member lands; it is clamped, and a landing index inside another group's block snaps to that block's boundary (groups stay contiguous). Cross-screen: the registry entry travels (a colliding group id on the destination is re-minted, name kept) and member positions are shifted by one common delta so the block's bounding box fits the destination frame — internal layout is preserved. Errors: unknown group on that screen / unknown target screen / empty group.",
+      inputSchema: {
+        groupId: z.string().min(1),
+        screenId: z.string().min(1),
+        targetIndex: z.number().int(),
+        targetScreenId: z.string().min(1).optional(),
+      },
+    },
+    async ({ groupId, screenId, targetIndex, targetScreenId }) => {
+      try {
+        moveUIGroupFromServer(groupId, targetIndex, targetScreenId, screenId);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Moved group "${groupId}" to index ${targetIndex}${targetScreenId ? ` on "${targetScreenId}"` : ''}.`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('move_ui_group', err);
+      }
+    },
+  );
+
+  server.registerTool(
     'group_ui_nodes',
     {
       title: 'Group UI mock nodes',
@@ -600,14 +662,15 @@ function buildServer(): McpServer {
     {
       title: 'Ungroup UI mock nodes',
       description:
-        'Dissolves one group: members lose their `group` tag (keeping their exact z positions), the registry entry is removed. Errors if no screen has the group id — `get_ui_layers` shows current groups.',
+        "Dissolves one group: members lose their `group` tag (keeping their exact z positions), the registry entry is removed. Group ids are only unique per screen — pass `screenId` to pin the owning screen (without it, the first screen carrying the id wins). Errors if the group id isn't found — `get_ui_layers` shows current groups.",
       inputSchema: {
         groupId: z.string().min(1),
+        screenId: z.string().min(1).optional(),
       },
     },
-    async ({ groupId }) => {
+    async ({ groupId, screenId }) => {
       try {
-        ungroupUINodesFromServer(groupId);
+        ungroupUINodesFromServer(groupId, screenId);
         return {
           content: [{ type: 'text', text: `Ungrouped "${groupId}".` }],
         };
@@ -622,15 +685,16 @@ function buildServer(): McpServer {
     {
       title: 'Rename a UI mock group',
       description:
-        'Renames an existing group (the label shown in the layers tree). Errors on an unknown group id or an empty name.',
+        'Renames an existing group (the label shown in the layers tree). Group ids are only unique per screen — pass `screenId` to pin the owning screen. Errors on an unknown group id or an empty name.',
       inputSchema: {
         groupId: z.string().min(1),
         name: z.string().min(1),
+        screenId: z.string().min(1).optional(),
       },
     },
-    async ({ groupId, name }) => {
+    async ({ groupId, name, screenId }) => {
       try {
-        renameUIGroupFromServer(groupId, name);
+        renameUIGroupFromServer(groupId, name, screenId);
         return {
           content: [
             { type: 'text', text: `Renamed group "${groupId}" to "${name}".` },
@@ -892,7 +956,7 @@ function buildServer(): McpServer {
     {
       title: 'Export the design to SwiftUI and run it on the simulator',
       description:
-        "Deterministically generates SwiftUI from the current design spec into `TangoGenerated/` inside the detected Xcode project, then builds, installs, and launches on the booted simulator — the no-LLM fast path from canvas to running app. One file per screen (`Tango<Name>Screen`), plus `TangoGeneratedRootView` (a TabView over all screens) to embed wherever the design should appear. Files under `TangoGenerated/` are tango-owned: regenerated on every export, never hand-edit them — to change those screens, change the design and re-export. Inputs are all optional and mirror `ios_build_run` (`scheme`, `udid`, `configuration`). The result includes `inclusion`: `'fs-synced'` means the project picks the folder up automatically (Xcode 16 filesystem-synchronized groups); `'manual-add-required'` means the user must drag `TangoGenerated/` into their target in Xcode once — tell them so. The result also includes `embedded`: `false` means no user Swift file references the generated views, so the launched app looks unchanged — offer to embed `TangoGeneratedRootView()` for the user (e.g. in place of the template `ContentView()` in their `App`'s `WindowGroup`); that's a normal user-code edit you may make. Fails fast when the design is empty or no simulator is booted.",
+        "Deterministically writes the current design INTO the user's SwiftUI sources, then builds, installs, and launches on the booted simulator — the no-LLM fast path from canvas to running app. Screens imported from a source file get that View struct's `var body` replaced in place (everything outside the body braces is untouched), so the app shows the design with no wiring step. Canvas-born screens get a new `<Name>Screen.swift` at the app source root and are linked to it for future exports. Safety rails: a linked file edited by hand since import is SKIPPED (its screen needs a refresh-import first), and every modified file's pre-export content is backed up under `.tango/export-backup/`. Inputs are all optional and mirror `ios_build_run` (`scheme`, `udid`, `configuration`). The result's `results` array reports per screen: `updated` / `unchanged` (spliced in place), `created` (new file — offer to wire `<Struct>()` into the user's navigation; that's a normal user-code edit you may make), or `skipped` with a `reason` to relay. `inclusion: 'manual-add-required'` (legacy non-fs-synced projects) means newly created files must be dragged into the Xcode target once — tell the user. Exported bodies open with a `// tango:body v=1 screen=<id>` marker: that body is design-managed, regenerated on every export — to change it, change the design and re-export (the rest of the file stays the user's). Fails fast when the design is empty or no simulator is booted.",
       inputSchema: {
         scheme: z.string().optional(),
         udid: z.string().optional(),

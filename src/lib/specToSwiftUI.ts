@@ -1,5 +1,5 @@
 // Deterministic UISpec → SwiftUI code generator. No LLM anywhere in this
-// path: the same spec produces byte-identical files, every time (asserted by
+// path: the same spec produces byte-identical output, every time (asserted by
 // tests). Consumes resolveSpec() so every styling decision is shared with the
 // preview host.
 //
@@ -10,35 +10,27 @@
 // (x + w/2, y + h/2) conversions in two codebases and is a classic
 // off-by-half bug source.
 //
-// Output files (fixed order):
-//   1. TangoSupport.swift        — Color/gradient helpers (static content)
-//   2. <TypeName>.swift          — one per screen, struct <TypeName>: View
-//   3. TangoGeneratedIndex.swift — TangoGeneratedRootView (TabView over all)
-//
-// Every file opens with the `tango:generated` marker — load-bearing: the
-// export step deletes stale marked files, and the docs tell agents and humans
-// these files are tango-owned (overwritten on every export).
+// This module emits BUILDING BLOCKS for the in-place export (iosExport):
+//   - emitScreenBody(): the interior of one screen's `var body` — spliced
+//     into the user's own View struct (linked screens) or wrapped in a fresh
+//     file (canvas-born screens). Opens with the `tango:body` marker so a
+//     later export can prove the body is tango-managed before overwriting,
+//     and so import can round-trip the struct back onto the same screen.
+//   - emitScreenFile(): a complete new .swift file for a screen with no
+//     source tie. The file belongs to the user after creation — only the
+//     marked body is tango-managed on subsequent exports.
+// Everything emitted is self-contained vanilla SwiftUI (exact sRGB color
+// literals, literal path points) — no shared support file to keep in sync.
 
-import type { UISpec } from './uiMockProtocol';
+import type { UIScreen, UISpec } from './uiMockProtocol';
 import {
   type ResolvedNode,
   type ResolvedScreen,
   type ResolvedStyle,
-  resolveSpec,
 } from './uiResolve';
 import type { Gradient, RGBA } from './themeColors';
 import { TANGO_THEME } from './themeColors';
-
-export type GeneratedFile = {
-  /** Path relative to the TangoGenerated/ output dir. */
-  path: string;
-  content: string;
-};
-
-export type SwiftCodegenOpts = {
-  /** Extra note appended to each file header. Keep deterministic — no dates. */
-  headerNote?: string;
-};
+import { bodyMarkerLine } from './swiftScan';
 
 // ── primitives ────────────────────────────────────────────────────────────
 
@@ -48,6 +40,15 @@ export function fmt(n: number): string {
   if (Number.isInteger(n)) return String(n);
   const s = n.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
   return s === '-0' ? '0' : s;
+}
+
+// 0–255 channel → 0–1 Double literal. 5 decimals round-trips 8-bit exactly
+// (1/255 ≈ 0.00392); precomputed so swiftc never folds divisions inside the
+// already-huge body expressions.
+export function fmtChannel(n: number): string {
+  if (n <= 0) return '0';
+  if (n >= 255) return '1';
+  return (n / 255).toFixed(5).replace(/0+$/, '').replace(/\.$/, '');
 }
 
 export function swiftStringLiteral(s: string): string {
@@ -65,16 +66,21 @@ export function swiftStringLiteral(s: string): string {
   return out + '"';
 }
 
-// PascalCase a screen id into a unique Swift type name. Prefixed `Tango` so
-// generated types can't collide with the user's own Views (the import flow
-// names screens after real View types). `taken` is mutated.
-export function screenTypeName(id: string, taken: Set<string>): string {
-  const pascal = id
+function pascalCase(id: string): string {
+  return id
     .split(/[^a-zA-Z0-9]+/)
     .filter(Boolean)
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join('');
-  let base = `Tango${pascal || 'Screen'}`;
+}
+
+const SWIFT_IDENT_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+// PascalCase a screen id into a unique Swift type name for a NEW screen file
+// (no prefix — the file is named like any user View). `taken` is mutated, so
+// the caller can pre-seed it with names the project already declares.
+export function screenTypeName(id: string, taken: Set<string>): string {
+  let base = pascalCase(id) || 'Screen';
   if (!/(Screen|View)$/.test(base)) base += 'Screen';
   let name = base;
   let i = 2;
@@ -86,22 +92,72 @@ export function screenTypeName(id: string, taken: Set<string>): string {
   return name;
 }
 
-// screenId → '<TypeName>.swift' for every screen in the spec. The single home
-// for the order-dependent naming pass (dedupe suffixes are assigned against a
-// whole-spec taken set, seeded with the root view's name), shared by
-// specToSwiftUI() itself and any UI that wants to show a screen's export
-// target — derive it live from the spec, never store it.
+// screenId → '<TypeName>.swift' for every screen in the spec — the title-row
+// chip's PREDICTION of the new-file target a screen with no source tie would
+// export to. Derive it live from the spec, never store it. The export
+// pipeline itself names via newScreenTypeNames (which additionally dedupes
+// against the project's declared types — this spec-only derivation can't see
+// those, so the chip may read 'SettingsScreen' where export actually creates
+// 'SettingsScreen2'; the export result reports the real name). Seeded with
+// every identifier-shaped screen id so a new file can never collide with a
+// linked screen's own struct (import names screens after real View types).
 export function screenFileNames(spec: UISpec): Map<string, string> {
-  const taken = new Set<string>(['TangoGeneratedRootView']);
+  const taken = new Set<string>(
+    spec.screens.map((s) => s.id).filter((id) => SWIFT_IDENT_RE.test(id)),
+  );
   const names = new Map<string, string>();
   for (const screen of spec.screens) {
+    // A screen never collides with its OWN id-as-struct-name seed.
+    const seeded = taken.delete(screen.id);
     names.set(screen.id, `${screenTypeName(screen.id, taken)}.swift`);
+    if (seeded) taken.add(screen.id);
   }
   return names;
 }
 
+// Type names for the screens that need a NEW file (no source tie), deduped
+// against `extraTaken` (the project's declared type names) and every
+// identifier-shaped screen id — a created struct can never collide with a
+// user type or a linked screen's View. Same own-id rule as screenFileNames.
+export function newScreenTypeNames(
+  spec: UISpec,
+  extraTaken: Iterable<string> = [],
+): Map<string, string> {
+  const taken = new Set<string>(extraTaken);
+  for (const s of spec.screens) {
+    if (SWIFT_IDENT_RE.test(s.id)) taken.add(s.id);
+  }
+  const names = new Map<string, string>();
+  for (const screen of spec.screens) {
+    if (screen.sourceFile) continue;
+    const seeded = taken.delete(screen.id);
+    names.set(screen.id, screenTypeName(screen.id, taken));
+    if (seeded) taken.add(screen.id);
+  }
+  return names;
+}
+
+// Struct names worth trying when locating a linked screen's View in its
+// source file, most likely first. Import names screens after the View type
+// ("OnboardingView"), so the id itself is usually exact; PascalCase(id) and
+// the title cover hand-renamed screens.
+export function structCandidates(
+  screen: Pick<UIScreen, 'id' | 'title'>,
+): string[] {
+  const out: string[] = [];
+  const push = (s: string) => {
+    if (SWIFT_IDENT_RE.test(s) && !out.includes(s)) out.push(s);
+  };
+  push(screen.id);
+  push(pascalCase(screen.id));
+  push(screen.title);
+  return out;
+}
+
+// Exact sRGB literal (Color(red:green:blue:opacity:) defaults to .sRGB) —
+// fully self-contained, no support-file initializer to ship alongside.
 function swiftColor(c: RGBA): string {
-  return `Color(tangoR: ${c.r}, g: ${c.g}, b: ${c.b}, a: ${fmt(c.a)})`;
+  return `Color(red: ${fmtChannel(c.r)}, green: ${fmtChannel(c.g)}, blue: ${fmtChannel(c.b)}, opacity: ${fmt(c.a)})`;
 }
 
 // CSS gradient angle (0deg = to top, clockwise) → SwiftUI UnitPoints.
@@ -520,132 +576,57 @@ function chunkIntoGroups(exprs: string[]): string {
   return chunkIntoGroups(groups);
 }
 
-// ── file assembly ─────────────────────────────────────────────────────────
+// ── body + file assembly ────────────────────────────────────────────────────
 
+// Header marker of the RETIRED whole-file export paradigm (TangoGenerated/).
+// Kept so the export step can still recognize and clean up old generated
+// files; nothing emits it anymore.
 export const GENERATED_MARKER = 'tango:generated';
 
-function fileHeader(tag: string, note?: string): string {
-  const lines = [
-    '// Generated by tango — DO NOT EDIT.',
-    `// ${GENERATED_MARKER} v=1 screen=${tag}`,
-    '// Regenerated on every "Export & Run"; change the design in tango instead.',
-  ];
-  if (note) lines.push(`// ${note}`);
-  return lines.join('\n') + '\n\n';
-}
-
-const SUPPORT_SWIFT = `import SwiftUI
-
-extension Color {
-  /// sRGB color from 0–255 channels — emitted by tango's deterministic codegen.
-  init(tangoR r: Int, g: Int, b: Int, a: Double) {
-    self.init(
-      .sRGB,
-      red: Double(r) / 255.0,
-      green: Double(g) / 255.0,
-      blue: Double(b) / 255.0,
-      opacity: a
-    )
-  }
-}
-`;
-
-function emitScreen(screen: ResolvedScreen, typeName: string, note?: string): string {
+/**
+ * The interior of one screen's `var body` — what in-place export splices into
+ * the user's View struct (linked screens) and emitScreenFile wraps for new
+ * ones. Relative indentation only; the splicer re-bases it to the target
+ * file's own indent style. Line 1 is the tango:body marker (see swiftScan).
+ */
+export function emitScreenBody(screen: ResolvedScreen): string {
   const nodes = screen.nodes.map(emitNode);
   const body =
     nodes.length === 0
-      ? indent('EmptyView()', 3)
-      : indent(chunkIntoGroups(nodes), 3);
+      ? indent('EmptyView()', 1)
+      : indent(chunkIntoGroups(nodes), 1);
   const bg = swiftColor(TANGO_THEME.background);
-  return (
-    fileHeader(screen.id, note) +
-    `import SwiftUI
+  return `${bodyMarkerLine(screen.id)}
+ZStack(alignment: .topLeading) {
+${body}
+}
+.frame(width: ${fmt(screen.frame.w)}, height: ${fmt(screen.frame.h)}, alignment: .topLeading)
+.background(${bg})
+.clipped()`;
+}
+
+/**
+ * A complete new .swift file for a screen with no source tie. Created once at
+ * the project's source root; from then on the screen is linked to it and
+ * exports splice only the marked body — the file is the user's to extend
+ * (wire it into navigation, add properties, …).
+ */
+export function emitScreenFile(screen: ResolvedScreen, typeName: string): string {
+  return `// Created by tango from the design screen ${swiftStringLiteral(screen.title)}.
+// The body below is design-managed (tango:body marker) and is regenerated by
+// every Export & Run; the rest of this file is yours.
+
+import SwiftUI
 
 /// ${screen.title.replace(/\n/g, ' ')} — ${fmt(screen.frame.w)}×${fmt(screen.frame.h)}
 struct ${typeName}: View {
   var body: some View {
-    ZStack(alignment: .topLeading) {
-${body}
-    }
-    .frame(width: ${fmt(screen.frame.w)}, height: ${fmt(screen.frame.h)}, alignment: .topLeading)
-    .background(${bg})
-    .clipped()
+${indent(emitScreenBody(screen), 2)}
   }
 }
 
 #Preview {
   ${typeName}()
 }
-`
-  );
-}
-
-function emitIndex(
-  screens: Array<{ screen: ResolvedScreen; typeName: string }>,
-  note?: string,
-): string {
-  const tabs = screens
-    .map(
-      ({ screen, typeName }) =>
-        `      ${typeName}()\n        .tabItem { Text(${swiftStringLiteral(screen.title)}) }`,
-    )
-    .join('\n');
-  const body =
-    screens.length === 0
-      ? '    EmptyView()'
-      : `    TabView {\n${tabs}\n    }`;
-  return (
-    fileHeader('index', note) +
-    `import SwiftUI
-
-/// Root view over every tango-generated screen. Embed this (or the individual
-/// screen views) wherever the design should appear.
-struct TangoGeneratedRootView: View {
-  var body: some View {
-${body}
-  }
-}
-
-#Preview {
-  TangoGeneratedRootView()
-}
-`
-  );
-}
-
-export function specToSwiftUI(
-  spec: UISpec,
-  opts?: SwiftCodegenOpts,
-): { files: GeneratedFile[]; embedTypeNames: string[] } {
-  const resolved = resolveSpec(spec);
-  // resolveSpec preserves screen ids/order 1:1, so the lookup is total.
-  const names = screenFileNames(spec);
-  const screens = resolved.screens.map((screen) => ({
-    screen,
-    typeName: names.get(screen.id)!.replace(/\.swift$/, ''),
-  }));
-
-  const files: GeneratedFile[] = [
-    {
-      path: 'TangoSupport.swift',
-      content: fileHeader('support', opts?.headerNote) + SUPPORT_SWIFT,
-    },
-    ...screens.map(({ screen, typeName }) => ({
-      path: `${typeName}.swift`,
-      content: emitScreen(screen, typeName, opts?.headerNote),
-    })),
-    {
-      path: 'TangoGeneratedIndex.swift',
-      content: emitIndex(screens, opts?.headerNote),
-    },
-  ];
-  // The view types user code can reference to actually show the design —
-  // generated screens render nothing until one of these appears in a
-  // non-generated Swift file. The export step scans for them to warn when
-  // an export would launch an app that looks unchanged.
-  const embedTypeNames = [
-    'TangoGeneratedRootView',
-    ...screens.map(({ typeName }) => typeName),
-  ];
-  return { files, embedTypeNames };
+`;
 }

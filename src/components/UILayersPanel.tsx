@@ -6,11 +6,16 @@
 // on top). Presentational: selection and mutation are delegated up to
 // UIMockCanvas via callbacks; it portals this into UIPanel's sidebar slot.
 //
-// Drag-to-reorder: rows are HTML5-draggable within their own screen. Drop
-// above/below a node row adopts THAT row's group (between grouped rows →
-// joins the group, between ungrouped rows → leaves any group); dropping on a
-// group header joins at the top of the group. Commits through moveNodeInSpec
-// so a drop is one atomic spec change.
+// Drag model (all HTML5-draggable, all committing through ONE atomic spec
+// op — moveNodeInSpec / moveGroupInSpec):
+//   - Node rows drag anywhere, including ACROSS screens. Drop above/below a
+//     node row adopts THAT row's group (between grouped rows → joins the
+//     group, between ungrouped rows → leaves any group); dropping on a group
+//     header joins at the top of the group; dropping on a screen header or
+//     an empty screen lands at the top of that screen's z, ungrouped.
+//   - Group headers drag as whole blocks (same screen or across screens).
+//     Drops land above/below ungrouped node rows or other group blocks —
+//     never inside another group (groups stay flat).
 
 import {
   ArrowDownToLine,
@@ -25,34 +30,59 @@ import {
 import type { DragEvent, MouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { SHAPE_ICONS } from './UIAddPalette';
-import { buildRows, dropIndexFor } from '@/lib/layerTree';
+import {
+  buildRows,
+  dropIndexFor,
+  endDropIndex,
+  groupDropIndexFor,
+  groupEndDropIndex,
+} from '@/lib/layerTree';
 import type { ReorderOp } from '@/lib/uiMockOps';
 import type { UINode, UIScreen } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
+// Group ids are only unique PER SCREEN ('group-1' exists on every screen
+// that ever grouped) — every group callback carries the owning screen id so
+// a collision can never address another screen's group.
 type Props = {
   screens: UIScreen[];
   selectedIds: string[];
   activeScreenId: string | null;
   onSelect: (id: string, additive: boolean) => void;
-  onSelectGroup: (groupId: string) => void;
+  onSelectGroup: (groupId: string, screenId: string) => void;
   onReorder: (id: string, op: ReorderOp) => void;
   onRemove: (id: string) => void;
-  onMoveNode: (nodeId: string, targetIndex: number, group?: string | null) => void;
-  onRenameGroup: (groupId: string, name: string) => void;
-  onUngroup: (groupId: string) => void;
+  onMoveNode: (
+    nodeId: string,
+    targetIndex: number,
+    group?: string | null,
+    targetScreenId?: string,
+  ) => void;
+  onMoveGroup: (
+    groupId: string,
+    targetIndex: number,
+    sourceScreenId: string,
+    targetScreenId?: string,
+  ) => void;
+  onRenameGroup: (groupId: string, name: string, screenId: string) => void;
+  onUngroup: (groupId: string, screenId: string) => void;
   onSelectScreen: (id: string) => void;
   onAiForScreen: (id: string) => void;
   onRemoveScreen: (id: string) => void;
 };
 
+type Dragging =
+  | { kind: 'node'; nodeId: string; screenId: string }
+  | { kind: 'group'; groupId: string; screenId: string };
+
 type DropTarget = {
   screenId: string;
-  // Row key the indicator renders against ('g:<id>' or node id).
+  // Row key the indicator renders against ('g:<id>', 's:<id>', or node id).
   rowKey: string;
   edge: 'above' | 'below' | 'into';
-  // Pre-computed args for onMoveNode.
+  // Pre-computed insertion index for the move op.
   targetIndex: number;
+  // Node drops only: group to join (string) or leave (null).
   group: string | null;
 };
 
@@ -65,6 +95,7 @@ export default function UILayersPanel({
   onReorder,
   onRemove,
   onMoveNode,
+  onMoveGroup,
   onRenameGroup,
   onUngroup,
   onSelectScreen,
@@ -75,7 +106,7 @@ export default function UILayersPanel({
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [renaming, setRenaming] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
-  const [dragging, setDragging] = useState<{ nodeId: string; screenId: string } | null>(null);
+  const [dragging, setDragging] = useState<Dragging | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
 
   useEffect(() => {
@@ -101,50 +132,137 @@ export default function UILayersPanel({
 
   // ── drag-to-reorder plumbing ─────────────────────────────────────────────
 
+  // Where a drop on this row would land, or null when the row is not a valid
+  // target for the current drag (drop onto itself, group into a group, …).
+  const computeRowDrop = (
+    e: DragEvent,
+    screen: UIScreen,
+    row: { rowKey: string; refNode?: UINode; groupId?: string },
+  ): DropTarget | null => {
+    if (!dragging) return null;
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const edge: 'above' | 'below' =
+      e.clientY < rect.top + rect.height / 2 ? 'above' : 'below';
+
+    if (dragging.kind === 'node') {
+      if (row.groupId !== undefined && row.refNode === undefined) {
+        // Group header: join the group at the top of its block.
+        const topMember = [...screen.nodes]
+          .reverse()
+          .find((n) => n.group === row.groupId);
+        if (!topMember || topMember.id === dragging.nodeId) return null;
+        return {
+          screenId: screen.id,
+          rowKey: row.rowKey,
+          edge: 'into',
+          targetIndex: dropIndexFor(screen, topMember.id, 'above', dragging.nodeId),
+          group: row.groupId,
+        };
+      }
+      const refNode = row.refNode!;
+      if (refNode.id === dragging.nodeId) return null;
+      return {
+        screenId: screen.id,
+        rowKey: row.rowKey,
+        edge,
+        targetIndex: dropIndexFor(screen, refNode.id, edge, dragging.nodeId),
+        group: refNode.group ?? null,
+      };
+    }
+
+    // Group block drag.
+    if (row.refNode !== undefined) {
+      // Only ungrouped node rows — a block can't interleave another group.
+      if (row.refNode.group) return null;
+      const idx = groupDropIndexFor(
+        screen,
+        row.refNode.id,
+        edge,
+        dragging.groupId,
+        dragging.screenId,
+      );
+      if (idx === null) return null;
+      return { screenId: screen.id, rowKey: row.rowKey, edge, targetIndex: idx, group: null };
+    }
+    // Another group's header: land the block above/below that block. A
+    // SAME-ID group on a different screen is a different group — only the
+    // dragged group's own header is excluded.
+    if (
+      row.groupId === undefined ||
+      (row.groupId === dragging.groupId && screen.id === dragging.screenId)
+    ) {
+      return null;
+    }
+    const members = [...screen.nodes]
+      .reverse()
+      .filter((n) => n.group === row.groupId);
+    if (members.length === 0) return null;
+    const ref = edge === 'above' ? members[0] : members[members.length - 1];
+    const idx = groupDropIndexFor(screen, ref.id, edge, dragging.groupId, dragging.screenId);
+    if (idx === null) return null;
+    return { screenId: screen.id, rowKey: row.rowKey, edge, targetIndex: idx, group: null };
+  };
+
   const onRowDragOver = (
     e: DragEvent,
     screen: UIScreen,
     row: { rowKey: string; refNode?: UINode; groupId?: string },
   ) => {
-    if (!dragging || dragging.screenId !== screen.id) return;
+    const target = computeRowDrop(e, screen, row);
+    if (!target) {
+      if (dropTarget?.rowKey === row.rowKey) setDropTarget(null);
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    setDropTarget(target);
+  };
+
+  // Screen header / empty-screen drop: land at the top of that screen's z,
+  // ungrouped — the cross-screen path for both node and group drags.
+  const onScreenDragOver = (e: DragEvent, screen: UIScreen) => {
+    if (!dragging) return;
+    const target: DropTarget =
+      dragging.kind === 'node'
+        ? {
+            screenId: screen.id,
+            rowKey: `s:${screen.id}`,
+            edge: 'into',
+            targetIndex: endDropIndex(screen, dragging.nodeId),
+            group: null,
+          }
+        : {
+            screenId: screen.id,
+            rowKey: `s:${screen.id}`,
+            edge: 'into',
+            targetIndex: groupEndDropIndex(screen, dragging.groupId, dragging.screenId),
+            group: null,
+          };
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    if (row.groupId !== undefined && row.refNode === undefined) {
-      // Group header: join the group at the top of its block.
-      const topMember = [...screen.nodes]
-        .reverse()
-        .find((n) => n.group === row.groupId);
-      if (!topMember || topMember.id === dragging.nodeId) return;
-      setDropTarget({
-        screenId: screen.id,
-        rowKey: row.rowKey,
-        edge: 'into',
-        targetIndex: dropIndexFor(screen, topMember.id, 'above', dragging.nodeId),
-        group: row.groupId,
-      });
-      return;
-    }
-    const refNode = row.refNode!;
-    if (refNode.id === dragging.nodeId) {
-      setDropTarget(null);
-      return;
-    }
-    const edge = e.clientY < rect.top + rect.height / 2 ? 'above' : 'below';
-    setDropTarget({
-      screenId: screen.id,
-      rowKey: row.rowKey,
-      edge,
-      targetIndex: dropIndexFor(screen, refNode.id, edge, dragging.nodeId),
-      group: refNode.group ?? null,
-    });
+    setDropTarget(target);
   };
 
   const commitDrop = (e: DragEvent) => {
     e.preventDefault();
-    if (dragging && dropTarget && dragging.screenId === dropTarget.screenId) {
-      onMoveNode(dragging.nodeId, dropTarget.targetIndex, dropTarget.group);
+    e.stopPropagation();
+    if (dragging && dropTarget) {
+      const cross =
+        dropTarget.screenId !== dragging.screenId
+          ? dropTarget.screenId
+          : undefined;
+      if (dragging.kind === 'node') {
+        onMoveNode(dragging.nodeId, dropTarget.targetIndex, dropTarget.group, cross);
+      } else {
+        onMoveGroup(dragging.groupId, dropTarget.targetIndex, dragging.screenId, cross);
+      }
     }
+    setDragging(null);
+    setDropTarget(null);
+  };
+
+  const endDrag = () => {
     setDragging(null);
     setDropTarget(null);
   };
@@ -170,12 +288,9 @@ export default function UILayersPanel({
         onDragStart={(e) => {
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/plain', node.id);
-          setDragging({ nodeId: node.id, screenId: screen.id });
+          setDragging({ kind: 'node', nodeId: node.id, screenId: screen.id });
         }}
-        onDragEnd={() => {
-          setDragging(null);
-          setDropTarget(null);
-        }}
+        onDragEnd={endDrag}
         onDragOver={(e) =>
           onRowDragOver(e, screen, { rowKey: node.id, refNode: node })
         }
@@ -189,7 +304,7 @@ export default function UILayersPanel({
           isSelected
             ? 'bg-accent text-foreground'
             : 'text-foreground/90 hover:bg-accent/60',
-          dragging?.nodeId === node.id && 'opacity-50',
+          dragging?.kind === 'node' && dragging.nodeId === node.id && 'opacity-50',
           dropIndicator(node.id),
         )}
       >
@@ -207,16 +322,16 @@ export default function UILayersPanel({
             isSelected && 'opacity-100',
           )}
         >
-          <LayerAction label="Bring to front" onClick={() => onReorder(node.id, 'front')}>
+          <LayerAction label="Bring to front (⌥⌘])" onClick={() => onReorder(node.id, 'front')}>
             <ArrowUpToLine className="size-3.5" />
           </LayerAction>
-          <LayerAction label="Move forward" onClick={() => onReorder(node.id, 'forward')}>
+          <LayerAction label="Move forward (⌘])" onClick={() => onReorder(node.id, 'forward')}>
             <ChevronUp className="size-3.5" />
           </LayerAction>
-          <LayerAction label="Move backward" onClick={() => onReorder(node.id, 'backward')}>
+          <LayerAction label="Move backward (⌘[)" onClick={() => onReorder(node.id, 'backward')}>
             <ChevronDown className="size-3.5" />
           </LayerAction>
-          <LayerAction label="Send to back" onClick={() => onReorder(node.id, 'back')}>
+          <LayerAction label="Send to back (⌥⌘[)" onClick={() => onReorder(node.id, 'back')}>
             <ArrowDownToLine className="size-3.5" />
           </LayerAction>
           <LayerAction label="Delete" onClick={() => onRemove(node.id)}>
@@ -247,11 +362,14 @@ export default function UILayersPanel({
                     if (el) headerRefs.current.set(screen.id, el);
                     else headerRefs.current.delete(screen.id);
                   }}
+                  onDragOver={(e) => onScreenDragOver(e, screen)}
+                  onDrop={commitDrop}
                   className={cn(
                     'group flex items-center gap-1 rounded-md border-l-2 px-1 transition-colors',
                     isActive
                       ? 'border-primary bg-accent/40 text-foreground'
                       : 'border-transparent text-muted-foreground/70',
+                    dropIndicator(`s:${screen.id}`),
                   )}
                 >
                   <button
@@ -309,7 +427,16 @@ export default function UILayersPanel({
                   </span>
                 </div>
                 {isCollapsed ? null : rows.length === 0 ? (
-                  <p className="px-2 py-1 text-xs text-muted-foreground/60">Empty</p>
+                  <p
+                    className={cn(
+                      'rounded-md px-2 py-1 text-xs text-muted-foreground/60',
+                      dropIndicator(`s:${screen.id}`),
+                    )}
+                    onDragOver={(e) => onScreenDragOver(e, screen)}
+                    onDrop={commitDrop}
+                  >
+                    Empty
+                  </p>
                 ) : (
                   rows.map((row) => {
                     if (row.kind === 'node') return nodeRow(screen, row.node, false);
@@ -321,6 +448,17 @@ export default function UILayersPanel({
                         <div
                           role="button"
                           tabIndex={0}
+                          draggable={renaming !== row.id}
+                          onDragStart={(e) => {
+                            e.dataTransfer.effectAllowed = 'move';
+                            e.dataTransfer.setData('text/plain', rowKey);
+                            setDragging({
+                              kind: 'group',
+                              groupId: row.id,
+                              screenId: screen.id,
+                            });
+                          }}
+                          onDragEnd={endDrag}
                           onDragOver={(e) =>
                             onRowDragOver(e, screen, { rowKey, groupId: row.id })
                           }
@@ -329,7 +467,7 @@ export default function UILayersPanel({
                             if (renaming === row.id) return;
                             e.stopPropagation();
                             if (e.detail >= 2) return; // double-click → rename
-                            onSelectGroup(row.id);
+                            onSelectGroup(row.id, screen.id);
                           }}
                           onDoubleClick={() => setRenaming(row.id)}
                           className={cn(
@@ -337,6 +475,9 @@ export default function UILayersPanel({
                             allSelected
                               ? 'bg-accent text-foreground'
                               : 'text-foreground/90 hover:bg-accent/60',
+                            dragging?.kind === 'group' &&
+                              dragging.groupId === row.id &&
+                              'opacity-50',
                             dropIndicator(rowKey),
                           )}
                         >
@@ -364,7 +505,9 @@ export default function UILayersPanel({
                               onBlur={(e) => {
                                 setRenaming(null);
                                 const v = e.target.value.trim();
-                                if (v && v !== row.name) onRenameGroup(row.id, v);
+                                if (v && v !== row.name) {
+                                  onRenameGroup(row.id, v, screen.id);
+                                }
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
@@ -378,7 +521,7 @@ export default function UILayersPanel({
                           ) : (
                             <span
                               className="min-w-0 flex-1 truncate text-xs font-medium"
-                              title="Double-click to rename"
+                              title="Drag to reorder · double-click to rename"
                             >
                               {row.name}
                             </span>
@@ -389,7 +532,10 @@ export default function UILayersPanel({
                               allSelected && 'opacity-100',
                             )}
                           >
-                            <LayerAction label="Ungroup" onClick={() => onUngroup(row.id)}>
+                            <LayerAction
+                              label="Ungroup"
+                              onClick={() => onUngroup(row.id, screen.id)}
+                            >
                               <Ungroup className="size-3.5" />
                             </LayerAction>
                           </span>

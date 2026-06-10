@@ -14,6 +14,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { sfSymbolToLucide } from '@/lib/lucideToSfSymbol';
+import { stripTangoBodyBlocks } from '@/lib/swiftScan';
 import type {
   UIColorToken,
   UIDesignSystem,
@@ -643,6 +644,12 @@ export async function runDesignScan(
     } catch {
       continue;
     }
+    // Same rule for in-place export output: tango:body-marked bodies inside
+    // USER files carry tango's theme literals (canvas background, default
+    // borders) — blank them so an export→import round-trip can't feed
+    // tango's own palette into the app's design system. The rest of the
+    // file still scans.
+    content = stripTangoBodyBlocks(content);
     files.push({ relPath: f.relPath, scan: scanSwiftSource(content), content });
   }
   const assetColors = await findAssetColors(workspace, readFile);

@@ -57,6 +57,7 @@ import {
   findNodeInSpec,
   groupNodesInSpec,
   instantiateComponentInSpec,
+  moveGroupInSpec,
   moveNodeInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
@@ -243,22 +244,24 @@ export default function UIMockCanvas({
   //   - the very first commit (initial spec / hydration from localStorage)
   //   - any commit triggered by a server-driven apply (skipNextSnapshot)
   // Everything else (drag/resize/text edit/delete) fires a debounced emit.
+  // onPersist runs SYNCHRONOUSLY on every commit (not inside the debounce):
+  // UIPanel's specRef must always hold the live spec — Export & Run ships it
+  // with the POST so an edit made <250ms before the click is never lost.
   const isFirstCommit = useRef(true);
   useEffect(() => {
     if (isFirstCommit.current) {
       isFirstCommit.current = false;
       return;
     }
+    onPersist(spec);
     if (skipNextSnapshot.current) {
+      // Server-driven apply: persisted locally so a refresh keeps the
+      // content; don't bounce the snapshot back up the WS.
       skipNextSnapshot.current = false;
-      // Persist locally so a refresh keeps server-driven content; just don't
-      // ship the snapshot back up.
-      onPersist(spec);
       return;
     }
     const timer = window.setTimeout(() => {
       uiMockBus._emitSnapshot(spec);
-      onPersist(spec);
     }, SNAPSHOT_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [spec, onPersist]);
@@ -357,12 +360,11 @@ export default function UIMockCanvas({
     [addToSelection, selectOnly, reportActiveScreen],
   );
 
-  // Select every member of a group (layers-tree group row click).
+  // Select every member of a group (layers-tree group row click). Group ids
+  // are only unique per screen, so the panel passes the owning screen.
   const selectGroup = useCallback(
-    (groupId: string) => {
-      const screen = specRef.current.screens.find((s) =>
-        s.nodes.some((n) => n.group === groupId),
-      );
+    (groupId: string, screenId: string) => {
+      const screen = specRef.current.screens.find((s) => s.id === screenId);
       if (!screen) return;
       setSelectedIds(
         screen.nodes.filter((n) => n.group === groupId).map((n) => n.id),
@@ -393,47 +395,86 @@ export default function UIMockCanvas({
     }
   }, []);
 
-  // Cmd+Shift+G: dissolve every group the selection touches.
+  // Cmd+Shift+G: dissolve every group the selection touches — addressed as
+  // (screen, group) pairs, since group ids repeat across screens.
   const ungroupSelection = useCallback(() => {
     const ids = new Set(selectedIdsRef.current);
-    const groupIds = new Set<string>();
+    const pairs = new Map<string, { screenId: string; groupId: string }>();
     for (const s of specRef.current.screens) {
       for (const n of s.nodes) {
-        if (ids.has(n.id) && n.group) groupIds.add(n.group);
+        if (ids.has(n.id) && n.group) {
+          pairs.set(`${s.id} ${n.group}`, { screenId: s.id, groupId: n.group });
+        }
       }
     }
-    if (groupIds.size === 0) return;
+    if (pairs.size === 0) return;
     try {
       let next = specRef.current;
-      for (const gid of groupIds) next = ungroupNodesInSpec(next, gid);
+      for (const { screenId, groupId } of pairs.values()) {
+        next = ungroupNodesInSpec(next, groupId, screenId);
+      }
       setSpec(next);
     } catch {
       // group vanished mid-keystroke — ignore.
     }
   }, []);
 
-  const renameGroup = useCallback((groupId: string, name: string) => {
-    try {
-      setSpec(renameGroupInSpec(specRef.current, groupId, name));
-    } catch {
-      // empty name or vanished group — ignore.
-    }
-  }, []);
-
-  const moveNode = useCallback(
-    (nodeId: string, targetIndex: number, group?: string | null) => {
+  const renameGroup = useCallback(
+    (groupId: string, name: string, screenId: string) => {
       try {
-        setSpec(moveNodeInSpec(specRef.current, nodeId, targetIndex, group));
+        setSpec(renameGroupInSpec(specRef.current, groupId, name, screenId));
       } catch {
-        // node/group vanished between drag start and drop — ignore.
+        // empty name or vanished group — ignore.
       }
     },
     [],
   );
 
-  const ungroup = useCallback((groupId: string) => {
+  const moveNode = useCallback(
+    (
+      nodeId: string,
+      targetIndex: number,
+      group?: string | null,
+      targetScreenId?: string,
+    ) => {
+      try {
+        setSpec(
+          moveNodeInSpec(specRef.current, nodeId, targetIndex, group, targetScreenId),
+        );
+      } catch {
+        // node/group/screen vanished between drag start and drop — ignore.
+      }
+    },
+    [],
+  );
+
+  const moveGroup = useCallback(
+    (
+      groupId: string,
+      targetIndex: number,
+      sourceScreenId: string,
+      targetScreenId?: string,
+    ) => {
+      try {
+        setSpec(
+          moveGroupInSpec(
+            specRef.current,
+            groupId,
+            targetIndex,
+            targetScreenId,
+            sourceScreenId,
+          ),
+        );
+      } catch {
+        // group/screen vanished between drag start and drop — ignore.
+      }
+    },
+    [],
+  );
+
+  const ungroup = useCallback((groupId: string, screenId: string) => {
     try {
-      setSpec(ungroupNodesInSpec(specRef.current, groupId));
+      setSpec(ungroupNodesInSpec(specRef.current, groupId, screenId));
     } catch {
       // already gone — ignore.
     }
@@ -601,6 +642,49 @@ export default function UIMockCanvas({
       setSpec(reorderNodeInSpec(specRef.current, id, op));
     } catch {
       // node vanished between render and click (server-driven set) — ignore.
+    }
+  }, []);
+
+  // Keyboard z-order over the whole selection, moving it as a CLUSTER.
+  // Processing order preserves relative stacking — forward/back start from
+  // the topmost node, backward/front from the bottommost (front/back invert:
+  // each successive jump-to-extreme lands ON TOP of / BELOW the previously
+  // processed one) — and a single-step move is skipped when the node it
+  // would swap past is itself selected, so adjacent selected nodes never
+  // trade places.
+  const reorderSelection = useCallback((op: ReorderOp) => {
+    const ids = selectedIdsRef.current;
+    if (ids.length === 0) return;
+    const selected = new Set(ids);
+    const locate = (
+      spec: UISpec,
+      id: string,
+    ): { nodes: UISpec['screens'][number]['nodes']; idx: number } | null => {
+      for (const s of spec.screens) {
+        const i = s.nodes.findIndex((n) => n.id === id);
+        if (i !== -1) return { nodes: s.nodes, idx: i };
+      }
+      return null;
+    };
+    const zOf = (id: string): number => locate(specRef.current, id)?.idx ?? -1;
+    const topFirst = op === 'forward' || op === 'back';
+    const ordered = [...ids].sort((a, b) =>
+      topFirst ? zOf(b) - zOf(a) : zOf(a) - zOf(b),
+    );
+    try {
+      let next = specRef.current;
+      for (const id of ordered) {
+        if (op === 'forward' || op === 'backward') {
+          const at = locate(next, id);
+          if (!at) continue;
+          const neighbor = at.nodes[op === 'forward' ? at.idx + 1 : at.idx - 1];
+          if (neighbor && selected.has(neighbor.id)) continue; // cluster moves together
+        }
+        next = reorderNodeInSpec(next, id, op);
+      }
+      setSpec(next);
+    } catch {
+      // node vanished mid-keystroke (server-driven set) — ignore.
     }
   }, []);
 
@@ -803,6 +887,19 @@ export default function UIMockCanvas({
         else groupSelection();
         return;
       }
+      // Z-order: Cmd+] / Cmd+[ move forward/backward, +Alt jumps to
+      // front/back (Figma keys). e.code, not e.key — macOS Option composes
+      // the bracket keys into different characters.
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        (e.code === 'BracketRight' || e.code === 'BracketLeft') &&
+        selectedIds.length > 0
+      ) {
+        e.preventDefault();
+        const up = e.code === 'BracketRight';
+        reorderSelection(up ? (e.altKey ? 'front' : 'forward') : e.altKey ? 'back' : 'backward');
+        return;
+      }
       // Escape priority: armed draw tool → popout → selection.
       if (e.key === 'Escape' && tool) {
         disarmDrawTool();
@@ -861,6 +958,7 @@ export default function UIMockCanvas({
     disarmDrawTool,
     groupSelection,
     ungroupSelection,
+    reorderSelection,
     pointerOverRef,
   ]);
 
@@ -1320,6 +1418,7 @@ export default function UIMockCanvas({
                 onReorder={reorderNode}
                 onRemove={removeNode}
                 onMoveNode={moveNode}
+                onMoveGroup={moveGroup}
                 onRenameGroup={renameGroup}
                 onUngroup={ungroup}
                 onSelectScreen={selectScreen}

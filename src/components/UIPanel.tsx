@@ -142,10 +142,28 @@ export default function UIPanel({ terminalAgent }: Props) {
     setLoad({ status: 'ready', initialSpec: initial });
   }, [generation]);
 
+  // Called synchronously on EVERY canvas commit (so specRef is always live —
+  // Export & Run ships it with the POST). localStorage gets its own short
+  // debounce: a whole-spec JSON.stringify per native input event (color
+  // picker drags fire continuously) is real jank for a store that's only
+  // read back at mount.
+  const persistTimer = useRef<number | null>(null);
   const persist = useCallback((spec: UISpec) => {
     specRef.current = spec;
     setScreenCount(spec.screens.length);
-    uiMockStore.save(spec);
+    if (persistTimer.current !== null) window.clearTimeout(persistTimer.current);
+    persistTimer.current = window.setTimeout(() => {
+      persistTimer.current = null;
+      uiMockStore.save(specRef.current);
+    }, 250);
+  }, []);
+  useEffect(() => {
+    return () => {
+      if (persistTimer.current !== null) {
+        window.clearTimeout(persistTimer.current);
+        uiMockStore.save(specRef.current);
+      }
+    };
   }, []);
 
   // Working-screen reports from the canvas → server (drives the preview-host
@@ -436,7 +454,14 @@ export default function UIPanel({ terminalAgent }: Props) {
     setStatus('Exporting…');
     const startedAt = Date.now();
     try {
-      const kick = await fetch('/api/ios/export-run', { method: 'POST' });
+      // Ship the canvas's CURRENT spec with the kick: snapshots debounce
+      // 250ms, so without this an element added just before the click would
+      // export stale state. The server adopts it exactly like a WS snapshot.
+      const kick = await fetch('/api/ios/export-run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ spec: specRef.current }),
+      });
       if (!kick.ok) {
         const body = (await kick.json().catch(() => ({}))) as {
           reason?: string;
@@ -448,31 +473,9 @@ export default function UIPanel({ terminalAgent }: Props) {
         await new Promise((r) => setTimeout(r, 1000));
         if (!mountedRef.current) return;
         const res = await fetch('/api/ios/export-run', { cache: 'no-store' });
-        const s = (await res.json()) as {
-          phase: string;
-          stage?: string;
-          message?: string;
-          errors?: string[];
-          bundleId?: string;
-          durationMs?: number;
-          inclusion?: string;
-          embedded?: boolean;
-        };
+        const s = (await res.json()) as ExportRunPoll;
         if (s.phase === 'done') {
-          const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
-          const manual =
-            s.inclusion === 'manual-add-required'
-              ? ' — one-time setup: drag TangoGenerated/ into your Xcode target'
-              : '';
-          if (s.embedded === false) {
-            // Built and launched, but no user Swift shows the generated views
-            // — without this warning the launch looks like a silent no-op.
-            setStatus(
-              `Launched in ${secs}s — but the app doesn't show the design yet: add TangoGeneratedRootView() to your app (e.g. in place of ContentView()), or ask ${terminalAgentMeta.shortLabel} to wire it up.${manual}`,
-            );
-            return;
-          }
-          setStatus(`Launched ${s.bundleId ?? 'app'} in ${secs}s.${manual}`);
+          setStatus(exportDoneMessage(s, terminalAgentMeta.shortLabel));
           return;
         }
         if (s.phase === 'error') {
@@ -486,7 +489,7 @@ export default function UIPanel({ terminalAgent }: Props) {
         }
         const labels: Record<string, string> = {
           generating: 'Generating SwiftUI',
-          writing: 'Writing files',
+          writing: 'Writing into your Swift sources',
           building: 'Building',
           installing: 'Installing',
           launching: 'Launching',
@@ -701,7 +704,7 @@ export default function UIPanel({ terminalAgent }: Props) {
                 void exportAndRun();
               }}
               disabled={exporting || screenCount === 0}
-              title="Generate SwiftUI into TangoGenerated/, build, and launch on the simulator"
+              title="Write the design into your SwiftUI sources (imported screens edit their own View's body in place; new screens get a new file), then build and launch on the simulator"
             >
               {exporting ? (
                 <RefreshCw className="size-3.5 animate-spin" />
@@ -767,6 +770,66 @@ export default function UIPanel({ terminalAgent }: Props) {
       )}
     </div>
   );
+}
+
+// Poll shape of /api/ios/export-run (mirrors ExportRunState in iosExport.ts).
+type ExportRunPoll = {
+  phase: string;
+  stage?: string;
+  message?: string;
+  errors?: string[];
+  bundleId?: string;
+  durationMs?: number;
+  inclusion?: string;
+  results?: Array<{
+    screenId: string;
+    file: string;
+    struct?: string;
+    action: 'updated' | 'unchanged' | 'created' | 'skipped';
+    reason?: string;
+  }>;
+};
+
+// One status line out of the per-screen export results: which structs were
+// spliced into which files, which files are new (and need wiring), what got
+// skipped and why.
+function exportDoneMessage(s: ExportRunPoll, agentLabel: string): string {
+  const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+  const results = s.results ?? [];
+  const basename = (p: string) => p.split('/').pop() ?? p;
+  const parts: string[] = [];
+
+  const updated = results.filter((r) => r.action === 'updated');
+  const unchanged = results.filter((r) => r.action === 'unchanged');
+  if (updated.length > 0) {
+    const files = [...new Set(updated.map((r) => basename(r.file)))];
+    parts.push(
+      `updated ${updated.map((r) => r.struct ?? r.screenId).join(', ')} in ${files.join(', ')}`,
+    );
+  } else if (unchanged.length > 0) {
+    parts.push('code already matched the design');
+  }
+
+  const created = results.filter((r) => r.action === 'created');
+  if (created.length > 0) {
+    parts.push(
+      `created ${created.map((r) => basename(r.file)).join(', ')} — wire ${created
+        .map((r) => `${r.struct ?? r.screenId}()`)
+        .join(' / ')} into your app (or ask ${agentLabel})`,
+    );
+  }
+
+  const skipped = results.filter((r) => r.action === 'skipped');
+  if (skipped.length > 0) {
+    const detail = skipped[0].reason ? `: ${skipped[0].reason}` : '';
+    parts.push(`⚠ skipped ${skipped.map((r) => r.screenId).join(', ')}${detail}`);
+  }
+
+  const manual =
+    created.length > 0 && s.inclusion === 'manual-add-required'
+      ? ' One-time setup: add the new file(s) to your Xcode target.'
+      : '';
+  return `Launched ${s.bundleId ?? 'app'} in ${secs}s — ${parts.join(' · ')}.${manual}`;
 }
 
 // Markdown handoff to the active terminal agent. The JSON is the source of

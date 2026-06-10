@@ -290,9 +290,20 @@ export function removeNodesFromSpec(spec: UISpec, nodeIds: string[]): UISpec {
   };
 }
 
-// Change a node's z-order within its own screen. `front`/`back` jump to the
-// top/bottom of the stack; `forward`/`backward` swap with the adjacent
-// sibling. Moves at a boundary are a no-op (still returns a fresh spec).
+// Change a node's z-order within its own screen, group-aware so a step can
+// never fracture a z-contiguous group block:
+//   - A node WITH a live group tag moves within its own block only:
+//     `forward`/`backward` step one slot clamped at the block edges (a step
+//     at an edge is a no-op that still returns a fresh spec); `front`/`back`
+//     jump to the top/bottom OF THE BLOCK, not the array.
+//   - A node WITHOUT a group tag (an orphan tag — no registry entry — counts
+//     as ungrouped, matching the layers tree): `forward`/`backward` swap with
+//     the adjacent sibling, except when that sibling is a group member — then
+//     the node jumps past that ENTIRE contiguous block (exactly one block per
+//     call, so adjacent blocks take one keypress each); `front`/`back` go to
+//     the array extremes. Moves at a boundary are a no-op (fresh spec).
+// The landed screen runs through normalizeScreenGroups as a backstop (a
+// no-op when the stepping math above holds).
 export function reorderNodeInSpec(
   spec: UISpec,
   nodeId: string,
@@ -304,27 +315,92 @@ export function reorderNodeInSpec(
   if (screenIdx === -1) fail([`Unknown node id: ${nodeId}`]);
   const screen = spec.screens[screenIdx];
   const idx = screen.nodes.findIndex((n) => n.id === nodeId);
+  const liveIds = new Set((screen.groups ?? []).map((g) => g.id));
+  const liveGroupOf = (n: UINode) =>
+    n.group !== undefined && liveIds.has(n.group) ? n.group : undefined;
+  const own = liveGroupOf(screen.nodes[idx]);
+
+  // Target index in the array AFTER the node is removed from its old slot
+  // (the same convention the splice below uses).
+  let target: number;
+  if (own !== undefined) {
+    // Members are z-contiguous: clamp every op to the node's own block.
+    let blockStart = idx;
+    while (blockStart > 0 && screen.nodes[blockStart - 1].group === own) {
+      blockStart -= 1;
+    }
+    let blockEnd = idx;
+    while (
+      blockEnd < screen.nodes.length - 1 &&
+      screen.nodes[blockEnd + 1].group === own
+    ) {
+      blockEnd += 1;
+    }
+    switch (op) {
+      case 'front':
+        target = blockEnd;
+        break;
+      case 'back':
+        target = blockStart;
+        break;
+      case 'forward':
+        target = Math.min(blockEnd, idx + 1);
+        break;
+      case 'backward':
+        target = Math.max(blockStart, idx - 1);
+        break;
+    }
+  } else {
+    switch (op) {
+      case 'front':
+        target = screen.nodes.length - 1;
+        break;
+      case 'back':
+        target = 0;
+        break;
+      case 'forward': {
+        const above =
+          idx < screen.nodes.length - 1
+            ? liveGroupOf(screen.nodes[idx + 1])
+            : undefined;
+        if (above !== undefined) {
+          // Jump past the whole contiguous block above (land just above it).
+          let j = idx + 1;
+          while (
+            j < screen.nodes.length - 1 &&
+            screen.nodes[j + 1].group === above
+          ) {
+            j += 1;
+          }
+          target = j;
+        } else {
+          target = Math.min(screen.nodes.length - 1, idx + 1);
+        }
+        break;
+      }
+      case 'backward': {
+        const below = idx > 0 ? liveGroupOf(screen.nodes[idx - 1]) : undefined;
+        if (below !== undefined) {
+          // Jump below the whole contiguous block beneath.
+          let j = idx - 1;
+          while (j > 0 && screen.nodes[j - 1].group === below) {
+            j -= 1;
+          }
+          target = j;
+        } else {
+          target = Math.max(0, idx - 1);
+        }
+        break;
+      }
+    }
+  }
   const nodes = [...screen.nodes];
   const [node] = nodes.splice(idx, 1);
-  let target: number;
-  switch (op) {
-    case 'front':
-      target = nodes.length;
-      break;
-    case 'back':
-      target = 0;
-      break;
-    case 'forward':
-      target = Math.min(nodes.length, idx + 1);
-      break;
-    case 'backward':
-      target = Math.max(0, idx - 1);
-      break;
-  }
   nodes.splice(target, 0, node);
+  const nextScreen = normalizeScreenGroups({ ...screen, nodes });
   return {
     ...spec,
-    screens: spec.screens.map((s, i) => (i === screenIdx ? { ...s, nodes } : s)),
+    screens: spec.screens.map((s, i) => (i === screenIdx ? nextScreen : s)),
   };
 }
 
@@ -377,6 +453,45 @@ function freshGroupId(screen: UIScreen): { id: string; name: string } {
   let n = 1;
   while (taken.has(`group-${n}`)) n += 1;
   return { id: `group-${n}`, name: `Group ${n}` };
+}
+
+// Repair the group invariants on one screen: orphan tags stripped and empty
+// registry entries pruned (pruneScreenGroups), then every group whose members
+// are fractured in z is re-coalesced — members come out (preserving relative
+// order) and reinsert as one block anchored where the TOPMOST member sat
+// among the non-members (the same policy as groupNodesInSpec). Groups are
+// processed in registry order. Returns the SAME screen reference when nothing
+// changed (memo contract).
+export function normalizeScreenGroups(screen: UIScreen): UIScreen {
+  let next = pruneScreenGroups(screen);
+  for (const group of next.groups ?? []) {
+    let first = -1;
+    let last = -1;
+    let count = 0;
+    for (let i = 0; i < next.nodes.length; i += 1) {
+      if (next.nodes[i].group !== group.id) continue;
+      if (first === -1) first = i;
+      last = i;
+      count += 1;
+    }
+    if (last - first === count - 1) continue;
+    const members: UINode[] = [];
+    const rest: UINode[] = [];
+    let insertAt = 0;
+    for (const node of next.nodes) {
+      if (node.group === group.id) {
+        members.push(node);
+        insertAt = rest.length;
+      } else {
+        rest.push(node);
+      }
+    }
+    next = {
+      ...next,
+      nodes: [...rest.slice(0, insertAt), ...members, ...rest.slice(insertAt)],
+    };
+  }
+  return next;
 }
 
 // Group nodes on one screen. Members are re-tagged (leaving any previous
@@ -434,12 +549,28 @@ export function groupNodesInSpec(
 }
 
 // Dissolve a group: members lose their tag (staying exactly where they are in
-// z), the registry entry goes away. Errors if no screen has the group.
-export function ungroupNodesInSpec(spec: UISpec, groupId: string): UISpec {
-  const screen = spec.screens.find((s) =>
-    (s.groups ?? []).some((g) => g.id === groupId),
+// z), the registry entry goes away. Group ids are only unique PER SCREEN
+// ('group-1' exists on every screen that ever grouped) — `screenId` pins
+// resolution to that one screen (throwing when it has no such group);
+// omitted, the first screen with the id wins. Errors if no screen has the
+// group.
+export function ungroupNodesInSpec(
+  spec: UISpec,
+  groupId: string,
+  screenId?: string,
+): UISpec {
+  const screen = spec.screens.find(
+    (s) =>
+      (screenId === undefined || s.id === screenId) &&
+      (s.groups ?? []).some((g) => g.id === groupId),
   );
-  if (!screen) fail([`Unknown group id: ${groupId}`]);
+  if (!screen) {
+    fail([
+      screenId === undefined
+        ? `Unknown group id: ${groupId}`
+        : `Unknown group id on screen ${screenId}: ${groupId}`,
+    ]);
+  }
   const nextScreen: UIScreen = {
     ...screen,
     nodes: screen.nodes.map((n) => (n.group === groupId ? stripGroupTag(n) : n)),
@@ -453,16 +584,28 @@ export function ungroupNodesInSpec(spec: UISpec, groupId: string): UISpec {
   };
 }
 
+// Rename a group's registry entry. Same id-collision caveat as ungroup:
+// `screenId` pins resolution to that one screen (throwing when it has no
+// such group); omitted, the first screen with the id wins.
 export function renameGroupInSpec(
   spec: UISpec,
   groupId: string,
   name: string,
+  screenId?: string,
 ): UISpec {
   if (!name.trim()) fail(['Group name must not be empty']);
-  const screen = spec.screens.find((s) =>
-    (s.groups ?? []).some((g) => g.id === groupId),
+  const screen = spec.screens.find(
+    (s) =>
+      (screenId === undefined || s.id === screenId) &&
+      (s.groups ?? []).some((g) => g.id === groupId),
   );
-  if (!screen) fail([`Unknown group id: ${groupId}`]);
+  if (!screen) {
+    fail([
+      screenId === undefined
+        ? `Unknown group id: ${groupId}`
+        : `Unknown group id on screen ${screenId}: ${groupId}`,
+    ]);
+  }
   return {
     ...spec,
     screens: spec.screens.map((s) =>
@@ -478,22 +621,67 @@ export function renameGroupInSpec(
   };
 }
 
-// Move a node to an explicit z-index within its own screen, optionally
-// joining a group (string), leaving one (null), or keeping membership
-// (undefined). The layers tree's drag-reorder commits through this so a drop
-// is one atomic spec change. targetIndex is clamped; the index is interpreted
-// AFTER the node is removed from its old slot. Empty groups are pruned.
+// Move a node to an explicit z-index, optionally joining a group (string),
+// leaving one (null), or keeping membership (undefined), and optionally onto
+// another screen. The layers tree's drag-reorder commits through this so a
+// drop is one atomic spec change. targetIndex is clamped; the index is
+// interpreted AFTER the node is removed from its old slot. Empty groups are
+// pruned, and the landed screen is ALWAYS normalized (normalizeScreenGroups):
+// a landing index interior to ANY group's block — the joined group or an
+// uninvolved one — effectively snaps to that block's boundary instead of
+// fracturing it; callers' index math can race concurrent edits and must not
+// be able to fracture a group. Cross-screen (targetScreenId set and different
+// from the node's own screen): `group` must name a group on the TARGET
+// screen, otherwise the tag is stripped (a tag from the old screen must never
+// travel), and x/y clamp so the box stays inside the target frame (origin 0
+// when it can't fit).
 export function moveNodeInSpec(
   spec: UISpec,
   nodeId: string,
   targetIndex: number,
   group?: string | null,
+  targetScreenId?: string,
 ): UISpec {
   const screenIdx = spec.screens.findIndex((s) =>
     s.nodes.some((n) => n.id === nodeId),
   );
   if (screenIdx === -1) fail([`Unknown node id: ${nodeId}`]);
   const screen = spec.screens[screenIdx];
+
+  if (targetScreenId !== undefined && targetScreenId !== screen.id) {
+    const targetIdx = spec.screens.findIndex((s) => s.id === targetScreenId);
+    if (targetIdx === -1) fail([`Unknown screen id: ${targetScreenId}`]);
+    const targetScreen = spec.screens[targetIdx];
+    if (
+      typeof group === 'string' &&
+      !(targetScreen.groups ?? []).some((g) => g.id === group)
+    ) {
+      fail([`Unknown group id on screen ${targetScreen.id}: ${group}`]);
+    }
+    let node = screen.nodes.find((n) => n.id === nodeId)!;
+    node =
+      typeof group === 'string' ? { ...node, group } : stripGroupTag(node);
+    node = {
+      ...node,
+      x: Math.max(0, Math.min(node.x, targetScreen.frame.w - node.width)),
+      y: Math.max(0, Math.min(node.y, targetScreen.frame.h - node.height)),
+    };
+    const source = pruneScreenGroups({
+      ...screen,
+      nodes: screen.nodes.filter((n) => n.id !== nodeId),
+    });
+    const nodes = [...targetScreen.nodes];
+    const target = Math.max(0, Math.min(nodes.length, Math.round(targetIndex)));
+    nodes.splice(target, 0, node);
+    const nextTarget = normalizeScreenGroups({ ...targetScreen, nodes });
+    return {
+      ...spec,
+      screens: spec.screens.map((s, i) =>
+        i === screenIdx ? source : i === targetIdx ? nextTarget : s,
+      ),
+    };
+  }
+
   if (
     typeof group === 'string' &&
     !(screen.groups ?? []).some((g) => g.id === group)
@@ -507,10 +695,108 @@ export function moveNodeInSpec(
   else if (typeof group === 'string') node = { ...node, group };
   const target = Math.max(0, Math.min(nodes.length, Math.round(targetIndex)));
   nodes.splice(target, 0, node);
-  const nextScreen = pruneScreenGroups({ ...screen, nodes });
+  // normalizeScreenGroups prunes first, so a group emptied by `group: null`
+  // still goes away.
+  const nextScreen = normalizeScreenGroups({ ...screen, nodes });
   return {
     ...spec,
     screens: spec.screens.map((s, i) => (i === screenIdx ? nextScreen : s)),
+  };
+}
+
+// Move a whole group block to an explicit z-index, optionally onto another
+// screen. Members come out together (preserving relative order) and reinsert
+// as one contiguous block; targetIndex is clamped and interpreted AFTER
+// removal (same convention as moveNodeInSpec — it addresses where the block's
+// BOTTOM member lands), and the landed screen is normalized
+// (normalizeScreenGroups): an index interior to ANOTHER group's block
+// effectively snaps to that block's boundary instead of fracturing it — the
+// moved block itself is contiguous and survives. Group ids are only unique
+// PER SCREEN ('group-1' exists on every screen that ever grouped) —
+// `sourceScreenId` pins resolution to that one screen (throwing when it has
+// no such group); omitted, the first screen with the id wins. A registry
+// entry with zero member nodes is an error (a ghost entry must not silently
+// vanish). Cross-screen: the registry entry travels too; a colliding id on
+// the target mints a fresh `group-N` there (name kept, members re-tagged),
+// and all members shift by one common delta so their bounding box stays
+// inside the target frame (origin 0 when it can't fit) — internal layout is
+// preserved. The source screen's registry entry is pruned.
+export function moveGroupInSpec(
+  spec: UISpec,
+  groupId: string,
+  targetIndex: number,
+  targetScreenId?: string,
+  sourceScreenId?: string,
+): UISpec {
+  const screenIdx = spec.screens.findIndex(
+    (s) =>
+      (sourceScreenId === undefined || s.id === sourceScreenId) &&
+      (s.groups ?? []).some((g) => g.id === groupId),
+  );
+  if (screenIdx === -1) {
+    fail([
+      sourceScreenId === undefined
+        ? `Unknown group id: ${groupId}`
+        : `Unknown group id on screen ${sourceScreenId}: ${groupId}`,
+    ]);
+  }
+  const screen = spec.screens[screenIdx];
+  const members = screen.nodes.filter((n) => n.group === groupId);
+  if (members.length === 0) fail([`Group has no members: ${groupId}`]);
+  const rest = screen.nodes.filter((n) => n.group !== groupId);
+
+  if (targetScreenId === undefined || targetScreenId === screen.id) {
+    const at = Math.max(0, Math.min(rest.length, Math.round(targetIndex)));
+    const nodes = [...rest.slice(0, at), ...members, ...rest.slice(at)];
+    return {
+      ...spec,
+      screens: spec.screens.map((s, i) =>
+        i === screenIdx ? normalizeScreenGroups({ ...s, nodes }) : s,
+      ),
+    };
+  }
+
+  const targetIdx = spec.screens.findIndex((s) => s.id === targetScreenId);
+  if (targetIdx === -1) fail([`Unknown screen id: ${targetScreenId}`]);
+  const targetScreen = spec.screens[targetIdx];
+  const entry = (screen.groups ?? []).find((g) => g.id === groupId)!;
+  const collides = (targetScreen.groups ?? []).some((g) => g.id === groupId);
+  const movedId = collides ? freshGroupId(targetScreen).id : groupId;
+
+  // One common delta clamps the members' bounding box into the target frame
+  // without disturbing their layout relative to each other.
+  const minX = Math.min(...members.map((n) => n.x));
+  const minY = Math.min(...members.map((n) => n.y));
+  const boxW = Math.max(...members.map((n) => n.x + n.width)) - minX;
+  const boxH = Math.max(...members.map((n) => n.y + n.height)) - minY;
+  const dx = Math.max(0, Math.min(minX, targetScreen.frame.w - boxW)) - minX;
+  const dy = Math.max(0, Math.min(minY, targetScreen.frame.h - boxH)) - minY;
+  const moved = members.map((n) => ({
+    ...n,
+    group: movedId,
+    x: n.x + dx,
+    y: n.y + dy,
+  }));
+
+  const source = pruneScreenGroups({ ...screen, nodes: rest });
+  const at = Math.max(
+    0,
+    Math.min(targetScreen.nodes.length, Math.round(targetIndex)),
+  );
+  const nextTarget = normalizeScreenGroups({
+    ...targetScreen,
+    nodes: [
+      ...targetScreen.nodes.slice(0, at),
+      ...moved,
+      ...targetScreen.nodes.slice(at),
+    ],
+    groups: [...(targetScreen.groups ?? []), { id: movedId, name: entry.name }],
+  });
+  return {
+    ...spec,
+    screens: spec.screens.map((s, i) =>
+      i === screenIdx ? source : i === targetIdx ? nextTarget : s,
+    ),
   };
 }
 
