@@ -17,6 +17,7 @@ import {
 } from '@/lib/uiMockProtocol';
 import {
   addNodesToScreen,
+  adoptSnapshotSpec,
   appendScreenToSpec,
   carryLibraryForward,
   duplicateScreenInSpec,
@@ -170,10 +171,12 @@ export function attachUIMock(ws: WebSocket): void {
           );
           return;
         }
-        // Snapshots describe SCREENS (the browser's editing surface). A
-        // client that omits the import-derived design library (older state,
-        // Clear button) must not wipe it — carry it forward.
-        cache = carryLibraryForward(cache, checked.data as UISpec);
+        // Snapshots describe SCREENS (the browser's editing surface). The
+        // design library is server/import-owned: the cache's copy wins even
+        // when the snapshot INCLUDES one (a stale tab mid-debounce after an
+        // import would otherwise revert the fresh library); a client copy
+        // only fills a library-less cache (localStorage restore).
+        cache = adoptSnapshotSpec(cache, checked.data as UISpec);
         cacheChanged();
       } else if (parsed.type === 'viewport') {
         const w = Math.round(parsed.w);

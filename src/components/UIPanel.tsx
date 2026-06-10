@@ -597,9 +597,9 @@ export default function UIPanel({ terminalAgent }: Props) {
     // any open browsers see the same state on refresh. We don't call MCP from
     // here — clear_ui_mock is for Claude. Clear means SCREENS: carry the
     // imported design library forward locally (the server's snapshot path
-    // does the same via carryLibraryForward but never echoes back, so a bare
-    // {screens: []} here would silently desync the client — the Add palette's
-    // Components section would vanish until a reload).
+    // keeps its own copy regardless via adoptSnapshotSpec but never echoes
+    // back, so a bare {screens: []} here would silently desync the client —
+    // the Add palette's Components section would vanish until a reload).
     const empty: UISpec = carryLibraryForward(specRef.current, { screens: [] });
     specRef.current = empty;
     setScreenCount(0);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addNodesToScreen,
+  adoptSnapshotSpec,
   appendScreenToSpec,
   applyComponentToSpec,
   carryLibraryForward,
@@ -642,6 +643,53 @@ describe('carryLibraryForward', () => {
   it('returns next untouched when prev has no library', () => {
     const next: UISpec = { screens: [] };
     expect(carryLibraryForward({ screens: [] }, next)).toBe(next);
+  });
+});
+
+describe('adoptSnapshotSpec', () => {
+  const freshLibrary = {
+    designSystem: { colors: [{ name: 'Brand', value: '#6159E1' }] },
+    components: [component('task-row')],
+  };
+  const staleLibrary = {
+    designSystem: { colors: [{ name: 'OldBrand', value: '#000000' }] },
+    components: [component('old-row')],
+  };
+
+  it('takes screens from the snapshot and the library from the cache', () => {
+    const cache: UISpec = { screens: [], ...freshLibrary };
+    const snapshot: UISpec = { screens: [screen('A')], ...staleLibrary };
+    const out = adoptSnapshotSpec(cache, snapshot);
+    expect(out.screens).toBe(snapshot.screens);
+    // A stale tab's included library must NOT revert the cache's fresh one.
+    expect(out.designSystem).toBe(freshLibrary.designSystem);
+    expect(out.components).toBe(freshLibrary.components);
+  });
+
+  it('keeps an explicitly cleared cache library over a snapshot copy', () => {
+    const cache: UISpec = { screens: [], designSystem: {}, components: [] };
+    const out = adoptSnapshotSpec(cache, {
+      screens: [],
+      ...staleLibrary,
+    });
+    expect(out.designSystem).toEqual({});
+    expect(out.components).toEqual([]);
+  });
+
+  it('fills a library-less cache from the snapshot (localStorage restore)', () => {
+    const out = adoptSnapshotSpec(
+      { screens: [] },
+      { screens: [screen('A')], ...freshLibrary },
+    );
+    expect(out.designSystem).toBe(freshLibrary.designSystem);
+    expect(out.components).toBe(freshLibrary.components);
+  });
+
+  it('omits library fields when neither side has them', () => {
+    const out = adoptSnapshotSpec({ screens: [] }, { screens: [screen('A')] });
+    expect(out).toEqual({ screens: [screen('A')] });
+    expect('designSystem' in out).toBe(false);
+    expect('components' in out).toBe(false);
   });
 });
 

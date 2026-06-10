@@ -522,11 +522,12 @@ export function moveNodeInSpec(
 // provide the one path that turns a template into real screen nodes.
 
 // Carry the design library forward across whole-spec replaces that omit it.
-// Browser snapshots and agent set_ui_mock calls describe SCREENS — when they
-// don't mention designSystem/components, the cache's library survives.
-// Passing the field explicitly (even as an empty object/array) replaces it.
-// Returns `next` untouched when there's nothing to carry (identity matters:
-// snapshot applies happen on every debounced edit).
+// Agent set_ui_mock calls describe SCREENS — when they don't mention
+// designSystem/components, the cache's library survives. Passing the field
+// explicitly (even as an empty object/array) replaces it — set_design_library
+// relies on that. Returns `next` untouched when there's nothing to carry.
+// NOT for browser snapshots — those use adoptSnapshotSpec, where the cache's
+// library wins even over an INCLUDED client copy.
 export function carryLibraryForward(prev: UISpec, next: UISpec): UISpec {
   const carryDesign =
     next.designSystem === undefined && prev.designSystem !== undefined;
@@ -536,6 +537,25 @@ export function carryLibraryForward(prev: UISpec, next: UISpec): UISpec {
   const out: UISpec = { ...next };
   if (carryDesign) out.designSystem = prev.designSystem;
   if (carryComponents) out.components = prev.components;
+  return out;
+}
+
+// Merge policy for browser snapshots: screens come from the snapshot (the
+// browser is the source of truth for human edits), the design library comes
+// from the cache whenever the cache has one. A client's library fields are at
+// best an echo of an earlier broadcast and at worst STALE — a tab whose
+// debounced snapshot was in flight when an import/set_design_library landed
+// would otherwise silently revert the fresh library on its next drag. The
+// browser never edits the library, so the cache copy (including an explicit
+// cleared {}/[] state) always wins; the snapshot's copy only fills a
+// library-less cache (e.g. a localStorage restore after design.json was
+// lost).
+export function adoptSnapshotSpec(prev: UISpec, snapshot: UISpec): UISpec {
+  const designSystem = prev.designSystem ?? snapshot.designSystem;
+  const components = prev.components ?? snapshot.components;
+  const out: UISpec = { screens: snapshot.screens };
+  if (designSystem !== undefined) out.designSystem = designSystem;
+  if (components !== undefined) out.components = components;
   return out;
 }
 
