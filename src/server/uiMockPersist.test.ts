@@ -52,6 +52,35 @@ describe('serializeSpecFile / parseSpecFile', () => {
     expect(loaded?.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
   });
 
+  it('round-trips the design library (designSystem + components) intact', () => {
+    const withLibrary: UISpec = {
+      ...SPEC,
+      designSystem: {
+        colors: [{ name: 'Brand', value: '#6159E1', count: 3 }],
+        typography: [{ name: 'headline', size: 17, weight: 600, count: 4 }],
+        spacing: [16, 8],
+        radii: [12],
+        icons: ['Star', 'Search'],
+        notes: ['shadow radius 8, x 0, y 2 (×3)'],
+      },
+      components: [
+        {
+          id: 'task-row',
+          name: 'Task Row',
+          description: 'One row of the task list',
+          frame: { w: 342, h: 56 },
+          nodes: [
+            { id: 'label', type: 'text', x: 8, y: 16, width: 200, height: 24 },
+          ],
+          usedBy: ['login'],
+          sourceFile: 'MyApp/TaskRow.swift',
+        },
+      ],
+    };
+    const loaded = parseSpecFile(serializeSpecFile(withLibrary, SAVED_AT));
+    expect(loaded).toEqual(withLibrary);
+  });
+
   it('emits a versioned envelope with trailing newline', () => {
     const raw = serializeSpecFile(SPEC, SAVED_AT);
     expect(raw.endsWith('\n')).toBe(true);

@@ -13,6 +13,7 @@ export function buildVariationsPrompt(scope: AgentTask['scope']): string {
   if (scope.kind === 'nodes' && scope.nodeIds?.length) {
     return (
       `Call get_ui_mock with screenId "${scope.screenId}" and read screen "${scope.screenId}" ("${scope.screenTitle}"). The user selected these element node(s): ${scope.nodeIds.join(', ')}.\n` +
+      'Also call get_design_library: when it returns imported design tokens or components, prefer them over inventing new styles (exact colors via style, the listed spacing/radii/icons) so variations stay consistent with the app.\n' +
       'Create exactly 3 divergent variations of the SELECTED ELEMENT(S) ONLY — not the whole screen — laid out together in ONE new comparison screen (a single add_ui_screen call).\n' +
       'Hard rules:\n' +
       '- NEVER call set_ui_mock or clear_ui_mock, and never modify the original screen or any other existing screen.\n' +
@@ -26,6 +27,7 @@ export function buildVariationsPrompt(scope: AgentTask['scope']): string {
   }
   return (
     `Call get_ui_mock with screenId "${scope.screenId}" and read screen "${scope.screenId}" ("${scope.screenTitle}").\n` +
+    'Also call get_design_library: when it returns imported design tokens or components, prefer them over inventing new styles (exact colors via style, the listed spacing/radii/icons; insert_ui_component to reuse a known unit) so variations stay consistent with the app.\n' +
     'Create exactly 3 divergent variations of it via the fast delta path, one variation at a time:\n' +
     `1. duplicate_ui_screen({ screenId: "${scope.screenId}", newScreenId: "${scope.screenId}-v1", newTitle: "${scope.screenTitle} · v1" }) — the copy appears on the user's canvas instantly.\n` +
     '2. Diverge the copy with ONE update_ui_nodes call carrying every patch for that variation — emit only the fields that change (x/y/width/height, text, className, style, props). Use add_ui_nodes / remove_ui_node only when the variation needs different elements.\n' +
@@ -47,7 +49,7 @@ export function buildCustomPrompt(scope: AgentTask['scope'], userText: string): 
       : `In screen "${scope.screenId}" ("${scope.screenTitle}"):`;
   return (
     `${context}\n${userText.trim()}\n\n` +
-    `Call get_ui_mock first to read the live state (pass screenId "${scope.screenId}" — it returns just that screen). For in-place edits prefer ONE update_ui_nodes call carrying every patch, emitting only the fields that change (update_ui_node / add_ui_nodes / remove_ui_node / reorder_ui_node for single-node work) so other nodes survive; to iterate on a copy, duplicate_ui_screen then patch the copy; for brand-new screens use add_ui_screen with fresh globally-unique ids. Avoid set_ui_mock — it replaces the whole spec.`
+    `Call get_ui_mock first to read the live state (pass screenId "${scope.screenId}" — it returns just that screen). For in-place edits prefer ONE update_ui_nodes call carrying every patch, emitting only the fields that change (update_ui_node / add_ui_nodes / remove_ui_node / reorder_ui_node for single-node work) so other nodes survive; to iterate on a copy, duplicate_ui_screen then patch the copy; for brand-new screens use add_ui_screen with fresh globally-unique ids. Avoid set_ui_mock — it replaces the whole spec. When styling or adding elements, check get_design_library and prefer the imported tokens/components (insert_ui_component) over inventing new styles.`
   );
 }
 

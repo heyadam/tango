@@ -32,6 +32,7 @@ import {
   NODE_TYPE_ORDER,
   SHAPE_TYPE_ORDER,
 } from '@/lib/uiMockDefaults';
+import { Component } from 'lucide-react';
 import type { UINodeType } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
@@ -61,6 +62,11 @@ type Props = {
   onAdd: (type: UINodeType) => void;
   onClose: () => void;
   disabled?: boolean;
+  // Imported design-library components (spec.components summaries). When
+  // present, a "Components" section lists them; insertion (fresh ids, group,
+  // placement) is the canvas's job — same division of labor as onAdd.
+  components?: Array<{ id: string; name: string }>;
+  onAddComponent?: (componentId: string) => void;
 };
 
 function PaletteRow({
@@ -86,7 +92,13 @@ function PaletteRow({
   );
 }
 
-export default function UIAddPalette({ onAdd, onClose, disabled }: Props) {
+export default function UIAddPalette({
+  onAdd,
+  onClose,
+  disabled,
+  components,
+  onAddComponent,
+}: Props) {
   return (
     <div
       // Stop pointer events from reaching the canvas (which would clear
@@ -123,6 +135,27 @@ export default function UIAddPalette({ onAdd, onClose, disabled }: Props) {
           {SHAPE_TYPE_ORDER.map((type) => (
             <PaletteRow key={type} type={type} onAdd={onAdd} />
           ))}
+          {components && components.length > 0 && onAddComponent ? (
+            <>
+              <div className="px-1 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+                Components
+              </div>
+              {components.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => onAddComponent(c.id)}
+                  className={cn(
+                    'flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground',
+                    'hover:bg-accent',
+                  )}
+                >
+                  <Component className="size-4 text-muted-foreground" />
+                  <span className="truncate">{c.name}</span>
+                </button>
+              ))}
+            </>
+          ) : null}
         </>
       )}
     </div>

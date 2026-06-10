@@ -135,7 +135,10 @@ You're running inside the **tango** workspace. The user is viewing a direct-mani
 - \`reorder_ui_node\` — change a node's z-order within its screen (front/back/forward/backward)
 - \`group_ui_nodes\` — group nodes on one screen (editor-level: layers-tree nesting + group selection; never affects rendering/export)
 - \`ungroup_ui_nodes\` / \`rename_ui_group\` — dissolve or rename a group
-- \`clear_ui_mock\` — empty the spec
+- \`clear_ui_mock\` — empty the spec (screens only; the imported design library survives)
+- \`get_design_library\` — read the imported design system (color/type/spacing/radius/icon tokens) + reusable component templates; check it before styling new work and prefer its tokens/components over inventing styles (pass \`componentId\` for one full template)
+- \`set_design_library\` — write the design library (tokens and/or component templates) after an agent-mediated import or curation pass
+- \`insert_ui_component\` — stamp a library component into a screen as grouped nodes with fresh ids
 
 For UI design work ("mock my UI", "show me what the X screen would look like", "prototype this flow", "sketch a layout for Y"), follow the **\`tango-ui-mock\`** skill at \`.claude/skills/tango-ui-mock/SKILL.md\` — it transcribes a real production UI (or a described one) into the design surface, where the user can drag, resize, and edit text, and then ship the tweaks back as a reference for the production codebase.
 
@@ -235,10 +238,15 @@ The canvas renders real shadcn primitives — Button, Input, Badge, Separator, T
 
 ## Tools
 
-\`get_ui_mock\` (pass \`screenId\` to read one screen — cheaper), \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`duplicate_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\`, \`update_ui_screen\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
+\`get_ui_mock\` (pass \`screenId\` to read one screen — cheaper), \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`duplicate_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\`, \`update_ui_screen\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\`, \`clear_ui_mock\`, plus the design library: \`get_design_library\`, \`set_design_library\`, \`insert_ui_component\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
 
 \`\`\`ts
-type UISpec = { screens: UIScreen[] };
+type UISpec = {
+  screens: UIScreen[];
+  // Import-derived design library (optional, additive) — see "Design library"
+  designSystem?: { colors?; typography?; spacing?; radii?; icons?; notes? };
+  components?: UIComponent[];  // reusable templates; nodes relative to (0,0)
+};
 type UIScreen = {
   id: string;          // stable, human-readable: 'login', 'dashboard'
   title: string;       // shown above the frame in the panel
@@ -276,9 +284,13 @@ type UINode = {
 
 Screens may also carry \`groups\` (\`[{id, name}]\`) with member nodes tagged \`group: '<id>'\` — editor-level grouping shown in the user's layers tree (the canvas selects a group as one unit). Groups never affect rendering or export. Manage them ONLY through \`group_ui_nodes\` / \`ungroup_ui_nodes\` / \`rename_ui_group\` (they keep members z-contiguous and prune emptied groups); preserve existing \`group\` tags when patching nodes, and use semantic names ("Header", "Task row") when the user asks you to organize layers.
 
+## Design library (imported source of truth)
+
+When the workspace has been imported, the spec carries a **design library**: \`designSystem\` (color tokens with CSS \`value\`s for the \`style\` channel, a type ramp, common spacing/radius values, lucide icon names) and \`components\` (reusable node templates with \`usedBy\` screen provenance). **Check \`get_design_library\` before styling new screens or variations and prefer what it returns over inventing new styles** — exact brand colors via \`style\`, the app's spacing/radius values, its icon set, and \`insert_ui_component\` to stamp a known unit (it lands as grouped nodes with fresh ids you can then patch). This keeps generated work visually and structurally consistent with the user's real app. The library is never consulted by rendering or export — it's guidance for composing. Maintain it with \`set_design_library\` (omitted sections are kept; a passed section REPLACES that whole section — a partial \`components\` array drops the templates it omits, so fetch and include existing ones; explicit \`{}\`/\`[]\` clears); \`clear_ui_mock\` and screen edits never touch it.
+
 ## Screen variations
 
-When asked for variations of a screen, use the fast delta path per variation: \`duplicate_ui_screen\` (instant copy with node ids remapped onto the new screen id) followed by ONE \`update_ui_nodes\` call carrying that variation's patches — emit only the fields that change; never regenerate whole screens with \`add_ui_screen\`, and never \`set_ui_mock\` or \`clear_ui_mock\` (they clobber the user's other screens). Give every variation a fresh, globally-unique screen id (\`'<screenId>-v1'\` style); any node you add must carry the new screen id prefix. Title it \`'<Title> · vN'\`, and do not copy \`sourceFile\` — a variation is not an import of that file (\`duplicate_ui_screen\` already drops it).
+When asked for variations of a screen, use the fast delta path per variation: \`duplicate_ui_screen\` (instant copy with node ids remapped onto the new screen id) followed by ONE \`update_ui_nodes\` call carrying that variation's patches — emit only the fields that change; never regenerate whole screens with \`add_ui_screen\`, and never \`set_ui_mock\` or \`clear_ui_mock\` (they clobber the user's other screens). Give every variation a fresh, globally-unique screen id (\`'<screenId>-v1'\` style); any node you add must carry the new screen id prefix. Title it \`'<Title> · vN'\`, and do not copy \`sourceFile\` — a variation is not an import of that file (\`duplicate_ui_screen\` already drops it). Diverge within the app's design system: check \`get_design_library\` first and build variations from the imported tokens/components rather than inventing a new visual language.
 
 ## Playbook (down: codebase → mock)
 
@@ -456,7 +468,7 @@ Both flows live in this terminal-Claude session. The user does not see SwiftUI b
 You'll combine your filesystem tools with tango's MCP tools:
 
 - **Filesystem (built-in)**: \`Read\` / \`Write\` / \`Edit\` / \`Glob\` for \`.swift\` files.
-- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\` (\`screenId\` filter for one screen), \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`duplicate_ui_screen\` (instant copy — duplicate-then-patch is the fast variation path), \`update_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\` (bulk patches in one call), \`remove_ui_node\`, \`reorder_ui_node\`, and editor-level grouping (\`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\` — layers-tree organization, never rendering). Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[], groups?}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance); export filenames are always derived (\`Tango<Pascal(id)>Screen.swift\`, order-dependent dedupe), never stored.
+- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\` (\`screenId\` filter for one screen), \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`duplicate_ui_screen\` (instant copy — duplicate-then-patch is the fast variation path), \`update_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`update_ui_nodes\` (bulk patches in one call), \`remove_ui_node\`, \`reorder_ui_node\`, and editor-level grouping (\`group_ui_nodes\`, \`ungroup_ui_nodes\`, \`rename_ui_group\` — layers-tree organization, never rendering), plus the design library (\`get_design_library\`, \`set_design_library\`, \`insert_ui_component\` — imported tokens/component templates; prefer them when styling). Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[], groups?}], designSystem?, components?}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance); export filenames are always derived (\`Tango<Pascal(id)>Screen.swift\`, order-dependent dedupe), never stored.
 
 Simple vector drawing maps to the shape node types: \`Rectangle\`/\`RoundedRectangle\` → \`rect\`, \`Circle\`/\`Ellipse\` → \`ellipse\`, straight two-point \`Path\`s → \`line\`/\`arrow\`, and \`triangle\`/\`star\` for the matching polygons. For heavier custom drawing (\`Canvas\`, multi-segment \`Path\`s, complex \`GeometryReader\` math) the node types can't represent, render the closest structural approximation (a \`div\` placeholder with a label) and tell the user what was approximated.
 
@@ -803,6 +815,33 @@ axes, default frame 390×844 for iPhone-class apps).
 One design screen per screen-level View. Use the View's type name as the
 screen \`id\` and \`title\` (e.g. \`OnboardingView\`).
 
+### 2b. Extract the design system + shared components
+
+While reading the sources, collect the app's reusable design material and
+record it with \`set_design_library\` (read what's already there first with
+\`get_design_library\` — the Import button's fast import may have populated it):
+
+- **Tokens** (\`designSystem\`): named colors (asset-catalog colorsets,
+  \`static let\` Color declarations, recurring literal colors → hex \`value\`s),
+  the type ramp (recurring \`.font(...)\` sizes/weights), the most-used spacing
+  and corner-radius values, lucide icon names for the SF Symbols in use, and
+  short \`notes\` for recurring treatments (shadows, card styles).
+- **Components** (\`components\`): views used by 2+ screens or obviously
+  repeated units (list row, card, stat tile, tab bar). One template per
+  component: node coords relative to the component's own (0,0) origin inside
+  its \`frame\` {w,h}, ONE instance with sample content (≤ ~12 nodes),
+  kebab-case \`id\`, human \`name\`, \`usedBy\` = screen ids using it,
+  \`sourceFile\` = the declaring file.
+
+**\`components\` REPLACES the whole array** — when the library already has
+templates (check \`get_design_library\` first), fetch each existing one in full
+(\`get_design_library\` with \`componentId\`) and include it in your write, or
+it is dropped. \`designSystem\` likewise replaces as a whole section; omitted
+sections are kept.
+
+Don't re-read files just to mine components — extract from what you already
+read for screens. Use the tokens while translating so screens stay faithful.
+
 ### 3. Write the spec
 
 - Canvas empty (\`get_ui_mock\` → no screens)? \`set_ui_mock\` with all screens.
@@ -815,8 +854,9 @@ screen \`id\` and \`title\` (e.g. \`OnboardingView\`).
 ### 4. Verify + record
 
 Re-read with \`get_ui_mock\`: nodes inside frames, no empty Button/Badge text,
-screen count matches what you found. Then
-\`remember_note({ category: 'context', text: 'Imported N SwiftUI screens onto the canvas: <names>' })\`.
+screen count matches what you found. Check \`get_design_library\` round-trips
+what you recorded. Then
+\`remember_note({ category: 'context', text: 'Imported N SwiftUI screens (+ design library) onto the canvas: <names>' })\`.
 
 ## Ownership rule (tell the user once, after the first import)
 

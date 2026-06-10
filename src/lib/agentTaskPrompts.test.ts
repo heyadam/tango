@@ -63,6 +63,15 @@ describe('buildVariationsPrompt', () => {
     expect(prompt).not.toContain('one add_ui_screen call per variation');
   });
 
+  it('points both scopes at the imported design library', () => {
+    const screenPrompt = buildVariationsPrompt(screenScope);
+    expect(screenPrompt).toContain('get_design_library');
+    expect(screenPrompt).toContain('prefer them over inventing new styles');
+    const nodesPrompt = buildVariationsPrompt(nodesScope);
+    expect(nodesPrompt).toContain('get_design_library');
+    expect(nodesPrompt).toContain('prefer them over inventing new styles');
+  });
+
   it('falls back to whole-screen variations when nodeIds is empty or missing', () => {
     for (const scope of [
       { ...nodesScope, nodeIds: [] },
@@ -95,6 +104,12 @@ describe('buildCustomPrompt', () => {
       'The user selected node(s) login-title, login-cta in screen "login" ("Login")',
     );
     expect(prompt).toContain('Tighten this up');
+  });
+
+  it('points custom edits at the imported design library', () => {
+    const prompt = buildCustomPrompt(screenScope, 'Add a stats card');
+    expect(prompt).toContain('get_design_library');
+    expect(prompt).toContain('insert_ui_component');
   });
 });
 

@@ -16,7 +16,7 @@ import {
 } from './uiImport';
 import { _setWorkspaceInternal } from './workspace';
 import { hashSource } from './sourceHash';
-import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
+import type { UIComponent, UIScreen, UISpec } from '@/lib/uiMockProtocol';
 
 const SCREEN: UIScreen = {
   id: 'LoginView',
@@ -64,6 +64,9 @@ function scriptedDeps(
     readFile: async () => 'struct LoginView: View { var body: some View {} }',
     getSpec: () => spec,
     setSpec,
+    // Empty scan by default — kickoff/spec stay scan-free unless a test
+    // overrides this with a scripted result.
+    scanDesign: async () => ({ designSystem: {}, componentCandidates: [] }),
     createMessage: async () => {
       const next = queue.shift();
       if (!next) throw new Error('scripted responses exhausted');
@@ -597,5 +600,258 @@ describe('runUiImport (scoped re-import)', () => {
       screenId: 'X',
     });
     expect(state.phase).toBe('error');
+  });
+});
+
+// ── design library import ──────────────────────────────────────────────────
+
+const COMPONENT: UIComponent = {
+  id: 'task-row',
+  name: 'Task Row',
+  frame: { w: 342, h: 56 },
+  nodes: [
+    { id: 'icon', type: 'Icon', x: 8, y: 16, width: 24, height: 24 },
+    { id: 'label', type: 'text', x: 40, y: 16, width: 200, height: 24, text: 'Buy milk' },
+  ],
+};
+
+describe('runUiImport design library', () => {
+  beforeEach(() => {
+    _setWorkspaceInternal('/repo', 'persisted');
+  });
+
+  afterEach(() => {
+    _setWorkspaceInternal(null, 'unset');
+  });
+
+  const done = (): ImportModelResponse => ({
+    stop_reason: 'end_turn',
+    content: [text('done')],
+  });
+
+  it('stamps scanner tokens on the spec and into the kickoff message', async () => {
+    const seenKickoffs: string[] = [];
+    const d = scriptedDeps(
+      [
+        {
+          stop_reason: 'tool_use',
+          content: [toolUse('t1', 'emit_screen', { screen: SCREEN })],
+        },
+        done(),
+      ],
+      {
+        scanDesign: async () => ({
+          designSystem: {
+            colors: [{ name: 'Brand', value: '#6159E1', count: 3 }],
+            spacing: [16, 8],
+          },
+          componentCandidates: [
+            { name: 'TaskRow', declaredIn: 'MyApp/TaskRow.swift', referencedByFiles: 2 },
+          ],
+        }),
+      },
+    );
+    const inner = d.createMessage;
+    d.createMessage = async (params) => {
+      const first = params.messages[0];
+      if (typeof first.content === 'string') seenKickoffs.push(first.content);
+      return inner(params);
+    };
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    // First setSpec call carries the scanned tokens.
+    expect(d.setSpec.mock.calls[0][0]).toEqual({
+      screens: [],
+      designSystem: {
+        colors: [{ name: 'Brand', value: '#6159E1', count: 3 }],
+        spacing: [16, 8],
+      },
+    });
+    // The emitted screen lands WITHOUT wiping the tokens.
+    const finalSpec = d.setSpec.mock.calls.at(-1)![0] as UISpec;
+    expect(finalSpec.screens).toEqual([SCREEN]);
+    expect(finalSpec.designSystem?.colors?.[0].name).toBe('Brand');
+    expect(seenKickoffs[0]).toContain('Brand #6159E1 ×3');
+    expect(seenKickoffs[0]).toContain('TaskRow (MyApp/TaskRow.swift, 2)');
+  });
+
+  it('survives a scanner failure', async () => {
+    const d = scriptedDeps(
+      [
+        {
+          stop_reason: 'tool_use',
+          content: [toolUse('t1', 'emit_screen', { screen: SCREEN })],
+        },
+        done(),
+      ],
+      {
+        scanDesign: async () => {
+          throw new Error('scanner exploded');
+        },
+      },
+    );
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+  });
+
+  it('does not scan on scoped re-imports', async () => {
+    const scan = vi.fn(async () => ({
+      designSystem: {},
+      componentCandidates: [],
+    }));
+    const scoped: UIScreen = { ...SCREEN, id: 'LoginView' };
+    const d = scriptedDeps(
+      [
+        {
+          stop_reason: 'tool_use',
+          content: [toolUse('t1', 'emit_screen', { screen: scoped })],
+        },
+        done(),
+      ],
+      { scanDesign: scan },
+    );
+    const state = await runUiImport(d, {
+      file: 'MyApp/LoginView.swift',
+      screenId: 'LoginView',
+    });
+    expect(state.phase).toBe('done');
+    expect(scan).not.toHaveBeenCalled();
+  });
+
+  it('records emitted components with allowlisted provenance and counts them', async () => {
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'emit_screen', { screen: SCREEN }),
+          toolUse('t2', 'emit_component', {
+            component: COMPONENT,
+            source_file: 'MyApp/LoginView.swift',
+          }),
+        ],
+      },
+      done(),
+    ]);
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    if (state.phase !== 'done') return;
+    expect(state.screensImported).toBe(1);
+    expect(state.componentsImported).toBe(1);
+    const finalSpec = d.setSpec.mock.calls.at(-1)![0] as UISpec;
+    expect(finalSpec.components).toEqual([
+      { ...COMPONENT, sourceFile: 'MyApp/LoginView.swift' },
+    ]);
+    expect(finalSpec.screens).toEqual([SCREEN]);
+  });
+
+  it('drops unlisted source_file and model-embedded sourceFile on components', async () => {
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'emit_component', {
+            component: { ...COMPONENT, sourceFile: 'MyApp/Fake.swift' },
+            source_file: 'MyApp/NotListed.swift',
+          }),
+          toolUse('t2', 'emit_screen', { screen: SCREEN }),
+        ],
+      },
+      done(),
+    ]);
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    const finalSpec = d.setSpec.mock.calls.at(-1)![0] as UISpec;
+    expect(finalSpec.components?.[0].sourceFile).toBeUndefined();
+  });
+
+  it('feeds component validation failures back as error tool results', async () => {
+    const seenMessages: unknown[][] = [];
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'emit_component', {
+            component: { id: 'broken' }, // missing name/frame/nodes
+          }),
+          toolUse('t2', 'emit_screen', { screen: SCREEN }),
+        ],
+      },
+      done(),
+    ]);
+    const inner = d.createMessage;
+    d.createMessage = async (params) => {
+      seenMessages.push(params.messages.map((m) => m.content));
+      return inner(params);
+    };
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    if (state.phase !== 'done') return;
+    expect(state.componentsImported).toBe(0);
+    const results = (seenMessages.at(-1)!.at(-1) ?? []) as Array<{
+      tool_use_id: string;
+      is_error?: boolean;
+      content: string;
+    }>;
+    const componentResult = results.find((r) => r.tool_use_id === 't1');
+    expect(componentResult?.is_error).toBe(true);
+    expect(componentResult?.content).toContain('component failed validation');
+  });
+
+  it('enforces the component cap for new ids but allows replacement', async () => {
+    let spec: UISpec = {
+      screens: [],
+      components: Array.from({ length: 24 }, (_, i) => ({
+        ...COMPONENT,
+        id: `c-${i}`,
+      })),
+    };
+    const setSpec = vi.fn((next: UISpec) => {
+      spec = next;
+    });
+    const d = scriptedDeps(
+      [
+        {
+          stop_reason: 'tool_use',
+          content: [
+            toolUse('t1', 'emit_component', {
+              component: { ...COMPONENT, id: 'c-new' },
+            }),
+            toolUse('t2', 'emit_component', {
+              component: { ...COMPONENT, id: 'c-3', name: 'Updated' },
+            }),
+            toolUse('t3', 'emit_screen', { screen: SCREEN }),
+          ],
+        },
+        done(),
+      ],
+      { getSpec: () => spec },
+    );
+    d.setSpec = setSpec;
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    if (state.phase !== 'done') return;
+    expect(state.componentsImported).toBe(1); // replacement only
+    expect(spec.components).toHaveLength(24);
+    expect(spec.components?.find((c) => c.id === 'c-3')?.name).toBe('Updated');
+    expect(spec.components?.some((c) => c.id === 'c-new')).toBe(false);
+  });
+});
+
+describe('applyEmittedScreen design library preservation', () => {
+  it('keeps designSystem and components on append and replace', () => {
+    const library = {
+      designSystem: { spacing: [16] },
+      components: [COMPONENT],
+    };
+    const appended = applyEmittedScreen({ screens: [], ...library }, SCREEN);
+    expect(appended.designSystem).toEqual(library.designSystem);
+    expect(appended.components).toEqual(library.components);
+    const replaced = applyEmittedScreen(appended, {
+      ...SCREEN,
+      title: 'Updated',
+    });
+    expect(replaced.designSystem).toEqual(library.designSystem);
+    expect(replaced.components).toEqual(library.components);
+    expect(replaced.screens[0].title).toBe('Updated');
   });
 });

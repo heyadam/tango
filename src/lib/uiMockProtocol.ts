@@ -105,8 +105,69 @@ export type UIScreen = {
   sourceHash?: string;
 };
 
+// ── Design library (import-derived) ─────────────────────────────────────
+
+// One extracted design token. `value` is a CSS color string (hex/rgb/oklch)
+// destined for the inline-`style` channel — the canvas/codegen className
+// channel only accepts tango theme tokens, so imported app palettes flow
+// through `style` (see uiResolve). `name` comes from the source when known
+// (asset catalog name, `static let` identifier), else a generated slug.
+export type UIColorToken = {
+  name: string;
+  value: string;
+  // How often the import scanner saw it — higher = more load-bearing.
+  count?: number;
+};
+
+export type UITextStyleToken = {
+  name: string; // 'largeTitle', 'system-17-semibold', 'Inter-14', …
+  size: number;
+  weight?: number; // CSS-style 100–900
+  family?: string; // custom font family when not the system font
+  count?: number;
+};
+
+// Extracted design-system primitives for one imported app. Everything is
+// optional and additive: this is guidance for humans + agents composing new
+// screens/variations, never consulted by rendering, preview, or export.
+export type UIDesignSystem = {
+  colors?: UIColorToken[];
+  typography?: UITextStyleToken[];
+  // Common spacing/radius values, most-used first.
+  spacing?: number[];
+  radii?: number[];
+  // lucide icon names in use (mapped from the app's SF Symbols).
+  icons?: string[];
+  // Free-form reusable style rules ("cards: radius 12, shadow y2 r8", …).
+  notes?: string[];
+};
+
+// A reusable component template extracted at import: a named group of nodes
+// with coords relative to the template's own (0,0) origin. Instantiating a
+// component stamps copies of `nodes` (fresh ids, offset coords) into a
+// screen — instances are plain nodes afterwards; the template is never
+// referenced at render/export time.
+export type UIComponent = {
+  id: string; // stable, kebab-case: 'task-row'
+  name: string; // human label: 'Task Row'
+  description?: string;
+  // Template bounding box; nodes live in [0,0]–[w,h].
+  frame: { w: number; h: number };
+  nodes: UINode[];
+  // Screen ids that use this component in the imported app (provenance for
+  // "where is this used", not a live link).
+  usedBy?: string[];
+  // Workspace-relative Swift source the component was extracted from.
+  sourceFile?: string;
+};
+
 export type UISpec = {
   screens: UIScreen[];
+  // Import-derived design library. Both optional + additive: absent on specs
+  // that never ran an import. Editor/agent metadata only — rendering,
+  // preview, and export consult `screens` exclusively.
+  designSystem?: UIDesignSystem;
+  components?: UIComponent[];
 };
 
 // ── Wire protocol ────────────────────────────────────────────────────────

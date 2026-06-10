@@ -129,3 +129,39 @@ export function lucideToSfSymbol(name: string | undefined | null): string {
   if (!name) return 'circle'; // mirrors the web renderer's Circle default
   return MAP[name] ?? SF_SYMBOL_FALLBACK;
 }
+
+// MAP is many-to-one (Trash/Trash2 → 'trash', Edit*/Pencil → 'pencil', …), so
+// the reverse direction needs canonical winners. Curated picks below; any
+// other collision resolves to the FIRST entry in MAP order (a literal, so
+// deterministic). Used by the import design scanner to turn an app's SF
+// Symbol usage into canvas-addressable lucide icon names.
+const REVERSE_CANONICAL: Record<string, string> = {
+  ellipsis: 'MoreHorizontal',
+  trash: 'Trash2', // the import prompt's pick
+  pencil: 'Pencil',
+  message: 'MessageCircle',
+  'square.and.arrow.up': 'Share',
+  photo: 'Image',
+  house: 'Home',
+  folder: 'Folder',
+  'chevron.left.forwardslash.chevron.right': 'Code',
+};
+
+const REVERSE: Record<string, string> = (() => {
+  const out: Record<string, string> = { ...REVERSE_CANONICAL };
+  for (const [lucide, sf] of Object.entries(MAP)) {
+    if (!(sf in out)) out[sf] = lucide;
+  }
+  return out;
+})();
+
+// SF Symbol → lucide name, with `.fill`/`.circle`-style suffixes retried
+// bare so e.g. 'star.fill' still finds Star. Returns null for symbols the
+// table can't represent.
+export function sfSymbolToLucide(sfName: string): string | null {
+  const direct = REVERSE[sfName];
+  if (direct) return direct;
+  const stripped = sfName.replace(/\.(fill|circle|square)$/, '');
+  if (stripped !== sfName && REVERSE[stripped]) return REVERSE[stripped];
+  return null;
+}

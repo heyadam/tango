@@ -21,19 +21,33 @@ import {
   getUIMock,
   getUIViewport,
   groupUINodesFromServer,
+  insertUIComponentFromServer,
   removeUINodesFromServer,
   removeUIScreenFromServer,
   renameUIGroupFromServer,
   reorderUINodeFromServer,
+  setDesignLibraryFromServer,
   setUIMockFromServer,
   ungroupUINodesFromServer,
   updateUINodeFromServer,
   updateUINodesFromServer,
   updateUIScreenFromServer,
 } from './uiMockBridge';
-import { describeLayers } from '@/lib/uiMockOps';
-import type { UINode, UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import {
+  describeDesignLibrary,
+  describeLayers,
+  validateComponentList,
+} from '@/lib/uiMockOps';
+import type {
+  UIComponent,
+  UIDesignSystem,
+  UINode,
+  UIScreen,
+  UISpec,
+} from '@/lib/uiMockProtocol';
+import {
+  uiComponentSchema,
+  uiDesignSystemSchema,
   uiNodePatchSchema,
   uiNodeSchema,
   uiScreenSchema,
@@ -76,7 +90,7 @@ import { getSimStatus } from './sim';
 const reorderOpEnum = z.enum(['front', 'back', 'forward', 'backward']);
 
 const TANGO_MCP_INSTRUCTIONS =
-  'Tango is a split-pane app: the user sees a direct-manipulation design canvas on the left (a spec of screens with absolutely-positioned nodes — the "UI mock") and this terminal agent on the right. Use get_ui_viewport/get_ui_mock before proposing designs, then set_ui_mock/add_ui_screen for fresh work and add_ui_nodes/update_ui_node/remove_ui_node/reorder_ui_node for incremental edits that preserve the user\'s manual tweaks. Use ios_status and ios_build_run after Swift edits when an iOS project is detected, and the ios_* control tools to drive the running app.';
+  'Tango is a split-pane app: the user sees a direct-manipulation design canvas on the left (a spec of screens with absolutely-positioned nodes — the "UI mock") and this terminal agent on the right. Use get_ui_viewport/get_ui_mock before proposing designs, then set_ui_mock/add_ui_screen for fresh work and add_ui_nodes/update_ui_node/remove_ui_node/reorder_ui_node for incremental edits that preserve the user\'s manual tweaks. Check get_design_library before styling new work — imports record the app\'s design tokens and reusable component templates there; prefer them (and insert_ui_component) over inventing new styles. Use ios_status and ios_build_run after Swift edits when an iOS project is detected, and the ios_* control tools to drive the running app.';
 
 function toolErrorResult(toolName: string, err: unknown) {
   return {
@@ -186,15 +200,17 @@ function buildServer(): McpServer {
     {
       title: 'Read the UI mock',
       description:
-        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Pass `screenId` to read just one screen (much smaller — prefer it whenever the task concerns a single screen; unknown ids return an empty `screens` array). Empty `screens` array means nothing has been mocked yet.",
+        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Pass `screenId` to read just one screen (much smaller, screens only — prefer it whenever the task concerns a single screen; unknown ids return an empty `screens` array). The full read also carries the imported design library (`designSystem`/`components`) when one exists; `get_design_library` is the cheap read for just that. Empty `screens` array means nothing has been mocked yet.",
       inputSchema: {
         screenId: z.string().min(1).optional(),
       },
     },
     async ({ screenId }) => {
       const spec = getUIMock();
+      // The scoped read stays small: screens only. The design library (which
+      // can carry 24 full templates) is get_design_library's job.
       const out: UISpec = screenId
-        ? { ...spec, screens: spec.screens.filter((s) => s.id === screenId) }
+        ? { screens: spec.screens.filter((s) => s.id === screenId) }
         : spec;
       return {
         content: [{ type: 'text', text: JSON.stringify(out, null, 2) }],
@@ -224,13 +240,20 @@ function buildServer(): McpServer {
     {
       title: 'Replace the UI mock',
       description:
-        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals using THEME tokens — `bg-card`, `text-muted-foreground`, etc.; layout-affecting classes are ignored, coords win), `style` (React inline-style object — use this for colors outside the app's theme palette like exact brand hex, gradients, and custom shadows; arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className` because the JIT only scans source files at build time, so off-theme color fidelity must come through `style`), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow. Screens may carry an optional `sourceFile` (import provenance) — preserve it when echoing a spec back.",
+        "Replaces the entire UI mock spec — every screen, every node. Use for a fresh mock or a full redesign. Each screen needs a unique `id`, a `title`, a `frame` ({w,h} in pixels — default to the user's current panel size from `get_ui_viewport` so the mock fills their screen; use 360×720 for explicit mobile, 768×1024 for explicit tablet), and an array of `nodes`. Each node has a unique `id`, a `type` (one of: div, text, heading, Button, Input, Textarea, Badge, Separator, Image, Icon), absolute pixel coords (`x`,`y`,`width`,`height`) inside the frame, and optional `text` (label/placeholder), `className` (Tailwind for visuals using THEME tokens — `bg-card`, `text-muted-foreground`, etc.; layout-affecting classes are ignored, coords win), `style` (React inline-style object — use this for colors outside the app's theme palette like exact brand hex, gradients, and custom shadows; arbitrary-value Tailwind classes like `bg-[#hex]` do NOT work in `className` because the JIT only scans source files at build time, so off-theme color fidelity must come through `style`), and `props` (component-specific: Button/Badge `variant`, Input/Textarea `placeholder`, Image `src`, Icon `iconName` from lucide-react, heading `level` 1|2|3). Prefer `add_ui_screen` when extending an existing flow. Screens may carry an optional `sourceFile` (import provenance) — preserve it when echoing a spec back. The spec's import-derived design library (`designSystem`, `components`) is KEPT when your spec omits those fields; pass them explicitly only to replace them (use `set_design_library` for library-only edits).",
       inputSchema: {
         spec: uiSpecSchema,
       },
     },
     async ({ spec }) => {
       try {
+        // Explicit components replace the library — hold them to the same
+        // template validation as set_design_library, or instantiation later
+        // stamps duplicate node ids into a screen.
+        if (spec.components !== undefined) {
+          const errors = validateComponentList(spec.components as UIComponent[]);
+          if (errors.length) throw new Error(errors.join('; '));
+        }
         setUIMockFromServer(spec as UISpec);
         const screenCount = spec.screens.length;
         const nodeCount = spec.screens.reduce(
@@ -283,7 +306,7 @@ function buildServer(): McpServer {
     {
       title: 'Clear the UI mock',
       description:
-        'Empties the UI mock — removes every screen and node. Reach for this when starting a fresh mock; otherwise prefer `set_ui_mock` (whole-spec replace) or `add_ui_screen` (extend) so user tweaks elsewhere are not silently dropped.',
+        'Empties the UI mock — removes every screen and node. The imported design library (designSystem/components) survives; clear it explicitly via `set_design_library` with empty values if the user wants a truly blank slate. Reach for this when starting a fresh mock; otherwise prefer `set_ui_mock` (whole-spec replace) or `add_ui_screen` (extend) so user tweaks elsewhere are not silently dropped.',
     },
     async () => {
       clearUIMockFromServer();
@@ -615,6 +638,123 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('rename_ui_group', err);
+      }
+    },
+  );
+
+  // Design-library tools. Import extracts the workspace's design system
+  // (color/type/spacing/radius/icon tokens) and reusable component templates
+  // onto the spec; these tools read that library, maintain it, and stamp
+  // component instances into screens. Generation guidance: prefer imported
+  // tokens/components over inventing new styles.
+
+  server.registerTool(
+    'get_design_library',
+    {
+      title: 'Read the imported design library',
+      description:
+        "Returns the workspace's imported design system (color tokens as CSS values for the `style` channel, type ramp, common spacing/radius values, lucide icon names in use) plus a summary of the reusable component templates (id, name, frame, nodeCount, usedBy, sourceFile — without node arrays). Call this BEFORE styling new screens or generating variations and prefer these tokens/components over inventing new styles, so output stays consistent with the imported app. Pass `componentId` to fetch ONE component's full template (its nodes, coords relative to the component origin). Empty results mean no import has run — design freely.",
+      inputSchema: {
+        componentId: z.string().min(1).optional(),
+      },
+    },
+    async ({ componentId }) => {
+      const spec = getUIMock();
+      if (componentId) {
+        const component = (spec.components ?? []).find(
+          (c) => c.id === componentId,
+        );
+        if (!component) {
+          return toolErrorResult(
+            'get_design_library',
+            new Error(`unknown component id: ${componentId}`),
+          );
+        }
+        return {
+          content: [
+            { type: 'text', text: JSON.stringify(component, null, 2) },
+          ],
+        };
+      }
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(describeDesignLibrary(spec), null, 2),
+          },
+        ],
+      };
+    },
+  );
+
+  server.registerTool(
+    'set_design_library',
+    {
+      title: 'Write the design library',
+      description:
+        "Replaces the spec's design library sections: pass `designSystem` (token sets) and/or `components` (full component templates — node coords relative to each component's (0,0) origin). An omitted section is left untouched, but a passed section replaces that WHOLE section — a partial `components` array drops every template it omits, so fetch existing ones (`get_design_library` with `componentId`) and include them to keep them. An explicit empty value ({} / []) clears that section. Screens are never affected. Use after an agent-mediated import to record extracted tokens/components, or to curate the library (the Import button's fast import maintains it automatically).",
+      inputSchema: {
+        designSystem: uiDesignSystemSchema.optional(),
+        components: z.array(uiComponentSchema).optional(),
+      },
+    },
+    async ({ designSystem, components }) => {
+      try {
+        if (designSystem === undefined && components === undefined) {
+          return toolErrorResult(
+            'set_design_library',
+            new Error('pass designSystem and/or components'),
+          );
+        }
+        setDesignLibraryFromServer({
+          designSystem: designSystem as UIDesignSystem | undefined,
+          components: components as UIComponent[] | undefined,
+        });
+        const parts: string[] = [];
+        if (designSystem !== undefined) parts.push('design system');
+        if (components !== undefined) {
+          parts.push(`${(components as UIComponent[]).length} component(s)`);
+        }
+        return {
+          content: [
+            { type: 'text', text: `Design library updated: ${parts.join(', ')}.` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('set_design_library', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'insert_ui_component',
+    {
+      title: 'Insert a component instance into a screen',
+      description:
+        "Stamps a design-library component template into a screen at (`x`,`y`) (top-left of the template box; defaults near the screen origin, clamped inside the frame). The instance becomes plain nodes with fresh globally-unique ids, grouped under a new editor-level group named after the component — returns the node ids + group id so you can patch the instance afterwards (e.g. its sample text) with `update_ui_nodes`. Prefer this over re-drawing a known component by hand.",
+      inputSchema: {
+        componentId: z.string().min(1),
+        screenId: z.string().min(1),
+        x: z.number().optional(),
+        y: z.number().optional(),
+      },
+    },
+    async ({ componentId, screenId, x, y }) => {
+      try {
+        const result = insertUIComponentFromServer(componentId, screenId, {
+          x,
+          y,
+        });
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Inserted component "${componentId}" into "${screenId}": ${JSON.stringify(result)}`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('insert_ui_component', err);
       }
     },
   );

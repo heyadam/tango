@@ -8,7 +8,14 @@
 // honest. Validation collects ALL problems before throwing, so callers get
 // one useful error instead of a fix-one-retry loop.
 
-import type { UIGroup, UINode, UIScreen, UISpec } from './uiMockProtocol';
+import type {
+  UIComponent,
+  UIDesignSystem,
+  UIGroup,
+  UINode,
+  UIScreen,
+  UISpec,
+} from './uiMockProtocol';
 
 export type ReorderOp = 'front' | 'back' | 'forward' | 'backward';
 
@@ -504,6 +511,184 @@ export function moveNodeInSpec(
   return {
     ...spec,
     screens: spec.screens.map((s, i) => (i === screenIdx ? nextScreen : s)),
+  };
+}
+
+// ── design library ──────────────────────────────────────────────────────────
+// Import-derived designSystem/components live as optional top-level UISpec
+// fields. They are editor/agent metadata: rendering, preview, and export
+// consult `screens` only. The ops below keep them consistent across the
+// surfaces that replace whole specs (browser snapshots, set_ui_mock) and
+// provide the one path that turns a template into real screen nodes.
+
+// Carry the design library forward across whole-spec replaces that omit it.
+// Browser snapshots and agent set_ui_mock calls describe SCREENS — when they
+// don't mention designSystem/components, the cache's library survives.
+// Passing the field explicitly (even as an empty object/array) replaces it.
+// Returns `next` untouched when there's nothing to carry (identity matters:
+// snapshot applies happen on every debounced edit).
+export function carryLibraryForward(prev: UISpec, next: UISpec): UISpec {
+  const carryDesign =
+    next.designSystem === undefined && prev.designSystem !== undefined;
+  const carryComponents =
+    next.components === undefined && prev.components !== undefined;
+  if (!carryDesign && !carryComponents) return next;
+  const out: UISpec = { ...next };
+  if (carryDesign) out.designSystem = prev.designSystem;
+  if (carryComponents) out.components = prev.components;
+  return out;
+}
+
+// All problems with a component list, collected: duplicate component ids and
+// duplicate node ids within any template (instance stamping relies on
+// template-local uniqueness). Shared by set_design_library and set_ui_mock's
+// explicit-components path so no whole-library write can smuggle in a
+// template that instantiation would corrupt a screen with.
+export function validateComponentList(components: UIComponent[]): string[] {
+  const errors: string[] = [];
+  const ids = new Set<string>();
+  for (const component of components) {
+    if (ids.has(component.id)) {
+      errors.push(`Duplicate component id: ${component.id}`);
+    }
+    ids.add(component.id);
+    const seen = new Set<string>();
+    for (const node of component.nodes) {
+      if (seen.has(node.id)) {
+        errors.push(
+          `Duplicate node id within component template "${component.id}": ${node.id}`,
+        );
+      }
+      seen.add(node.id);
+    }
+  }
+  return errors;
+}
+
+// Replace the component with the same id, or append. Errors (collected):
+// duplicate node ids within the template. Template node coords are the
+// component's own space — they never collide with screen node ids, so no
+// global check. A replacement that omits sourceFile keeps the prior
+// component's provenance (same semantics as the screen path's
+// applyEmittedScreen).
+export function applyComponentToSpec(
+  spec: UISpec,
+  component: UIComponent,
+): UISpec {
+  const errors = validateComponentList([component]);
+  if (errors.length) fail(errors);
+  const components = spec.components ?? [];
+  const idx = components.findIndex((c) => c.id === component.id);
+  if (idx === -1) {
+    return { ...spec, components: [...components, component] };
+  }
+  const prior = components[idx];
+  const carried =
+    component.sourceFile === undefined && prior.sourceFile !== undefined
+      ? { ...component, sourceFile: prior.sourceFile }
+      : component;
+  return {
+    ...spec,
+    components: components.map((c, i) => (i === idx ? carried : c)),
+  };
+}
+
+// Stamp a component template into a screen: every template node becomes a
+// real node with a fresh globally-unique id (`<componentId>-<n>-<templateId>`,
+// smallest untaken n) offset by the insert origin, and the batch lands in a
+// new editor-level group named after the component. Errors: unknown
+// component/screen. The origin is clamped so the template box stays inside
+// the frame where possible.
+export function instantiateComponentInSpec(
+  spec: UISpec,
+  componentId: string,
+  screenId: string,
+  opts?: { x?: number; y?: number },
+): { spec: UISpec; nodeIds: string[]; groupId: string } {
+  const component = (spec.components ?? []).find((c) => c.id === componentId);
+  const screen = spec.screens.find((s) => s.id === screenId);
+  const errors: string[] = [];
+  if (!component) errors.push(`Unknown component id: ${componentId}`);
+  if (!screen) errors.push(`Unknown screen id: ${screenId}`);
+  if (errors.length) fail(errors);
+  // Defensive: a template with internal node-id dupes (e.g. arrived via a
+  // browser snapshot or hand-edited design.json that skipped the validated
+  // write paths) would otherwise stamp DUPLICATE node ids into the screen.
+  const templateErrors = validateComponentList([component!]);
+  if (templateErrors.length) fail(templateErrors);
+
+  const x = Math.max(
+    0,
+    Math.min(opts?.x ?? 16, screen!.frame.w - component!.frame.w),
+  );
+  const y = Math.max(
+    0,
+    Math.min(opts?.y ?? 16, screen!.frame.h - component!.frame.h),
+  );
+
+  const existing = collectIds(spec);
+  let n = 1;
+  const idsFor = (k: number) =>
+    component!.nodes.map((node) => `${componentId}-${k}-${node.id}`);
+  while (idsFor(n).some((id) => existing.has(id))) n += 1;
+  const ids = idsFor(n);
+
+  const fresh = freshGroupId(screen!);
+  const groupId = fresh.id;
+  const nodes: UINode[] = component!.nodes.map((node, i) => ({
+    ...node,
+    id: ids[i],
+    x: node.x + x,
+    y: node.y + y,
+    group: groupId,
+  }));
+
+  const nextScreen: UIScreen = {
+    ...screen!,
+    nodes: [...screen!.nodes, ...nodes],
+    groups: [...(screen!.groups ?? []), { id: groupId, name: component!.name }],
+  };
+  return {
+    spec: {
+      ...spec,
+      screens: spec.screens.map((s) => (s.id === screenId ? nextScreen : s)),
+    },
+    nodeIds: ids,
+    groupId,
+  };
+}
+
+export type DesignLibraryOutline = {
+  designSystem?: UIDesignSystem;
+  components: Array<{
+    id: string;
+    name: string;
+    description?: string;
+    frame: { w: number; h: number };
+    nodeCount: number;
+    usedBy?: string[];
+    sourceFile?: string;
+  }>;
+};
+
+// Compact, read-only summary of the design library: the full designSystem
+// (it's already small) plus component metadata WITHOUT template nodes — the
+// cheap first read. Fetch one full template by passing its componentId to
+// the caller's detail path (get_design_library componentId param).
+export function describeDesignLibrary(spec: UISpec): DesignLibraryOutline {
+  return {
+    ...(spec.designSystem !== undefined
+      ? { designSystem: spec.designSystem }
+      : {}),
+    components: (spec.components ?? []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      ...(c.description !== undefined ? { description: c.description } : {}),
+      frame: c.frame,
+      nodeCount: c.nodes.length,
+      ...(c.usedBy !== undefined ? { usedBy: c.usedBy } : {}),
+      ...(c.sourceFile !== undefined ? { sourceFile: c.sourceFile } : {}),
+    })),
   };
 }
 
