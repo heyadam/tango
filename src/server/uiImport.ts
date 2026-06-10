@@ -15,9 +15,15 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import * as z from 'zod/v4';
-import { uiScreenSchema } from '@/lib/uiMockSchema';
+import { uiComponentSchema, uiScreenSchema } from '@/lib/uiMockSchema';
+import { applyComponentToSpec } from '@/lib/uiMockOps';
 import { hashSource } from './sourceHash';
-import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
+import {
+  designScanKickoffBlock,
+  runDesignScan,
+  type DesignScanResult,
+} from './designScan';
+import type { UIComponent, UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import { getHook } from './serverHooks';
 import { getWorkspaceOrNull } from './workspace';
 import { importModel } from './config';
@@ -30,11 +36,13 @@ export type UiImportState =
       filesFound: number;
       filesRead: number;
       screensImported: number;
+      componentsImported: number;
     }
   | {
       phase: 'done';
       ok: true;
       screensImported: number;
+      componentsImported: number;
       filesRead: number;
       durationMs: number;
       summary: string;
@@ -171,7 +179,9 @@ export async function findSwiftFiles(
 export function applyEmittedScreen(current: UISpec, screen: UIScreen): UISpec {
   const idx = current.screens.findIndex((s) => s.id === screen.id);
   if (idx === -1) {
-    return { screens: [...current.screens, screen] };
+    // Spread `current` so the spec's other top-level fields (designSystem,
+    // components) ride along — a bare {screens} literal would wipe them.
+    return { ...current, screens: [...current.screens, screen] };
   }
   const screens = current.screens.slice();
   const prior = screens[idx];
@@ -182,7 +192,7 @@ export function applyEmittedScreen(current: UISpec, screen: UIScreen): UISpec {
   } else {
     screens[idx] = screen;
   }
-  return { screens };
+  return { ...current, screens };
 }
 
 // Pure, tested: reject screens whose node ids collide (within the screen) —
@@ -303,13 +313,24 @@ Files under TangoGenerated/ are tango's own previous exports of canvas designs (
 - Ignore container wrappers (\`ZStack(alignment: .topLeading)\`, \`Group {}\`) — they exist only for SwiftUI's ViewBuilder limits.
 - When re-importing a TangoGenerated screen, omit \`source_file\` unless you know the original user source — the canvas keeps the screen's prior provenance when it is omitted.
 
+## Design system & shared components
+
+The kickoff message may include a deterministic design-system scan of the sources (colors, type ramp, spacing, radii, icons, reusable view structs). Those tokens are already stored on the design spec — use them while translating so screens stay faithful to the app: exact hex values via \`style\`, the listed spacing/radius values, the listed lucide icon names.
+
+While reading screens, also record REUSABLE COMPONENTS with \`emit_component\`: a view used by 2+ screens, or an obviously repeated unit (list row, card, stat tile, tab/nav bar). Rules:
+
+- Template node coords are relative to the component's own (0,0) origin inside its \`frame\` {w,h} — the component's natural size, not a screen frame.
+- Keep templates small: ONE instance with realistic sample content (a single row, not the whole list), at most ~12 nodes.
+- \`id\` = kebab-case ("task-row"); \`name\` = human label ("Task Row"); set \`usedBy\` to the ids of screens that use it; pass \`source_file\` for the declaring file.
+- Emit components opportunistically from files you are already reading — never re-read files just to mine components, and never let components delay screens. Screens come first; a screen that uses a component still gets its nodes emitted in full.
+
 ## Procedure
 
 1. From the provided file lists, pick the likely screen sources (App roots, *View/*Screen files, TangoGenerated screen files). Read the @main App entry early — screens reachable from it are what the app actually shows, and they must be imported. Read several files per turn — request multiple read_swift_file calls in one response.
 2. Emit each screen as soon as it's translated; don't batch them at the end. Screen id and title = the View's type name (e.g. "OnboardingView"). Prefix node ids with the screen id (e.g. "onboardingview-title") so ids stay unique across the canvas. Always pass \`source_file\` for user sources — the workspace-relative path of the file you translated the screen from, copied from the file list; omit it for TangoGenerated files (see the round-trip rules).
 3. If emit_screen returns a validation error, fix the screen and re-emit it. If it returns LAYOUT WARNINGS (clipped text, out-of-frame nodes), treat them as defects: correct the coordinates and re-emit the screen with the same id before moving on.
 4. Don't re-read files you've seen; don't read files that are clearly not screens (models, extensions, networking).
-5. When every screen is emitted, reply with a one-paragraph summary naming the imported screens. Do not ask follow-up questions — finish the import autonomously.`;
+5. When every screen is emitted (plus emit_component for shared units you encountered), reply with a one-paragraph summary naming the imported screens and components. Do not ask follow-up questions — finish the import autonomously.`;
 
 const READ_FILE_CHAR_CAP = 100_000;
 
@@ -347,12 +368,33 @@ function buildTools(): Anthropic.Tool[] {
         required: ['screen'],
       } as Anthropic.Tool['input_schema'],
     },
+    {
+      name: 'emit_component',
+      description:
+        "Record one reusable component template in the design library (a view used by 2+ screens, or an obviously repeated unit). Node coords are relative to the component's own (0,0) origin inside frame {w,h}. Replaces an existing component with the same id, otherwise appends.",
+      input_schema: {
+        type: 'object',
+        properties: {
+          component: z.toJSONSchema(uiComponentSchema) as Record<
+            string,
+            unknown
+          >,
+          source_file: {
+            type: 'string',
+            description:
+              'Workspace-relative path of the Swift file declaring this component — copy it from the provided file list.',
+          },
+        },
+        required: ['component'],
+      } as Anthropic.Tool['input_schema'],
+    },
   ];
 }
 
 function buildKickoffMessage(
   files: SwiftFileInfo[],
   existing: UISpec,
+  scanBlock = '',
 ): string {
   const userFiles = files.filter((f) => !f.generated);
   const generatedFiles = files.filter((f) => f.generated);
@@ -375,6 +417,16 @@ function buildKickoffMessage(
       '',
       `Previously exported design screens in ${GENERATED_DIR}/ (${generatedFiles.length}) — tango's own earlier exports; if the app's entry point renders TangoGeneratedRootView, these ARE the app's current UI. Re-import any whose screens are missing from the canvas (see the TangoGenerated round-trip rules):`,
       listOf(generatedFiles),
+    );
+  }
+  if (scanBlock) parts.push('', scanBlock);
+  const existingComponents = existing.components ?? [];
+  if (existingComponents.length > 0) {
+    parts.push(
+      '',
+      `The design library already has ${existingComponents.length} component(s): ${existingComponents
+        .map((c) => c.id)
+        .join(', ')}. emit_component with one of these ids replaces it.`,
     );
   }
   parts.push('', existingNote);
@@ -422,6 +474,9 @@ export function buildScopedKickoffMessage(
 // ── Engine ──────────────────────────────────────────────────────────────────
 
 const MAX_TURNS = 40;
+// Component-library cap: enough for any real app's reusable kit, small enough
+// that the library stays browsable and the model can't flood the spec.
+const MAX_COMPONENTS = 24;
 
 // Minimal structural slice of the API response the loop needs — lets tests
 // script responses without fabricating full `Anthropic.Message`s.
@@ -435,6 +490,12 @@ export type UiImportDeps = {
   readFile: (absPath: string) => Promise<string>;
   getSpec: () => UISpec | null;
   setSpec: (spec: UISpec) => void;
+  // Deterministic design-system pre-pass (designScan). Best-effort: a throw
+  // is swallowed and the import proceeds without the scan.
+  scanDesign: (
+    workspace: string,
+    files: SwiftFileInfo[],
+  ) => Promise<DesignScanResult>;
   createMessage: (params: {
     system: string;
     tools: Anthropic.Tool[];
@@ -471,6 +532,7 @@ function realCreateMessage(): UiImportDeps['createMessage'] {
 const realDeps: UiImportDeps = {
   listSwiftFiles: findSwiftFiles,
   readFile: (p) => fs.readFile(p, 'utf8'),
+  scanDesign: (workspace, files) => runDesignScan(workspace, files),
   getSpec: () => getHook('getUiMockSpec')?.() ?? null,
   setSpec: (spec) => {
     const set = getHook('setUiMockSpec');
@@ -509,6 +571,7 @@ export async function runUiImport(
     filesFound: 0,
     filesRead: 0,
     screensImported: 0,
+    componentsImported: 0,
   };
   const setRunning = () => {
     slot.state = { phase: 'running', startedAt, ...progress };
@@ -539,13 +602,36 @@ export async function runUiImport(
   setRunning();
   const fileSet = new Set(files.map((f) => f.relPath));
 
+  // Deterministic design-system pre-pass (full imports only — a scoped
+  // one-screen refresh shouldn't churn workspace-wide tokens). Tokens land on
+  // the live spec immediately; the summary block rides the kickoff message so
+  // the model translates with the app's real palette/ramp in hand.
+  // Best-effort: a scanner failure never blocks the import.
+  let scanBlock = '';
+  if (!scope) {
+    try {
+      const scan = await deps.scanDesign(workspace, files);
+      if (Object.keys(scan.designSystem).length > 0) {
+        const current = deps.getSpec() ?? { screens: [] };
+        deps.setSpec({ ...current, designSystem: scan.designSystem });
+      }
+      scanBlock = designScanKickoffBlock(scan);
+    } catch {
+      // scan is enrichment, not a prerequisite
+    }
+  }
+
   const tools = buildTools();
   const messages: Anthropic.MessageParam[] = [
     {
       role: 'user',
       content: scope
         ? buildScopedKickoffMessage(scope, deps.getSpec() ?? { screens: [] })
-        : buildKickoffMessage(files, deps.getSpec() ?? { screens: [] }),
+        : buildKickoffMessage(
+            files,
+            deps.getSpec() ?? { screens: [] },
+            scanBlock,
+          ),
     },
   ];
 
@@ -662,6 +748,85 @@ export async function runUiImport(
       );
     }
 
+    if (block.name === 'emit_component') {
+      const parsed = uiComponentSchema.safeParse(
+        (block.input as { component?: unknown }).component,
+      );
+      if (!parsed.success) {
+        return result(
+          `component failed validation: ${parsed.error.message.slice(0, 1500)}`,
+          true,
+        );
+      }
+      // Server is the provenance authority (same policy as emit_screen):
+      // strip any model-embedded sourceFile, stamp only the allowlisted
+      // source_file param. Editor-group tags don't exist on templates.
+      const { sourceFile: _modelEmbedded, ...componentBase } =
+        parsed.data as UIComponent;
+      let component: UIComponent = {
+        ...componentBase,
+        nodes: componentBase.nodes.map(({ group: _g, ...rest }) => rest),
+      };
+      const current = deps.getSpec() ?? { screens: [] };
+      const isReplacement = (current.components ?? []).some(
+        (c) => c.id === component.id,
+      );
+      if (
+        !isReplacement &&
+        (current.components?.length ?? 0) >= MAX_COMPONENTS
+      ) {
+        return result(
+          `the component library is full (${MAX_COMPONENTS}) — only the most reusable components belong here; skip the rest`,
+          true,
+        );
+      }
+      const src = (block.input as { source_file?: unknown }).source_file;
+      let note: string | null = null;
+      if (typeof src === 'string') {
+        if (fileSet.has(src) && !isGeneratedScreenPath(src)) {
+          component = { ...component, sourceFile: src };
+        } else {
+          note = `note: source_file "${src}" is not a user source from the provided file list — provenance not recorded`;
+        }
+      }
+      try {
+        deps.setSpec(applyComponentToSpec(current, component));
+      } catch (err) {
+        return result(
+          `recording component failed: ${err instanceof Error ? err.message : String(err)}`,
+          true,
+        );
+      }
+      progress.componentsImported += 1;
+      setRunning();
+      const warnings: string[] = [];
+      for (const node of component.nodes) {
+        if (
+          node.x < 0 ||
+          node.y < 0 ||
+          node.x + node.width > component.frame.w ||
+          node.y + node.height > component.frame.h
+        ) {
+          warnings.push(
+            `node "${node.id}" extends outside the ${component.frame.w}×${component.frame.h} template frame`,
+          );
+        }
+      }
+      if (component.nodes.length > 16) {
+        warnings.push(
+          `template has ${component.nodes.length} nodes — keep templates to one small instance with sample content`,
+        );
+      }
+      if (warnings.length > 0) {
+        return result(
+          `Recorded component "${component.id}" (${component.nodes.length} nodes) WITH WARNINGS — fix and re-emit the component with the same id:\n- ${warnings.join('\n- ')}${note ? `\n${note}` : ''}`,
+        );
+      }
+      return result(
+        `Recorded component "${component.id}" (${component.nodes.length} nodes).${note ? ` ${note}` : ''}`,
+      );
+    }
+
     return result(`unknown tool: ${block.name}`, true);
   };
 
@@ -728,6 +893,7 @@ export async function runUiImport(
     phase: 'done',
     ok: true,
     screensImported: progress.screensImported,
+    componentsImported: progress.componentsImported,
     filesRead: progress.filesRead,
     durationMs: Date.now() - startedAt,
     summary: lastText.slice(0, 500),

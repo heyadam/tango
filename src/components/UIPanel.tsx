@@ -30,6 +30,7 @@ import PanelHeader from './PanelHeader';
 import { uiMockBus } from '@/lib/uiMockBus';
 import { uiMockStore } from '@/lib/uiMockStore';
 import { EMPTY_SPEC, type UISpec } from '@/lib/uiMockProtocol';
+import { carryLibraryForward } from '@/lib/uiMockOps';
 import { workspaceBus } from '@/lib/workspaceBus';
 import { openWS } from '@/lib/wsClient';
 import { terminalBus } from '@/lib/terminalBus';
@@ -543,15 +544,17 @@ export default function UIPanel({ terminalAgent }: Props) {
             phase: string;
             filesRead?: number;
             screensImported?: number;
+            componentsImported?: number;
             durationMs?: number;
             message?: string;
           };
           if (s.phase === 'done') {
             const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+            const components = s.componentsImported ?? 0;
             setStatus(
               scope
                 ? `Refreshed "${scope.screenId}" in ${secs}s.`
-                : `Imported ${s.screensImported} screen${s.screensImported === 1 ? '' : 's'} in ${secs}s.`,
+                : `Imported ${s.screensImported} screen${s.screensImported === 1 ? '' : 's'}${components > 0 ? ` + ${components} component${components === 1 ? '' : 's'}` : ''} in ${secs}s.`,
             );
             return;
           }
@@ -592,8 +595,12 @@ export default function UIPanel({ terminalAgent }: Props) {
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
     // any open browsers see the same state on refresh. We don't call MCP from
-    // here — clear_ui_mock is for Claude.
-    const empty: UISpec = { screens: [] };
+    // here — clear_ui_mock is for Claude. Clear means SCREENS: carry the
+    // imported design library forward locally (the server's snapshot path
+    // does the same via carryLibraryForward but never echoes back, so a bare
+    // {screens: []} here would silently desync the client — the Add palette's
+    // Components section would vanish until a reload).
+    const empty: UISpec = carryLibraryForward(specRef.current, { screens: [] });
     specRef.current = empty;
     setScreenCount(0);
     uiMockStore.save(empty);

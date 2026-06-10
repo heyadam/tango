@@ -56,6 +56,7 @@ import {
   addNodesToScreen,
   findNodeInSpec,
   groupNodesInSpec,
+  instantiateComponentInSpec,
   moveNodeInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
@@ -561,6 +562,35 @@ export default function UIMockCanvas({
         setEditingId(null);
       } catch {
         // id collision is effectively impossible with a random uuid; ignore.
+      }
+    },
+    [selectedIds],
+  );
+
+  // Stamp an imported design-library component into the working screen —
+  // same placement policy as addNodeOfType; the pure op mints fresh ids and
+  // wraps the instance in a group named after the component.
+  const addComponentInstance = useCallback(
+    (componentId: string) => {
+      const current = specRef.current;
+      if (current.screens.length === 0) return;
+      const target =
+        current.screens.find((s) =>
+          s.nodes.some((n) => selectedIds.includes(n.id)),
+        ) ?? current.screens[0];
+      const stagger = (target.nodes.length % 6) * 24;
+      try {
+        const result = instantiateComponentInSpec(
+          current,
+          componentId,
+          target.id,
+          { x: 24 + stagger, y: 24 + stagger },
+        );
+        setSpec(result.spec);
+        setSelectedIds(result.nodeIds);
+        setEditingId(null);
+      } catch {
+        // component/screen vanished between render and click — ignore.
       }
     },
     [selectedIds],
@@ -1207,6 +1237,11 @@ export default function UIMockCanvas({
               onAdd={addNodeOfType}
               onClose={() => setAddOpen(false)}
               disabled={isEmpty}
+              components={spec.components?.map((c) => ({
+                id: c.id,
+                name: c.name,
+              }))}
+              onAddComponent={addComponentInstance}
             />
           ) : (
             <Button

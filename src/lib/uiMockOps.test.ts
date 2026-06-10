@@ -2,10 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   addNodesToScreen,
   appendScreenToSpec,
+  applyComponentToSpec,
+  carryLibraryForward,
+  describeDesignLibrary,
   describeLayers,
   duplicateScreenInSpec,
   findNodeInSpec,
   groupNodesInSpec,
+  instantiateComponentInSpec,
   moveNodeInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
@@ -15,8 +19,14 @@ import {
   updateNodeInSpec,
   updateNodesInSpec,
   updateScreenInSpec,
+  validateComponentList,
 } from './uiMockOps';
-import type { UINode, UIScreen, UISpec } from './uiMockProtocol';
+import type {
+  UIComponent,
+  UINode,
+  UIScreen,
+  UISpec,
+} from './uiMockProtocol';
 
 const node = (id: string, overrides: Partial<UINode> = {}): UINode => ({
   id,
@@ -589,5 +599,209 @@ describe('sourceHash provenance', () => {
     const out = duplicateScreenInSpec(withProvenance, 'A', 'A2');
     expect('sourceFile' in out.screens[1]).toBe(false);
     expect('sourceHash' in out.screens[1]).toBe(false);
+  });
+});
+
+// ── design library ──────────────────────────────────────────────────────────
+
+const component = (
+  id: string,
+  overrides: Partial<UIComponent> = {},
+): UIComponent => ({
+  id,
+  name: `Component ${id}`,
+  frame: { w: 200, h: 60 },
+  nodes: [node('icon', { width: 24, height: 24 }), node('label', { x: 32, width: 120 })],
+  ...overrides,
+});
+
+describe('carryLibraryForward', () => {
+  const library = {
+    designSystem: { colors: [{ name: 'Brand', value: '#6159E1' }] },
+    components: [component('task-row')],
+  };
+
+  it('carries omitted designSystem/components from prev', () => {
+    const prev: UISpec = { screens: [], ...library };
+    const next: UISpec = { screens: [screen('A')] };
+    const out = carryLibraryForward(prev, next);
+    expect(out.designSystem).toBe(library.designSystem);
+    expect(out.components).toBe(library.components);
+    expect(out.screens).toBe(next.screens);
+  });
+
+  it('respects explicit values, including empty ones', () => {
+    const prev: UISpec = { screens: [], ...library };
+    const next: UISpec = { screens: [], designSystem: {}, components: [] };
+    const out = carryLibraryForward(prev, next);
+    expect(out).toBe(next); // nothing to carry — identity preserved
+    expect(out.designSystem).toEqual({});
+    expect(out.components).toEqual([]);
+  });
+
+  it('returns next untouched when prev has no library', () => {
+    const next: UISpec = { screens: [] };
+    expect(carryLibraryForward({ screens: [] }, next)).toBe(next);
+  });
+});
+
+describe('applyComponentToSpec', () => {
+  it('appends a new component and replaces by id', () => {
+    const withOne = applyComponentToSpec({ screens: [] }, component('task-row'));
+    expect(withOne.components?.map((c) => c.id)).toEqual(['task-row']);
+    const replaced = applyComponentToSpec(
+      withOne,
+      component('task-row', { name: 'Renamed' }),
+    );
+    expect(replaced.components).toHaveLength(1);
+    expect(replaced.components?.[0].name).toBe('Renamed');
+  });
+
+  it('rejects duplicate node ids within the template', () => {
+    expect(() =>
+      applyComponentToSpec(
+        { screens: [] },
+        component('x', { nodes: [node('a'), node('a')] }),
+      ),
+    ).toThrow(/Duplicate node id within component template/);
+  });
+
+  it('carries the prior sourceFile when a replacement omits it', () => {
+    const withOne = applyComponentToSpec(
+      { screens: [] },
+      component('task-row', { sourceFile: 'App/TaskRow.swift' }),
+    );
+    const replaced = applyComponentToSpec(
+      withOne,
+      component('task-row', { name: 'Renamed' }),
+    );
+    expect(replaced.components?.[0].sourceFile).toBe('App/TaskRow.swift');
+    const restated = applyComponentToSpec(
+      replaced,
+      component('task-row', { sourceFile: 'App/Other.swift' }),
+    );
+    expect(restated.components?.[0].sourceFile).toBe('App/Other.swift');
+  });
+});
+
+describe('validateComponentList', () => {
+  it('collects duplicate component ids and intra-template node dupes', () => {
+    const errors = validateComponentList([
+      component('a'),
+      component('a'),
+      component('b', { nodes: [node('x'), node('x')] }),
+    ]);
+    expect(errors).toEqual([
+      'Duplicate component id: a',
+      'Duplicate node id within component template "b": x',
+    ]);
+  });
+
+  it('passes a clean list', () => {
+    expect(validateComponentList([component('a'), component('b')])).toEqual([]);
+  });
+});
+
+describe('instantiateComponentInSpec', () => {
+  const base = (): UISpec => ({
+    screens: [screen('A', [node('a1')])],
+    components: [component('task-row')],
+  });
+
+  it('stamps offset nodes with fresh ids in a named group', () => {
+    const input = base();
+    const { spec: out, nodeIds, groupId } = instantiateComponentInSpec(
+      input,
+      'task-row',
+      'A',
+      { x: 50, y: 100 },
+    );
+    expect(nodeIds).toEqual(['task-row-1-icon', 'task-row-1-label']);
+    const inserted = out.screens[0].nodes.slice(1);
+    expect(inserted.map((n) => n.id)).toEqual(nodeIds);
+    expect(inserted[0]).toMatchObject({ x: 50, y: 100, group: groupId });
+    expect(inserted[1]).toMatchObject({ x: 82, y: 100, group: groupId });
+    expect(out.screens[0].groups).toEqual([
+      { id: groupId, name: 'Component task-row' },
+    ]);
+    // template untouched
+    expect(out.components).toBe(input.components);
+  });
+
+  it('bumps the instance counter to avoid id collisions', () => {
+    const first = instantiateComponentInSpec(base(), 'task-row', 'A');
+    const second = instantiateComponentInSpec(first.spec, 'task-row', 'A');
+    expect(second.nodeIds).toEqual(['task-row-2-icon', 'task-row-2-label']);
+  });
+
+  it('clamps the origin inside the frame', () => {
+    const { spec: out } = instantiateComponentInSpec(base(), 'task-row', 'A', {
+      x: 5000,
+      y: -10,
+    });
+    const inserted = out.screens[0].nodes.slice(1);
+    expect(inserted[0].x).toBe(600); // 800 - 200
+    expect(inserted[0].y).toBe(0);
+  });
+
+  it('errors on unknown component or screen', () => {
+    expect(() => instantiateComponentInSpec(base(), 'nope', 'A')).toThrow(
+      /Unknown component id: nope/,
+    );
+    expect(() => instantiateComponentInSpec(base(), 'task-row', 'Z')).toThrow(
+      /Unknown screen id: Z/,
+    );
+  });
+
+  it('refuses to stamp a template carrying duplicate node ids', () => {
+    // Such a template can only arrive via paths that skip the validated
+    // writes (hand-edited design.json, raw snapshot) — instantiation is the
+    // last line of defense for the global node-id invariant.
+    const poisoned: UISpec = {
+      screens: [screen('A')],
+      components: [
+        component('task-row', { nodes: [node('a'), node('a')] }),
+      ],
+    };
+    expect(() =>
+      instantiateComponentInSpec(poisoned, 'task-row', 'A'),
+    ).toThrow(/Duplicate node id within component template/);
+  });
+
+  it('preserves identity of untouched screens', () => {
+    const input: UISpec = {
+      screens: [screen('A'), screen('B')],
+      components: [component('task-row')],
+    };
+    const { spec: out } = instantiateComponentInSpec(input, 'task-row', 'A');
+    expect(out.screens[1]).toBe(input.screens[1]);
+  });
+});
+
+describe('describeDesignLibrary', () => {
+  it('summarizes components without node arrays', () => {
+    const out = describeDesignLibrary({
+      screens: [],
+      designSystem: { spacing: [16] },
+      components: [
+        component('task-row', { usedBy: ['home'], sourceFile: 'A/Row.swift' }),
+      ],
+    });
+    expect(out.designSystem).toEqual({ spacing: [16] });
+    expect(out.components).toEqual([
+      {
+        id: 'task-row',
+        name: 'Component task-row',
+        frame: { w: 200, h: 60 },
+        nodeCount: 2,
+        usedBy: ['home'],
+        sourceFile: 'A/Row.swift',
+      },
+    ]);
+  });
+
+  it('omits absent fields', () => {
+    const out = describeDesignLibrary({ screens: [] });
+    expect(out).toEqual({ components: [] });
   });
 });

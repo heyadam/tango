@@ -58,8 +58,49 @@ export const uiScreenSchema = z.object({
   sourceHash: z.string().min(1).optional(),
 });
 
+export const uiColorTokenSchema = z.object({
+  name: z.string().min(1),
+  value: z.string().min(1),
+  count: z.number().optional(),
+});
+
+export const uiTextStyleTokenSchema = z.object({
+  name: z.string().min(1),
+  size: z.number().positive(),
+  weight: z.number().optional(),
+  family: z.string().optional(),
+  count: z.number().optional(),
+});
+
+export const uiDesignSystemSchema = z.object({
+  colors: z.array(uiColorTokenSchema).optional(),
+  typography: z.array(uiTextStyleTokenSchema).optional(),
+  spacing: z.array(z.number()).optional(),
+  radii: z.array(z.number()).optional(),
+  icons: z.array(z.string().min(1)).optional(),
+  notes: z.array(z.string().min(1)).optional(),
+});
+
+export const uiComponentSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  frame: z.object({
+    w: z.number().int().positive(),
+    h: z.number().int().positive(),
+  }),
+  nodes: z.array(uiNodeSchema).min(1),
+  usedBy: z.array(z.string().min(1)).optional(),
+  sourceFile: z.string().min(1).optional(),
+});
+
+// designSystem/components are purely-additive optional fields — old
+// design.json files and old browser snapshots stay valid without a
+// FILE_VERSION bump (see uiMockPersist MIGRATIONS).
 export const uiSpecSchema = z.object({
   screens: z.array(uiScreenSchema),
+  designSystem: uiDesignSystemSchema.optional(),
+  components: z.array(uiComponentSchema).optional(),
 });
 
 // Partial node for `update_ui_node` — every field of a node except `id`

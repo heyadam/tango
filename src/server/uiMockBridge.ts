@@ -18,8 +18,10 @@ import {
 import {
   addNodesToScreen,
   appendScreenToSpec,
+  carryLibraryForward,
   duplicateScreenInSpec,
   groupNodesInSpec,
+  instantiateComponentInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
   renameGroupInSpec,
@@ -28,10 +30,15 @@ import {
   updateNodeInSpec,
   updateNodesInSpec,
   updateScreenInSpec,
+  validateComponentList,
   type NodePatch,
   type ReorderOp,
 } from '@/lib/uiMockOps';
-import type { UINode } from '@/lib/uiMockProtocol';
+import type {
+  UIComponent,
+  UIDesignSystem,
+  UINode,
+} from '@/lib/uiMockProtocol';
 import { uiSpecSchema } from '@/lib/uiMockSchema';
 
 // Authoritative server-side cache of the design spec ("UI mock"). The
@@ -163,7 +170,10 @@ export function attachUIMock(ws: WebSocket): void {
           );
           return;
         }
-        cache = checked.data as UISpec;
+        // Snapshots describe SCREENS (the browser's editing surface). A
+        // client that omits the import-derived design library (older state,
+        // Clear button) must not wipe it — carry it forward.
+        cache = carryLibraryForward(cache, checked.data as UISpec);
         cacheChanged();
       } else if (parsed.type === 'viewport') {
         const w = Math.round(parsed.w);
@@ -216,8 +226,14 @@ export function getUIViewport(): { w: number; h: number } | null {
 }
 
 export function setUIMockFromServer(spec: UISpec): void {
-  cache = spec;
-  cacheChanged({ type: 'set', spec });
+  // Whole-spec writes that omit designSystem/components keep the cache's
+  // (agents and the import engine describe screens; the library is replaced
+  // only when stated explicitly — clearing it takes designSystem: {} /
+  // components: []). Node-level wrappers below all spread the live cache, so
+  // this only bites on set_ui_mock / clear_ui_mock-shaped writes.
+  const next = carryLibraryForward(cache, spec);
+  cache = next;
+  cacheChanged({ type: 'set', spec: next });
 }
 
 // Validated append (duplicate screen id, intra-screen node dupes, global
@@ -296,4 +312,37 @@ export function ungroupUINodesFromServer(groupId: string): void {
 
 export function renameUIGroupFromServer(groupId: string, name: string): void {
   setUIMockFromServer(renameGroupInSpec(cache, groupId, name));
+}
+
+// ── Design library mutations ────────────────────────────────────────────────
+
+// Replace the named library sections on the live spec. Omitted sections are
+// untouched; explicit values (including {} / []) replace. Component templates
+// are validated for intra-template node-id dupes via applyComponentToSpec.
+export function setDesignLibraryFromServer(library: {
+  designSystem?: UIDesignSystem;
+  components?: UIComponent[];
+}): void {
+  const next: UISpec = { ...cache };
+  if (library.designSystem !== undefined) {
+    next.designSystem = library.designSystem;
+  }
+  if (library.components !== undefined) {
+    const errors = validateComponentList(library.components);
+    if (errors.length) throw new Error(errors.join('; '));
+    next.components = library.components;
+  }
+  setUIMockFromServer(next);
+}
+
+// Stamp a component template into a screen (fresh node ids, grouped, offset
+// to x/y). Returns the inserted node ids + group id for follow-up edits.
+export function insertUIComponentFromServer(
+  componentId: string,
+  screenId: string,
+  opts?: { x?: number; y?: number },
+): { nodeIds: string[]; groupId: string } {
+  const result = instantiateComponentInSpec(cache, componentId, screenId, opts);
+  setUIMockFromServer(result.spec);
+  return { nodeIds: result.nodeIds, groupId: result.groupId };
 }
