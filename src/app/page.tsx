@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import AgentPanel from '@/components/AgentPanel';
 import AppTopBar from '@/components/AppTopBar';
@@ -19,6 +19,8 @@ import { cn } from '@/lib/utils';
 
 const Terminal = dynamic(() => import('@/components/Terminal'), { ssr: false });
 
+const LS_AGENT_WIDTH = 'TANGO_AGENT_SIDEBAR_WIDTH';
+
 // Kick the chunk download immediately on page load instead of waiting for the
 // workspace fetch to resolve and the component to mount — the dynamic() above
 // stays as the SSR boundary (xterm dies on SSR), this just warms the cache.
@@ -33,6 +35,11 @@ function HomeBody() {
   const [terminalAgent, setTerminalAgent] = useState<TerminalAgentId>(
     DEFAULT_TERMINAL_AGENT,
   );
+
+  const [agentWidth, setAgentWidth] = useState(400);
+  const [isResizing, setIsResizing] = useState(false);
+  const agentWidthRef = useRef(400);
+  const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   const workspaceReady = current != null && current.path != null;
 
@@ -50,6 +57,46 @@ function HomeBody() {
   useEffect(() => {
     void refreshTerminalAgent();
   }, [refreshTerminalAgent]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(LS_AGENT_WIDTH);
+    if (saved) {
+      const n = parseInt(saved, 10);
+      if (n >= 280 && n <= 900) {
+        setAgentWidth(n);
+        agentWidthRef.current = n;
+      }
+    }
+  }, []);
+
+  useEffect(() => () => cleanupResizeRef.current?.(), []);
+
+  function handleResizeStart(e: React.PointerEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = agentWidthRef.current;
+    setIsResizing(true);
+    document.body.style.cursor = 'col-resize';
+
+    function move(ev: PointerEvent) {
+      const next = Math.max(280, Math.min(900, startW + ev.clientX - startX));
+      agentWidthRef.current = next;
+      setAgentWidth(next);
+    }
+
+    function end() {
+      setIsResizing(false);
+      document.body.style.cursor = '';
+      localStorage.setItem(LS_AGENT_WIDTH, String(agentWidthRef.current));
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', end);
+      cleanupResizeRef.current = null;
+    }
+
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    cleanupResizeRef.current = end;
+  }
 
   // Canvas tasks auto-expand a collapsed sidebar: the agent panel stays
   // mounted while collapsed (so delivery already works) — this makes the
@@ -97,11 +144,13 @@ function HomeBody() {
             focus() on reconnect a no-op while hidden. */}
         <aside
           inert={!terminalOpen}
+          style={terminalOpen ? { width: agentWidth } : undefined}
           className={cn(
-            'h-full shrink-0 overflow-hidden bg-background transition-[width] duration-200 ease-out',
-            terminalOpen
-              ? 'w-[35vw] min-w-[320px] border-r border-border'
-              : 'w-0',
+            'h-full shrink-0 overflow-hidden bg-background',
+            terminalOpen ? '' : 'w-0',
+            isResizing
+              ? 'transition-none'
+              : 'transition-[width] duration-200 ease-out',
           )}
         >
           {workspaceReady ? (
@@ -122,6 +171,12 @@ function HomeBody() {
             <TerminalPlaceholder terminalAgent={terminalAgent} />
           )}
         </aside>
+        {terminalOpen && (
+          <div
+            className="z-10 w-1 shrink-0 cursor-col-resize select-none bg-border transition-colors hover:bg-primary/40 active:bg-primary/60"
+            onPointerDown={handleResizeStart}
+          />
+        )}
         <section className="min-w-[400px] flex-1 bg-card">
           {workspaceReady ? (
             <UIPanel terminalAgent={terminalAgent} />
