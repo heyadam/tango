@@ -55,6 +55,10 @@ import { getHook } from './serverHooks';
 import type { UISpec } from '@/lib/uiMockProtocol';
 
 export const GENERATED_DIR_NAME = 'TangoGenerated';
+// Pre-export originals, one mirror path per modified file. Superseded PER
+// FILE when that file is next modified — never wiped wholesale: a retry
+// after a failed build must not destroy the only copy of a hand-written
+// body the failed run had just replaced.
 export const BACKUP_DIR = path.join('.tango', 'export-backup');
 
 export type GeneratedDirInclusion = 'fs-synced' | 'manual-add-required';
@@ -318,8 +322,10 @@ function spliceFailureReason(
   switch (reason) {
     case 'struct-not-found':
       return `no struct named ${candidates.join(' / ')} in ${file} — re-import the screen to relink it`;
+    case 'struct-ambiguous':
+      return `${file} declares several structs named ${struct} — rename one (or re-import) so the screen's target is unambiguous`;
     case 'body-not-found':
-      return `struct ${struct} in ${file} has no \`var body\` to replace`;
+      return `struct ${struct} in ${file} has no computed \`var body\` to replace`;
     default:
       return `couldn't safely parse ${file} around ${struct} (${reason}) — file left untouched`;
   }
@@ -370,9 +376,7 @@ export async function applyInPlaceExport(args: {
   const results: ScreenExportResult[] = [];
   const provenance = new Map<string, { sourceFile: string; sourceHash: string }>();
   const backedUp: string[] = [];
-
   const backupRoot = path.join(workspace, BACKUP_DIR);
-  await fsx.rmrf(backupRoot);
 
   // Linked screens, grouped by source file (several screens can live in one
   // file — TodoListView and AuthView both in ContentView.swift).
@@ -387,6 +391,17 @@ export async function applyInPlaceExport(args: {
       unlinked.push(screen);
     }
   }
+
+  // Legacy cleanup and the project-type scan run BEFORE the splice writes:
+  // both walk up to 2000 files, and sitting between the last linked-file
+  // write and the provenance restamp they could outlast the source-sync
+  // watcher's 300ms debounce — the chips would flap 'stale' against the
+  // not-yet-restamped hashes.
+  const legacy = await cleanupLegacyGenerated(sourceRoot, projectDir, fsx);
+  const newFileNames =
+    unlinked.length > 0
+      ? newScreenTypeNames(spec, await scanProjectTypes(projectDir, fsx))
+      : new Map<string, string>();
 
   // App-shell containers a DESIGN body never contains: a hand-written body
   // built around one of these is the app's navigation scaffolding, which the
@@ -567,10 +582,8 @@ export async function applyInPlaceExport(args: {
   // Canvas-born screens → fresh files at the source root, named clear of the
   // project's declared types, then linked so the next export splices in place.
   if (unlinked.length > 0) {
-    const projectTypes = await scanProjectTypes(projectDir, fsx);
-    const names = newScreenTypeNames(spec, projectTypes);
     for (const screen of unlinked) {
-      const typeName = names.get(screen.id)!;
+      const typeName = newFileNames.get(screen.id)!;
       const abs = path.join(sourceRoot, `${typeName}.swift`);
       const rel = path.relative(workspace, abs);
       if (await fsx.exists(abs)) {
@@ -600,7 +613,6 @@ export async function applyInPlaceExport(args: {
     }
   }
 
-  const legacy = await cleanupLegacyGenerated(sourceRoot, projectDir, fsx);
   return { results, provenance, backedUp, legacy };
 }
 

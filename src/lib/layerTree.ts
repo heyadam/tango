@@ -67,12 +67,17 @@ export function endDropIndex(screen: UIScreen, draggedId: string): number {
 }
 
 // Group-block variant of endDropIndex: end-of-z index after ALL of the
-// dragged group's members on this screen are removed (0 of them when the
-// group lives on another screen).
+// dragged group's members are removed from this screen. Group ids are only
+// unique PER SCREEN, so matching on the id alone isn't enough — members are
+// only being removed when this screen IS the drag's source screen
+// (`fromScreenId`). On a cross-screen drag, a same-id group here is the
+// target's own distinct group and nothing is removed.
 export function groupEndDropIndex(
   screen: UIScreen,
   draggedGroupId: string,
+  fromScreenId: string,
 ): number {
+  if (screen.id !== fromScreenId) return screen.nodes.length;
   return (
     screen.nodes.length -
     screen.nodes.filter((n) => n.group === draggedGroupId).length
@@ -81,20 +86,28 @@ export function groupEndDropIndex(
 
 // Insertion index for a GROUP BLOCK dropped relative to a reference node row,
 // in the array AFTER all the group's members are removed. Returns null when
-// the reference is a member of the dragged group (the panel ignores such
-// drops) or isn't on this screen. Works when the group lives on ANOTHER
-// screen too — then removedBelow is 0 by definition.
+// the reference isn't on this screen, or when this screen is the drag's
+// SOURCE screen (`fromScreenId`) and the reference is a member of the dragged
+// group (the panel ignores such drops). Group ids are only unique PER SCREEN:
+// on a cross-screen drag nothing is being removed here, so removedBelow is 0
+// and a reference tagged with the SAME id (the target's own distinct group)
+// is a legal reference — though the panel never offers grouped rows as
+// group-drop refs anyway.
 export function groupDropIndexFor(
   screen: UIScreen,
   refNodeId: string,
   edge: 'above' | 'below',
   draggedGroupId: string,
+  fromScreenId: string,
 ): number | null {
   const iRef = screen.nodes.findIndex((n) => n.id === refNodeId);
-  if (iRef === -1 || screen.nodes[iRef].group === draggedGroupId) return null;
-  const removedBelow = screen.nodes.filter(
-    (n, i) => i < iRef && n.group === draggedGroupId,
-  ).length;
+  if (iRef === -1) return null;
+  const sameScreen = screen.id === fromScreenId;
+  if (sameScreen && screen.nodes[iRef].group === draggedGroupId) return null;
+  const removedBelow = sameScreen
+    ? screen.nodes.filter((n, i) => i < iRef && n.group === draggedGroupId)
+        .length
+    : 0;
   const afterRemoval = iRef - removedBelow;
   return edge === 'above' ? afterRemoval + 1 : afterRemoval;
 }

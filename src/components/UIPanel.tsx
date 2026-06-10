@@ -142,10 +142,28 @@ export default function UIPanel({ terminalAgent }: Props) {
     setLoad({ status: 'ready', initialSpec: initial });
   }, [generation]);
 
+  // Called synchronously on EVERY canvas commit (so specRef is always live —
+  // Export & Run ships it with the POST). localStorage gets its own short
+  // debounce: a whole-spec JSON.stringify per native input event (color
+  // picker drags fire continuously) is real jank for a store that's only
+  // read back at mount.
+  const persistTimer = useRef<number | null>(null);
   const persist = useCallback((spec: UISpec) => {
     specRef.current = spec;
     setScreenCount(spec.screens.length);
-    uiMockStore.save(spec);
+    if (persistTimer.current !== null) window.clearTimeout(persistTimer.current);
+    persistTimer.current = window.setTimeout(() => {
+      persistTimer.current = null;
+      uiMockStore.save(specRef.current);
+    }, 250);
+  }, []);
+  useEffect(() => {
+    return () => {
+      if (persistTimer.current !== null) {
+        window.clearTimeout(persistTimer.current);
+        uiMockStore.save(specRef.current);
+      }
+    };
   }, []);
 
   // Working-screen reports from the canvas → server (drives the preview-host

@@ -41,12 +41,15 @@ import type { ReorderOp } from '@/lib/uiMockOps';
 import type { UINode, UIScreen } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
+// Group ids are only unique PER SCREEN ('group-1' exists on every screen
+// that ever grouped) — every group callback carries the owning screen id so
+// a collision can never address another screen's group.
 type Props = {
   screens: UIScreen[];
   selectedIds: string[];
   activeScreenId: string | null;
   onSelect: (id: string, additive: boolean) => void;
-  onSelectGroup: (groupId: string) => void;
+  onSelectGroup: (groupId: string, screenId: string) => void;
   onReorder: (id: string, op: ReorderOp) => void;
   onRemove: (id: string) => void;
   onMoveNode: (
@@ -58,10 +61,11 @@ type Props = {
   onMoveGroup: (
     groupId: string,
     targetIndex: number,
+    sourceScreenId: string,
     targetScreenId?: string,
   ) => void;
-  onRenameGroup: (groupId: string, name: string) => void;
-  onUngroup: (groupId: string) => void;
+  onRenameGroup: (groupId: string, name: string, screenId: string) => void;
+  onUngroup: (groupId: string, screenId: string) => void;
   onSelectScreen: (id: string) => void;
   onAiForScreen: (id: string) => void;
   onRemoveScreen: (id: string) => void;
@@ -170,18 +174,31 @@ export default function UILayersPanel({
     if (row.refNode !== undefined) {
       // Only ungrouped node rows — a block can't interleave another group.
       if (row.refNode.group) return null;
-      const idx = groupDropIndexFor(screen, row.refNode.id, edge, dragging.groupId);
+      const idx = groupDropIndexFor(
+        screen,
+        row.refNode.id,
+        edge,
+        dragging.groupId,
+        dragging.screenId,
+      );
       if (idx === null) return null;
       return { screenId: screen.id, rowKey: row.rowKey, edge, targetIndex: idx, group: null };
     }
-    // Another group's header: land the block above/below that block.
-    if (row.groupId === undefined || row.groupId === dragging.groupId) return null;
+    // Another group's header: land the block above/below that block. A
+    // SAME-ID group on a different screen is a different group — only the
+    // dragged group's own header is excluded.
+    if (
+      row.groupId === undefined ||
+      (row.groupId === dragging.groupId && screen.id === dragging.screenId)
+    ) {
+      return null;
+    }
     const members = [...screen.nodes]
       .reverse()
       .filter((n) => n.group === row.groupId);
     if (members.length === 0) return null;
     const ref = edge === 'above' ? members[0] : members[members.length - 1];
-    const idx = groupDropIndexFor(screen, ref.id, edge, dragging.groupId);
+    const idx = groupDropIndexFor(screen, ref.id, edge, dragging.groupId, dragging.screenId);
     if (idx === null) return null;
     return { screenId: screen.id, rowKey: row.rowKey, edge, targetIndex: idx, group: null };
   };
@@ -219,7 +236,7 @@ export default function UILayersPanel({
             screenId: screen.id,
             rowKey: `s:${screen.id}`,
             edge: 'into',
-            targetIndex: groupEndDropIndex(screen, dragging.groupId),
+            targetIndex: groupEndDropIndex(screen, dragging.groupId, dragging.screenId),
             group: null,
           };
     e.preventDefault();
@@ -238,7 +255,7 @@ export default function UILayersPanel({
       if (dragging.kind === 'node') {
         onMoveNode(dragging.nodeId, dropTarget.targetIndex, dropTarget.group, cross);
       } else {
-        onMoveGroup(dragging.groupId, dropTarget.targetIndex, cross);
+        onMoveGroup(dragging.groupId, dropTarget.targetIndex, dragging.screenId, cross);
       }
     }
     setDragging(null);
@@ -450,7 +467,7 @@ export default function UILayersPanel({
                             if (renaming === row.id) return;
                             e.stopPropagation();
                             if (e.detail >= 2) return; // double-click → rename
-                            onSelectGroup(row.id);
+                            onSelectGroup(row.id, screen.id);
                           }}
                           onDoubleClick={() => setRenaming(row.id)}
                           className={cn(
@@ -488,7 +505,9 @@ export default function UILayersPanel({
                               onBlur={(e) => {
                                 setRenaming(null);
                                 const v = e.target.value.trim();
-                                if (v && v !== row.name) onRenameGroup(row.id, v);
+                                if (v && v !== row.name) {
+                                  onRenameGroup(row.id, v, screen.id);
+                                }
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
@@ -513,7 +532,10 @@ export default function UILayersPanel({
                               allSelected && 'opacity-100',
                             )}
                           >
-                            <LayerAction label="Ungroup" onClick={() => onUngroup(row.id)}>
+                            <LayerAction
+                              label="Ungroup"
+                              onClick={() => onUngroup(row.id, screen.id)}
+                            >
                               <Ungroup className="size-3.5" />
                             </LayerAction>
                           </span>

@@ -59,7 +59,7 @@ export function ScreenFileChip({
       title={
         sourceFile
           ? `Linked to ${sourceFile}\nImport reads it; Export & Run rewrites the View's body in place.${syncNote}`
-          : `No source file yet — Export & Run creates ${exportName} at the app source root.`
+          : `No source file yet — Export & Run creates a file like ${exportName} at the app source root (final name avoids the project's existing types).`
       }
       // Keep the copy click from also activating the screen via the row.
       onPointerDown={(e) => e.stopPropagation()}

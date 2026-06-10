@@ -326,8 +326,11 @@ export function moveUIGroupFromServer(
   groupId: string,
   targetIndex: number,
   targetScreenId?: string,
+  sourceScreenId?: string,
 ): void {
-  setUIMockFromServer(moveGroupInSpec(cache, groupId, targetIndex, targetScreenId));
+  setUIMockFromServer(
+    moveGroupInSpec(cache, groupId, targetIndex, targetScreenId, sourceScreenId),
+  );
 }
 
 export function groupUINodesFromServer(
@@ -338,12 +341,16 @@ export function groupUINodesFromServer(
   setUIMockFromServer(groupNodesInSpec(cache, screenId, nodeIds, opts));
 }
 
-export function ungroupUINodesFromServer(groupId: string): void {
-  setUIMockFromServer(ungroupNodesInSpec(cache, groupId));
+export function ungroupUINodesFromServer(groupId: string, screenId?: string): void {
+  setUIMockFromServer(ungroupNodesInSpec(cache, groupId, screenId));
 }
 
-export function renameUIGroupFromServer(groupId: string, name: string): void {
-  setUIMockFromServer(renameGroupInSpec(cache, groupId, name));
+export function renameUIGroupFromServer(
+  groupId: string,
+  name: string,
+  screenId?: string,
+): void {
+  setUIMockFromServer(renameGroupInSpec(cache, groupId, name, screenId));
 }
 
 // ── Design library mutations ────────────────────────────────────────────────

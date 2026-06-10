@@ -6,11 +6,12 @@
 // (single-line, multiline """, raw #"…"#) and string interpolation \(…),
 // which can carry arbitrarily nested braces/strings inside.
 //
-// Known, accepted lexing gap: Swift 5.7 bare regex literals (`/[a-z]"/`).
-// A regex literal containing a quote or brace could desync the scanner; they
-// are vanishingly rare in SwiftUI view files, and a desync surfaces as a
-// loud "couldn't locate" error — never a silent bad splice (replace only
-// happens when the struct, body, and both brace matches all resolve).
+// Known, accepted lexing gap: Swift 5.7 BARE regex literals (`/[a-z]"/`) —
+// indistinguishable from division without full parsing. Extended-delimiter
+// regexes (`#/…/#`) ARE lexed. As a backstop for any residual desync,
+// replaceStructBody re-locates the body in its own output and refuses to
+// return a splice whose interior isn't exactly what it inserted — a desync
+// surfaces as a loud failure, never a silently corrupted file.
 
 // ── code mask ───────────────────────────────────────────────────────────────
 
@@ -21,7 +22,10 @@ type Ctx =
   | { kind: 'code'; interp: boolean; parens: number }
   | { kind: 'line' }
   | { kind: 'block'; depth: number }
-  | { kind: 'string'; multi: boolean; hashes: number };
+  | { kind: 'string'; multi: boolean; hashes: number }
+  // Extended-delimiter regex literal: #/…/# (flag-free Swift 5.7+). Interior
+  // is masked so a `}` in a character class can't desync brace matching.
+  | { kind: 'regex'; hashes: number };
 
 // mask[i] === 1 ⇔ src[i] is plain top-level code: not comment, not string
 // content/delimiter, not interpolation interior.
@@ -57,6 +61,20 @@ export function codeMask(src: string): Uint8Array {
         ctx.depth -= 1;
         if (ctx.depth === 0) stack.pop();
         i += 2;
+        continue;
+      }
+      i += 1;
+      continue;
+    }
+
+    if (ctx.kind === 'regex') {
+      if (ch === '\\') {
+        i += 2; // escaped char inside the regex (\/ \# …)
+        continue;
+      }
+      if (ch === '/' && hashRun(i + 1) === ctx.hashes) {
+        stack.pop();
+        i += 1 + ctx.hashes;
         continue;
       }
       i += 1;
@@ -113,6 +131,11 @@ export function codeMask(src: string): Uint8Array {
       i += hashes + (multi ? 3 : 1);
       continue;
     }
+    if (hashes > 0 && src[i + hashes] === '/') {
+      stack.push({ kind: 'regex', hashes });
+      i += hashes + 1;
+      continue;
+    }
     if (ctx.interp) {
       if (ch === '(') ctx.parens += 1;
       else if (ch === ')') {
@@ -153,9 +176,11 @@ export type StructBodyLoc = {
 
 export type FindBodyFailure =
   | 'struct-not-found'
+  | 'struct-ambiguous'
   | 'struct-unbalanced'
   | 'body-not-found'
-  | 'body-unbalanced';
+  | 'body-unbalanced'
+  | 'splice-verify-failed';
 
 export type FindBodyResult =
   | { ok: true; loc: StructBodyLoc }
@@ -196,17 +221,38 @@ export function findViewStructBody(
 ): FindBodyResult {
   const mask = codeMask(src);
 
-  const structRe = /\bstruct\s+([A-Za-z_][A-Za-z0-9_]*)/g;
-  let structStart = -1;
-  let nameEnd = -1;
+  // Unicode identifier capture: ASCII-only classes would truncate `Café` to
+  // `Caf` and silently splice the wrong struct on an exact-name search.
+  const structRe = /\bstruct\s+([\p{ID_Start}_][\p{ID_Continue}_]*)/gu;
+  const matches: Array<{ start: number; nameEnd: number }> = [];
   for (const m of src.matchAll(structRe)) {
     if (!mask[m.index]) continue;
     if (m[1] !== structName) continue;
-    structStart = m.index;
-    nameEnd = m.index + m[0].length;
-    break;
+    matches.push({ start: m.index, nameEnd: m.index + m[0].length });
   }
-  if (structStart === -1) return { ok: false, reason: 'struct-not-found' };
+  if (matches.length === 0) return { ok: false, reason: 'struct-not-found' };
+
+  // Several same-named structs can coexist (a top-level View plus a
+  // namespaced `extension Screens { struct Detail … }`). Prefer the
+  // top-level (brace-depth-0) declaration; if that doesn't single one out,
+  // fail loudly rather than splice the first textual occurrence.
+  let chosen = matches[0];
+  if (matches.length > 1) {
+    let depth = 0;
+    let at = 0;
+    const depthAt = (index: number): number => {
+      for (; at < index; at++) {
+        if (!mask[at]) continue;
+        if (src[at] === '{') depth += 1;
+        else if (src[at] === '}') depth -= 1;
+      }
+      return depth;
+    };
+    const topLevel = matches.filter((m) => depthAt(m.start) === 0);
+    if (topLevel.length !== 1) return { ok: false, reason: 'struct-ambiguous' };
+    chosen = topLevel[0];
+  }
+  const { start: structStart, nameEnd } = chosen;
 
   // First code-position '{' after the name is the struct body — generic
   // params, inheritance clauses, and where-clauses carry no braces.
@@ -224,6 +270,7 @@ export function findViewStructBody(
   // `var body` at depth 1 of the struct (a nested type's body never matches).
   const bodyRe = /\bvar\s+body\b/g;
   let candidate = -1;
+  let candidateEnd = -1;
   for (const m of src.slice(structOpen + 1, structClose).matchAll(bodyRe)) {
     const at = structOpen + 1 + m.index;
     if (!mask[at]) continue;
@@ -235,19 +282,41 @@ export function findViewStructBody(
     }
     if (depth === 1) {
       candidate = at;
+      candidateEnd = at + m[0].length;
       break;
     }
   }
   if (candidate === -1) return { ok: false, reason: 'body-not-found' };
 
   let bodyOpen = -1;
-  for (let i = candidate; i < structClose; i++) {
+  for (let i = candidateEnd; i < structClose; i++) {
     if (mask[i] && src[i] === '{') {
       bodyOpen = i;
       break;
     }
   }
   if (bodyOpen === -1) return { ok: false, reason: 'body-not-found' };
+
+  // The `{` must belong to THIS declaration. A computed body only ever has a
+  // type annotation between `var body` and its block (`: some View`, generic
+  // brackets, optionals). A STORED `var body = …` (legal — it satisfies View)
+  // followed by another member would otherwise bind bodyOpen to that NEXT
+  // member's brace and splice generated code into it. Reject any span
+  // carrying an initializer, statement separator, attribute, or a fresh
+  // declaration keyword — better a loud body-not-found than a wrong-target
+  // splice.
+  let span = '';
+  for (let i = candidateEnd; i < bodyOpen; i++) {
+    if (mask[i]) span += src[i];
+  }
+  if (
+    /[=;@]/.test(span) ||
+    /\b(func|var|let|init|deinit|subscript|struct|class|enum|protocol|extension|typealias|case|import)\b/.test(
+      span,
+    )
+  ) {
+    return { ok: false, reason: 'body-not-found' };
+  }
   const bodyClose = matchBrace(src, mask, bodyOpen);
   if (bodyClose === -1 || bodyClose > structClose) {
     return { ok: false, reason: 'body-unbalanced' };
@@ -305,7 +374,49 @@ export function replaceStructBody(
     bodyIndent +
     '}' +
     src.slice(bodyClose + 1);
+
+  // Verify the splice against any residual lexer desync (the bare-regex gap,
+  // future Swift syntax): re-locate the body in OUR OWN OUTPUT and require
+  // its interior to be exactly what we inserted. A mismatch means the
+  // original location was wrong — refuse loudly, never hand back a
+  // corrupted file.
+  const check = findViewStructBody(next, structName);
+  if (
+    !check.ok ||
+    next.slice(check.loc.bodyOpen + 1, check.loc.bodyClose) !==
+      `\n${inner}\n${bodyIndent}`
+  ) {
+    return { ok: false, reason: 'splice-verify-failed' };
+  }
   return { ok: true, source: next, changed: next !== src };
+}
+
+/**
+ * Blank out the interior of every tango-marked body block — used by the
+ * design-system scanner so tango's own generated output (theme background
+ * colors, spacing) can't feed back into the next import's token extraction.
+ * Conservative: a marker whose enclosing block can't be resolved is left
+ * in place (over-counting beats mangling the scan input).
+ */
+export function stripTangoBodyBlocks(src: string): string {
+  let out = src;
+  for (let guard = 0; guard < 64; guard++) {
+    const idx = out.indexOf(BODY_MARKER);
+    if (idx === -1) break;
+    const mask = codeMask(out);
+    let open = -1;
+    for (let i = idx; i >= 0; i--) {
+      if (mask[i] && out[i] === '{') {
+        open = i;
+        break;
+      }
+    }
+    if (open === -1) break;
+    const close = matchBrace(out, mask, open);
+    if (close === -1 || close < idx) break;
+    out = out.slice(0, open + 1) + out.slice(close);
+  }
+  return out;
 }
 
 // ── tango body marker ───────────────────────────────────────────────────────
@@ -359,7 +470,7 @@ export function declaredTypeNames(src: string): Set<string> {
   const mask = codeMask(src);
   const out = new Set<string>();
   const re =
-    /\b(?:struct|class|enum|actor|protocol|typealias)\s+([A-Za-z_][A-Za-z0-9_]*)/g;
+    /\b(?:struct|class|enum|actor|protocol|typealias)\s+([\p{ID_Start}_][\p{ID_Continue}_]*)/gu;
   for (const m of src.matchAll(re)) {
     if (mask[m.index]) out.add(m[1]);
   }

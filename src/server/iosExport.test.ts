@@ -216,13 +216,35 @@ describe('applyInPlaceExport — linked screens', () => {
     });
   });
 
-  it('clears the previous backup dir at the start of each run', async () => {
+  it('keeps backups of files the current run leaves untouched (retry safety)', async () => {
     const { files, fsx } = memFs({
       '/repo/MyApp/ContentView.swift': CONTENT_VIEW,
-      [`/repo/${BACKUP_DIR}/MyApp/Stale.swift`]: 'old backup',
+      [`/repo/${BACKUP_DIR}/MyApp/Other.swift`]: 'untouched backup',
     });
     await run(linkedSpec(), fsx);
-    expect(files.has(`/repo/${BACKUP_DIR}/MyApp/Stale.swift`)).toBe(false);
+    expect(files.get(`/repo/${BACKUP_DIR}/MyApp/Other.swift`)).toBe('untouched backup');
+  });
+
+  it('a retry after a failed build never destroys the only pre-export original', async () => {
+    const { files, fsx } = memFs({ '/repo/MyApp/ContentView.swift': CONTENT_VIEW });
+    // Run 1 splices and backs up the hand-written original (then the build
+    // fails — irrelevant to applyInPlaceExport).
+    const first = await run(linkedSpec(), fsx);
+    expect(files.get(`/repo/${BACKUP_DIR}/MyApp/ContentView.swift`)).toBe(CONTENT_VIEW);
+    // Run 2 (the natural retry): the splice is now 'unchanged', no new
+    // backup is written — and the original must STILL be there.
+    const spec2: UISpec = {
+      screens: [
+        screen({
+          id: 'TodoListView',
+          sourceFile: 'MyApp/ContentView.swift',
+          sourceHash: first.provenance.get('TodoListView')!.sourceHash,
+        }),
+      ],
+    };
+    const second = await run(spec2, fsx);
+    expect(second.results[0].action).toBe('unchanged');
+    expect(files.get(`/repo/${BACKUP_DIR}/MyApp/ContentView.swift`)).toBe(CONTENT_VIEW);
   });
 
   it('splices several screens sharing one file in a single write', async () => {

@@ -109,12 +109,18 @@ describe('groupEndDropIndex', () => {
     [{ id: 'g', name: 'Pair' }],
   );
 
-  it('subtracts the dragged group members on this screen', () => {
-    expect(groupEndDropIndex(s, 'g')).toBe(2);
+  it('subtracts the dragged group members on a same-screen drag', () => {
+    expect(groupEndDropIndex(s, 'g', 'S')).toBe(2);
   });
 
   it('drops at the raw end when the group lives on another screen', () => {
-    expect(groupEndDropIndex(s, 'other')).toBe(4);
+    expect(groupEndDropIndex(s, 'other', 'T')).toBe(4);
+  });
+
+  it('does not subtract a same-id group owned by the target on a cross-screen drag', () => {
+    // 'g' exists on BOTH screens: the dragged group (from T) is a distinct
+    // group, so S's members are not being removed — raw end.
+    expect(groupEndDropIndex(s, 'g', 'T')).toBe(4);
   });
 });
 
@@ -126,23 +132,36 @@ describe('groupDropIndexFor', () => {
     [{ id: 'g', name: 'Pair' }],
   );
 
-  it('counts only members below the reference', () => {
+  it('counts only members below the reference on a same-screen drag', () => {
     // ref a (index 1): one member (g1) below → afterRemoval 0.
-    expect(groupDropIndexFor(s, 'a', 'below', 'g')).toBe(0);
-    expect(groupDropIndexFor(s, 'a', 'above', 'g')).toBe(1);
+    expect(groupDropIndexFor(s, 'a', 'below', 'g', 'S')).toBe(0);
+    expect(groupDropIndexFor(s, 'a', 'above', 'g', 'S')).toBe(1);
     // ref b (index 3): both members below → afterRemoval 1.
-    expect(groupDropIndexFor(s, 'b', 'below', 'g')).toBe(1);
-    expect(groupDropIndexFor(s, 'b', 'above', 'g')).toBe(2);
+    expect(groupDropIndexFor(s, 'b', 'below', 'g', 'S')).toBe(1);
+    expect(groupDropIndexFor(s, 'b', 'above', 'g', 'S')).toBe(2);
   });
 
   it('returns null when the reference is a member of the dragged group', () => {
-    expect(groupDropIndexFor(s, 'g1', 'above', 'g')).toBeNull();
-    expect(groupDropIndexFor(s, 'g2', 'below', 'g')).toBeNull();
+    expect(groupDropIndexFor(s, 'g1', 'above', 'g', 'S')).toBeNull();
+    expect(groupDropIndexFor(s, 'g2', 'below', 'g', 'S')).toBeNull();
+  });
+
+  it('returns null when the reference is not on this screen', () => {
+    expect(groupDropIndexFor(s, 'zz', 'above', 'g', 'S')).toBeNull();
+    expect(groupDropIndexFor(s, 'zz', 'above', 'g', 'T')).toBeNull();
   });
 
   it('applies no adjustment when the group lives on another screen', () => {
-    // No members of 'other' here → removedBelow is 0 by definition.
-    expect(groupDropIndexFor(s, 'g2', 'below', 'other')).toBe(2);
-    expect(groupDropIndexFor(s, 'g2', 'above', 'other')).toBe(3);
+    // No members of 'other' here, and fromScreenId differs anyway.
+    expect(groupDropIndexFor(s, 'g2', 'below', 'other', 'T')).toBe(2);
+    expect(groupDropIndexFor(s, 'g2', 'above', 'other', 'T')).toBe(3);
+  });
+
+  it('treats a same-id group owned by the target as ordinary nodes on a cross-screen drag', () => {
+    // Dragging 'g' from screen T: S's 'g' is a DIFFERENT group that is not
+    // being removed — its members are legal refs and never subtracted.
+    expect(groupDropIndexFor(s, 'g1', 'above', 'g', 'T')).toBe(1);
+    expect(groupDropIndexFor(s, 'b', 'below', 'g', 'T')).toBe(3);
+    expect(groupDropIndexFor(s, 'b', 'above', 'g', 'T')).toBe(4);
   });
 });

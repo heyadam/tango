@@ -93,9 +93,12 @@ export type UIScreen = {
   nodes: UINode[];
   // Editor-level groups (see UIGroup). Optional and absent when empty.
   groups?: UIGroup[];
-  // Workspace-relative Swift source this screen was imported from (provenance
-  // only). The export target is NEVER stored — always derived live via
-  // screenFileNames() in specToSwiftUI.ts (order-dependent dedupe).
+  // Workspace-relative Swift source this screen was imported from — both
+  // provenance AND the in-place export target: Export & Run rewrites this
+  // file's matching View body (and restamps the field after creating a new
+  // file for a screen that lacked one). Screens WITHOUT a sourceFile export
+  // to a derived new file (newScreenTypeNames in specToSwiftUI.ts — never
+  // stored; screenFileNames is the chip's client-side prediction of it).
   sourceFile?: string;
   // Content fingerprint (sha-256 prefix) of `sourceFile` at import time —
   // stamped by the import engine alongside sourceFile, never by hand. The

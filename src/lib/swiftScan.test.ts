@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   bodyHasMarker,
   bodyMarkerLine,
+  codeContainsWord,
   codeMask,
   declaredTypeNames,
   findViewStructBody,
   replaceStructBody,
+  stripTangoBodyBlocks,
 } from './swiftScan';
 
 // A realistic user file: two screen Views + a leaf component + an enum, with
@@ -255,6 +257,159 @@ describe('replaceStructBody', () => {
       ok: false,
       reason: 'struct-not-found',
     });
+  });
+});
+
+// Attacks confirmed by the adversarial review — every case here previously
+// produced a SILENT wrong-target or corrupting splice.
+describe('findViewStructBody — wrong-target hardening', () => {
+  it('refuses a STORED `var body` property instead of splicing the next member', () => {
+    const src = `struct StoredBodyView: View {
+  var body = AnyView(Text("stored"))
+
+  func helper() {
+    print("user logic")
+  }
+}`;
+    expect(findViewStructBody(src, 'StoredBodyView')).toEqual({
+      ok: false,
+      reason: 'body-not-found',
+    });
+    const rep = replaceStructBody(src, 'StoredBodyView', 'Text("NEW")');
+    expect(rep.ok).toBe(false);
+  });
+
+  it('refuses a stored body with a didSet observer block', () => {
+    const src = `struct ObservedView: View {
+  var body = Text("stored") {
+    didSet { print("changed") }
+  }
+}`;
+    expect(findViewStructBody(src, 'ObservedView')).toEqual({
+      ok: false,
+      reason: 'body-not-found',
+    });
+  });
+
+  it('refuses an annotation-only stored body followed by a function', () => {
+    const src = `struct Request {
+  var body: Data
+
+  func validate() -> Bool {
+    true
+  }
+}`;
+    expect(findViewStructBody(src, 'Request')).toEqual({
+      ok: false,
+      reason: 'body-not-found',
+    });
+  });
+
+  it('still accepts computed bodies with comments inside the annotation', () => {
+    const src = `struct Ok: View {
+  var body: /* the view */ some View {
+    Text("fine")
+  }
+}`;
+    const found = findViewStructBody(src, 'Ok');
+    expect(found.ok).toBe(true);
+  });
+
+  it('masks extended regex literals: a } inside #/…/# cannot desync the body braces', () => {
+    const src = `struct RegexView: View {
+  var body: some View {
+    let bad = text.firstMatch(of: #/[}]/#)
+    return Text("old")
+  }
+
+  func keepMe() {}
+}`;
+    const found = findViewStructBody(src, 'RegexView');
+    expect(found.ok).toBe(true);
+    if (!found.ok) return;
+    const inner = src.slice(found.loc.bodyOpen + 1, found.loc.bodyClose);
+    expect(inner).toContain('return Text("old")');
+    const rep = replaceStructBody(src, 'RegexView', 'Text("NEW")');
+    expect(rep.ok).toBe(true);
+    if (!rep.ok) return;
+    expect(rep.source).toContain('func keepMe() {}');
+    expect(rep.source).not.toContain(']/#)');
+  });
+
+  it('captures full Unicode identifiers — Café never matches a search for Caf', () => {
+    const src = `struct Café: View { var body: some View { Text("café") } }
+struct Caf: View { var body: some View { Text("caf") } }`;
+    const found = findViewStructBody(src, 'Caf');
+    expect(found.ok).toBe(true);
+    if (!found.ok) return;
+    expect(src.slice(found.loc.bodyOpen, found.loc.bodyClose)).toContain('caf');
+    expect(src.slice(found.loc.bodyOpen, found.loc.bodyClose)).not.toContain('café');
+    expect(declaredTypeNames(src).has('Café')).toBe(true);
+  });
+
+  it('prefers the top-level struct over a same-named nested one', () => {
+    const src = `extension Screens {
+  struct Detail: View {
+    var body: some View { Text("nested") }
+  }
+}
+
+struct Detail: View {
+  var body: some View { Text("top-level") }
+}`;
+    const found = findViewStructBody(src, 'Detail');
+    expect(found.ok).toBe(true);
+    if (!found.ok) return;
+    expect(src.slice(found.loc.bodyOpen, found.loc.bodyClose)).toContain('top-level');
+  });
+
+  it('fails loudly on truly ambiguous same-named structs', () => {
+    const src = `extension A { struct Detail: View { var body: some View { Text("a") } } }
+extension B { struct Detail: View { var body: some View { Text("b") } } }`;
+    expect(findViewStructBody(src, 'Detail')).toEqual({
+      ok: false,
+      reason: 'struct-ambiguous',
+    });
+  });
+});
+
+describe('stripTangoBodyBlocks', () => {
+  it('blanks marked body interiors and leaves the rest of the file intact', () => {
+    const src = `struct A: View {
+  var body: some View {
+    ${bodyMarkerLine('a')}
+    ZStack { Text("x").background(Color(red: 0.9, green: 0.9, blue: 0.8, opacity: 1)) }
+  }
+  func keep() -> Int { 7 }
+}
+struct B: View {
+  var body: some View {
+    Text("hand written").foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.3, opacity: 1))
+  }
+}`;
+    const out = stripTangoBodyBlocks(src);
+    expect(out).not.toContain('0.9');
+    expect(out).not.toContain('tango:body');
+    expect(out).toContain('func keep() -> Int { 7 }');
+    expect(out).toContain('hand written');
+    expect(out).toContain('0.3');
+  });
+
+  it('is a no-op without markers', () => {
+    const src = 'struct X: View { var body: some View { Text("a") } }';
+    expect(stripTangoBodyBlocks(src)).toBe(src);
+  });
+});
+
+describe('codeContainsWord', () => {
+  it('matches whole words at code positions only', () => {
+    const frag = `// TabView in a comment
+let s = "TabView in a string"
+Text("x").tabViewStyle(.page)
+TabViewStateThing()
+`;
+    expect(codeContainsWord(frag, ['TabView'])).toBeNull();
+    expect(codeContainsWord(`${frag}TabView { Text("t") }`, ['TabView'])).toBe('TabView');
   });
 });
 

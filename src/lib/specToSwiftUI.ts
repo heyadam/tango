@@ -92,12 +92,15 @@ export function screenTypeName(id: string, taken: Set<string>): string {
   return name;
 }
 
-// screenId → '<TypeName>.swift' for every screen in the spec — the DERIVED
-// new-file target a screen with no source tie would export to. The single
-// home for the order-dependent naming pass, shared by the export pipeline and
-// the title-row chip — derive it live from the spec, never store it. Seeded
-// with every identifier-shaped screen id so a new file can never collide with
-// a linked screen's own struct (import names screens after real View types).
+// screenId → '<TypeName>.swift' for every screen in the spec — the title-row
+// chip's PREDICTION of the new-file target a screen with no source tie would
+// export to. Derive it live from the spec, never store it. The export
+// pipeline itself names via newScreenTypeNames (which additionally dedupes
+// against the project's declared types — this spec-only derivation can't see
+// those, so the chip may read 'SettingsScreen' where export actually creates
+// 'SettingsScreen2'; the export result reports the real name). Seeded with
+// every identifier-shaped screen id so a new file can never collide with a
+// linked screen's own struct (import names screens after real View types).
 export function screenFileNames(spec: UISpec): Map<string, string> {
   const taken = new Set<string>(
     spec.screens.map((s) => s.id).filter((id) => SWIFT_IDENT_RE.test(id)),
