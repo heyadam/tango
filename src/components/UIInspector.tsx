@@ -6,7 +6,9 @@
 // export/preview use) and writes through the two styling channels — theme
 // tokens as className swaps (classTokens), arbitrary values as inline style —
 // so every edit round-trips through export and stays agent-readable.
-// Presentational: all mutations flow up via onApply → updateNodes.
+// Presentational: all mutations flow up via onApply → applyNodePatches
+// (patches computed inside the canvas's state updater, so same-tick edits
+// compose instead of clobbering).
 
 import { useEffect, useState } from 'react';
 import { Ban } from 'lucide-react';
@@ -29,7 +31,7 @@ import { cn } from '@/lib/utils';
 
 type Props = {
   nodes: UINode[];
-  onApply: (patches: Map<string, Partial<UINode>>) => void;
+  onApply: (ids: string[], fn: (node: UINode) => Partial<UINode>) => void;
 };
 
 // Which sections a node type supports. A section renders only when EVERY
@@ -60,9 +62,7 @@ export default function UIInspector({ nodes, onApply }: Props) {
   const homogeneous = nodes.every((n) => n.type === first.type);
 
   const apply = (fn: (node: UINode) => Partial<UINode>) => {
-    const patches = new Map<string, Partial<UINode>>();
-    for (const n of nodes) patches.set(n.id, fn(n));
-    onApply(patches);
+    onApply(nodes.map((n) => n.id), fn);
   };
 
   const lineLike = first.type === 'line' || first.type === 'arrow';

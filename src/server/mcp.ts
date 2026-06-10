@@ -51,6 +51,7 @@ import {
   readActiveDeviceFromServeSim,
   resolveActiveUdid,
 } from './iosBuild';
+import { tangoPort } from './config';
 import {
   type ControlResult,
   fetchAxSnapshot,
@@ -1084,7 +1085,7 @@ export function mountMcp(server: http.Server, mcpPath = '/mcp'): void {
             sessionIdGenerator: () => randomUUID(),
             // DNS rebinding protection — we're localhost-only.
             enableDnsRebindingProtection: true,
-            allowedHosts: ['localhost', '127.0.0.1', `localhost:${process.env.PORT ?? '3000'}`, `127.0.0.1:${process.env.PORT ?? '3000'}`],
+            allowedHosts: ['localhost', '127.0.0.1', `localhost:${tangoPort()}`, `127.0.0.1:${tangoPort()}`],
             onsessioninitialized: (newSid) => {
               transports[newSid] = { transport, mcpServer };
             },

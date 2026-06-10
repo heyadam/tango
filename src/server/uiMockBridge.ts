@@ -32,6 +32,7 @@ import {
   type ReorderOp,
 } from '@/lib/uiMockOps';
 import type { UINode } from '@/lib/uiMockProtocol';
+import { uiSpecSchema } from '@/lib/uiMockSchema';
 
 // Authoritative server-side cache of the design spec ("UI mock"). The
 // browser is the source of truth for
@@ -126,7 +127,21 @@ export function attachUIMock(ws: WebSocket): void {
     onMessage: (raw) => {
       const parsed = raw as UIMockClientMsg;
       if (parsed.type === 'snapshot' && parsed.spec) {
-        cache = parsed.spec;
+        // Validate before accepting: the cache fans out to the preview host
+        // and the write-behind persist, so a malformed client snapshot would
+        // poison both. Reject loudly and keep the last good spec.
+        const checked = uiSpecSchema.safeParse(parsed.spec);
+        if (!checked.success) {
+          console.warn(
+            '[ui-mock] rejected invalid snapshot:',
+            checked.error.issues
+              .slice(0, 3)
+              .map((i) => `${i.path.join('.')}: ${i.message}`)
+              .join('; '),
+          );
+          return;
+        }
+        cache = checked.data as UISpec;
         cacheChanged();
       } else if (parsed.type === 'viewport') {
         const w = Math.round(parsed.w);

@@ -21,7 +21,9 @@ import { cn } from '@/lib/utils';
 
 type Props = {
   nodes: UINode[];
-  onApply: (patches: Map<string, Partial<UINode>>) => void;
+  // Patches are computed per node INSIDE the canvas's state updater (see
+  // applyNodePatches in UIMockCanvas) so same-tick edits compose.
+  onApply: (ids: string[], fn: (node: UINode) => Partial<UINode>) => void;
 };
 
 // Literal class strings so the Tailwind JIT sees every swatch color. Shared
@@ -53,9 +55,7 @@ export default function UIShapeStyleBar({ nodes, onApply }: Props) {
   const widths = allLines ? [1, 2, 4] : [0, 1, 2, 4];
 
   const apply = (fn: (node: UINode) => Partial<UINode>) => {
-    const patches = new Map<string, Partial<UINode>>();
-    for (const n of nodes) patches.set(n.id, fn(n));
-    onApply(patches);
+    onApply(nodes.map((n) => n.id), fn);
   };
 
   return (

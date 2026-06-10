@@ -19,6 +19,7 @@ import { uiScreenSchema } from '@/lib/uiMockSchema';
 import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import { getHook } from './serverHooks';
 import { getWorkspaceOrNull } from './workspace';
+import { importModel } from './config';
 
 export type UiImportState =
   | { phase: 'idle' }
@@ -400,7 +401,7 @@ export type UiImportDeps = {
 
 function realCreateMessage(): UiImportDeps['createMessage'] {
   const client = new Anthropic();
-  const model = process.env.TANGO_IMPORT_MODEL ?? 'claude-opus-4-8';
+  const model = importModel();
   return async ({ system, tools, messages }) => {
     // Streaming keeps long generations under SDK HTTP timeouts; top-level
     // cache_control auto-marks the last cacheable block so each loop

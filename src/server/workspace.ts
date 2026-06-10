@@ -7,6 +7,7 @@ import {
   ensureTangoDir,
   type IosProjectStatus,
 } from './iosBuild';
+import { pinnedWorkspace } from './config';
 
 // The directory the terminal agent operates in: where the in-app terminal
 // lands, and where `.mcp.json` and `.claude/tango.md` are managed so the
@@ -1207,8 +1208,8 @@ export async function ensureWorkspace(
 export async function resolveWorkspaceAtBoot(
   loadPersisted: () => Promise<string | null>,
 ): Promise<{ path: string | null; source: WorkspaceSource }> {
-  const env = process.env.TANGO_WORKSPACE;
-  if (env && env.trim() !== '') {
+  const env = pinnedWorkspace();
+  if (env) {
     const abs = path.resolve(env);
     _setWorkspaceInternal(abs, 'env');
     return { path: abs, source: 'env' };

@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import type { DragEvent, MouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Button } from './ui/button';
 import { SHAPE_ICONS } from './UIAddPalette';
 import type { ReorderOp } from '@/lib/uiMockOps';
 import type { UINode, UIScreen } from '@/lib/uiMockProtocol';

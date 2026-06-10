@@ -526,6 +526,34 @@ export default function UIMockCanvas({
     [],
   );
 
+  // Inspector / style-bar channel: each patch is COMPUTED from the live node
+  // inside the state updater, not from the caller's (possibly stale) props —
+  // two edits landing in the same tick compose instead of the second
+  // clobbering the first. (`updateNodes` above stays for gesture commits,
+  // whose patches are origin+delta geometry and must NOT be re-derived from
+  // the live spec mid-flight.)
+  const applyNodePatches = useCallback(
+    (ids: string[], fn: (node: UINode) => Partial<UINode>) => {
+      const wanted = new Set(ids);
+      if (wanted.size === 0) return;
+      setSpec((prev) => ({
+        ...prev,
+        screens: prev.screens.map((screen) => {
+          if (!screen.nodes.some((n) => wanted.has(n.id))) return screen;
+          return {
+            ...screen,
+            nodes: screen.nodes.map((node) =>
+              wanted.has(node.id)
+                ? { ...node, ...fn(node), id: node.id }
+                : node,
+            ),
+          };
+        }),
+      }));
+    },
+    [],
+  );
+
   const deleteSelected = useCallback(() => {
     if (selectedIds.length === 0) return;
     const toDrop = new Set(selectedIds);
@@ -1797,7 +1825,7 @@ export default function UIMockCanvas({
             subsumes it) is closed. */}
         {!sidebarContainer && shapeSelection.length > 0 && !editingId && (
           <div className="pointer-events-auto absolute bottom-3 left-1/2 -translate-x-1/2">
-            <UIShapeStyleBar nodes={shapeSelection} onApply={updateNodes} />
+            <UIShapeStyleBar nodes={shapeSelection} onApply={applyNodePatches} />
           </div>
         )}
       </div>
@@ -1826,7 +1854,7 @@ export default function UIMockCanvas({
             </div>
             {selectedNodes.length > 0 && !editingId && (
               <div className="max-h-[55%] shrink-0 overflow-auto border-t border-border">
-                <UIInspector nodes={selectedNodes} onApply={updateNodes} />
+                <UIInspector nodes={selectedNodes} onApply={applyNodePatches} />
               </div>
             )}
           </div>,

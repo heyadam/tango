@@ -364,7 +364,6 @@ export default function UIPanel({ terminalAgent }: Props) {
       cancelled = true;
       if (timer != null) window.clearTimeout(timer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startPreview = useCallback(async () => {

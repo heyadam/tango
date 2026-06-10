@@ -8,6 +8,7 @@ import {
   designJsonPath,
   flushPendingPersist,
   loadSpecFromDisk,
+  migrateEnvelope,
   parseSpecFile,
   schedulePersist,
   serializeSpecFile,
@@ -74,8 +75,13 @@ describe('serializeSpecFile / parseSpecFile', () => {
     expect(parseSpecFile('42')).toBeNull();
   });
 
-  it('returns null for a version mismatch', () => {
+  it('returns null for an unknown (newer) version — never migrates down', () => {
     const raw = JSON.stringify({ version: 99, savedAt: SAVED_AT, spec: SPEC });
+    expect(parseSpecFile(raw)).toBeNull();
+  });
+
+  it('returns null for a non-numeric version', () => {
+    const raw = JSON.stringify({ version: '1', savedAt: SAVED_AT, spec: SPEC });
     expect(parseSpecFile(raw)).toBeNull();
   });
 
@@ -86,6 +92,18 @@ describe('serializeSpecFile / parseSpecFile', () => {
       spec: { screens: [{ id: 'x' }] },
     };
     expect(parseSpecFile(JSON.stringify(bad))).toBeNull();
+  });
+});
+
+describe('migrateEnvelope', () => {
+  it('passes a current-version envelope through untouched', () => {
+    const envelope = { version: 1, spec: SPEC };
+    expect(migrateEnvelope(envelope)).toEqual(envelope);
+  });
+
+  it('returns null when no migration path exists', () => {
+    expect(migrateEnvelope({ version: 0, spec: {} })).toBeNull();
+    expect(migrateEnvelope({ version: 99, spec: {} })).toBeNull();
   });
 });
 

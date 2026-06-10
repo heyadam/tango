@@ -3,6 +3,7 @@ import type { WebSocket } from 'ws';
 import { getWorkspaceOrNull } from './workspace';
 import { getTerminalAgent } from './workspaceState';
 import { registerHook } from './serverHooks';
+import { tangoPort } from './config';
 import { buildTerminalPtyEnv } from './ptyEnv';
 import {
   terminalAgentFromQuery,
@@ -59,8 +60,7 @@ export function attachPty(ws: WebSocket, requestedAgent?: unknown): void {
   }
   const shell = defaultShell();
   const agent = terminalAgentFromQuery(requestedAgent) ?? getTerminalAgent();
-  const rawPort = Number(process.env.TANGO_PORT ?? process.env.PORT ?? 3000);
-  const port = Number.isFinite(rawPort) && rawPort > 0 ? rawPort : 3000;
+  const port = tangoPort();
   const ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-256color',
     cols: 80,
