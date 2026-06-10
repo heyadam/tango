@@ -143,6 +143,11 @@ export function startSourceSync(): void {
   slot.workspace = ws;
   slot.signature = '';
   slot.statuses = {};
+  // Clear the previous workspace's statuses everywhere: the bridge's replay
+  // cache (new canvases must not inherit old badges) and connected browsers
+  // (recompute's change-detection compares against the just-reset {} and
+  // would otherwise stay silent when the new workspace has no linked screens).
+  broadcastSourceSync({});
   // The bridge pings on every cacheChanged; the signature short-circuit makes
   // the common case (geometry edits) free.
   _setSourceSyncSpecListener(() => void recompute(false));
