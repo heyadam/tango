@@ -576,3 +576,18 @@ describe('findNodeInSpec', () => {
     expect(findNodeInSpec(fixture(), 'zz')).toBeNull();
   });
 });
+
+describe('sourceHash provenance', () => {
+  it('duplicateScreenInSpec drops sourceHash along with sourceFile', () => {
+    const withProvenance = spec([
+      {
+        ...screen('A', [node('a1')]),
+        sourceFile: 'MyApp/A.swift',
+        sourceHash: 'abc123',
+      },
+    ]);
+    const out = duplicateScreenInSpec(withProvenance, 'A', 'A2');
+    expect('sourceFile' in out.screens[1]).toBe(false);
+    expect('sourceHash' in out.screens[1]).toBe(false);
+  });
+});

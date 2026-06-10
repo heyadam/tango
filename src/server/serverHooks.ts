@@ -33,6 +33,9 @@ export type ServerHooks = {
   setUiMockSpec?: (spec: UISpec) => void;
   // Number of connected /ws/preview clients (registered by previewBridge).
   previewClientCount?: () => number;
+  // (Re)point the source-sync watcher at the current workspace (registered by
+  // sourceSync in server.ts's graph; called by workspaceState on switch).
+  sourceSyncRestart?: () => void;
 };
 
 function getHooks(): ServerHooks {

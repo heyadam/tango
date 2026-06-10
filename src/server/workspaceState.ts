@@ -254,6 +254,9 @@ export async function setWorkspace(
     callHook('resetUiMock');
     callHook('broadcastWorkspaceChanged');
     callHook('agentBroadcastWorkspaceChanged');
+    // Re-point the Swift source watcher at the new workspace (resetUiMock's
+    // re-hydrate will trigger the first status recompute).
+    callHook('sourceSyncRestart');
   }
 
   if (ensureResult.ok) {

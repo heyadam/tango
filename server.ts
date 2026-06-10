@@ -6,6 +6,8 @@ import { WebSocketServer } from 'ws';
 import { attachPty } from './src/server/pty';
 import { attachAgent, warmAgentEngine } from './src/server/agentBridge';
 import { attachUIMock, hydrateUIMockFromDisk } from './src/server/uiMockBridge';
+import { startSourceSync } from './src/server/sourceSync';
+import { registerHook } from './src/server/serverHooks';
 import { flushPersistSync } from './src/server/uiMockPersist';
 import { attachPreview } from './src/server/previewBridge';
 import { mountMcp } from './src/server/mcp';
@@ -63,6 +65,13 @@ app.prepare().then(async () => {
     // server restart doesn't lose the canvas.
     await hydrateUIMockFromDisk();
   }
+
+  // Watch the workspace's Swift sources so linked screens can show "code
+  // changed since import". Re-pointed on workspace switch via the
+  // sourceSyncRestart hook; no-op (provenance-only recompute) if fs.watch
+  // is unavailable.
+  registerHook('sourceSyncRestart', startSourceSync);
+  startSourceSync();
 
   // Boot the iOS Simulator stream helper. No-op on non-darwin; failures
   // surface through /api/sim/status, not by crashing the server.

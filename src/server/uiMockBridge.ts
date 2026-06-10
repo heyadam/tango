@@ -81,6 +81,25 @@ function broadcast(msg: UIMockServerMsg): void {
   hub.broadcast(msg);
 }
 
+// ── source-sync coupling ────────────────────────────────────────────────────
+// sourceSync (same module graph) pushes statuses here for broadcast and
+// attach-time replay, and registers a listener so cacheChanged can ping it.
+// The bridge never imports sourceSync (that direction would be a cycle).
+
+let latestSourceSync: Record<string, import('@/lib/uiMockProtocol').SourceSyncStatus> = {};
+let sourceSyncSpecListener: (() => void) | null = null;
+
+export function broadcastSourceSync(
+  statuses: Record<string, import('@/lib/uiMockProtocol').SourceSyncStatus>,
+): void {
+  latestSourceSync = statuses;
+  broadcast({ type: 'source_sync', statuses });
+}
+
+export function _setSourceSyncSpecListener(fn: (() => void) | null): void {
+  sourceSyncSpecListener = fn;
+}
+
 // Keep activeScreenId pointing at a real screen: default to the first screen
 // when unset or stale.
 function reconcileActiveScreen(): void {
@@ -103,6 +122,9 @@ function cacheChanged(broadcastMsg?: UIMockServerMsg): void {
   broadcastPreviewSpec(cache, activeScreenId);
   const ws = getWorkspaceOrNull();
   if (ws) schedulePersist(ws, cache);
+  // Screen provenance may have changed (import stamped a hash, screen
+  // removed) — sourceSync short-circuits when it didn't.
+  sourceSyncSpecListener?.();
 }
 
 // Load the active workspace's persisted spec into the cache and tell every
@@ -166,11 +188,20 @@ export function attachUIMock(ws: WebSocket): void {
   // Send the current cache so a fresh client sees what AI has already written,
   // even if no other browser is open. The browser's own snapshot a moment
   // later will overwrite this with its localStorage-backed spec — fine, user
-  // state wins on tie.
+  // state wins on tie. Source-sync statuses replay too (they only broadcast
+  // on change, so a fresh client would otherwise start blank).
   try {
     ws.send(
       JSON.stringify({ type: 'set', spec: cache } satisfies UIMockServerMsg),
     );
+    if (Object.keys(latestSourceSync).length > 0) {
+      ws.send(
+        JSON.stringify({
+          type: 'source_sync',
+          statuses: latestSourceSync,
+        } satisfies UIMockServerMsg),
+      );
+    }
   } catch {
     // socket already gone
   }

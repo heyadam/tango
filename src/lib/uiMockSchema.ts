@@ -55,6 +55,7 @@ export const uiScreenSchema = z.object({
   nodes: z.array(uiNodeSchema),
   groups: z.array(uiGroupSchema).optional(),
   sourceFile: z.string().min(1).optional(),
+  sourceHash: z.string().min(1).optional(),
 });
 
 export const uiSpecSchema = z.object({
