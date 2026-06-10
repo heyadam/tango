@@ -15,6 +15,7 @@ import path from 'node:path';
 import { isSafeUdid, runCommand } from './iosBuild';
 import { resolveActiveUdid } from './iosBuild';
 import { getHook } from './serverHooks';
+import { tangoPort, tangoRepoRoot } from './config';
 
 export const PREVIEW_BUNDLE_ID = 'dev.tango.preview-host';
 
@@ -62,7 +63,7 @@ function fail(message: string): PreviewHostStatus {
 }
 
 function repoRoot(): string | null {
-  return process.env.TANGO_REPO_ROOT ?? null;
+  return tangoRepoRoot();
 }
 
 function derivedDataPath(): string {
@@ -166,7 +167,7 @@ export async function startPreviewHost(opts?: {
   });
 
   slot.status = { phase: 'launching' };
-  const port = process.env.TANGO_PORT ?? '3000';
+  const port = String(tangoPort());
   const launch = await runCommand(
     'xcrun',
     ['simctl', 'launch', udid, PREVIEW_BUNDLE_ID],

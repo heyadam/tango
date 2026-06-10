@@ -1,0 +1,47 @@
+# CI gates for every PR and push to main.
+#
+# Two jobs mirror the repo's two correctness surfaces:
+#   - node: tsc + eslint + the vitest suite (pure-logic coverage incl. the
+#     SwiftUI codegen golden files).
+#   - swift: `swiftc -typecheck` of the generated goldens AND the committed
+#     preview-host app against the iOS simulator SDK — this is the "one
+#     styling brain" convention from CLAUDE.md, enforced instead of remembered.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  node:
+    name: Typecheck, lint, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+
+  swift:
+    name: Swift typecheck (goldens + preview host)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Typecheck SwiftUI codegen goldens
+        run: |
+          set -euo pipefail
+          for dir in src/lib/__snapshots__/specToSwiftUI/*/; do
+            echo "── ${dir}"
+            xcrun -sdk iphonesimulator swiftc -typecheck \
+              -target arm64-apple-ios17.0-simulator "${dir}"*.swift
+          done
+      - name: Typecheck preview-host sources
+        run: |
+          xcrun -sdk iphonesimulator swiftc -typecheck \
+            -target arm64-apple-ios17.0-simulator preview-host/Sources/*.swift

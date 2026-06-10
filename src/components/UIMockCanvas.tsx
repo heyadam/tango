@@ -24,10 +24,7 @@
 // are not broadcast — see uiMockBridge), so there's no infinite ping-pong.
 
 import {
-  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
-  type RefObject,
-  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -37,23 +34,18 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Moveable from 'react-moveable';
-import type {
-  OnDrag,
-  OnDragEnd,
-  OnDragGroup,
-  OnDragGroupEnd,
-  OnDragGroupStart,
-  OnDragStart,
-  OnResize,
-  OnResizeEnd,
-  OnResizeGroup,
-  OnResizeGroupEnd,
-  OnResizeGroupStart,
-  OnResizeStart,
-} from 'react-moveable';
-import { Check, Maximize, Minus, Plus, Sparkles } from 'lucide-react';
-import UIMockNode from './UIMockNode';
-import UIAddPalette, { SHAPE_ICONS } from './UIAddPalette';
+import { Plus, Sparkles } from 'lucide-react';
+import NodeWrapper from './canvas/NodeWrapper';
+import { useCanvasCamera } from './canvas/useCanvasCamera';
+import { useDrawTool } from './canvas/useDrawTool';
+import { useMoveableGestures } from './canvas/useMoveableGestures';
+import {
+  EmptyState,
+  ScreenFileChip,
+  ShapeToolbar,
+  ZoomControls,
+} from './canvas/CanvasChrome';
+import UIAddPalette from './UIAddPalette';
 import UIAIPopout from './UIAIPopout';
 import UILayersPanel from './UILayersPanel';
 import { Button } from './ui/button';
@@ -61,6 +53,7 @@ import { uiMockBus } from '@/lib/uiMockBus';
 import type { ApplyMsg } from '@/lib/uiMockBus';
 import {
   addNodesToScreen,
+  findNodeInSpec,
   groupNodesInSpec,
   moveNodeInSpec,
   removeNodesFromSpec,
@@ -72,27 +65,10 @@ import {
 } from '@/lib/uiMockOps';
 import { screenFileNames } from '@/lib/specToSwiftUI';
 import type { AgentTask } from '@/lib/terminalBus';
-import {
-  NODE_DEFAULTS,
-  NODE_LABELS,
-  SHAPE_TYPE_ORDER,
-  isShapeType,
-  makeNode,
-} from '@/lib/uiMockDefaults';
-import { dropAtPoint, isLineTool, shapeFromDrag } from '@/lib/shapeDraw';
+import { NODE_DEFAULTS, isShapeType, makeNode } from '@/lib/uiMockDefaults';
+import { isLineTool } from '@/lib/shapeDraw';
 import UIShapeStyleBar from './UIShapeStyleBar';
 import UIInspector from './UIInspector';
-import {
-  MAX_ZOOM,
-  MIN_ZOOM,
-  type Camera,
-  clampZoom,
-  fitCamera,
-  normalizeWheelDelta,
-  panBy,
-  wheelZoomFactor,
-  zoomAtPoint,
-} from '@/lib/uiCanvasCamera';
 import {
   EMPTY_SPEC,
   type UINode,
@@ -180,25 +156,6 @@ export default function UIMockCanvas({
   // Same pattern for selection, so the popout openers stay dep-free.
   const selectedIdsRef = useRef(selectedIds);
   selectedIdsRef.current = selectedIds;
-
-  // Origin geometry stashed at drag/resize start, keyed by node id. The end
-  // handlers commit `origin + delta` rather than reading the live spec —
-  // otherwise a server-driven `set` arriving mid-drag would shift the base
-  // and the user's commit would land in a wildly wrong spot.
-  const dragOrigin = useRef<
-    Map<string, { x: number; y: number; width: number; height: number }>
-  >(new Map());
-
-  const stashOrigin = useCallback((id: string) => {
-    const node = findNode(specRef.current, id);
-    if (!node) return;
-    dragOrigin.current.set(id, {
-      x: node.x,
-      y: node.y,
-      width: node.width,
-      height: node.height,
-    });
-  }, []);
 
   // Tracks whether the next spec render came from a server-driven apply.
   // We bump this when an apply lands and skip one snapshot effect run — the
@@ -526,6 +483,34 @@ export default function UIMockCanvas({
     [],
   );
 
+  // Inspector / style-bar channel: each patch is COMPUTED from the live node
+  // inside the state updater, not from the caller's (possibly stale) props —
+  // two edits landing in the same tick compose instead of the second
+  // clobbering the first. (`updateNodes` above stays for gesture commits,
+  // whose patches are origin+delta geometry and must NOT be re-derived from
+  // the live spec mid-flight.)
+  const applyNodePatches = useCallback(
+    (ids: string[], fn: (node: UINode) => Partial<UINode>) => {
+      const wanted = new Set(ids);
+      if (wanted.size === 0) return;
+      setSpec((prev) => ({
+        ...prev,
+        screens: prev.screens.map((screen) => {
+          if (!screen.nodes.some((n) => wanted.has(n.id))) return screen;
+          return {
+            ...screen,
+            nodes: screen.nodes.map((node) =>
+              wanted.has(node.id)
+                ? { ...node, ...fn(node), id: node.id }
+                : node,
+            ),
+          };
+        }),
+      }));
+    },
+    [],
+  );
+
   const deleteSelected = useCallback(() => {
     if (selectedIds.length === 0) return;
     const toDrop = new Set(selectedIds);
@@ -670,205 +655,29 @@ export default function UIMockCanvas({
   }, [spec, popout]);
 
   // ── Camera (pan / zoom) ───────────────────────────────────────────────
-  // View-only: the content layer renders under translate+scale. Never enters
-  // the spec or the wire — see the header comment.
-  const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, zoom: 1 });
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  // True while a Moveable drag/resize is in flight — a camera move mid-gesture
-  // would invalidate the matrix Moveable snapshotted at gesture start.
-  const gestureActiveRef = useRef(false);
-  // Camera keyboard shortcuts only apply while the cursor is over the canvas
-  // (the listeners live on window to beat the browser's own Cmd+/− zoom).
-  const pointerOverRef = useRef(false);
-  // Flips on the first user camera move; auto-fit (mount, screens streaming
-  // in from an import) backs off once the user has taken the wheel.
-  const userMovedCameraRef = useRef(false);
-  // Space-held mounts the pan-capture overlay; grabbing tracks an active pan
-  // drag (space or middle-mouse) for the cursor.
-  const [spaceHeld, setSpaceHeld] = useState(false);
-  const [grabbing, setGrabbing] = useState(false);
-  const panLast = useRef<{ x: number; y: number } | null>(null);
-
-  // Zoom anchored at the viewport center (keyboard / toolbar zoom).
-  const zoomTo = useCallback((nextZoom: number) => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-    const point = { x: vp.clientWidth / 2, y: vp.clientHeight / 2 };
-    userMovedCameraRef.current = true;
-    setCamera((c) => zoomAtPoint(c, point, clampZoom(nextZoom)));
-  }, []);
-
-  const zoomStep = useCallback((factor: number) => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-    const point = { x: vp.clientWidth / 2, y: vp.clientHeight / 2 };
-    userMovedCameraRef.current = true;
-    setCamera((c) => zoomAtPoint(c, point, clampZoom(c.zoom * factor)));
-  }, []);
-
-  const fitToContent = useCallback(() => {
-    const vp = viewportRef.current;
-    const content = contentRef.current;
-    if (!vp || !content) return;
-    setCamera(
-      fitCamera(
-        { w: content.offsetWidth, h: content.offsetHeight },
-        { w: vp.clientWidth, h: vp.clientHeight },
-      ),
-    );
-  }, []);
-
-  // Pan drags capture on the *viewport* (not the element under the pointer)
-  // so the drag survives the space overlay unmounting mid-gesture. Capture is
-  // best-effort: without it the pan still works while the pointer stays over
-  // the canvas (move/up events bubble to the viewport's handlers).
-  const beginPan = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    try {
-      viewportRef.current?.setPointerCapture(e.pointerId);
-    } catch {
-      // pointer already gone — pan uncaptured
-    }
-    panLast.current = { x: e.clientX, y: e.clientY };
-    setGrabbing(true);
-  }, []);
-
-  const movePan = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    const last = panLast.current;
-    if (!last) return;
-    const dx = e.clientX - last.x;
-    const dy = e.clientY - last.y;
-    if (dx === 0 && dy === 0) return;
-    panLast.current = { x: e.clientX, y: e.clientY };
-    userMovedCameraRef.current = true;
-    setCamera((c) => panBy(c, dx, dy));
-  }, []);
-
-  const endPan = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!panLast.current) return;
-    panLast.current = null;
-    setGrabbing(false);
-    try {
-      viewportRef.current?.releasePointerCapture(e.pointerId);
-    } catch {
-      // capture already released
-    }
-  }, []);
-
-  const onViewportPointerDown = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (e.button === 1) {
-        // Middle-mouse pan; preventDefault suppresses platform autoscroll.
-        e.preventDefault();
-        beginPan(e);
-        return;
-      }
-      // Clicks landing on the viewport background (not on the content layer
-      // or a node) clear selection and exit text edit mode.
-      if (e.button === 0 && e.target === e.currentTarget) {
-        clearSelection();
-      }
-    },
-    [beginPan, clearSelection],
-  );
-
-  // Wheel: pinch (ctrlKey in Chromium/Firefox) or Cmd+wheel zooms toward the
-  // cursor; plain wheel pans. Native listener — React's root-level wheel
-  // handlers are passive, so preventDefault (needed to beat browser page
-  // zoom and back-swipe) wouldn't work through onWheel.
-  useEffect(() => {
-    const el = viewportRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (gestureActiveRef.current) return;
-      if (specRef.current.screens.length === 0) return;
-      const { dx, dy } = normalizeWheelDelta(e.deltaX, e.deltaY, e.deltaMode);
-      userMovedCameraRef.current = true;
-      if (e.ctrlKey || e.metaKey) {
-        const rect = el.getBoundingClientRect();
-        const point = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-        setCamera((c) =>
-          zoomAtPoint(c, point, clampZoom(c.zoom * wheelZoomFactor(dy))),
-        );
-      } else if (e.shiftKey && dx === 0) {
-        // Shift+wheel on a mouse: vertical notches pan horizontally.
-        setCamera((c) => panBy(c, -dy, 0));
-      } else {
-        setCamera((c) => panBy(c, -dx, -dy));
-      }
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, []);
-
-  // Space-held pan mode. Cleared on keyup and window blur (Cmd+Tab while
-  // holding space would otherwise leave the overlay stuck on).
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || e.repeat) return;
-      if (editingId) return;
-      if (isTypingTarget(e.target)) return;
-      if (!pointerOverRef.current) return;
-      e.preventDefault();
-      setSpaceHeld(true);
-    };
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.code === 'Space') setSpaceHeld(false);
-    };
-    const onBlur = () => setSpaceHeld(false);
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
-    window.addEventListener('blur', onBlur);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
-      window.removeEventListener('blur', onBlur);
-    };
-  }, [editingId]);
-
-  // Camera shortcuts: Cmd/Ctrl +/−/0, Shift+1 = fit. preventDefault beats the
-  // browser's page zoom — which is why these are scoped to cursor-over-canvas.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (editingId || isTypingTarget(e.target)) return;
-      if (!pointerOverRef.current || gestureActiveRef.current) return;
-      if (specRef.current.screens.length === 0) return;
-      const mod = e.metaKey || e.ctrlKey;
-      if (mod && (e.key === '=' || e.key === '+')) {
-        e.preventDefault();
-        zoomStep(1.25);
-      } else if (mod && e.key === '-') {
-        e.preventDefault();
-        zoomStep(1 / 1.25);
-      } else if (mod && e.key === '0') {
-        e.preventDefault();
-        zoomTo(1);
-      } else if (e.shiftKey && e.code === 'Digit1') {
-        e.preventDefault();
-        fitToContent();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [editingId, zoomStep, zoomTo, fitToContent]);
-
-  // Zoom-to-fit when content appears (mount with a spec, Clear → re-import),
-  // and as screens stream in from an import — until the user moves the
-  // camera. Keyed on screen count, not the spec, so node edits never refit.
-  // Layout effect: the content layer mounts in this same render and must be
-  // measured before paint.
+  // Extracted to useCanvasCamera — view-only state; never enters the spec.
   const screenCount = spec.screens.length;
-  useLayoutEffect(() => {
-    if (screenCount === 0) {
-      // Content went away — reset so the next content auto-fits again.
-      userMovedCameraRef.current = false;
-      setCamera({ x: 0, y: 0, zoom: 1 });
-      return;
-    }
-    if (userMovedCameraRef.current) return;
-    fitToContent();
-  }, [screenCount, fitToContent]);
+  const {
+    camera,
+    viewportRef,
+    contentRef,
+    gestureActiveRef,
+    pointerOverRef,
+    spaceHeld,
+    grabbing,
+    zoomTo,
+    zoomStep,
+    fitToContent,
+    beginPan,
+    movePan,
+    endPan,
+    onViewportPointerDown,
+  } = useCanvasCamera({
+    editingId,
+    screenCount,
+    specRef,
+    onBackgroundClick: clearSelection,
+  });
 
   // Moveable doesn't watch ancestor transforms (its observers only cover the
   // target's own size/style) — re-read rects so the selection overlay tracks
@@ -895,145 +704,37 @@ export default function UIMockCanvas({
   }, []);
 
   // ── Draw tools (vector shapes) ────────────────────────────────────────
-  // An armed shape tool mounts a crosshair overlay (below the space-pan
-  // overlay, so space+drag still pans). Pointer down hit-tests the screen
-  // frames through screenRefs; drag coords convert client → frame-local by
-  // dividing by camera.zoom (getBoundingClientRect already includes the
-  // transform). One-shot: committing a draw disarms back to select.
-  const [tool, setTool] = useState<UINodeType | null>(null);
-  const toolRef = useRef(tool);
-  toolRef.current = tool;
-  // Live rubber-band rect, in draw-overlay (screen-space) coords.
-  const [rubber, setRubber] = useState<{
-    start: { x: number; y: number };
-    cur: { x: number; y: number };
-  } | null>(null);
-  const drawSession = useRef<{
-    screenId: string;
-    // Client-space rect of the screen frame at gesture start.
-    frameRect: { left: number; top: number };
-    // Client-space rect of the overlay (rubber-band coordinate origin).
-    overlayRect: { left: number; top: number };
-    startClient: { x: number; y: number };
-    shift: boolean;
-  } | null>(null);
-
-  const armTool = useCallback((type: UINodeType) => {
-    setTool((prev) => (prev === type ? null : type));
-  }, []);
-
-  const cancelDraw = useCallback(() => {
-    drawSession.current = null;
-    gestureActiveRef.current = false;
-    setRubber(null);
-  }, []);
-
-  const onDrawPointerDown = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (e.button !== 0 || !toolRef.current) return;
-      // Hit-test the screen frames (client space — rects include the camera).
-      let hit: { id: string; rect: DOMRect } | null = null;
-      for (const [id, el] of screenRefs.current) {
-        const rect = el.getBoundingClientRect();
-        if (
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom
-        ) {
-          hit = { id, rect };
-          break;
-        }
-      }
-      if (!hit) return;
-      e.preventDefault();
-      const overlayRect = e.currentTarget.getBoundingClientRect();
+  // Extracted to useDrawTool; the canvas owns the spec/selection commit.
+  const commitDrawnNode = useCallback(
+    (screenId: string, node: UINode) => {
       try {
-        e.currentTarget.setPointerCapture(e.pointerId);
-      } catch {
-        // pointer already gone — draw uncaptured
-      }
-      drawSession.current = {
-        screenId: hit.id,
-        frameRect: { left: hit.rect.left, top: hit.rect.top },
-        overlayRect: { left: overlayRect.left, top: overlayRect.top },
-        startClient: { x: e.clientX, y: e.clientY },
-        shift: e.shiftKey,
-      };
-      // Suppress wheel-zoom / camera shortcuts mid-draw — a camera move would
-      // invalidate the frame rect captured above.
-      gestureActiveRef.current = true;
-      const start = {
-        x: e.clientX - overlayRect.left,
-        y: e.clientY - overlayRect.top,
-      };
-      setRubber({ start, cur: start });
-    },
-    [],
-  );
-
-  const onDrawPointerMove = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      const session = drawSession.current;
-      if (!session) return;
-      session.shift = e.shiftKey;
-      setRubber((prev) =>
-        prev
-          ? {
-              start: prev.start,
-              cur: {
-                x: e.clientX - session.overlayRect.left,
-                y: e.clientY - session.overlayRect.top,
-              },
-            }
-          : prev,
-      );
-    },
-    [],
-  );
-
-  const onDrawPointerUp = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      const session = drawSession.current;
-      const type = toolRef.current;
-      cancelDraw();
-      if (!session || !type) return;
-      const screen = specRef.current.screens.find(
-        (s) => s.id === session.screenId,
-      );
-      if (!screen) return;
-      const zoom = camera.zoom;
-      const toFrame = (clientX: number, clientY: number) => ({
-        x: (clientX - session.frameRect.left) / zoom,
-        y: (clientY - session.frameRect.top) / zoom,
-      });
-      const start = toFrame(session.startClient.x, session.startClient.y);
-      const end = toFrame(e.clientX, e.clientY);
-      const geom =
-        shapeFromDrag(type, start, end, {
-          shift: session.shift || e.shiftKey,
-          frame: screen.frame,
-        }) ??
-        // Click (or sub-minimum drag): drop the default size at the point.
-        dropAtPoint(NODE_DEFAULTS[type], start, screen.frame);
-      const node = makeNode(type, geom.x, geom.y);
-      node.width = geom.width;
-      node.height = geom.height;
-      if ('end' in geom && geom.end) {
-        node.props = { ...node.props, end: geom.end };
-      }
-      try {
-        setSpec(addNodesToScreen(specRef.current, screen.id, [node]));
+        setSpec(addNodesToScreen(specRef.current, screenId, [node]));
         setSelectedIds([node.id]);
         setEditingId(null);
-        reportActiveScreen(screen.id);
+        reportActiveScreen(screenId);
       } catch {
         // id collision is effectively impossible with a random uuid; ignore.
       }
-      setTool(null);
     },
-    [camera.zoom, cancelDraw, reportActiveScreen],
+    [reportActiveScreen],
   );
+
+  const {
+    tool,
+    rubber,
+    armTool,
+    disarm: disarmDrawTool,
+    cancelDraw,
+    onDrawPointerDown,
+    onDrawPointerMove,
+    onDrawPointerUp,
+  } = useDrawTool({
+    cameraZoom: camera.zoom,
+    screenRefs,
+    specRef,
+    gestureActiveRef,
+    onCommit: commitDrawnNode,
+  });
 
   // ── Keyboard ──────────────────────────────────────────────────────────
   // Lives below the camera + draw-tool sections: the handler reads
@@ -1061,8 +762,7 @@ export default function UIMockCanvas({
       }
       // Escape priority: armed draw tool → popout → selection.
       if (e.key === 'Escape' && tool) {
-        setTool(null);
-        cancelDraw();
+        disarmDrawTool();
         return;
       }
       // Escape closes the popout first, the selection second. (With focus in
@@ -1115,9 +815,10 @@ export default function UIMockCanvas({
     popout,
     tool,
     armTool,
-    cancelDraw,
+    disarmDrawTool,
     groupSelection,
     ungroupSelection,
+    pointerOverRef,
   ]);
 
   // ── AI island anchoring ───────────────────────────────────────────────
@@ -1209,7 +910,7 @@ export default function UIMockCanvas({
   const selectedNodes = useMemo(() => {
     const out: UINode[] = [];
     for (const id of selectedIds) {
-      const node = findNode(spec, id);
+      const node = findNodeInSpec(spec, id);
       if (node) out.push(node);
     }
     return out;
@@ -1245,259 +946,15 @@ export default function UIMockCanvas({
   }, [targetElements, spec]);
 
   // ── Drag / resize handlers ────────────────────────────────────────────
-  // During drag/resize we mutate the DOM directly for smoothness; on end we
-  // commit final geometry to spec (origin + delta) and pin the wrapper's
-  // inline left/top/width/height to the same values before queuing the spec
-  // update. Pinning matters: React's reconciler skips writing same-value
-  // style props, so a naive "clear inline overrides; let React's render
-  // restore" sequence ends up clearing whatever onResize/onDrag set without
-  // React putting anything back — the wrapper briefly has no width/height
-  // and collapses to its content's intrinsic size, which the user perceives
-  // as the element snapping to its original aspect ratio. The origin is
-  // captured on *Start so a server-driven `set` arriving mid-gesture can't
-  // shift the base.
-
-  // Restore the inline geometry of a target whose gesture didn't commit.
-  // React's prev-render tracked values match `origin`, so its diff would
-  // skip writing — we have to put the values back ourselves. Without an
-  // origin (gesture started outside our normal flow) we just clear the
-  // overrides and hope the next render touches the styles.
-  const restoreInlineGeometry = (
-    target: HTMLElement,
-    origin: { x: number; y: number; width: number; height: number } | undefined,
-  ) => {
-    target.style.transform = '';
-    if (origin) {
-      target.style.width = `${origin.width}px`;
-      target.style.height = `${origin.height}px`;
-      target.style.left = `${origin.x}px`;
-      target.style.top = `${origin.y}px`;
-    } else {
-      target.style.width = '';
-      target.style.height = '';
-    }
-  };
-
-  // The AI island hides for the duration of a gesture — imperatively, no
-  // setState mid-drag; the [spec]-keyed anchoring effect re-positions on
-  // commit.
-  const hideAiIsland = () => {
-    if (aiIslandRef.current) aiIslandRef.current.style.visibility = 'hidden';
-  };
-  const showAiIsland = () => {
-    if (aiIslandRef.current) aiIslandRef.current.style.visibility = '';
-  };
-
-  const onDragStart = useCallback(
-    (e: OnDragStart) => {
-      gestureActiveRef.current = true;
-      hideAiIsland();
-      const id = (e.target as HTMLElement).getAttribute('data-mock-id');
-      if (id) stashOrigin(id);
-    },
-    [stashOrigin],
-  );
-
-  const onDrag = useCallback((e: OnDrag) => {
-    e.target.style.transform = e.transform;
-  }, []);
-
-  const onDragEnd = useCallback(
-    (e: OnDragEnd) => {
-      gestureActiveRef.current = false;
-      showAiIsland();
-      const target = e.target as HTMLElement;
-      const id = target.getAttribute('data-mock-id');
-      if (!id) {
-        target.style.transform = '';
-        return;
-      }
-      const origin = dragOrigin.current.get(id);
-      dragOrigin.current.delete(id);
-      const last = e.isDrag
-        ? (e.lastEvent?.beforeTranslate as [number, number] | undefined)
-        : undefined;
-      if (!last || !origin) {
-        restoreInlineGeometry(target, origin);
-        return;
-      }
-      const newX = origin.x + last[0];
-      const newY = origin.y + last[1];
-      target.style.transform = '';
-      target.style.left = `${newX}px`;
-      target.style.top = `${newY}px`;
-      updateNode(id, { x: newX, y: newY });
-    },
-    [updateNode],
-  );
-
-  const onDragGroupStart = useCallback(
-    (e: OnDragGroupStart) => {
-      gestureActiveRef.current = true;
-      hideAiIsland();
-      for (const ev of e.events) {
-        const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
-        if (id) stashOrigin(id);
-      }
-    },
-    [stashOrigin],
-  );
-
-  const onDragGroup = useCallback((e: OnDragGroup) => {
-    for (const ev of e.events) {
-      ev.target.style.transform = ev.transform;
-    }
-  }, []);
-
-  const onDragGroupEnd = useCallback(
-    (e: OnDragGroupEnd) => {
-      gestureActiveRef.current = false;
-      showAiIsland();
-      const patches = new Map<string, Partial<UINode>>();
-      for (const ev of e.events) {
-        const target = ev.target as HTMLElement;
-        const id = target.getAttribute('data-mock-id');
-        const origin = id ? dragOrigin.current.get(id) : undefined;
-        if (id) dragOrigin.current.delete(id);
-        const last = e.isDrag
-          ? (ev.lastEvent?.beforeTranslate as [number, number] | undefined)
-          : undefined;
-        if (!id || !last || !origin) {
-          restoreInlineGeometry(target, origin);
-          continue;
-        }
-        const newX = origin.x + last[0];
-        const newY = origin.y + last[1];
-        target.style.transform = '';
-        target.style.left = `${newX}px`;
-        target.style.top = `${newY}px`;
-        patches.set(id, { x: newX, y: newY });
-      }
-      updateNodes(patches);
-    },
-    [updateNodes],
-  );
-
-  const onResizeStart = useCallback(
-    (e: OnResizeStart) => {
-      gestureActiveRef.current = true;
-      hideAiIsland();
-      const id = (e.target as HTMLElement).getAttribute('data-mock-id');
-      if (id) stashOrigin(id);
-    },
-    [stashOrigin],
-  );
-
-  const onResize = useCallback((e: OnResize) => {
-    e.target.style.width = `${e.width}px`;
-    e.target.style.height = `${e.height}px`;
-    e.target.style.transform = e.drag.transform;
-  }, []);
-
-  const onResizeEnd = useCallback(
-    (e: OnResizeEnd) => {
-      gestureActiveRef.current = false;
-      showAiIsland();
-      const target = e.target as HTMLElement;
-      const id = target.getAttribute('data-mock-id');
-      if (!id) {
-        target.style.transform = '';
-        target.style.width = '';
-        target.style.height = '';
-        return;
-      }
-      const origin = dragOrigin.current.get(id);
-      dragOrigin.current.delete(id);
-      const last = e.lastEvent;
-      const before = last?.drag?.beforeTranslate as
-        | [number, number]
-        | undefined;
-      const w = last ? Number(last.width) : NaN;
-      const h = last ? Number(last.height) : NaN;
-      if (
-        !origin ||
-        !before ||
-        !Number.isFinite(w) ||
-        !Number.isFinite(h)
-      ) {
-        restoreInlineGeometry(target, origin);
-        return;
-      }
-      const newW = Math.max(8, Math.round(w));
-      const newH = Math.max(8, Math.round(h));
-      const newX = origin.x + before[0];
-      const newY = origin.y + before[1];
-      target.style.transform = '';
-      target.style.width = `${newW}px`;
-      target.style.height = `${newH}px`;
-      target.style.left = `${newX}px`;
-      target.style.top = `${newY}px`;
-      updateNode(id, { x: newX, y: newY, width: newW, height: newH });
-    },
-    [updateNode],
-  );
-
-  const onResizeGroupStart = useCallback(
-    (e: OnResizeGroupStart) => {
-      gestureActiveRef.current = true;
-      hideAiIsland();
-      for (const ev of e.events) {
-        const id = (ev.target as HTMLElement).getAttribute('data-mock-id');
-        if (id) stashOrigin(id);
-      }
-    },
-    [stashOrigin],
-  );
-
-  const onResizeGroup = useCallback((e: OnResizeGroup) => {
-    for (const ev of e.events) {
-      ev.target.style.width = `${ev.width}px`;
-      ev.target.style.height = `${ev.height}px`;
-      ev.target.style.transform = ev.drag.transform;
-    }
-  }, []);
-
-  const onResizeGroupEnd = useCallback(
-    (e: OnResizeGroupEnd) => {
-      gestureActiveRef.current = false;
-      showAiIsland();
-      const patches = new Map<string, Partial<UINode>>();
-      for (const ev of e.events) {
-        const target = ev.target as HTMLElement;
-        const id = target.getAttribute('data-mock-id');
-        const origin = id ? dragOrigin.current.get(id) : undefined;
-        if (id) dragOrigin.current.delete(id);
-        const last = ev.lastEvent;
-        const before = last?.drag?.beforeTranslate as
-          | [number, number]
-          | undefined;
-        const w = last ? Number(last.width) : NaN;
-        const h = last ? Number(last.height) : NaN;
-        if (
-          !id ||
-          !origin ||
-          !before ||
-          !Number.isFinite(w) ||
-          !Number.isFinite(h)
-        ) {
-          restoreInlineGeometry(target, origin);
-          continue;
-        }
-        const newW = Math.max(8, Math.round(w));
-        const newH = Math.max(8, Math.round(h));
-        const newX = origin.x + before[0];
-        const newY = origin.y + before[1];
-        target.style.transform = '';
-        target.style.width = `${newW}px`;
-        target.style.height = `${newH}px`;
-        target.style.left = `${newX}px`;
-        target.style.top = `${newY}px`;
-        patches.set(id, { x: newX, y: newY, width: newW, height: newH });
-      }
-      updateNodes(patches);
-    },
-    [updateNodes],
-  );
+  // Extracted to useMoveableGestures (origin+delta commits, inline-geometry
+  // pinning — see the hook's header comment for the why).
+  const gestureHandlers = useMoveableGestures({
+    specRef,
+    gestureActiveRef,
+    aiIslandRef,
+    updateNode,
+    updateNodes,
+  });
 
   // ── Render ────────────────────────────────────────────────────────────
   const isEmpty = spec.screens.length === 0;
@@ -1651,18 +1108,7 @@ export default function UIMockCanvas({
           renderDirections={
             editingId ? [] : ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']
           }
-          onDragStart={onDragStart}
-          onDrag={onDrag}
-          onDragEnd={onDragEnd}
-          onDragGroupStart={onDragGroupStart}
-          onDragGroup={onDragGroup}
-          onDragGroupEnd={onDragGroupEnd}
-          onResizeStart={onResizeStart}
-          onResize={onResize}
-          onResizeEnd={onResizeEnd}
-          onResizeGroupStart={onResizeGroupStart}
-          onResizeGroup={onResizeGroup}
-            onResizeGroupEnd={onResizeGroupEnd}
+          {...gestureHandlers}
           />
         )}
 
@@ -1797,7 +1243,7 @@ export default function UIMockCanvas({
             subsumes it) is closed. */}
         {!sidebarContainer && shapeSelection.length > 0 && !editingId && (
           <div className="pointer-events-auto absolute bottom-3 left-1/2 -translate-x-1/2">
-            <UIShapeStyleBar nodes={shapeSelection} onApply={updateNodes} />
+            <UIShapeStyleBar nodes={shapeSelection} onApply={applyNodePatches} />
           </div>
         )}
       </div>
@@ -1826,324 +1272,12 @@ export default function UIMockCanvas({
             </div>
             {selectedNodes.length > 0 && !editingId && (
               <div className="max-h-[55%] shrink-0 overflow-auto border-t border-border">
-                <UIInspector nodes={selectedNodes} onApply={updateNodes} />
+                <UIInspector nodes={selectedNodes} onApply={applyNodePatches} />
               </div>
             )}
           </div>,
           sidebarContainer,
         )}
-    </div>
-  );
-}
-
-// Memoized: with uiMockOps preserving node identity for untouched nodes and
-// every callback prop useCallback-stable in the parent, a drag/selection
-// change re-renders only the affected nodes instead of the whole canvas.
-const NodeWrapper = memo(function NodeWrapper({
-  node,
-  isSelected,
-  isPulsing,
-  isEditing,
-  refsMap,
-  onPointerSelect,
-  onStartEditing,
-  onCommitText,
-  onEndEdit,
-}: {
-  node: UINode;
-  isSelected: boolean;
-  isPulsing: boolean;
-  isEditing: boolean;
-  refsMap: RefObject<Map<string, HTMLDivElement>>;
-  onPointerSelect: (id: string, mode: 'replace' | 'additive' | 'deep') => void;
-  onStartEditing: (id: string) => void;
-  onCommitText: (id: string, text: string) => void;
-  onEndEdit: () => void;
-}) {
-  // Callback ref keeps the refs map in sync with the live DOM. We register on
-  // mount and unregister on unmount; React calls the callback with `null` on
-  // unmount so the cleanup is automatic.
-  const setRef = useCallback(
-    (el: HTMLDivElement | null) => {
-      const map = refsMap.current;
-      if (!map) return;
-      if (el) {
-        map.set(node.id, el);
-      } else {
-        map.delete(node.id);
-      }
-    },
-    [node.id, refsMap],
-  );
-
-  const onPointerDown = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      // Don't kick selection while the user is editing text.
-      if (isEditing) return;
-      // Stop the canvas-level click-to-deselect from firing.
-      e.stopPropagation();
-      // Figma muscle memory: Shift adds, Cmd/Ctrl deep-selects past a group,
-      // plain click selects the node's whole group (resolved in the parent).
-      const mode = e.shiftKey ? 'additive' : e.metaKey || e.ctrlKey ? 'deep' : 'replace';
-      onPointerSelect(node.id, mode);
-    },
-    [isEditing, node.id, onPointerSelect],
-  );
-
-  const onDoubleClick = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      if (!isTextual(node)) return;
-      e.stopPropagation();
-      onStartEditing(node.id);
-    },
-    [node, onStartEditing],
-  );
-
-  const commitText = useCallback(
-    (text: string) => onCommitText(node.id, text),
-    [node.id, onCommitText],
-  );
-
-  const style: CSSProperties = {
-    position: 'absolute',
-    left: node.x,
-    top: node.y,
-    width: node.width,
-    height: node.height,
-  };
-
-  return (
-    <div
-      ref={setRef}
-      data-mock-id={node.id}
-      className={cn(
-        'box-border',
-        isSelected && 'ring-1 ring-ring/50',
-        isPulsing && 'outline outline-2 outline-primary/70',
-      )}
-      style={style}
-      onPointerDown={onPointerDown}
-      onDoubleClick={onDoubleClick}
-    >
-      <UIMockNode
-        node={node}
-        isEditing={isEditing}
-        onCommitText={commitText}
-        onEndEdit={onEndEdit}
-      />
-    </div>
-  );
-});
-
-// Directional provenance chip in the screen title row: '↓ <basename>' when
-// the screen was imported from a Swift source, else '↑ <TypeName>.swift' (the
-// derived export target). Click copies the relevant workspace-relative path.
-// Renders inside the transformed title row, so it scales with zoom — accepted
-// (informational only; all triggers live in screen space).
-function ScreenFileChip({
-  sourceFile,
-  exportName,
-}: {
-  sourceFile?: string;
-  exportName: string;
-}) {
-  const [copied, setCopied] = useState(false);
-  const timerRef = useRef<number | null>(null);
-  useEffect(() => {
-    return () => {
-      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
-    };
-  }, []);
-
-  return (
-    <button
-      type="button"
-      className="ml-2 inline-flex max-w-40 items-center gap-0.5 truncate align-bottom font-mono text-[10px] text-muted-foreground hover:text-foreground"
-      title={`Imported from: ${sourceFile ?? '—'}\nExports to: TangoGenerated/${exportName}`}
-      // Keep the copy click from also activating the screen via the row.
-      onPointerDown={(e) => e.stopPropagation()}
-      onClick={() => {
-        void navigator.clipboard.writeText(
-          sourceFile ?? `TangoGenerated/${exportName}`,
-        );
-        setCopied(true);
-        if (timerRef.current !== null) window.clearTimeout(timerRef.current);
-        timerRef.current = window.setTimeout(() => setCopied(false), 1200);
-      }}
-    >
-      {copied ? (
-        <>
-          <Check className="size-3" />
-          copied
-        </>
-      ) : sourceFile ? (
-        `↓ ${basename(sourceFile)}`
-      ) : (
-        `↑ ${exportName}`
-      )}
-    </button>
-  );
-}
-
-function basename(path: string): string {
-  const i = path.lastIndexOf('/');
-  return i === -1 ? path : path.slice(i + 1);
-}
-
-// Shared guard for the window-level key listeners: don't hijack keys headed
-// for a text edit or a focused control (space activates a focused button).
-function isTypingTarget(t: EventTarget | null): boolean {
-  const el = t as HTMLElement | null;
-  return Boolean(
-    el &&
-      (el.isContentEditable ||
-        el.tagName === 'INPUT' ||
-        el.tagName === 'TEXTAREA' ||
-        el.tagName === 'SELECT' ||
-        el.tagName === 'BUTTON'),
-  );
-}
-
-function findNode(spec: UISpec, id: string): UINode | null {
-  for (const screen of spec.screens) {
-    for (const node of screen.nodes) {
-      if (node.id === id) return node;
-    }
-  }
-  return null;
-}
-
-function isTextual(node: UINode): boolean {
-  return (
-    node.type === 'text' ||
-    node.type === 'heading' ||
-    node.type === 'Button' ||
-    node.type === 'Badge'
-  );
-}
-
-// Shape draw tools: click (or R/O/L) to arm, click again or Escape to disarm.
-// Armed state mounts the crosshair overlay in the canvas; committing a draw
-// disarms back to select (one-shot, like Figma).
-const SHAPE_SHORTCUTS: Partial<Record<UINodeType, string>> = {
-  rect: 'R',
-  ellipse: 'O',
-  line: 'L',
-  arrow: '⇧L',
-};
-
-function ShapeToolbar({
-  tool,
-  disabled,
-  onArm,
-}: {
-  tool: UINodeType | null;
-  disabled: boolean;
-  onArm: (type: UINodeType) => void;
-}) {
-  return (
-    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-0.5 text-secondary-foreground shadow-md">
-      {SHAPE_TYPE_ORDER.map((type) => {
-        const Icon = SHAPE_ICONS[type];
-        const shortcut = SHAPE_SHORTCUTS[type];
-        return (
-          <Button
-            key={type}
-            size="sm"
-            variant="ghost"
-            disabled={disabled}
-            className={cn(
-              'size-7 px-0',
-              tool === type &&
-                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
-            )}
-            onClick={() => onArm(type)}
-            title={`${NODE_LABELS[type]}${shortcut ? ` (${shortcut})` : ''}`}
-            aria-pressed={tool === type}
-          >
-            <Icon className="size-3.5" />
-          </Button>
-        );
-      })}
-    </div>
-  );
-}
-
-// Figma-style zoom readout: −/+ step around the viewport center, clicking
-// the percentage resets to 100%, Fit reframes the whole spec.
-function ZoomControls({
-  zoom,
-  disabled,
-  onZoomStep,
-  onZoomTo,
-  onFit,
-}: {
-  zoom: number;
-  disabled: boolean;
-  onZoomStep: (factor: number) => void;
-  onZoomTo: (zoom: number) => void;
-  onFit: () => void;
-}) {
-  return (
-    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-0.5 text-secondary-foreground shadow-md">
-      <Button
-        size="sm"
-        variant="ghost"
-        className="size-7 px-0"
-        disabled={disabled || zoom <= MIN_ZOOM}
-        onClick={() => onZoomStep(1 / 1.25)}
-        title="Zoom out (⌘−)"
-      >
-        <Minus className="size-3.5" />
-      </Button>
-      <button
-        type="button"
-        className="w-12 rounded-sm px-1 py-1 text-center font-mono text-[11px] tabular-nums hover:bg-secondary-foreground/10 disabled:pointer-events-none disabled:opacity-50"
-        disabled={disabled}
-        onClick={() => onZoomTo(1)}
-        title="Reset to 100% (⌘0)"
-      >
-        {Math.round(zoom * 100)}%
-      </button>
-      <Button
-        size="sm"
-        variant="ghost"
-        className="size-7 px-0"
-        disabled={disabled || zoom >= MAX_ZOOM}
-        onClick={() => onZoomStep(1.25)}
-        title="Zoom in (⌘+)"
-      >
-        <Plus className="size-3.5" />
-      </Button>
-      <Button
-        size="sm"
-        variant="ghost"
-        className="size-7 px-0"
-        disabled={disabled}
-        onClick={onFit}
-        title="Zoom to fit (⇧1)"
-      >
-        <Maximize className="size-3.5" />
-      </Button>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="flex h-full w-full items-center justify-center bg-background p-8 text-center text-sm text-muted-foreground">
-      <div className="max-w-md space-y-2">
-        <p className="font-medium text-foreground">UI mock is empty.</p>
-        <p>
-          Ask the terminal agent to{' '}
-          <span className="rounded bg-muted px-1 font-mono text-foreground/90">
-            “mock my settings page as a UI”
-          </span>{' '}
-          (or any other screen / flow). The agent will read your codebase and write
-          a shadcn-based mock here that you can drag, resize, and edit, then
-          send back as a reference for the real UI.
-        </p>
-      </div>
     </div>
   );
 }

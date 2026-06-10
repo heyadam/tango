@@ -24,8 +24,8 @@ import {
 } from 'lucide-react';
 import type { DragEvent, MouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Button } from './ui/button';
 import { SHAPE_ICONS } from './UIAddPalette';
+import { buildRows, dropIndexFor } from '@/lib/layerTree';
 import type { ReorderOp } from '@/lib/uiMockOps';
 import type { UINode, UIScreen } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
@@ -45,33 +45,6 @@ type Props = {
   onAiForScreen: (id: string) => void;
   onRemoveScreen: (id: string) => void;
 };
-
-// One displayed row: either an ungrouped node or a group block (the group's
-// members render nested under it). Blocks sit at their topmost member's z.
-type TreeRow =
-  | { kind: 'node'; node: UINode }
-  | { kind: 'group'; id: string; name: string; members: UINode[] };
-
-function buildRows(screen: UIScreen): TreeRow[] {
-  const rows: TreeRow[] = [];
-  const seen = new Set<string>();
-  const names = new Map((screen.groups ?? []).map((g) => [g.id, g.name]));
-  for (const node of [...screen.nodes].reverse()) {
-    if (node.group && names.has(node.group)) {
-      if (seen.has(node.group)) continue;
-      seen.add(node.group);
-      rows.push({
-        kind: 'group',
-        id: node.group,
-        name: names.get(node.group)!,
-        members: [...screen.nodes].reverse().filter((n) => n.group === node.group),
-      });
-    } else {
-      rows.push({ kind: 'node', node });
-    }
-  }
-  return rows;
-}
 
 type DropTarget = {
   screenId: string;
@@ -127,20 +100,6 @@ export default function UILayersPanel({
   };
 
   // ── drag-to-reorder plumbing ─────────────────────────────────────────────
-
-  // z-index (after removal of the dragged node) for a drop relative to a
-  // reference node. 'above' in the displayed (reverse-z) list = higher z.
-  const dropIndexFor = (
-    screen: UIScreen,
-    refNodeId: string,
-    edge: 'above' | 'below',
-    draggedId: string,
-  ): number => {
-    const iRef = screen.nodes.findIndex((n) => n.id === refNodeId);
-    const iDragged = screen.nodes.findIndex((n) => n.id === draggedId);
-    const afterRemoval = iRef - (iDragged !== -1 && iDragged < iRef ? 1 : 0);
-    return edge === 'above' ? afterRemoval + 1 : afterRemoval;
-  };
 
   const onRowDragOver = (
     e: DragEvent,

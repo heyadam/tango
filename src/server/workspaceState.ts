@@ -14,6 +14,7 @@ import {
   isTerminalAgentId,
   type TerminalAgentId,
 } from '@/lib/terminalAgent';
+import { stateDirOverride } from './config';
 
 // User-level state file that survives across server restarts. Lives at
 // ~/.tango/state.json so it's outside any workspace and not subject to a
@@ -45,7 +46,7 @@ function getTerminalAgentSlot(): TerminalAgentSlot {
 }
 
 function stateDir(): string {
-  return process.env.TANGO_STATE_DIR ?? path.join(os.homedir(), '.tango');
+  return stateDirOverride() ?? path.join(os.homedir(), '.tango');
 }
 
 function statePath(): string {

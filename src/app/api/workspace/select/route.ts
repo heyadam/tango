@@ -1,15 +1,13 @@
 import path from 'node:path';
 import { dryRunSetWorkspace, setWorkspace } from '@/server/workspaceState';
+import { tangoPort } from '@/server/config';
 
 type SelectBody = { path?: unknown; dryRun?: unknown };
 
 function getPort(): number {
   // server.ts stashes the port we listened on into TANGO_PORT before any
-  // route can run. Fall back to PORT / 3000 if someone wires this up
-  // differently (e.g., tests).
-  const raw = process.env.TANGO_PORT ?? process.env.PORT ?? '3000';
-  const n = Number(raw);
-  return Number.isFinite(n) && n > 0 ? n : 3000;
+  // route can run (see src/server/config.ts).
+  return tangoPort();
 }
 
 export async function POST(request: Request) {

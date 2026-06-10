@@ -21,6 +21,30 @@ import type { UISpec } from '@/lib/uiMockProtocol';
 const FILE_VERSION = 1;
 const PERSIST_DEBOUNCE_MS = 750;
 
+// ── schema migrations ───────────────────────────────────────────────────────
+// When a future change to the design.json shape isn't backwards-compatible,
+// bump FILE_VERSION and register `N: (envelope) => envelope` here to lift a
+// version-N envelope to version N+1. parseSpecFile chains them, so an old
+// file upgrades on first load instead of being quarantined. Purely-additive
+// schema changes (optional fields) do NOT need an entry — zod accepts them.
+// Files NEWER than FILE_VERSION are never migrated down: they quarantine
+// (design.invalid-*.json) rather than risk silently dropping fields written
+// by a newer tango.
+type Envelope = { version: number; spec: unknown };
+const MIGRATIONS: Record<number, (envelope: Envelope) => Envelope> = {
+  // e.g. 1: ({ spec }) => ({ version: 2, spec: liftV1toV2(spec) }),
+};
+
+export function migrateEnvelope(envelope: Envelope): Envelope | null {
+  let current = envelope;
+  while (current.version !== FILE_VERSION) {
+    const step = MIGRATIONS[current.version];
+    if (!step) return null; // unknown (likely newer) version — unusable
+    current = step(current);
+  }
+  return current;
+}
+
 export function designJsonPath(workspace: string): string {
   return path.join(workspace, '.tango', 'design.json');
 }
@@ -33,8 +57,9 @@ export function serializeSpecFile(spec: UISpec, savedAt: string): string {
   );
 }
 
-// Pure. Returns null for anything that isn't a valid v1 envelope carrying a
-// schema-valid spec — callers treat null as "no usable file".
+// Pure. Returns null for anything that isn't (or can't be migrated to) a
+// current-version envelope carrying a schema-valid spec — callers treat null
+// as "no usable file".
 export function parseSpecFile(raw: string): UISpec | null {
   let parsed: unknown;
   try {
@@ -46,8 +71,13 @@ export function parseSpecFile(raw: string): UISpec | null {
     return null;
   }
   const envelope = parsed as { version?: unknown; spec?: unknown };
-  if (envelope.version !== FILE_VERSION) return null;
-  const result = uiSpecSchema.safeParse(envelope.spec);
+  if (typeof envelope.version !== 'number') return null;
+  const migrated = migrateEnvelope({
+    version: envelope.version,
+    spec: envelope.spec,
+  });
+  if (!migrated) return null;
+  const result = uiSpecSchema.safeParse(migrated.spec);
   return result.success ? (result.data as UISpec) : null;
 }
 

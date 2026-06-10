@@ -40,6 +40,17 @@ export type ScreenLayers = {
 
 export type LayersOutline = { screens: ScreenLayers[] };
 
+// Find one node by id across all screens (null when absent). The canvas and
+// its gesture/draw hooks share this for ref-based lookups.
+export function findNodeInSpec(spec: UISpec, id: string): UINode | null {
+  for (const screen of spec.screens) {
+    for (const node of screen.nodes) {
+      if (node.id === id) return node;
+    }
+  }
+  return null;
+}
+
 function collectIds(spec: UISpec): Set<string> {
   const ids = new Set<string>();
   for (const screen of spec.screens) {

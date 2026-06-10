@@ -15,17 +15,22 @@ import type { WebSocket } from 'ws';
 import {
   query,
   startup,
-  type EffortLevel,
   type Options,
   type Query,
   type SDKMessage,
   type SDKUserMessage,
-  type SettingSource,
-  type ThinkingConfig,
   type WarmQuery,
 } from '@anthropic-ai/claude-agent-sdk';
 import type { AgentClientMsg, AgentServerMsg } from '@/lib/agentProtocol';
 import { summarizeToolInput, displayToolName } from '@/lib/agentProtocol';
+import {
+  agentEffort,
+  agentModel,
+  agentPrewarmDisabled,
+  agentSettingSourcesOptions,
+  agentThinkingOptions,
+  tangoPort,
+} from './config';
 import { getWorkspaceOrNull } from './workspace';
 import {
   getTerminalAgent,
@@ -62,22 +67,19 @@ const TANGO_SYSTEM_APPEND = [
   'Keep responses tight: a sentence or two between tool calls, a short summary at the end. The user is watching the canvas and simulator, not reading reports.',
 ].join(' ');
 
-function serverPort(): number {
-  const raw = Number(process.env.TANGO_PORT ?? process.env.PORT ?? 3000);
-  return Number.isFinite(raw) && raw > 0 ? raw : 3000;
-}
-
 async function buildOptions(workspace: string): Promise<Options> {
   const resume =
     (await loadPersistedAgentSession(workspace).catch(() => null)) ??
     undefined;
+  // Model / effort / thinking / settings rationale lives with the knobs in
+  // src/server/config.ts (speed-first defaults, benchmarked).
   return {
     cwd: workspace,
     resume,
     mcpServers: {
       'tango-canvas': {
         type: 'http',
-        url: terminalAgentMcpUrl(serverPort()),
+        url: terminalAgentMcpUrl(tangoPort()),
         // The canvas/iOS tools ARE the product surface — always in the
         // prompt, never deferred behind tool search (saves a ToolSearch hop
         // before the first canvas edit of a session).
@@ -95,37 +97,11 @@ async function buildOptions(workspace: string): Promise<Options> {
     allowDangerouslySkipPermissions: true,
     skills: 'all',
     includePartialMessages: true,
-    // Sonnet 4.6 by default: the interactive loop favors speed and cost over
-    // peak capability. Override per-machine with TANGO_AGENT_MODEL.
-    model: process.env.TANGO_AGENT_MODEL ?? 'claude-sonnet-4-6',
-    // The design loop wants snap over deliberation: low effort cuts the
-    // minutes-long thinking stretches before the first canvas mutation.
-    // Override per-machine with TANGO_AGENT_EFFORT (low|medium|high|max).
+    model: agentModel(),
     effort: agentEffort(),
-    // Extended thinking off by default: thinking tokens stream at a crawl on
-    // subscription accounts (~12-30 tok/s measured) — a single think block
-    // cost 3+ minutes before the first canvas edit, and benchmarks show the
-    // variations flow runs 5x faster without it (109s vs 578s, same tool
-    // sequence). TANGO_AGENT_THINKING=adaptive restores it.
-    ...(process.env.TANGO_AGENT_THINKING === 'adaptive'
-      ? {}
-      : { thinking: { type: 'disabled' } satisfies ThinkingConfig }),
-    // Workspace-scoped settings only: the user's global ~/.claude plugins,
-    // hooks, and skills don't belong in the embedded design agent (they
-    // bloat every turn and fire foreign hooks). Workspace CLAUDE.md /
-    // tango.md / .claude/skills still load. TANGO_AGENT_SETTINGS=all reverts.
-    ...(process.env.TANGO_AGENT_SETTINGS === 'all'
-      ? {}
-      : { settingSources: ['project', 'local'] satisfies SettingSource[] }),
+    ...agentThinkingOptions(),
+    ...agentSettingSourcesOptions(),
   };
-}
-
-function agentEffort(): EffortLevel {
-  const raw = process.env.TANGO_AGENT_EFFORT;
-  if (raw === 'low' || raw === 'medium' || raw === 'high' || raw === 'max') {
-    return raw;
-  }
-  return 'low';
 }
 
 // ── Warm spare ──────────────────────────────────────────────────────────────
@@ -152,7 +128,7 @@ function discardWarm(): void {
 // Pre-warm an engine for the current workspace. No-op unless the built-in
 // agent is selected and a workspace is set. Safe to call repeatedly.
 export function warmAgentEngine(): void {
-  if (process.env.TANGO_AGENT_NO_PREWARM === '1') return;
+  if (agentPrewarmDisabled()) return;
   const workspace = getWorkspaceOrNull();
   if (!workspace || getTerminalAgent() !== 'tango') return;
   if (warmSlot.promise && warmSlot.workspace === workspace) return;

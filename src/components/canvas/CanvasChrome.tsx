@@ -1,0 +1,195 @@
+'use client';
+
+// The canvas's floating chrome, extracted from UIMockCanvas: the shape draw
+// toolbar, the zoom readout, the screen title-row provenance chip, and the
+// empty state. All presentational — state and behavior stay in the canvas.
+
+import { useEffect, useRef, useState } from 'react';
+import { Check, Maximize, Minus, Plus } from 'lucide-react';
+import { Button } from '../ui/button';
+import { SHAPE_ICONS } from '../UIAddPalette';
+import { NODE_LABELS, SHAPE_TYPE_ORDER } from '@/lib/uiMockDefaults';
+import { MAX_ZOOM, MIN_ZOOM } from '@/lib/uiCanvasCamera';
+import type { UINodeType } from '@/lib/uiMockProtocol';
+import { cn } from '@/lib/utils';
+
+// Directional provenance chip in the screen title row: '↓ <basename>' when
+// the screen was imported from a Swift source, else '↑ <TypeName>.swift' (the
+// derived export target). Click copies the relevant workspace-relative path.
+// Renders inside the transformed title row, so it scales with zoom — accepted
+// (informational only; all triggers live in screen space).
+export function ScreenFileChip({
+  sourceFile,
+  exportName,
+}: {
+  sourceFile?: string;
+  exportName: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<number | null>(null);
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  return (
+    <button
+      type="button"
+      className="ml-2 inline-flex max-w-40 items-center gap-0.5 truncate align-bottom font-mono text-[10px] text-muted-foreground hover:text-foreground"
+      title={`Imported from: ${sourceFile ?? '—'}\nExports to: TangoGenerated/${exportName}`}
+      // Keep the copy click from also activating the screen via the row.
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={() => {
+        void navigator.clipboard.writeText(
+          sourceFile ?? `TangoGenerated/${exportName}`,
+        );
+        setCopied(true);
+        if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+        timerRef.current = window.setTimeout(() => setCopied(false), 1200);
+      }}
+    >
+      {copied ? (
+        <>
+          <Check className="size-3" />
+          copied
+        </>
+      ) : sourceFile ? (
+        `↓ ${basename(sourceFile)}`
+      ) : (
+        `↑ ${exportName}`
+      )}
+    </button>
+  );
+}
+
+function basename(path: string): string {
+  const i = path.lastIndexOf('/');
+  return i === -1 ? path : path.slice(i + 1);
+}
+
+// Shape draw tools: click (or R/O/L) to arm, click again or Escape to disarm.
+// Armed state mounts the crosshair overlay in the canvas; committing a draw
+// disarms back to select (one-shot, like Figma).
+const SHAPE_SHORTCUTS: Partial<Record<UINodeType, string>> = {
+  rect: 'R',
+  ellipse: 'O',
+  line: 'L',
+  arrow: '⇧L',
+};
+
+export function ShapeToolbar({
+  tool,
+  disabled,
+  onArm,
+}: {
+  tool: UINodeType | null;
+  disabled: boolean;
+  onArm: (type: UINodeType) => void;
+}) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-0.5 text-secondary-foreground shadow-md">
+      {SHAPE_TYPE_ORDER.map((type) => {
+        const Icon = SHAPE_ICONS[type];
+        const shortcut = SHAPE_SHORTCUTS[type];
+        return (
+          <Button
+            key={type}
+            size="sm"
+            variant="ghost"
+            disabled={disabled}
+            className={cn(
+              'size-7 px-0',
+              tool === type &&
+                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+            )}
+            onClick={() => onArm(type)}
+            title={`${NODE_LABELS[type]}${shortcut ? ` (${shortcut})` : ''}`}
+            aria-pressed={tool === type}
+          >
+            <Icon className="size-3.5" />
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Figma-style zoom readout: −/+ step around the viewport center, clicking
+// the percentage resets to 100%, Fit reframes the whole spec.
+export function ZoomControls({
+  zoom,
+  disabled,
+  onZoomStep,
+  onZoomTo,
+  onFit,
+}: {
+  zoom: number;
+  disabled: boolean;
+  onZoomStep: (factor: number) => void;
+  onZoomTo: (zoom: number) => void;
+  onFit: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-0.5 text-secondary-foreground shadow-md">
+      <Button
+        size="sm"
+        variant="ghost"
+        className="size-7 px-0"
+        disabled={disabled || zoom <= MIN_ZOOM}
+        onClick={() => onZoomStep(1 / 1.25)}
+        title="Zoom out (⌘−)"
+      >
+        <Minus className="size-3.5" />
+      </Button>
+      <button
+        type="button"
+        className="w-12 rounded-sm px-1 py-1 text-center font-mono text-[11px] tabular-nums hover:bg-secondary-foreground/10 disabled:pointer-events-none disabled:opacity-50"
+        disabled={disabled}
+        onClick={() => onZoomTo(1)}
+        title="Reset to 100% (⌘0)"
+      >
+        {Math.round(zoom * 100)}%
+      </button>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="size-7 px-0"
+        disabled={disabled || zoom >= MAX_ZOOM}
+        onClick={() => onZoomStep(1.25)}
+        title="Zoom in (⌘+)"
+      >
+        <Plus className="size-3.5" />
+      </Button>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="size-7 px-0"
+        disabled={disabled}
+        onClick={onFit}
+        title="Zoom to fit (⇧1)"
+      >
+        <Maximize className="size-3.5" />
+      </Button>
+    </div>
+  );
+}
+
+export function EmptyState() {
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-background p-8 text-center text-sm text-muted-foreground">
+      <div className="max-w-md space-y-2">
+        <p className="font-medium text-foreground">UI mock is empty.</p>
+        <p>
+          Ask the terminal agent to{' '}
+          <span className="rounded bg-muted px-1 font-mono text-foreground/90">
+            “mock my settings page as a UI”
+          </span>{' '}
+          (or any other screen / flow). The agent will read your codebase and write
+          a shadcn-based mock here that you can drag, resize, and edit, then
+          send back as a reference for the real UI.
+        </p>
+      </div>
+    </div>
+  );
+}
