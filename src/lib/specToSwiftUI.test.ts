@@ -37,6 +37,28 @@ const KITCHEN_SINK: UISpec = {
   ],
 };
 
+// One screen exercising all 6 shape types + the fill/stroke channels.
+const SHAPES: UISpec = {
+  screens: [
+    {
+      id: 'shapes',
+      title: 'Shapes',
+      frame: { w: 390, h: 844 },
+      nodes: [
+        node({ id: 'r1', type: 'rect', x: 24, y: 24, width: 160, height: 120 }),
+        node({ id: 'r2', type: 'rect', x: 200, y: 24, width: 160, height: 120, className: 'bg-primary rounded-xl border-2 border-foreground' }),
+        node({ id: 'e1', type: 'ellipse', x: 24, y: 170, width: 120, height: 80, className: 'bg-secondary border border-dashed' }),
+        node({ id: 'l1', type: 'line', x: 24, y: 280, width: 200, height: 8 }),
+        node({ id: 'l2', type: 'line', x: 24, y: 300, width: 120, height: 90, className: 'border-4 border-destructive border-dashed', props: { end: 'ne' } }),
+        node({ id: 'a1', type: 'arrow', x: 24, y: 420, width: 200, height: 60, className: 'border-2 border-primary', props: { end: 'se' } }),
+        node({ id: 't1', type: 'triangle', x: 24, y: 520, width: 120, height: 104, className: 'bg-warning' }),
+        node({ id: 's1', type: 'star', x: 180, y: 520, width: 120, height: 120, className: 'bg-primary/60 border border-primary', props: { points: 5 } }),
+        node({ id: 's2', type: 'star', x: 24, y: 660, width: 100, height: 100, props: { points: 8 }, style: { background: 'linear-gradient(135deg, #635BFF 0%, #00D4FF 100%)', opacity: 0.9 } }),
+      ],
+    },
+  ],
+};
+
 const TWO_SCREEN_FLOW: UISpec = {
   screens: [
     {
@@ -185,6 +207,28 @@ describe('specToSwiftUI', () => {
         `__snapshots__/specToSwiftUI/two-screen-flow/${f.path}`,
       );
     }
+  });
+
+  it('matches the shapes golden files', async () => {
+    const { files } = specToSwiftUI(SHAPES);
+    for (const f of files) {
+      await expect(f.content).toMatchFileSnapshot(
+        `__snapshots__/specToSwiftUI/shapes/${f.path}`,
+      );
+    }
+  });
+
+  it('emits shape geometry as literal points, never re-derived', () => {
+    const { files } = specToSwiftUI(SHAPES);
+    const screen = files[1].content;
+    // The horizontal line's resolved midline points.
+    expect(screen).toContain('p.move(to: CGPoint(x: 0, y: 4))');
+    expect(screen).toContain('p.addLine(to: CGPoint(x: 200, y: 4))');
+    // Triangle closes its ring.
+    expect(screen).toContain('p.closeSubpath()');
+    // Ellipse is a true Ellipse, not a capsule.
+    expect(screen).toContain('Ellipse()');
+    expect(screen).not.toContain('.position(');
   });
 
   it('uses frame().offset() — never center-based .position()', () => {

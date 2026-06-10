@@ -118,6 +118,11 @@ struct WireStyle: Codable {
     }
 }
 
+struct WirePoint: Codable {
+    let x: Double
+    let y: Double
+}
+
 struct WireNode: Codable, Identifiable {
     let id: String
     let kind: String
@@ -130,6 +135,11 @@ struct WireNode: Codable, Identifiable {
     let sfSymbol: String?
     let imageSrc: String?
     let separatorVertical: Bool?
+    // Vector shapes (kind "polygon"/"line"): pre-computed pixel coords inside
+    // the node box. Plot them verbatim — geometry math lives in tango's
+    // resolver, never here.
+    let shapePoints: [WirePoint]?
+    let arrowHead: [WirePoint]?
     let style: WireStyle
 }
 

@@ -20,10 +20,13 @@ import {
   duplicateUIScreenFromServer,
   getUIMock,
   getUIViewport,
+  groupUINodesFromServer,
   removeUINodesFromServer,
   removeUIScreenFromServer,
+  renameUIGroupFromServer,
   reorderUINodeFromServer,
   setUIMockFromServer,
+  ungroupUINodesFromServer,
   updateUINodeFromServer,
   updateUINodesFromServer,
   updateUIScreenFromServer,
@@ -298,7 +301,7 @@ function buildServer(): McpServer {
     {
       title: 'Inspect the UI mock layer hierarchy',
       description:
-        "Returns a compact, z-ordered outline of the UI mock — each screen and, within it, its nodes listed from back to front with a `z` index (array order; higher `z` = rendered on top), `id`, `type`, a truncated `text`, and the bounding `rect`. This is the cheap way to see the layer structure and grab real node ids before calling `update_ui_node`, `remove_ui_node`, or `reorder_ui_node` (use `get_ui_mock` instead when you need the full styling/props of every node). Pass `screenId` to scope to one screen; omit it for all screens. An unknown `screenId` returns an empty `screens` array.",
+        "Returns a compact, z-ordered outline of the UI mock — each screen and, within it, its nodes listed from back to front with a `z` index (array order; higher `z` = rendered on top), `id`, `type`, a truncated `text`, the bounding `rect`, and (when grouped) a `group` tag; the screen carries its `groups` registry (`{id, name}`). This is the cheap way to see the layer structure and grab real node/group ids before calling `update_ui_node`, `remove_ui_node`, `reorder_ui_node`, or the group tools (use `get_ui_mock` instead when you need the full styling/props of every node). Pass `screenId` to scope to one screen; omit it for all screens. An unknown `screenId` returns an empty `screens` array.",
       inputSchema: {
         screenId: z.string().optional(),
       },
@@ -534,6 +537,83 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('reorder_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'group_ui_nodes',
+    {
+      title: 'Group UI mock nodes',
+      description:
+        "Creates an editor-level group from nodes on ONE screen: members get a `group` tag, the screen's `groups` registry gains `{id, name}`, and members are made z-contiguous (the block lands where the topmost member sat). Groups are an organization/selection aid — the layers tree nests them and the canvas selects them as one; they never change rendering or export. Nodes already in another group are stolen (emptied groups are pruned). Omit `id`/`name` to auto-assign (`group-N` / `Group N`). Errors: unknown screen, nodes not on that screen, explicit id already taken.",
+      inputSchema: {
+        screenId: z.string().min(1),
+        nodeIds: z.array(z.string().min(1)).min(1),
+        id: z.string().min(1).optional(),
+        name: z.string().min(1).optional(),
+      },
+    },
+    async ({ screenId, nodeIds, id, name }) => {
+      try {
+        groupUINodesFromServer(screenId, nodeIds, { id, name });
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Grouped ${nodeIds.length} node(s) on "${screenId}".`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('group_ui_nodes', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'ungroup_ui_nodes',
+    {
+      title: 'Ungroup UI mock nodes',
+      description:
+        'Dissolves one group: members lose their `group` tag (keeping their exact z positions), the registry entry is removed. Errors if no screen has the group id — `get_ui_layers` shows current groups.',
+      inputSchema: {
+        groupId: z.string().min(1),
+      },
+    },
+    async ({ groupId }) => {
+      try {
+        ungroupUINodesFromServer(groupId);
+        return {
+          content: [{ type: 'text', text: `Ungrouped "${groupId}".` }],
+        };
+      } catch (err) {
+        return toolErrorResult('ungroup_ui_nodes', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'rename_ui_group',
+    {
+      title: 'Rename a UI mock group',
+      description:
+        'Renames an existing group (the label shown in the layers tree). Errors on an unknown group id or an empty name.',
+      inputSchema: {
+        groupId: z.string().min(1),
+        name: z.string().min(1),
+      },
+    },
+    async ({ groupId, name }) => {
+      try {
+        renameUIGroupFromServer(groupId, name);
+        return {
+          content: [
+            { type: 'text', text: `Renamed group "${groupId}" to "${name}".` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('rename_ui_group', err);
       }
     },
   );

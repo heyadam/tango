@@ -22,6 +22,15 @@ import {
   withAlpha,
 } from './themeColors';
 import { lucideToSfSymbol } from './lucideToSfSymbol';
+import {
+  type Point,
+  arrowHeadPoints,
+  linePoints,
+  pickLineEnd,
+  pickStarPointCount,
+  starPoints,
+  trianglePoints,
+} from './shapeGeometry';
 
 export type ResolvedStyle = {
   backgroundColor?: RGBA;
@@ -50,7 +59,10 @@ export type ResolvedNodeKind =
   | 'badge'
   | 'separator'
   | 'image'
-  | 'icon';
+  | 'icon'
+  | 'ellipse'
+  | 'polygon'
+  | 'line';
 
 export type ResolvedNode = {
   id: string;
@@ -65,6 +77,13 @@ export type ResolvedNode = {
   sfSymbol?: string; // icon only
   imageSrc?: string; // image only; http(s) URLs only
   separatorVertical?: boolean;
+  // Shape geometry, PIXEL coords inside the node box, computed here (via
+  // shapeGeometry) so every renderer plots the same literal points.
+  // 'polygon': closed ring, fill + stroke. 'line': open segment, stroke only
+  // (fill channels ignored); `arrowHead` is an open wing→tip→wing polyline
+  // stroked like the line itself.
+  shapePoints?: Point[];
+  arrowHead?: Point[];
   style: ResolvedStyle;
 };
 
@@ -194,6 +213,17 @@ function baselineFor(node: UINode): ResolvedStyle {
     }
     case 'Icon':
       return { textColor: T.foreground };
+    // Shapes: fill = background channel, stroke = border channel. Rect/
+    // ellipse/triangle/star default to a quiet muted fill with no stroke;
+    // line/arrow default to a 2px foreground stroke (their fill is unused).
+    case 'rect':
+    case 'ellipse':
+    case 'triangle':
+    case 'star':
+      return { backgroundColor: T.muted };
+    case 'line':
+    case 'arrow':
+      return { borderColor: T.foreground, borderWidth: 2 };
     default:
       return {};
   }
@@ -573,6 +603,14 @@ const KIND_MAP: Record<UINode['type'], ResolvedNodeKind> = {
   div: 'box',
   text: 'text',
   heading: 'text',
+  // rect intentionally resolves to 'box' — fill/border/radius chrome is the
+  // same pipeline div already rides; only the baseline differs.
+  rect: 'box',
+  ellipse: 'ellipse',
+  line: 'line',
+  arrow: 'line',
+  triangle: 'polygon',
+  star: 'polygon',
   Button: 'button',
   Input: 'input',
   Textarea: 'textarea',
@@ -637,6 +675,29 @@ export function resolveNode(node: UINode): ResolvedNode {
       resolved.sfSymbol = lucideToSfSymbol(name);
       break;
     }
+    case 'line':
+    case 'arrow': {
+      const end = pickLineEnd(node.props?.end);
+      const segment = linePoints(node.width, node.height, end);
+      resolved.shapePoints = segment;
+      if (node.type === 'arrow') {
+        resolved.arrowHead = arrowHeadPoints(
+          segment,
+          resolved.style.borderWidth ?? 2,
+        );
+      }
+      break;
+    }
+    case 'triangle':
+      resolved.shapePoints = trianglePoints(node.width, node.height);
+      break;
+    case 'star':
+      resolved.shapePoints = starPoints(
+        node.width,
+        node.height,
+        pickStarPointCount(node.props?.points),
+      );
+      break;
   }
   return resolved;
 }

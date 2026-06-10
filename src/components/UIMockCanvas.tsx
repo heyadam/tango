@@ -35,6 +35,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import Moveable from 'react-moveable';
 import type {
   OnDrag,
@@ -50,9 +51,9 @@ import type {
   OnResizeGroupStart,
   OnResizeStart,
 } from 'react-moveable';
-import { Check, Layers, Maximize, Minus, Plus, Sparkles } from 'lucide-react';
+import { Check, Maximize, Minus, Plus, Sparkles } from 'lucide-react';
 import UIMockNode from './UIMockNode';
-import UIAddPalette from './UIAddPalette';
+import UIAddPalette, { SHAPE_ICONS } from './UIAddPalette';
 import UIAIPopout from './UIAIPopout';
 import UILayersPanel from './UILayersPanel';
 import { Button } from './ui/button';
@@ -60,14 +61,27 @@ import { uiMockBus } from '@/lib/uiMockBus';
 import type { ApplyMsg } from '@/lib/uiMockBus';
 import {
   addNodesToScreen,
+  groupNodesInSpec,
+  moveNodeInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
+  renameGroupInSpec,
   reorderNodeInSpec,
+  ungroupNodesInSpec,
   type ReorderOp,
 } from '@/lib/uiMockOps';
 import { screenFileNames } from '@/lib/specToSwiftUI';
 import type { AgentTask } from '@/lib/terminalBus';
-import { NODE_DEFAULTS, makeNode } from '@/lib/uiMockDefaults';
+import {
+  NODE_DEFAULTS,
+  NODE_LABELS,
+  SHAPE_TYPE_ORDER,
+  isShapeType,
+  makeNode,
+} from '@/lib/uiMockDefaults';
+import { dropAtPoint, isLineTool, shapeFromDrag } from '@/lib/shapeDraw';
+import UIShapeStyleBar from './UIShapeStyleBar';
+import UIInspector from './UIInspector';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -104,19 +118,23 @@ type Props = {
   // screen, or clicking a frame's background). UIPanel ships it to the server
   // so the preview-host app shows the screen the user is actually editing.
   onActiveScreen?: (screenId: string) => void;
+  // UIPanel's docked sidebar slot. When present, the layers tree + inspector
+  // portal into it (state lives here, layout lives in UIPanel so the canvas
+  // viewport measurement excludes the sidebar). Null = sidebar closed.
+  sidebarContainer?: HTMLDivElement | null;
 };
 
 export default function UIMockCanvas({
   initialSpec,
   onPersist,
   onActiveScreen,
+  sidebarContainer,
 }: Props) {
   const [spec, setSpec] = useState<UISpec>(initialSpec ?? EMPTY_SPEC);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-  // Floating overlay visibility — the Add palette and Layers panel.
+  // Floating overlay visibility — the Add palette.
   const [addOpen, setAddOpen] = useState(false);
-  const [layersOpen, setLayersOpen] = useState(false);
   // The user's working screen, lifted to state for display (title-row tint,
   // layers-panel highlight, screen-scope sparkle anchor). The wire report
   // stays deduped through lastActiveScreen below.
@@ -335,6 +353,121 @@ export default function UIMockCanvas({
     [reportActiveScreenOfNode],
   );
 
+  // Group-aware canvas click (Figma semantics): plain click on a grouped node
+  // selects the whole group; Cmd/Ctrl+click deep-selects the single node;
+  // Shift+click stays additive. A plain click on an already-selected node is
+  // a no-op so a drag can follow without collapsing a multi-selection.
+  const selectFromPointer = useCallback(
+    (id: string, mode: 'replace' | 'additive' | 'deep') => {
+      if (mode === 'additive') {
+        addToSelection(id);
+        return;
+      }
+      if (mode === 'deep') {
+        selectOnly(id);
+        return;
+      }
+      if (selectedIdsRef.current.includes(id)) return;
+      const screen = specRef.current.screens.find((s) =>
+        s.nodes.some((n) => n.id === id),
+      );
+      const node = screen?.nodes.find((n) => n.id === id);
+      if (screen && node?.group) {
+        const members = screen.nodes
+          .filter((n) => n.group === node.group)
+          .map((n) => n.id);
+        setSelectedIds(members);
+        setEditingId(null);
+        reportActiveScreen(screen.id);
+        return;
+      }
+      selectOnly(id);
+    },
+    [addToSelection, selectOnly, reportActiveScreen],
+  );
+
+  // Select every member of a group (layers-tree group row click).
+  const selectGroup = useCallback(
+    (groupId: string) => {
+      const screen = specRef.current.screens.find((s) =>
+        s.nodes.some((n) => n.group === groupId),
+      );
+      if (!screen) return;
+      setSelectedIds(
+        screen.nodes.filter((n) => n.group === groupId).map((n) => n.id),
+      );
+      setEditingId(null);
+      reportActiveScreen(screen.id);
+    },
+    [reportActiveScreen],
+  );
+
+  // Cmd+G: group the selection on its (first) screen. Nodes from other
+  // screens are dropped from the group, mirroring the AI popout's scoping.
+  const groupSelection = useCallback(() => {
+    const ids = selectedIdsRef.current;
+    if (ids.length < 2) return;
+    const screen = specRef.current.screens.find((s) =>
+      s.nodes.some((n) => n.id === ids[0]),
+    );
+    if (!screen) return;
+    const onScreen = ids.filter((id) =>
+      screen.nodes.some((n) => n.id === id),
+    );
+    if (onScreen.length < 2) return;
+    try {
+      setSpec(groupNodesInSpec(specRef.current, screen.id, onScreen));
+    } catch {
+      // node vanished mid-keystroke (server-driven set) — ignore.
+    }
+  }, []);
+
+  // Cmd+Shift+G: dissolve every group the selection touches.
+  const ungroupSelection = useCallback(() => {
+    const ids = new Set(selectedIdsRef.current);
+    const groupIds = new Set<string>();
+    for (const s of specRef.current.screens) {
+      for (const n of s.nodes) {
+        if (ids.has(n.id) && n.group) groupIds.add(n.group);
+      }
+    }
+    if (groupIds.size === 0) return;
+    try {
+      let next = specRef.current;
+      for (const gid of groupIds) next = ungroupNodesInSpec(next, gid);
+      setSpec(next);
+    } catch {
+      // group vanished mid-keystroke — ignore.
+    }
+  }, []);
+
+  const renameGroup = useCallback((groupId: string, name: string) => {
+    try {
+      setSpec(renameGroupInSpec(specRef.current, groupId, name));
+    } catch {
+      // empty name or vanished group — ignore.
+    }
+  }, []);
+
+  const moveNode = useCallback(
+    (nodeId: string, targetIndex: number, group?: string | null) => {
+      try {
+        setSpec(moveNodeInSpec(specRef.current, nodeId, targetIndex, group));
+      } catch {
+        // node/group vanished between drag start and drop — ignore.
+      }
+    },
+    [],
+  );
+
+  const ungroup = useCallback((groupId: string) => {
+    try {
+      setSpec(ungroupNodesInSpec(specRef.current, groupId));
+    } catch {
+      // already gone — ignore.
+    }
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedIds([]);
     setEditingId(null);
@@ -535,35 +668,6 @@ export default function UIMockCanvas({
           );
     if (anchorGone) setPopout(null);
   }, [spec, popout]);
-
-  // ── Keyboard ──────────────────────────────────────────────────────────
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      // Don't steal Backspace/Delete while the user is editing text.
-      if (editingId) return;
-      const target = e.target as HTMLElement | null;
-      if (target && (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
-        return;
-      }
-      // Escape closes the popout first, the selection second. (With focus in
-      // the popout's textarea the typing-target guard above returns early and
-      // the popout's own onKeyDown handles it.)
-      if (e.key === 'Escape' && popout) {
-        setPopout(null);
-        return;
-      }
-      if (e.key === 'Backspace' || e.key === 'Delete') {
-        if (selectedIds.length > 0) {
-          e.preventDefault();
-          deleteSelected();
-        }
-      } else if (e.key === 'Escape') {
-        clearSelection();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [editingId, selectedIds.length, deleteSelected, clearSelection, popout]);
 
   // ── Camera (pan / zoom) ───────────────────────────────────────────────
   // View-only: the content layer renders under translate+scale. Never enters
@@ -790,6 +894,232 @@ export default function UIMockCanvas({
     };
   }, []);
 
+  // ── Draw tools (vector shapes) ────────────────────────────────────────
+  // An armed shape tool mounts a crosshair overlay (below the space-pan
+  // overlay, so space+drag still pans). Pointer down hit-tests the screen
+  // frames through screenRefs; drag coords convert client → frame-local by
+  // dividing by camera.zoom (getBoundingClientRect already includes the
+  // transform). One-shot: committing a draw disarms back to select.
+  const [tool, setTool] = useState<UINodeType | null>(null);
+  const toolRef = useRef(tool);
+  toolRef.current = tool;
+  // Live rubber-band rect, in draw-overlay (screen-space) coords.
+  const [rubber, setRubber] = useState<{
+    start: { x: number; y: number };
+    cur: { x: number; y: number };
+  } | null>(null);
+  const drawSession = useRef<{
+    screenId: string;
+    // Client-space rect of the screen frame at gesture start.
+    frameRect: { left: number; top: number };
+    // Client-space rect of the overlay (rubber-band coordinate origin).
+    overlayRect: { left: number; top: number };
+    startClient: { x: number; y: number };
+    shift: boolean;
+  } | null>(null);
+
+  const armTool = useCallback((type: UINodeType) => {
+    setTool((prev) => (prev === type ? null : type));
+  }, []);
+
+  const cancelDraw = useCallback(() => {
+    drawSession.current = null;
+    gestureActiveRef.current = false;
+    setRubber(null);
+  }, []);
+
+  const onDrawPointerDown = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (e.button !== 0 || !toolRef.current) return;
+      // Hit-test the screen frames (client space — rects include the camera).
+      let hit: { id: string; rect: DOMRect } | null = null;
+      for (const [id, el] of screenRefs.current) {
+        const rect = el.getBoundingClientRect();
+        if (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
+          hit = { id, rect };
+          break;
+        }
+      }
+      if (!hit) return;
+      e.preventDefault();
+      const overlayRect = e.currentTarget.getBoundingClientRect();
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+        // pointer already gone — draw uncaptured
+      }
+      drawSession.current = {
+        screenId: hit.id,
+        frameRect: { left: hit.rect.left, top: hit.rect.top },
+        overlayRect: { left: overlayRect.left, top: overlayRect.top },
+        startClient: { x: e.clientX, y: e.clientY },
+        shift: e.shiftKey,
+      };
+      // Suppress wheel-zoom / camera shortcuts mid-draw — a camera move would
+      // invalidate the frame rect captured above.
+      gestureActiveRef.current = true;
+      const start = {
+        x: e.clientX - overlayRect.left,
+        y: e.clientY - overlayRect.top,
+      };
+      setRubber({ start, cur: start });
+    },
+    [],
+  );
+
+  const onDrawPointerMove = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      const session = drawSession.current;
+      if (!session) return;
+      session.shift = e.shiftKey;
+      setRubber((prev) =>
+        prev
+          ? {
+              start: prev.start,
+              cur: {
+                x: e.clientX - session.overlayRect.left,
+                y: e.clientY - session.overlayRect.top,
+              },
+            }
+          : prev,
+      );
+    },
+    [],
+  );
+
+  const onDrawPointerUp = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      const session = drawSession.current;
+      const type = toolRef.current;
+      cancelDraw();
+      if (!session || !type) return;
+      const screen = specRef.current.screens.find(
+        (s) => s.id === session.screenId,
+      );
+      if (!screen) return;
+      const zoom = camera.zoom;
+      const toFrame = (clientX: number, clientY: number) => ({
+        x: (clientX - session.frameRect.left) / zoom,
+        y: (clientY - session.frameRect.top) / zoom,
+      });
+      const start = toFrame(session.startClient.x, session.startClient.y);
+      const end = toFrame(e.clientX, e.clientY);
+      const geom =
+        shapeFromDrag(type, start, end, {
+          shift: session.shift || e.shiftKey,
+          frame: screen.frame,
+        }) ??
+        // Click (or sub-minimum drag): drop the default size at the point.
+        dropAtPoint(NODE_DEFAULTS[type], start, screen.frame);
+      const node = makeNode(type, geom.x, geom.y);
+      node.width = geom.width;
+      node.height = geom.height;
+      if ('end' in geom && geom.end) {
+        node.props = { ...node.props, end: geom.end };
+      }
+      try {
+        setSpec(addNodesToScreen(specRef.current, screen.id, [node]));
+        setSelectedIds([node.id]);
+        setEditingId(null);
+        reportActiveScreen(screen.id);
+      } catch {
+        // id collision is effectively impossible with a random uuid; ignore.
+      }
+      setTool(null);
+    },
+    [camera.zoom, cancelDraw, reportActiveScreen],
+  );
+
+  // ── Keyboard ──────────────────────────────────────────────────────────
+  // Lives below the camera + draw-tool sections: the handler reads
+  // pointerOverRef / tool / armTool, which must be initialized first.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Don't steal Backspace/Delete while the user is editing text.
+      if (editingId) return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      // Cmd+G groups the selection; Cmd+Shift+G ungroups. Before the draw
+      // shortcuts (whose guard skips modified keys anyway) and gated on a
+      // selection so the browser's own Cmd+G keeps working otherwise.
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.key.toLowerCase() === 'g' &&
+        selectedIds.length > 0
+      ) {
+        e.preventDefault();
+        if (e.shiftKey) ungroupSelection();
+        else groupSelection();
+        return;
+      }
+      // Escape priority: armed draw tool → popout → selection.
+      if (e.key === 'Escape' && tool) {
+        setTool(null);
+        cancelDraw();
+        return;
+      }
+      // Escape closes the popout first, the selection second. (With focus in
+      // the popout's textarea the typing-target guard above returns early and
+      // the popout's own onKeyDown handles it.)
+      if (e.key === 'Escape' && popout) {
+        setPopout(null);
+        return;
+      }
+      // Draw-tool shortcuts (Figma keys), scoped to cursor-over-canvas like
+      // the camera shortcuts so typing elsewhere never arms a tool.
+      if (
+        pointerOverRef.current &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        !e.repeat &&
+        specRef.current.screens.length > 0
+      ) {
+        const k = e.key.toLowerCase();
+        if (k === 'r') {
+          armTool('rect');
+          return;
+        }
+        if (k === 'o') {
+          armTool('ellipse');
+          return;
+        }
+        if (k === 'l') {
+          armTool(e.shiftKey ? 'arrow' : 'line');
+          return;
+        }
+      }
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        if (selectedIds.length > 0) {
+          e.preventDefault();
+          deleteSelected();
+        }
+      } else if (e.key === 'Escape') {
+        clearSelection();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [
+    editingId,
+    selectedIds.length,
+    deleteSelected,
+    clearSelection,
+    popout,
+    tool,
+    armTool,
+    cancelDraw,
+    groupSelection,
+    ungroupSelection,
+  ]);
+
   // ── AI island anchoring ───────────────────────────────────────────────
   // Wrapper-relative rects via getBoundingClientRect, so the sparkle/card
   // track the camera at constant size. Anchor: the popout's own scope while
@@ -873,6 +1203,22 @@ export default function UIMockCanvas({
   // screenId → derived export filename for the title-row chip. Derived live —
   // the export target is order-dependent and never stored on the spec.
   const screenFiles = useMemo(() => screenFileNames(spec), [spec]);
+
+  // The selected nodes (inspector) and their shape subset (quick style bar
+  // when the sidebar is closed; patches only touch the shape nodes).
+  const selectedNodes = useMemo(() => {
+    const out: UINode[] = [];
+    for (const id of selectedIds) {
+      const node = findNode(spec, id);
+      if (node) out.push(node);
+    }
+    return out;
+  }, [selectedIds, spec]);
+
+  const shapeSelection = useMemo(
+    () => selectedNodes.filter((n) => isShapeType(n.type)),
+    [selectedNodes],
+  );
 
   // ── Moveable target list ──────────────────────────────────────────────
   // We rebuild on every render keyed by selectedIds; React → DOM reconciliation
@@ -1259,8 +1605,7 @@ export default function UIMockCanvas({
                   isPulsing={pulse.nodes.has(node.id)}
                   isEditing={editingId === node.id}
                   refsMap={nodeRefs}
-                  onSelectOnly={selectOnly}
-                  onAddSelection={addToSelection}
+                  onPointerSelect={selectFromPointer}
                   onStartEditing={startEditing}
                   onCommitText={commitNodeText}
                   onEndEdit={stopEditing}
@@ -1339,6 +1684,46 @@ export default function UIMockCanvas({
             }}
           />
         )}
+
+        {/* Draw-tool overlay: crosshair capture surface for the armed shape
+            tool. Sits BELOW the space-pan overlay so space+drag still pans,
+            and below the floating controls (4000) so the toolbar stays
+            clickable to switch/disarm. */}
+        {tool && !isEmpty && (
+          <div
+            className="absolute inset-0 cursor-crosshair touch-none"
+            style={{ zIndex: 3400 }}
+            onPointerDown={onDrawPointerDown}
+            onPointerMove={onDrawPointerMove}
+            onPointerUp={onDrawPointerUp}
+            onPointerCancel={cancelDraw}
+          >
+            {rubber &&
+              (isLineTool(tool) ? (
+                <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+                  <line
+                    x1={rubber.start.x}
+                    y1={rubber.start.y}
+                    x2={rubber.cur.x}
+                    y2={rubber.cur.y}
+                    className="stroke-primary"
+                    strokeWidth={1.5}
+                    strokeDasharray="4"
+                  />
+                </svg>
+              ) : (
+                <div
+                  className="pointer-events-none absolute border border-dashed border-primary bg-primary/10"
+                  style={{
+                    left: Math.min(rubber.start.x, rubber.cur.x),
+                    top: Math.min(rubber.start.y, rubber.cur.y),
+                    width: Math.abs(rubber.cur.x - rubber.start.x),
+                    height: Math.abs(rubber.cur.y - rubber.start.y),
+                  }}
+                />
+              ))}
+          </div>
+        )}
       </div>
 
       {/* Floating element/layer controls. The wrapper is click-through; only
@@ -1348,7 +1733,7 @@ export default function UIMockCanvas({
         className="pointer-events-none absolute inset-0"
         style={{ zIndex: 4000 }}
       >
-        <div className="pointer-events-auto absolute left-3 top-3">
+        <div className="pointer-events-auto absolute left-3 top-3 flex items-start gap-2">
           {addOpen ? (
             <UIAddPalette
               onAdd={addNodeOfType}
@@ -1366,6 +1751,7 @@ export default function UIMockCanvas({
               Add
             </Button>
           )}
+          <ShapeToolbar tool={tool} disabled={isEmpty} onArm={armTool} />
         </div>
         {/* AI sparkle/popout island. Zero-size at the layer origin so its
             absolutely-positioned children land in wrapper coords; one ref so
@@ -1407,33 +1793,45 @@ export default function UIMockCanvas({
             onFit={fitToContent}
           />
         </div>
-        <div className="pointer-events-auto absolute bottom-3 right-3 top-3 flex items-start">
-          {layersOpen ? (
-            <UILayersPanel
-              screens={spec.screens}
-              selectedIds={selectedIds}
-              activeScreenId={activeScreenId}
-              onSelect={handleLayerSelect}
-              onReorder={reorderNode}
-              onRemove={removeNode}
-              onSelectScreen={selectScreen}
-              onAiForScreen={openPopoutForScreen}
-              onRemoveScreen={removeScreen}
-              onClose={() => setLayersOpen(false)}
-            />
-          ) : (
-            <Button
-              size="sm"
-              variant="secondary"
-              className="shadow-md"
-              onClick={() => setLayersOpen(true)}
-            >
-              <Layers className="size-3.5" />
-              Layers
-            </Button>
-          )}
-        </div>
+        {/* Quick style bar: only when the docked sidebar (whose inspector
+            subsumes it) is closed. */}
+        {!sidebarContainer && shapeSelection.length > 0 && !editingId && (
+          <div className="pointer-events-auto absolute bottom-3 left-1/2 -translate-x-1/2">
+            <UIShapeStyleBar nodes={shapeSelection} onApply={updateNodes} />
+          </div>
+        )}
       </div>
+
+      {/* Docked design sidebar (layers tree + inspector), portaled into
+          UIPanel's slot so spec/selection state stays in this component. */}
+      {sidebarContainer &&
+        createPortal(
+          <div className="flex h-full min-h-0 flex-col">
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <UILayersPanel
+                screens={spec.screens}
+                selectedIds={selectedIds}
+                activeScreenId={activeScreenId}
+                onSelect={handleLayerSelect}
+                onSelectGroup={selectGroup}
+                onReorder={reorderNode}
+                onRemove={removeNode}
+                onMoveNode={moveNode}
+                onRenameGroup={renameGroup}
+                onUngroup={ungroup}
+                onSelectScreen={selectScreen}
+                onAiForScreen={openPopoutForScreen}
+                onRemoveScreen={removeScreen}
+              />
+            </div>
+            {selectedNodes.length > 0 && !editingId && (
+              <div className="max-h-[55%] shrink-0 overflow-auto border-t border-border">
+                <UIInspector nodes={selectedNodes} onApply={updateNodes} />
+              </div>
+            )}
+          </div>,
+          sidebarContainer,
+        )}
     </div>
   );
 }
@@ -1447,8 +1845,7 @@ const NodeWrapper = memo(function NodeWrapper({
   isPulsing,
   isEditing,
   refsMap,
-  onSelectOnly,
-  onAddSelection,
+  onPointerSelect,
   onStartEditing,
   onCommitText,
   onEndEdit,
@@ -1458,8 +1855,7 @@ const NodeWrapper = memo(function NodeWrapper({
   isPulsing: boolean;
   isEditing: boolean;
   refsMap: RefObject<Map<string, HTMLDivElement>>;
-  onSelectOnly: (id: string) => void;
-  onAddSelection: (id: string) => void;
+  onPointerSelect: (id: string, mode: 'replace' | 'additive' | 'deep') => void;
   onStartEditing: (id: string) => void;
   onCommitText: (id: string, text: string) => void;
   onEndEdit: () => void;
@@ -1486,13 +1882,12 @@ const NodeWrapper = memo(function NodeWrapper({
       if (isEditing) return;
       // Stop the canvas-level click-to-deselect from firing.
       e.stopPropagation();
-      if (e.shiftKey || e.metaKey || e.ctrlKey) {
-        onAddSelection(node.id);
-      } else if (!isSelected) {
-        onSelectOnly(node.id);
-      }
+      // Figma muscle memory: Shift adds, Cmd/Ctrl deep-selects past a group,
+      // plain click selects the node's whole group (resolved in the parent).
+      const mode = e.shiftKey ? 'additive' : e.metaKey || e.ctrlKey ? 'deep' : 'replace';
+      onPointerSelect(node.id, mode);
     },
-    [isEditing, isSelected, node.id, onAddSelection, onSelectOnly],
+    [isEditing, node.id, onPointerSelect],
   );
 
   const onDoubleClick = useCallback(
@@ -1624,6 +2019,53 @@ function isTextual(node: UINode): boolean {
     node.type === 'heading' ||
     node.type === 'Button' ||
     node.type === 'Badge'
+  );
+}
+
+// Shape draw tools: click (or R/O/L) to arm, click again or Escape to disarm.
+// Armed state mounts the crosshair overlay in the canvas; committing a draw
+// disarms back to select (one-shot, like Figma).
+const SHAPE_SHORTCUTS: Partial<Record<UINodeType, string>> = {
+  rect: 'R',
+  ellipse: 'O',
+  line: 'L',
+  arrow: '⇧L',
+};
+
+function ShapeToolbar({
+  tool,
+  disabled,
+  onArm,
+}: {
+  tool: UINodeType | null;
+  disabled: boolean;
+  onArm: (type: UINodeType) => void;
+}) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-0.5 text-secondary-foreground shadow-md">
+      {SHAPE_TYPE_ORDER.map((type) => {
+        const Icon = SHAPE_ICONS[type];
+        const shortcut = SHAPE_SHORTCUTS[type];
+        return (
+          <Button
+            key={type}
+            size="sm"
+            variant="ghost"
+            disabled={disabled}
+            className={cn(
+              'size-7 px-0',
+              tool === type &&
+                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+            )}
+            onClick={() => onArm(type)}
+            title={`${NODE_LABELS[type]}${shortcut ? ` (${shortcut})` : ''}`}
+            aria-pressed={tool === type}
+          >
+            <Icon className="size-3.5" />
+          </Button>
+        );
+      })}
+    </div>
   );
 }
 

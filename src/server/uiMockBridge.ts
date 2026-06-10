@@ -19,9 +19,12 @@ import {
   addNodesToScreen,
   appendScreenToSpec,
   duplicateScreenInSpec,
+  groupNodesInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
+  renameGroupInSpec,
   reorderNodeInSpec,
+  ungroupNodesInSpec,
   updateNodeInSpec,
   updateNodesInSpec,
   updateScreenInSpec,
@@ -231,4 +234,20 @@ export function removeUINodesFromServer(nodeIds: string[]): void {
 
 export function reorderUINodeFromServer(nodeId: string, op: ReorderOp): void {
   setUIMockFromServer(reorderNodeInSpec(cache, nodeId, op));
+}
+
+export function groupUINodesFromServer(
+  screenId: string,
+  nodeIds: string[],
+  opts?: { id?: string; name?: string },
+): void {
+  setUIMockFromServer(groupNodesInSpec(cache, screenId, nodeIds, opts));
+}
+
+export function ungroupUINodesFromServer(groupId: string): void {
+  setUIMockFromServer(ungroupNodesInSpec(cache, groupId));
+}
+
+export function renameUIGroupFromServer(groupId: string, name: string): void {
+  setUIMockFromServer(renameGroupInSpec(cache, groupId, name));
 }

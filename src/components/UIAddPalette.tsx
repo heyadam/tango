@@ -7,21 +7,31 @@
 // that's where the spec/selection state and mutators are.
 
 import {
+  Circle,
   Heading,
   Image as ImageIcon,
   MousePointerClick,
   Minus,
+  MoveUpRight,
+  Slash,
   Sparkle,
   Square,
+  SquareRoundCorner,
+  Star,
   Tag,
   TextCursorInput,
+  Triangle,
   Type,
   WrapText,
   X,
 } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { Button } from './ui/button';
-import { NODE_LABELS, NODE_TYPE_ORDER } from '@/lib/uiMockDefaults';
+import {
+  NODE_LABELS,
+  NODE_TYPE_ORDER,
+  SHAPE_TYPE_ORDER,
+} from '@/lib/uiMockDefaults';
 import type { UINodeType } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
@@ -29,6 +39,12 @@ const ICONS: Record<UINodeType, ComponentType<{ className?: string }>> = {
   div: Square,
   text: Type,
   heading: Heading,
+  rect: SquareRoundCorner,
+  ellipse: Circle,
+  line: Slash,
+  arrow: MoveUpRight,
+  triangle: Triangle,
+  star: Star,
   Button: MousePointerClick,
   Input: TextCursorInput,
   Textarea: WrapText,
@@ -38,11 +54,37 @@ const ICONS: Record<UINodeType, ComponentType<{ className?: string }>> = {
   Icon: Sparkle,
 };
 
+// Shared by the palette rows and the shape toolbar in UIMockCanvas.
+export const SHAPE_ICONS = ICONS;
+
 type Props = {
   onAdd: (type: UINodeType) => void;
   onClose: () => void;
   disabled?: boolean;
 };
+
+function PaletteRow({
+  type,
+  onAdd,
+}: {
+  type: UINodeType;
+  onAdd: (type: UINodeType) => void;
+}) {
+  const Icon = ICONS[type];
+  return (
+    <button
+      type="button"
+      onClick={() => onAdd(type)}
+      className={cn(
+        'flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground',
+        'hover:bg-accent',
+      )}
+    >
+      <Icon className="size-4 text-muted-foreground" />
+      {NODE_LABELS[type]}
+    </button>
+  );
+}
 
 export default function UIAddPalette({ onAdd, onClose, disabled }: Props) {
   return (
@@ -50,7 +92,7 @@ export default function UIAddPalette({ onAdd, onClose, disabled }: Props) {
       // Stop pointer events from reaching the canvas (which would clear
       // selection / start a drag).
       onPointerDown={(e) => e.stopPropagation()}
-      className="flex w-44 flex-col gap-1 rounded-lg border border-border bg-card p-2 shadow-lg"
+      className="flex max-h-[70vh] w-44 flex-col gap-1 overflow-y-auto rounded-lg border border-border bg-card p-2 shadow-lg"
     >
       <div className="flex items-center justify-between px-1 pb-1">
         <span className="text-xs font-medium text-muted-foreground">
@@ -71,23 +113,17 @@ export default function UIAddPalette({ onAdd, onClose, disabled }: Props) {
           Add a screen first, then drop elements here.
         </p>
       ) : (
-        NODE_TYPE_ORDER.map((type) => {
-          const Icon = ICONS[type];
-          return (
-            <button
-              key={type}
-              type="button"
-              onClick={() => onAdd(type)}
-              className={cn(
-                'flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground',
-                'hover:bg-accent',
-              )}
-            >
-              <Icon className="size-4 text-muted-foreground" />
-              {NODE_LABELS[type]}
-            </button>
-          );
-        })
+        <>
+          {NODE_TYPE_ORDER.map((type) => (
+            <PaletteRow key={type} type={type} onAdd={onAdd} />
+          ))}
+          <div className="px-1 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+            Shapes
+          </div>
+          {SHAPE_TYPE_ORDER.map((type) => (
+            <PaletteRow key={type} type={type} onAdd={onAdd} />
+          ))}
+        </>
       )}
     </div>
   );
