@@ -325,6 +325,29 @@ export function bodyHasMarker(src: string, loc: StructBodyLoc): boolean {
   return src.slice(loc.bodyOpen, loc.bodyClose + 1).includes(BODY_MARKER);
 }
 
+/**
+ * First needle that appears as a whole word at a CODE position in a Swift
+ * fragment (null when none do). A body interior is a valid standalone
+ * fragment — it starts in code context right after the body's `{`. Word
+ * boundaries keep `TabView` from matching `.tabViewStyle` or `TabViewState`;
+ * the mask keeps it from matching inside strings and comments.
+ */
+export function codeContainsWord(
+  fragment: string,
+  needles: string[],
+): string | null {
+  if (needles.length === 0) return null;
+  const mask = codeMask(fragment);
+  const re = new RegExp(
+    `\\b(?:${needles.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+    'g',
+  );
+  for (const m of fragment.matchAll(re)) {
+    if (mask[m.index]) return m[0];
+  }
+  return null;
+}
+
 // ── declared type names ─────────────────────────────────────────────────────
 
 /**

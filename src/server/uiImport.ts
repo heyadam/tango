@@ -257,7 +257,9 @@ export const UI_IMPORT_SYSTEM_PROMPT = `You are tango's SwiftUI import engine. T
 
 ## What counts as a screen
 
-A screen-level View is a top-level \`struct X: View\` representing a full screen: the \`@main\` App's root, NavigationStack/TabView destinations, sheet contents. Leaf components (a row, a button style) are NOT screens — they render as nodes inside their parent screen. Skip #Preview bodies and PreviewProviders.
+A screen-level View is a top-level \`struct X: View\` representing a full screen: NavigationStack/TabView destinations, sheet contents, the root view when it draws real content itself. Leaf components (a row, a button style) are NOT screens — they render as nodes inside their parent screen. Skip #Preview bodies and PreviewProviders.
+
+**A navigation SHELL is NOT a screen — never emit one.** A View whose body mainly instantiates OTHER screen-level Views inside a TabView / NavigationSplitView (or switches between them on app state) — e.g. \`ContentView { TabView { TodoListView(); AuthView() } }\` — is routing scaffolding, not a design. Do not emit a screen for it (no placeholder screens like "Tasks tab (TodoListView)"): the canvas can't represent navigation, tango's export refuses to overwrite shell bodies, and a placeholder screen would just shadow the real screens. Instead, emit each destination as its own screen and paint the chrome the shell draws onto EVERY destination (e.g. the tab bar as nodes at the bottom of each tab's screen, with the right tab highlighted).
 
 ## Coordinate projection
 

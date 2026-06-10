@@ -40,6 +40,7 @@ import {
 } from '@/lib/specToSwiftUI';
 import {
   bodyHasMarker,
+  codeContainsWord,
   declaredTypeNames,
   findViewStructBody,
   replaceStructBody,
@@ -387,6 +388,18 @@ export async function applyInPlaceExport(args: {
     }
   }
 
+  // App-shell containers a DESIGN body never contains: a hand-written body
+  // built around one of these is the app's navigation scaffolding, which the
+  // canvas cannot represent — overwriting it with absolutely-positioned boxes
+  // would disconnect every real screen from the running app. (NavigationStack
+  // is deliberately absent: real screens wrap themselves in one for title
+  // bars; the shell signals are hosting OTHER canvas screens or the
+  // tab/split/scene containers below.)
+  const SHELL_CONTAINERS = ['TabView', 'NavigationSplitView', 'WindowGroup'];
+  const candidatesByScreen = new Map(
+    spec.screens.map((s) => [s.id, structCandidates(s)]),
+  );
+
   for (const [rel, screens] of linkedByFile) {
     const abs = safeWorkspacePath(workspace, rel);
     if (!abs) {
@@ -456,14 +469,54 @@ export async function applyInPlaceExport(args: {
         continue;
       }
 
+      const located = findViewStructBody(text, structName);
+      if (!located.ok) continue; // unreachable — just located above
+      const marked = bodyHasMarker(text, located.loc);
+
+      // Navigation-shell guard: an UNMARKED body that hosts other canvas
+      // screens (ContentView { TabView { TodoListView(); AuthView() } }) or
+      // is built around an app-shell container is the app's navigation
+      // scaffolding — overwriting it would replace the real tab bar /
+      // routing with static boxes and disconnect the designed screens from
+      // the running app. Skip it; the design lives in its destinations.
+      if (!marked) {
+        const interior = text.slice(
+          located.loc.bodyOpen + 1,
+          located.loc.bodyClose,
+        );
+        const ownNames = new Set(candidatesByScreen.get(screen.id) ?? []);
+        const otherScreenStructs = [
+          ...new Set(
+            spec.screens
+              .filter((s) => s.id !== screen.id)
+              .flatMap((s) => candidatesByScreen.get(s.id) ?? [])
+              .filter((n) => !ownNames.has(n)),
+          ),
+        ];
+        const hosted = codeContainsWord(interior, otherScreenStructs);
+        const container = hosted
+          ? null
+          : codeContainsWord(interior, SHELL_CONTAINERS);
+        if (hosted || container) {
+          results.push({
+            screenId: screen.id,
+            file: rel,
+            struct: structName,
+            action: 'skipped',
+            reason: hosted
+              ? `${structName} is the app's navigation shell (its body shows ${hosted}, another canvas screen) — tango never overwrites navigation; delete the "${screen.id}" screen from the canvas and design its destination screens instead`
+              : `${structName}'s body is built around a ${container} — it looks like the app's navigation shell, which tango never overwrites; design its destination screens instead (or remove this screen from the canvas)`,
+          });
+          continue;
+        }
+      }
+
       // Stale guard: the file changed since this screen was imported. Only a
       // body that is provably tango-generated (marker) is safe to overwrite —
       // hand-written changes get a refresh-first skip, never clobbered.
-      const located = findViewStructBody(text, structName);
-      if (!located.ok) continue; // unreachable — just located above
       const stale =
         screen.sourceHash !== undefined && originalHash !== screen.sourceHash;
-      if (stale && !bodyHasMarker(text, located.loc)) {
+      if (stale && !marked) {
         results.push({
           screenId: screen.id,
           file: rel,

@@ -384,6 +384,134 @@ describe('applyInPlaceExport — linked screens', () => {
   });
 });
 
+// ── applyInPlaceExport: navigation-shell guard ──────────────────────────────
+
+const SHELL_CONTENT_VIEW = `import SwiftUI
+
+struct ContentView: View {
+  var body: some View {
+    TabView {
+      TodoListView().tabItem { Label("Tasks", systemImage: "checklist") }
+      AuthView().tabItem { Label("Account", systemImage: "person") }
+    }
+  }
+}
+
+struct TodoListView: View {
+  var body: some View {
+    NavigationStack {
+      Text("todos")
+    }
+  }
+}
+
+struct AuthView: View {
+  var body: some View {
+    Text("auth")
+  }
+}
+`;
+
+describe('applyInPlaceExport — navigation-shell guard', () => {
+  const shellSpec = (): UISpec => ({
+    screens: ['ContentView', 'TodoListView', 'AuthView'].map((id) =>
+      screen({
+        id,
+        sourceFile: 'MyApp/ContentView.swift',
+        sourceHash: hashSource(SHELL_CONTENT_VIEW),
+      }),
+    ),
+  });
+
+  it('skips the shell (it hosts other canvas screens) and exports the destinations', async () => {
+    const { files, fsx } = memFs({
+      '/repo/MyApp/ContentView.swift': SHELL_CONTENT_VIEW,
+    });
+    const out = await run(shellSpec(), fsx);
+    const byId = new Map(out.results.map((r) => [r.screenId, r]));
+    expect(byId.get('ContentView')!.action).toBe('skipped');
+    expect(byId.get('ContentView')!.reason).toContain('navigation shell');
+    // A real screen wrapping itself in a NavigationStack still exports.
+    expect(byId.get('TodoListView')!.action).toBe('updated');
+    expect(byId.get('AuthView')!.action).toBe('updated');
+    const next = files.get('/repo/MyApp/ContentView.swift')!;
+    // The shell's TabView body survives byte-for-byte.
+    expect(next).toContain('TabView {');
+    expect(next).toContain('.tabItem { Label("Tasks", systemImage: "checklist") }');
+    expect(next).toContain('screen=TodoListView');
+    expect(out.provenance.has('ContentView')).toBe(false);
+  });
+
+  it('skips an unmarked TabView body even when the hosted views are not canvas screens', async () => {
+    const src = `import SwiftUI
+struct RootView: View {
+  var body: some View {
+    TabView { HomePane() ; SettingsPane() }
+  }
+}
+`;
+    const { files, fsx } = memFs({ '/repo/MyApp/Root.swift': src });
+    const spec: UISpec = {
+      screens: [
+        screen({
+          id: 'RootView',
+          sourceFile: 'MyApp/Root.swift',
+          sourceHash: hashSource(src),
+        }),
+      ],
+    };
+    const out = await run(spec, fsx);
+    expect(out.results[0].action).toBe('skipped');
+    expect(out.results[0].reason).toContain('TabView');
+    expect(files.get('/repo/MyApp/Root.swift')).toBe(src);
+  });
+
+  it('does not trip on TabView mentioned in strings, comments, or as a prefix', async () => {
+    const src = `import SwiftUI
+struct HomeView: View {
+  // A TabView used to live here.
+  let note = "TabView is gone"
+  var body: some View {
+    Text("home").tabViewStyle(.page)
+  }
+}
+`;
+    const { fsx } = memFs({ '/repo/MyApp/Home.swift': src });
+    const spec: UISpec = {
+      screens: [
+        screen({
+          id: 'HomeView',
+          sourceFile: 'MyApp/Home.swift',
+          sourceHash: hashSource(src),
+        }),
+      ],
+    };
+    const out = await run(spec, fsx);
+    expect(out.results[0].action).toBe('updated');
+  });
+
+  it('still regenerates a MARKED body freely (markers outrank the shell guard)', async () => {
+    const { files, fsx } = memFs({
+      '/repo/MyApp/ContentView.swift': SHELL_CONTENT_VIEW,
+    });
+    // First export marks TodoListView's body…
+    await run(shellSpec(), fsx);
+    const afterFirst = files.get('/repo/MyApp/ContentView.swift')!;
+    // …second export re-splices it without tripping any guard.
+    const spec2: UISpec = {
+      screens: [
+        screen({
+          id: 'TodoListView',
+          sourceFile: 'MyApp/ContentView.swift',
+          sourceHash: hashSource(afterFirst),
+        }),
+      ],
+    };
+    const out = await run(spec2, fsx);
+    expect(out.results[0].action).toBe('unchanged');
+  });
+});
+
 // ── applyInPlaceExport: new screens ─────────────────────────────────────────
 
 describe('applyInPlaceExport — canvas-born screens', () => {
