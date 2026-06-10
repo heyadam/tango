@@ -15,10 +15,12 @@ import type { WebSocket } from 'ws';
 import {
   query,
   startup,
+  type EffortLevel,
   type Options,
   type Query,
   type SDKMessage,
   type SDKUserMessage,
+  type SettingSource,
   type WarmQuery,
 } from '@anthropic-ai/claude-agent-sdk';
 import type { AgentClientMsg, AgentServerMsg } from '@/lib/agentProtocol';
@@ -95,7 +97,26 @@ async function buildOptions(workspace: string): Promise<Options> {
     // Sonnet 4.6 by default: the interactive loop favors speed and cost over
     // peak capability. Override per-machine with TANGO_AGENT_MODEL.
     model: process.env.TANGO_AGENT_MODEL ?? 'claude-sonnet-4-6',
+    // The design loop wants snap over deliberation: low effort cuts the
+    // minutes-long thinking stretches before the first canvas mutation.
+    // Override per-machine with TANGO_AGENT_EFFORT (low|medium|high|max).
+    effort: agentEffort(),
+    // Workspace-scoped settings only: the user's global ~/.claude plugins,
+    // hooks, and skills don't belong in the embedded design agent (they
+    // bloat every turn and fire foreign hooks). Workspace CLAUDE.md /
+    // tango.md / .claude/skills still load. TANGO_AGENT_SETTINGS=all reverts.
+    ...(process.env.TANGO_AGENT_SETTINGS === 'all'
+      ? {}
+      : { settingSources: ['project', 'local'] satisfies SettingSource[] }),
   };
+}
+
+function agentEffort(): EffortLevel {
+  const raw = process.env.TANGO_AGENT_EFFORT;
+  if (raw === 'low' || raw === 'medium' || raw === 'high' || raw === 'max') {
+    return raw;
+  }
+  return 'low';
 }
 
 // ── Warm spare ──────────────────────────────────────────────────────────────
