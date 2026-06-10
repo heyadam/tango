@@ -15,6 +15,7 @@ import {
   type UiImportDeps,
 } from './uiImport';
 import { _setWorkspaceInternal } from './workspace';
+import { hashSource } from './sourceHash';
 import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
 
 const SCREEN: UIScreen = {
@@ -341,7 +342,15 @@ describe('runUiImport', () => {
     const state = await runUiImport(d);
     expect(state.phase).toBe('done');
     expect(d.setSpec).toHaveBeenCalledWith({
-      screens: [{ ...SCREEN, sourceFile: 'MyApp/LoginView.swift' }],
+      screens: [
+        {
+          ...SCREEN,
+          sourceFile: 'MyApp/LoginView.swift',
+          sourceHash: hashSource(
+            'struct LoginView: View { var body: some View {} }',
+          ),
+        },
+      ],
     });
   });
 
@@ -459,6 +468,134 @@ describe('runUiImport', () => {
       { stop_reason: 'refusal', content: [] },
     ]);
     const state = await runUiImport(d);
+    expect(state.phase).toBe('error');
+  });
+});
+
+describe('applyEmittedScreen sourceHash carry', () => {
+  const base = (over: Partial<UIScreen>): UIScreen => ({
+    id: 's',
+    title: 'S',
+    frame: { w: 390, h: 844 },
+    nodes: [],
+    ...over,
+  });
+
+  it('carries prior sourceHash with the preserved sourceFile', () => {
+    const current: UISpec = {
+      screens: [base({ sourceFile: 'App/S.swift', sourceHash: 'h1' })],
+    };
+    const next = applyEmittedScreen(current, base({}));
+    expect(next.screens[0].sourceFile).toBe('App/S.swift');
+    expect(next.screens[0].sourceHash).toBe('h1');
+  });
+
+  it('a replacement that sets sourceFile does NOT inherit the stale hash', () => {
+    const current: UISpec = {
+      screens: [base({ sourceFile: 'App/S.swift', sourceHash: 'h1' })],
+    };
+    const next = applyEmittedScreen(
+      current,
+      base({ sourceFile: 'App/Other.swift' }),
+    );
+    expect(next.screens[0].sourceFile).toBe('App/Other.swift');
+    expect(next.screens[0].sourceHash).toBeUndefined();
+  });
+});
+
+describe('runUiImport (scoped re-import)', () => {
+  beforeEach(() => {
+    _setWorkspaceInternal('/repo', 'persisted');
+  });
+
+  afterEach(() => {
+    _setWorkspaceInternal(null, 'unset');
+  });
+
+  const SCOPE = { file: 'MyApp/LoginView.swift', screenId: 'LoginView' };
+
+  it('rejects emits with the wrong screen id, accepts the pinned id', async () => {
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'emit_screen', {
+            screen: { ...SCREEN, id: 'SomethingElse' },
+            source_file: SCOPE.file,
+          }),
+        ],
+      },
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t2', 'emit_screen', {
+            screen: SCREEN,
+            source_file: SCOPE.file,
+          }),
+        ],
+      },
+      { stop_reason: 'end_turn', content: [text('refreshed')] },
+    ]);
+    const state = await runUiImport(d, SCOPE);
+    expect(state.phase).toBe('done');
+    if (state.phase !== 'done') return;
+    expect(state.screensImported).toBe(1);
+    const applied = d.setSpec.mock.calls[0][0] as UISpec;
+    expect(applied.screens[0].id).toBe('LoginView');
+    expect(applied.screens[0].sourceHash).toBeDefined();
+  });
+
+  it('restricts reads to the scoped file', async () => {
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'read_swift_file', { path: 'MyApp/Models/User.swift' }),
+        ],
+      },
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t2', 'emit_screen', { screen: SCREEN, source_file: SCOPE.file }),
+        ],
+      },
+      { stop_reason: 'end_turn', content: [text('done')] },
+    ]);
+    const seen: unknown[][] = [];
+    const inner = d.createMessage;
+    d.createMessage = async (params) => {
+      seen.push(params.messages.map((m) => m.content));
+      return inner(params);
+    };
+    const state = await runUiImport(d, SCOPE);
+    expect(state.phase).toBe('done');
+    // The off-scope read came back as an error tool_result.
+    const secondTurn = seen[1];
+    const lastContent = secondTurn[secondTurn.length - 1] as Array<{
+      type: string;
+      is_error?: boolean;
+    }>;
+    expect(lastContent[0].is_error).toBe(true);
+  });
+
+  it('errors when the scoped file is unreadable', async () => {
+    const d = scriptedDeps([], {
+      readFile: async () => {
+        throw new Error('ENOENT');
+      },
+    });
+    const state = await runUiImport(d, SCOPE);
+    expect(state.phase).toBe('error');
+    if (state.phase !== 'error') return;
+    expect(state.message).toContain('source file not found');
+  });
+
+  it('refuses paths escaping the workspace', async () => {
+    const d = scriptedDeps([]);
+    const state = await runUiImport(d, {
+      file: '../outside/Evil.swift',
+      screenId: 'X',
+    });
     expect(state.phase).toBe('error');
   });
 });

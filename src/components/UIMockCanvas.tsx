@@ -42,6 +42,7 @@ import { useMoveableGestures } from './canvas/useMoveableGestures';
 import {
   EmptyState,
   ScreenFileChip,
+  ScreenRefreshButton,
   ShapeToolbar,
   ZoomControls,
 } from './canvas/CanvasChrome';
@@ -71,6 +72,7 @@ import UIShapeStyleBar from './UIShapeStyleBar';
 import UIInspector from './UIInspector';
 import {
   EMPTY_SPEC,
+  type SourceSyncStatus,
   type UINode,
   type UINodeType,
   type UISpec,
@@ -94,6 +96,9 @@ type Props = {
   // screen, or clicking a frame's background). UIPanel ships it to the server
   // so the preview-host app shows the screen the user is actually editing.
   onActiveScreen?: (screenId: string) => void;
+  // Refresh one screen from its linked source file (the title-row refresh
+  // action) — UIPanel runs the scoped import and owns the status line.
+  onReimportScreen?: (screenId: string, sourceFile: string) => void;
   // UIPanel's docked sidebar slot. When present, the layers tree + inspector
   // portal into it (state lives here, layout lives in UIPanel so the canvas
   // viewport measurement excludes the sidebar). Null = sidebar closed.
@@ -104,6 +109,7 @@ export default function UIMockCanvas({
   initialSpec,
   onPersist,
   onActiveScreen,
+  onReimportScreen,
   sidebarContainer,
 }: Props) {
   const [spec, setSpec] = useState<UISpec>(initialSpec ?? EMPTY_SPEC);
@@ -133,6 +139,11 @@ export default function UIMockCanvas({
     screens: Set<string>;
   }>(() => ({ nodes: new Set(), screens: new Set() }));
   const pulseTimer = useRef<number | null>(null);
+  // Per-screen source-file sync ('synced' | 'stale' | 'missing'), pushed by
+  // the server's watcher over /ws/ui-mock. Absent id = unlinked screen.
+  const [sourceSync, setSourceSync] = useState<
+    Record<string, SourceSyncStatus>
+  >({});
 
   // Map<nodeId, wrapper-element> populated by callback refs on each rendered
   // node so we can hand react-moveable real DOM targets without re-querying.
@@ -216,6 +227,8 @@ export default function UIMockCanvas({
           ...prev,
           screens: [...prev.screens, msg.screen],
         }));
+      } else if (msg.type === 'source_sync') {
+        setSourceSync(msg.statuses);
       }
     });
     return () => {
@@ -1024,7 +1037,16 @@ export default function UIMockCanvas({
               <ScreenFileChip
                 sourceFile={screen.sourceFile}
                 exportName={screenFiles.get(screen.id)!}
+                syncStatus={sourceSync[screen.id]}
               />
+              {screen.sourceFile && onReimportScreen && (
+                <ScreenRefreshButton
+                  screenId={screen.id}
+                  sourceFile={screen.sourceFile}
+                  syncStatus={sourceSync[screen.id]}
+                  onReimport={onReimportScreen}
+                />
+              )}
             </div>
             <div
               ref={(el) => {

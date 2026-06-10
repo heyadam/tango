@@ -256,6 +256,14 @@ export async function setWorkspace(
     callHook('agentBroadcastWorkspaceChanged');
   }
 
+  // Re-point the Swift source watcher at the new workspace. Outside the
+  // isSwitch block on purpose: the FIRST selection (previous === null) must
+  // start the watcher too — boot ran startSourceSync with no workspace and
+  // returned without one.
+  if (previous !== abs) {
+    callHook('sourceSyncRestart');
+  }
+
   if (ensureResult.ok) {
     return { ok: true, path: abs };
   }

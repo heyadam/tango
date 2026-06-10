@@ -5,25 +5,29 @@
 // empty state. All presentational — state and behavior stay in the canvas.
 
 import { useEffect, useRef, useState } from 'react';
-import { Check, Maximize, Minus, Plus } from 'lucide-react';
+import { Check, Maximize, Minus, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '../ui/button';
 import { SHAPE_ICONS } from '../UIAddPalette';
 import { NODE_LABELS, SHAPE_TYPE_ORDER } from '@/lib/uiMockDefaults';
 import { MAX_ZOOM, MIN_ZOOM } from '@/lib/uiCanvasCamera';
-import type { UINodeType } from '@/lib/uiMockProtocol';
+import type { SourceSyncStatus, UINodeType } from '@/lib/uiMockProtocol';
 import { cn } from '@/lib/utils';
 
 // Directional provenance chip in the screen title row: '↓ <basename>' when
 // the screen was imported from a Swift source, else '↑ <TypeName>.swift' (the
 // derived export target). Click copies the relevant workspace-relative path.
+// When the source-sync watcher reports the linked file changed since import,
+// the chip goes warning-tinted ('stale'); a deleted source reads 'missing'.
 // Renders inside the transformed title row, so it scales with zoom — accepted
 // (informational only; all triggers live in screen space).
 export function ScreenFileChip({
   sourceFile,
   exportName,
+  syncStatus,
 }: {
   sourceFile?: string;
   exportName: string;
+  syncStatus?: SourceSyncStatus;
 }) {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -33,11 +37,25 @@ export function ScreenFileChip({
     };
   }, []);
 
+  const syncNote =
+    syncStatus === 'stale'
+      ? '\n⚠ code changed since import — refresh to re-import'
+      : syncStatus === 'missing'
+        ? '\n⚠ source file is missing'
+        : '';
+
   return (
     <button
       type="button"
-      className="ml-2 inline-flex max-w-40 items-center gap-0.5 truncate align-bottom font-mono text-[10px] text-muted-foreground hover:text-foreground"
-      title={`Imported from: ${sourceFile ?? '—'}\nExports to: TangoGenerated/${exportName}`}
+      className={cn(
+        'ml-2 inline-flex max-w-40 items-center gap-0.5 truncate align-bottom font-mono text-[10px]',
+        syncStatus === 'stale'
+          ? 'text-warning-foreground'
+          : syncStatus === 'missing'
+            ? 'text-destructive/80 line-through'
+            : 'text-muted-foreground hover:text-foreground',
+      )}
+      title={`Imported from: ${sourceFile ?? '—'}\nExports to: TangoGenerated/${exportName}${syncNote}`}
       // Keep the copy click from also activating the screen via the row.
       onPointerDown={(e) => e.stopPropagation()}
       onClick={() => {
@@ -49,6 +67,12 @@ export function ScreenFileChip({
         timerRef.current = window.setTimeout(() => setCopied(false), 1200);
       }}
     >
+      {syncStatus === 'stale' && (
+        <span
+          aria-hidden
+          className="mr-0.5 inline-block size-1.5 shrink-0 animate-pulse rounded-full bg-warning"
+        />
+      )}
       {copied ? (
         <>
           <Check className="size-3" />
@@ -59,6 +83,44 @@ export function ScreenFileChip({
       ) : (
         `↑ ${exportName}`
       )}
+    </button>
+  );
+}
+
+// Title-row refresh action for linked screens: re-import this screen from its
+// source file (a scoped fast-import run). Quiet when in sync, warning-tinted
+// and always-visible when the source changed underneath the canvas.
+export function ScreenRefreshButton({
+  screenId,
+  sourceFile,
+  syncStatus,
+  onReimport,
+}: {
+  screenId: string;
+  sourceFile: string;
+  syncStatus?: SourceSyncStatus;
+  onReimport: (screenId: string, sourceFile: string) => void;
+}) {
+  if (syncStatus === 'missing') return null;
+  return (
+    <button
+      type="button"
+      aria-label={`Re-import ${screenId} from ${sourceFile}`}
+      title={
+        syncStatus === 'stale'
+          ? `${sourceFile} changed since import — click to re-import this screen`
+          : `Re-import this screen from ${sourceFile}`
+      }
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={() => onReimport(screenId, sourceFile)}
+      className={cn(
+        'ml-1 inline-flex size-4 items-center justify-center rounded align-bottom',
+        syncStatus === 'stale'
+          ? 'text-warning-foreground hover:bg-warning/20'
+          : 'text-muted-foreground/60 hover:bg-accent hover:text-foreground',
+      )}
+    >
+      <RefreshCw className="size-3" />
     </button>
   );
 }

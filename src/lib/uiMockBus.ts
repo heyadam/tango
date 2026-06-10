@@ -23,14 +23,18 @@ const snapshotListeners = new Set<SnapshotListener>();
 // be dropped on the floor; replay closes that window without coupling
 // UIPanel to the canvas's mount lifecycle.
 let lastApply: ApplyMsg | null = null;
+// source_sync frames replay separately — they must never displace the spec-
+// carrying replay (a canvas mounting late still needs the last `set`).
+let lastSourceSync: ApplyMsg | null = null;
 
 export const uiMockBus = {
   // Wired by UIMockCanvas — receives server-driven updates (set / append).
   _onApply(cb: ApplyListener): () => void {
     applyListeners.add(cb);
-    if (lastApply) {
+    for (const replay of [lastApply, lastSourceSync]) {
+      if (!replay) continue;
       try {
-        cb(lastApply);
+        cb(replay);
       } catch {
         // listener threw; we still want to keep it registered
       }
@@ -46,7 +50,8 @@ export const uiMockBus = {
   },
 
   _emitApply(msg: ApplyMsg): void {
-    lastApply = msg;
+    if (msg.type === 'source_sync') lastSourceSync = msg;
+    else lastApply = msg;
     for (const fn of applyListeners) fn(msg);
   },
 
@@ -58,6 +63,7 @@ export const uiMockBus = {
   // the previous workspace's spec.
   _resetForWorkspaceSwitch(): void {
     lastApply = null;
+    lastSourceSync = null;
   },
 };
 

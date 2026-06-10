@@ -131,7 +131,8 @@ export function appendScreenToSpec(spec: UISpec, screen: UIScreen): UISpec {
 // step of a variation (duplicate, then patch deltas with updateNodesInSpec).
 // Node ids are remapped onto the new screen id: a `<sourceId>-` prefix is
 // swapped for `<newId>-`, anything else gets `<newId>-` prepended. sourceFile
-// is NOT copied (a duplicate doesn't mirror the original's source file).
+// (and sourceHash) is NOT copied (a duplicate doesn't mirror the original's
+// source file).
 // Errors (collected): unknown source screen, newScreenId already taken, any
 // remapped node id colliding globally or within the duplicate.
 export function duplicateScreenInSpec(
@@ -164,7 +165,7 @@ export function duplicateScreenInSpec(
     return { ...node, id };
   });
   if (errors.length) fail(errors);
-  const { sourceFile: _dropped, ...rest } = source!;
+  const { sourceFile: _dropped, sourceHash: _droppedHash, ...rest } = source!;
   const screen: UIScreen = {
     ...rest,
     id: newScreenId,

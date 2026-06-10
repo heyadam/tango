@@ -97,6 +97,12 @@ export type UIScreen = {
   // only). The export target is NEVER stored — always derived live via
   // screenFileNames() in specToSwiftUI.ts (order-dependent dedupe).
   sourceFile?: string;
+  // Content fingerprint (sha-256 prefix) of `sourceFile` at import time —
+  // stamped by the import engine alongside sourceFile, never by hand. The
+  // source-sync watcher compares it against the live file to mark a screen
+  // stale ("code changed since import"). Travels with sourceFile: preserved
+  // on replace-when-omitted, dropped on duplicate.
+  sourceHash?: string;
 };
 
 export type UISpec = {
@@ -110,7 +116,18 @@ export type UISpec = {
 // re-broadcast the whole spec when only one screen was added.
 export type ServerSetMsg = { type: 'set'; spec: UISpec };
 export type ServerAppendScreenMsg = { type: 'append_screen'; screen: UIScreen };
-export type UIMockServerMsg = ServerSetMsg | ServerAppendScreenMsg;
+// Server → browser. Per-screen source-file sync state, recomputed when the
+// watcher sees a linked .swift file change or when screen provenance changes.
+// Only screens with a sourceFile appear; absence = unlinked.
+export type SourceSyncStatus = 'synced' | 'stale' | 'missing';
+export type ServerSourceSyncMsg = {
+  type: 'source_sync';
+  statuses: Record<string, SourceSyncStatus>;
+};
+export type UIMockServerMsg =
+  | ServerSetMsg
+  | ServerAppendScreenMsg
+  | ServerSourceSyncMsg;
 
 // Browser → server. Debounced after local edits; server replaces its cache.
 // No broadcast — last-writer-wins, single-browser typical.

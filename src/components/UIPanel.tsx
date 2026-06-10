@@ -241,6 +241,9 @@ export default function UIPanel({ terminalAgent }: Props) {
         setScreenCount(specRef.current.screens.length);
         uiMockStore.save(specRef.current);
         uiMockBus._emitApply(appMsg);
+      } else if (msg.type === 'source_sync') {
+        // Per-screen source-file sync states — straight through to the canvas.
+        uiMockBus._emitApply(parsed as import('@/lib/uiMockProtocol').ServerSourceSyncMsg);
       }
     });
 
@@ -507,57 +510,84 @@ export default function UIPanel({ terminalAgent }: Props) {
   // the deterministic direction is export (Export & Run). The canvas updates
   // live over /ws/ui-mock as each screen lands.
   const [importing, setImporting] = useState(false);
-  const importFromCode = useCallback(async () => {
-    if (importing) return;
-    setImporting(true);
-    setStatus('Importing…');
-    try {
-      const kick = await fetch('/api/ui/import', { method: 'POST' });
-      if (!kick.ok) {
-        const body = (await kick.json().catch(() => ({}))) as {
-          reason?: string;
-        };
-        setStatus(`Import blocked: ${body.reason ?? `HTTP ${kick.status}`}`);
-        return;
-      }
-      for (;;) {
-        await new Promise((r) => setTimeout(r, 700));
-        if (!mountedRef.current) return;
-        const res = await fetch('/api/ui/import', { cache: 'no-store' });
-        const s = (await res.json()) as {
-          phase: string;
-          filesRead?: number;
-          screensImported?: number;
-          durationMs?: number;
-          message?: string;
-        };
-        if (s.phase === 'done') {
-          const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+  // One runner for both flavors: a bare run is the full workspace import; a
+  // scope re-imports one screen from its linked source file (the chip's
+  // refresh action). Same endpoint, same state machine, same polling.
+  const runImport = useCallback(
+    async (scope?: { file: string; screenId: string }) => {
+      if (importing) return;
+      setImporting(true);
+      setStatus(scope ? `Refreshing from ${scope.file}…` : 'Importing…');
+      try {
+        const kick = await fetch('/api/ui/import', {
+          method: 'POST',
+          ...(scope
+            ? {
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(scope),
+              }
+            : {}),
+        });
+        if (!kick.ok) {
+          const body = (await kick.json().catch(() => ({}))) as {
+            reason?: string;
+          };
+          setStatus(`Import blocked: ${body.reason ?? `HTTP ${kick.status}`}`);
+          return;
+        }
+        for (;;) {
+          await new Promise((r) => setTimeout(r, 700));
+          if (!mountedRef.current) return;
+          const res = await fetch('/api/ui/import', { cache: 'no-store' });
+          const s = (await res.json()) as {
+            phase: string;
+            filesRead?: number;
+            screensImported?: number;
+            durationMs?: number;
+            message?: string;
+          };
+          if (s.phase === 'done') {
+            const secs = ((s.durationMs ?? 0) / 1000).toFixed(1);
+            setStatus(
+              scope
+                ? `Refreshed "${scope.screenId}" in ${secs}s.`
+                : `Imported ${s.screensImported} screen${s.screensImported === 1 ? '' : 's'} in ${secs}s.`,
+            );
+            return;
+          }
+          if (s.phase === 'error') {
+            setStatus(`Import failed: ${s.message ?? 'unknown error'}`);
+            return;
+          }
+          if (s.phase === 'idle') {
+            setStatus('Import ended unexpectedly.');
+            return;
+          }
           setStatus(
-            `Imported ${s.screensImported} screen${s.screensImported === 1 ? '' : 's'} in ${secs}s.`,
+            scope
+              ? `Refreshing "${scope.screenId}"…`
+              : `Importing… ${s.filesRead ?? 0} file${(s.filesRead ?? 0) === 1 ? '' : 's'} read · ${s.screensImported ?? 0} screen${(s.screensImported ?? 0) === 1 ? '' : 's'}`,
           );
-          return;
         }
-        if (s.phase === 'error') {
-          setStatus(`Import failed: ${s.message ?? 'unknown error'}`);
-          return;
-        }
-        if (s.phase === 'idle') {
-          setStatus('Import ended unexpectedly.');
-          return;
-        }
+      } catch (err) {
         setStatus(
-          `Importing… ${s.filesRead ?? 0} file${(s.filesRead ?? 0) === 1 ? '' : 's'} read · ${s.screensImported ?? 0} screen${(s.screensImported ?? 0) === 1 ? '' : 's'}`,
+          `Import failed: ${err instanceof Error ? err.message : String(err)}`,
         );
+      } finally {
+        if (mountedRef.current) setImporting(false);
       }
-    } catch (err) {
-      setStatus(
-        `Import failed: ${err instanceof Error ? err.message : String(err)}`,
-      );
-    } finally {
-      if (mountedRef.current) setImporting(false);
-    }
-  }, [importing]);
+    },
+    [importing],
+  );
+
+  const importFromCode = useCallback(() => runImport(), [runImport]);
+
+  const reimportScreen = useCallback(
+    (screenId: string, sourceFile: string) => {
+      void runImport({ file: sourceFile, screenId });
+    },
+    [runImport],
+  );
 
   const clearMock = useCallback(() => {
     // Local clear: emit an empty snapshot so the server cache matches and
@@ -710,6 +740,7 @@ export default function UIPanel({ terminalAgent }: Props) {
               initialSpec={load.initialSpec}
               onPersist={persist}
               onActiveScreen={handleActiveScreen}
+              onReimportScreen={reimportScreen}
               sidebarContainer={sidebarOpen ? sidebarEl : null}
             />
           )}

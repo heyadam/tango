@@ -16,6 +16,7 @@ import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import * as z from 'zod/v4';
 import { uiScreenSchema } from '@/lib/uiMockSchema';
+import { hashSource } from './sourceHash';
 import type { UIScreen, UISpec } from '@/lib/uiMockProtocol';
 import { getHook } from './serverHooks';
 import { getWorkspaceOrNull } from './workspace';
@@ -164,8 +165,9 @@ export async function findSwiftFiles(
 
 // Pure, tested: replace the screen with the same id, or append. Imported
 // screens never disturb other screens (the user's existing work survives).
-// A replacement that omits sourceFile keeps the prior screen's provenance
-// (re-emits and TangoGenerated round-trips don't re-state the user source).
+// A replacement that omits sourceFile keeps the prior screen's provenance —
+// sourceHash travels with it (re-emits and TangoGenerated round-trips don't
+// re-state the user source).
 export function applyEmittedScreen(current: UISpec, screen: UIScreen): UISpec {
   const idx = current.screens.findIndex((s) => s.id === screen.id);
   if (idx === -1) {
@@ -173,10 +175,13 @@ export function applyEmittedScreen(current: UISpec, screen: UIScreen): UISpec {
   }
   const screens = current.screens.slice();
   const prior = screens[idx];
-  screens[idx] =
-    screen.sourceFile === undefined && prior.sourceFile !== undefined
-      ? { ...screen, sourceFile: prior.sourceFile }
-      : screen;
+  if (screen.sourceFile === undefined && prior.sourceFile !== undefined) {
+    const carried: UIScreen = { ...screen, sourceFile: prior.sourceFile };
+    if (prior.sourceHash !== undefined) carried.sourceHash = prior.sourceHash;
+    screens[idx] = carried;
+  } else {
+    screens[idx] = screen;
+  }
   return { screens };
 }
 
@@ -376,6 +381,44 @@ function buildKickoffMessage(
   return parts.join('\n');
 }
 
+// Validate a scoped re-import target and shape it like the scanner's output.
+// Tight on purpose: workspace-relative, must exist, must be .swift.
+async function scopedFileList(
+  workspace: string,
+  relFile: string,
+  deps: Pick<UiImportDeps, 'readFile'>,
+): Promise<SwiftFileInfo[]> {
+  if (!relFile.endsWith('.swift')) return [];
+  const root = path.resolve(workspace);
+  const abs = path.resolve(root, relFile);
+  if (abs !== root && !abs.startsWith(root + path.sep)) return [];
+  let bytes: number;
+  try {
+    bytes = (await deps.readFile(abs)).length;
+  } catch {
+    return [];
+  }
+  return [{ relPath: relFile, bytes, generated: isGeneratedScreenPath(relFile) }];
+}
+
+// Kickoff for a scoped re-import: one file, one screen id, replace in place.
+export function buildScopedKickoffMessage(
+  scope: UiImportScope,
+  existing: UISpec,
+): string {
+  const current = existing.screens.find((s) => s.id === scope.screenId);
+  const currentNote = current
+    ? `The canvas currently has this screen as "${current.title}" (${current.frame.w}×${current.frame.h}, ${current.nodes.length} nodes); your emit replaces it in place.`
+    : `The canvas does not currently have a screen with this id; your emit will add it.`;
+  return [
+    `Re-import ONE screen from its source file: read \`${scope.file}\` and emit the screen for the View it defines.`,
+    '',
+    `Emit exactly one screen, and its id MUST be exactly "${scope.screenId}" — this refresh replaces that screen on the canvas. Do not emit any other screens.`,
+    `Pass source_file: "${scope.file}".`,
+    currentNote,
+  ].join('\n');
+}
+
 // ── Engine ──────────────────────────────────────────────────────────────────
 
 const MAX_TURNS = 40;
@@ -449,8 +492,14 @@ function fail(message: string): UiImportState {
   return state;
 }
 
+// Scoped re-import: refresh ONE screen from its linked source file (the
+// chip's refresh action). Same engine, same state machine — the file list is
+// pinned to the one file and the model must emit exactly `screenId`.
+export type UiImportScope = { file: string; screenId: string };
+
 export async function runUiImport(
   deps: UiImportDeps = realDeps,
+  scope?: UiImportScope,
 ): Promise<UiImportState> {
   const slot = getSlot();
   if (slot.state.phase === 'running') return slot.state;
@@ -471,12 +520,20 @@ export async function runUiImport(
 
   let files: SwiftFileInfo[];
   try {
-    files = await deps.listSwiftFiles(workspace);
+    if (scope) {
+      files = await scopedFileList(workspace, scope.file, deps);
+    } else {
+      files = await deps.listSwiftFiles(workspace);
+    }
   } catch (err) {
     return fail(err instanceof Error ? err.message : String(err));
   }
   if (files.length === 0) {
-    return fail('no Swift sources found in this workspace');
+    return fail(
+      scope
+        ? `source file not found: ${scope.file}`
+        : 'no Swift sources found in this workspace',
+    );
   }
   progress.filesFound = files.length;
   setRunning();
@@ -486,10 +543,9 @@ export async function runUiImport(
   const messages: Anthropic.MessageParam[] = [
     {
       role: 'user',
-      content: buildKickoffMessage(
-        files,
-        deps.getSpec() ?? { screens: [] },
-      ),
+      content: scope
+        ? buildScopedKickoffMessage(scope, deps.getSpec() ?? { screens: [] })
+        : buildKickoffMessage(files, deps.getSpec() ?? { screens: [] }),
     },
   ];
 
@@ -554,6 +610,12 @@ export async function runUiImport(
           true,
         );
       }
+      if (scope && screenBase.id !== scope.screenId) {
+        return result(
+          `this is a scoped refresh of screen "${scope.screenId}" — emit that exact id (got "${screenBase.id}"), and no other screens`,
+          true,
+        );
+      }
       const src = (block.input as { source_file?: unknown }).source_file;
       let screen: UIScreen = screenBase;
       let note: string | null = null;
@@ -565,6 +627,15 @@ export async function runUiImport(
             'note: TangoGenerated paths are exports, not provenance — keeping the prior sourceFile';
         } else if (fileSet.has(src)) {
           screen = { ...screenBase, sourceFile: src };
+          // Fingerprint the source at import time — the sync watcher compares
+          // this against the live file to mark the screen stale later.
+          try {
+            screen.sourceHash = hashSource(
+              await deps.readFile(path.join(workspace, src)),
+            );
+          } catch {
+            // unreadable right now — leave unset (status reads as synced)
+          }
         } else {
           note = `note: source_file "${src}" is not in the provided file list — provenance not recorded`;
         }

@@ -272,7 +272,7 @@ type UINode = {
 };
 \`\`\`
 
-\`sourceFile\` is import provenance: the workspace-relative Swift file the screen was imported from. Set it only when the screen mirrors a real file, and preserve it when re-emitting an existing screen. Export filenames are always derived from the screen id at export time — never stored, so don't try to record them here.
+\`sourceFile\` is import provenance: the workspace-relative Swift file the screen was imported from. Set it only when the screen mirrors a real file, and preserve it when re-emitting an existing screen. \`sourceHash\` is the file's content fingerprint stamped by tango's import engine — preserve it alongside sourceFile and NEVER fabricate or alter it (the canvas uses it to show "code changed since import"). Export filenames are always derived from the screen id at export time — never stored, so don't try to record them here.
 
 Screens may also carry \`groups\` (\`[{id, name}]\`) with member nodes tagged \`group: '<id>'\` — editor-level grouping shown in the user's layers tree (the canvas selects a group as one unit). Groups never affect rendering or export. Manage them ONLY through \`group_ui_nodes\` / \`ungroup_ui_nodes\` / \`rename_ui_group\` (they keep members z-contiguous and prune emptied groups); preserve existing \`group\` tags when patching nodes, and use semantic names ("Header", "Task row") when the user asks you to organize layers.
 
