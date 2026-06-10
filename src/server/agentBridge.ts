@@ -21,6 +21,7 @@ import {
   type SDKMessage,
   type SDKUserMessage,
   type SettingSource,
+  type ThinkingConfig,
   type WarmQuery,
 } from '@anthropic-ai/claude-agent-sdk';
 import type { AgentClientMsg, AgentServerMsg } from '@/lib/agentProtocol';
@@ -101,6 +102,14 @@ async function buildOptions(workspace: string): Promise<Options> {
     // minutes-long thinking stretches before the first canvas mutation.
     // Override per-machine with TANGO_AGENT_EFFORT (low|medium|high|max).
     effort: agentEffort(),
+    // Extended thinking off by default: thinking tokens stream at a crawl on
+    // subscription accounts (~12-30 tok/s measured) — a single think block
+    // cost 3+ minutes before the first canvas edit, and benchmarks show the
+    // variations flow runs 5x faster without it (109s vs 578s, same tool
+    // sequence). TANGO_AGENT_THINKING=adaptive restores it.
+    ...(process.env.TANGO_AGENT_THINKING === 'adaptive'
+      ? {}
+      : { thinking: { type: 'disabled' } satisfies ThinkingConfig }),
     // Workspace-scoped settings only: the user's global ~/.claude plugins,
     // hooks, and skills don't belong in the embedded design agent (they
     // bloat every turn and fire foreign hooks). Workspace CLAUDE.md /
