@@ -17,6 +17,7 @@ import {
   addUINodesFromServer,
   appendUIScreenFromServer,
   clearUIMockFromServer,
+  duplicateUIScreenFromServer,
   getUIMock,
   getUIViewport,
   removeUINodesFromServer,
@@ -24,6 +25,8 @@ import {
   reorderUINodeFromServer,
   setUIMockFromServer,
   updateUINodeFromServer,
+  updateUINodesFromServer,
+  updateUIScreenFromServer,
 } from './uiMockBridge';
 import { describeLayers } from '@/lib/uiMockOps';
 import type { UINode, UIScreen, UISpec } from '@/lib/uiMockProtocol';
@@ -179,12 +182,18 @@ function buildServer(): McpServer {
     {
       title: 'Read the UI mock',
       description:
-        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Empty `screens` array means nothing has been mocked yet.",
+        "Returns the current UI mock spec — the user-tweakable shadcn/Tailwind design shown in the left pane. Each screen has a fixed-size `frame` (w×h px) and a flat list of `nodes` at absolute coordinates inside that frame. Call this BEFORE proposing changes — the user has likely dragged, resized, or edited text since you last set the mock, and those tweaks reflect their intent for the production UI. Pass `screenId` to read just one screen (much smaller — prefer it whenever the task concerns a single screen; unknown ids return an empty `screens` array). Empty `screens` array means nothing has been mocked yet.",
+      inputSchema: {
+        screenId: z.string().min(1).optional(),
+      },
     },
-    async () => {
+    async ({ screenId }) => {
       const spec = getUIMock();
+      const out: UISpec = screenId
+        ? { ...spec, screens: spec.screens.filter((s) => s.id === screenId) }
+        : spec;
       return {
-        content: [{ type: 'text', text: JSON.stringify(spec, null, 2) }],
+        content: [{ type: 'text', text: JSON.stringify(out, null, 2) }],
       };
     },
   );
@@ -357,6 +366,40 @@ function buildServer(): McpServer {
   );
 
   server.registerTool(
+    'update_ui_nodes',
+    {
+      title: 'Update many UI mock nodes in one call',
+      description:
+        "Bulk version of `update_ui_node`: applies many small patches in ONE call — the cheap delta path for restyles, rearranges, and divergence after `duplicate_ui_screen` (emit only the fields that change, never regenerate whole nodes or screens). Each entry shallow-merges `patch` into the node found by `nodeId`; the same patch rules as `update_ui_node` apply (`id` immutable, omitted fields unchanged). All-or-nothing: unknown ids fail the whole call, listing every one. Patches to the same node merge in order.",
+      inputSchema: {
+        patches: z
+          .array(
+            z.object({
+              nodeId: z.string().min(1),
+              patch: uiNodePatchSchema,
+            }),
+          )
+          .min(1),
+      },
+    },
+    async ({ patches }) => {
+      try {
+        updateUINodesFromServer(patches);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Updated ${patches.length} node patch(es).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('update_ui_nodes', err);
+      }
+    },
+  );
+
+  server.registerTool(
     'remove_ui_node',
     {
       title: 'Remove UI mock node(s)',
@@ -379,6 +422,69 @@ function buildServer(): McpServer {
         };
       } catch (err) {
         return toolErrorResult('remove_ui_node', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'duplicate_ui_screen',
+    {
+      title: 'Duplicate a screen in the UI mock',
+      description:
+        "Copies an existing screen to a new screen appended at the end — the FAST first step for variations and iterations: the copy appears on the user's canvas instantly, then you diverge it with a few `update_ui_nodes` patches instead of regenerating every node. Node ids are remapped automatically (`<sourceId>-` prefixes become `<newScreenId>-`, others get `<newScreenId>-` prepended) and `sourceFile` is not copied. `newScreenId` must be globally unique (convention: `<sourceId>-v1`, `-v2`, …); `newTitle` defaults to \"<source title> copy\". Errors list every id collision.",
+      inputSchema: {
+        screenId: z.string().min(1),
+        newScreenId: z.string().min(1),
+        newTitle: z.string().min(1).optional(),
+      },
+    },
+    async ({ screenId, newScreenId, newTitle }) => {
+      try {
+        duplicateUIScreenFromServer(screenId, newScreenId, newTitle);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Duplicated screen "${screenId}" as "${newScreenId}". Diverge it with update_ui_nodes (node ids now carry the "${newScreenId}-" prefix).`,
+            },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('duplicate_ui_screen', err);
+      }
+    },
+  );
+
+  server.registerTool(
+    'update_ui_screen',
+    {
+      title: 'Update a screen’s title or frame',
+      description:
+        'Patches screen-level fields (`title`, `frame`) of one screen without touching its nodes or any other screen. The screen `id` is immutable (export filenames and the simulator preview are keyed on it). Errors if the screen id does not exist.',
+      inputSchema: {
+        screenId: z.string().min(1),
+        title: z.string().min(1).optional(),
+        frame: z
+          .object({ w: z.number().positive(), h: z.number().positive() })
+          .optional(),
+      },
+    },
+    async ({ screenId, title, frame }) => {
+      if (title === undefined && frame === undefined) {
+        return toolErrorResult(
+          'update_ui_screen',
+          new Error('Provide at least one of `title` or `frame`.'),
+        );
+      }
+      try {
+        updateUIScreenFromServer(screenId, { title, frame });
+        return {
+          content: [
+            { type: 'text', text: `Updated screen "${screenId}".` },
+          ],
+        };
+      } catch (err) {
+        return toolErrorResult('update_ui_screen', err);
       }
     },
   );

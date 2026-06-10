@@ -6,11 +6,13 @@
 
 // pending: the model is still composing this tool call's input (tool_pending
 // frame); the item is replaced by the real one when the tool_use frame lands.
+// progressChars: cumulative input chars composed so far (tool_progress).
 export type ToolItem = {
   kind: 'tool';
   name: string;
   detail: string;
   pending?: boolean;
+  progressChars?: number;
 };
 
 export type TranscriptItem =

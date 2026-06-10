@@ -12,7 +12,7 @@ export function buildVariationsPrompt(scope: AgentTask['scope']): string {
   // variations are the screen-scope (or empty-selection) behavior below.
   if (scope.kind === 'nodes' && scope.nodeIds?.length) {
     return (
-      `Call get_ui_mock and read screen "${scope.screenId}" ("${scope.screenTitle}"). The user selected these element node(s): ${scope.nodeIds.join(', ')}.\n` +
+      `Call get_ui_mock with screenId "${scope.screenId}" and read screen "${scope.screenId}" ("${scope.screenTitle}"). The user selected these element node(s): ${scope.nodeIds.join(', ')}.\n` +
       'Create exactly 3 divergent variations of the SELECTED ELEMENT(S) ONLY — not the whole screen — laid out together in ONE new comparison screen (a single add_ui_screen call).\n' +
       'Hard rules:\n' +
       '- NEVER call set_ui_mock or clear_ui_mock, and never modify the original screen or any other existing screen.\n' +
@@ -25,13 +25,16 @@ export function buildVariationsPrompt(scope: AgentTask['scope']): string {
     );
   }
   return (
-    `Call get_ui_mock and read screen "${scope.screenId}" ("${scope.screenTitle}").\n` +
-    'Create exactly 3 divergent variations of it as NEW screens. For speed, fan out: launch 3 subagents with the Task tool IN PARALLEL — all three Task calls in a single message — one subagent per variation. Assign each subagent a distinct divergence direction plus its exact screen id and title from the rules below, and repeat the hard rules verbatim in its instructions; each subagent calls get_ui_mock itself and then makes exactly one add_ui_screen call. If the Task tool is unavailable, do them sequentially yourself — one add_ui_screen call per variation, so they stream onto the canvas one by one.\n' +
+    `Call get_ui_mock with screenId "${scope.screenId}" and read screen "${scope.screenId}" ("${scope.screenTitle}").\n` +
+    'Create exactly 3 divergent variations of it via the fast delta path, one variation at a time:\n' +
+    `1. duplicate_ui_screen({ screenId: "${scope.screenId}", newScreenId: "${scope.screenId}-v1", newTitle: "${scope.screenTitle} · v1" }) — the copy appears on the user's canvas instantly.\n` +
+    '2. Diverge the copy with ONE update_ui_nodes call carrying every patch for that variation — emit only the fields that change (x/y/width/height, text, className, style, props). Use add_ui_nodes / remove_ui_node only when the variation needs different elements.\n' +
+    '3. Repeat for "-v2" and "-v3" ("· v2", "· v3").\n' +
     'Hard rules:\n' +
-    '- NEVER call set_ui_mock or clear_ui_mock, and never modify the original screen or any other existing screen.\n' +
-    `- Every new screen id and every node id must be fresh and globally unique across the whole spec. Use "${scope.screenId}-v1", "${scope.screenId}-v2", "${scope.screenId}-v3" (pick a different suffix if one is taken) and prefix every node id with its new screen id.\n` +
-    `- Copy the original frame {w,h} exactly. Title the screens "${scope.screenTitle} · v1", "· v2", "· v3".\n` +
-    "- Do not copy the original screen's sourceFile onto the variations.\n" +
+    '- NEVER call set_ui_mock or clear_ui_mock, and never modify the original screen or any other existing screen — only patch node ids carrying the new screen prefix.\n' +
+    `- Use "${scope.screenId}-v1", "${scope.screenId}-v2", "${scope.screenId}-v3" as the new screen ids (pick a different suffix if one is taken). duplicate_ui_screen remaps node ids onto the new screen id automatically; any node YOU add must have a fresh globally unique id prefixed with its new screen id.\n` +
+    `- Title the screens "${scope.screenTitle} · v1", "· v2", "· v3".\n` +
+    "- Do not copy the original screen's sourceFile onto the variations (duplicate_ui_screen already drops it).\n" +
     '- Diverge genuinely in layout, hierarchy, and styling — not just color swaps.\n' +
     'Finish with one short line per variation describing its idea.'
   );
@@ -44,7 +47,7 @@ export function buildCustomPrompt(scope: AgentTask['scope'], userText: string): 
       : `In screen "${scope.screenId}" ("${scope.screenTitle}"):`;
   return (
     `${context}\n${userText.trim()}\n\n` +
-    'Call get_ui_mock first to read the live state. For in-place edits use the node-level tools (update_ui_node / add_ui_nodes / remove_ui_node / reorder_ui_node) so other nodes survive; for new screens use add_ui_screen with fresh globally-unique ids. Avoid set_ui_mock — it replaces the whole spec.'
+    `Call get_ui_mock first to read the live state (pass screenId "${scope.screenId}" — it returns just that screen). For in-place edits prefer ONE update_ui_nodes call carrying every patch, emitting only the fields that change (update_ui_node / add_ui_nodes / remove_ui_node / reorder_ui_node for single-node work) so other nodes survive; to iterate on a copy, duplicate_ui_screen then patch the copy; for brand-new screens use add_ui_screen with fresh globally-unique ids. Avoid set_ui_mock — it replaces the whole spec.`
   );
 }
 

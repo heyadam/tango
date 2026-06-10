@@ -20,6 +20,9 @@ export type AgentServerMsg =
   // add_ui_screen) can take minutes to generate and would otherwise look like
   // a hang. Superseded by the tool_use frame once the input is complete.
   | { type: 'tool_pending'; name: string }
+  // Throttled progress while a tool call's input streams: cumulative input
+  // chars composed so far. Proves long compositions are moving.
+  | { type: 'tool_progress'; chars: number }
   // The agent invoked a tool. detail is a short human-readable summary of the
   // input (see summarizeToolInput).
   | { type: 'tool_use'; name: string; detail: string }

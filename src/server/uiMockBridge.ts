@@ -18,10 +18,13 @@ import {
 import {
   addNodesToScreen,
   appendScreenToSpec,
+  duplicateScreenInSpec,
   removeNodesFromSpec,
   removeScreenFromSpec,
   reorderNodeInSpec,
   updateNodeInSpec,
+  updateNodesInSpec,
+  updateScreenInSpec,
   type NodePatch,
   type ReorderOp,
 } from '@/lib/uiMockOps';
@@ -180,6 +183,23 @@ export function removeUIScreenFromServer(screenId: string): void {
   setUIMockFromServer(removeScreenFromSpec(cache, screenId));
 }
 
+export function duplicateUIScreenFromServer(
+  screenId: string,
+  newScreenId: string,
+  newTitle?: string,
+): void {
+  setUIMockFromServer(
+    duplicateScreenInSpec(cache, screenId, newScreenId, newTitle),
+  );
+}
+
+export function updateUIScreenFromServer(
+  screenId: string,
+  patch: { title?: string; frame?: { w: number; h: number } },
+): void {
+  setUIMockFromServer(updateScreenInSpec(cache, screenId, patch));
+}
+
 export function clearUIMockFromServer(): void {
   setUIMockFromServer({ screens: [] });
 }
@@ -197,6 +217,12 @@ export function addUINodesFromServer(screenId: string, nodes: UINode[]): void {
 
 export function updateUINodeFromServer(nodeId: string, patch: NodePatch): void {
   setUIMockFromServer(updateNodeInSpec(cache, nodeId, patch));
+}
+
+export function updateUINodesFromServer(
+  patches: Array<{ nodeId: string; patch: NodePatch }>,
+): void {
+  setUIMockFromServer(updateNodesInSpec(cache, patches));
 }
 
 export function removeUINodesFromServer(nodeIds: string[]): void {

@@ -293,6 +293,16 @@ export default function AgentPanel({
             { kind: 'tool', name: msg.name, detail: '', pending: true },
           ]);
           return;
+        case 'tool_progress':
+          setItems((prev) => {
+            const last = prev[prev.length - 1];
+            if (!last || last.kind !== 'tool' || !last.pending) return prev;
+            return [
+              ...prev.slice(0, -1),
+              { ...last, progressChars: msg.chars },
+            ];
+          });
+          return;
         case 'tool_use':
           setItems((prev) => [
             ...stripTrailingPending(prev),
@@ -767,7 +777,9 @@ const ToolRow = memo(function ToolRow({
       <span className="shrink-0 font-medium">{item.name}</span>
       {item.pending ? (
         <span className="min-w-0 truncate text-[11px] italic text-muted-foreground/70">
-          preparing…
+          {item.progressChars
+            ? `preparing… ${(item.progressChars / 1000).toFixed(1)}k chars`
+            : 'preparing…'}
         </span>
       ) : (
         item.detail && (

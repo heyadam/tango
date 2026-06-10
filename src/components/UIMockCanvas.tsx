@@ -132,6 +132,13 @@ export default function UIMockCanvas({
   // Bumped (debounced) when the wrapper resizes — sidebar expand/collapse,
   // window resize — so the clamp/flip math above re-runs against fresh bounds.
   const [wrapperEpoch, setWrapperEpoch] = useState(0);
+  // Server-applied (agent) changes flash briefly so the user can see exactly
+  // what the agent touched as edits stream in.
+  const [pulse, setPulse] = useState<{
+    nodes: Set<string>;
+    screens: Set<string>;
+  }>(() => ({ nodes: new Set(), screens: new Set() }));
+  const pulseTimer = useRef<number | null>(null);
 
   // Map<nodeId, wrapper-element> populated by callback refs on each rendered
   // node so we can hand react-moveable real DOM targets without re-querying.
@@ -184,8 +191,38 @@ export default function UIMockCanvas({
 
   // ── Server → browser apply ─────────────────────────────────────────────
   useEffect(() => {
-    return uiMockBus._onApply((msg: ApplyMsg) => {
+    const flashPulse = (nodes: Set<string>, screens: Set<string>): void => {
+      if (nodes.size === 0 && screens.size === 0) return;
+      setPulse({ nodes, screens });
+      if (pulseTimer.current !== null) window.clearTimeout(pulseTimer.current);
+      pulseTimer.current = window.setTimeout(() => {
+        pulseTimer.current = null;
+        setPulse({ nodes: new Set(), screens: new Set() });
+      }, 1100);
+    };
+    const unsubscribe = uiMockBus._onApply((msg: ApplyMsg) => {
       if (msg.type === 'set') {
+        // Diff against the outgoing spec so agent-touched nodes/screens flash.
+        const prev = specRef.current;
+        const prevNodes = new Map<string, UINode>();
+        for (const s of prev.screens) for (const n of s.nodes) prevNodes.set(n.id, n);
+        const prevScreens = new Set(prev.screens.map((s) => s.id));
+        const pulseNodes = new Set<string>();
+        const pulseScreens = new Set<string>();
+        for (const s of msg.spec.screens) {
+          if (!prevScreens.has(s.id)) {
+            pulseScreens.add(s.id);
+            continue;
+          }
+          for (const n of s.nodes) {
+            const old = prevNodes.get(n.id);
+            if (!old) pulseNodes.add(n.id);
+            else if (old !== n && JSON.stringify(old) !== JSON.stringify(n)) {
+              pulseNodes.add(n.id);
+            }
+          }
+        }
+        flashPulse(pulseNodes, pulseScreens);
         skipNextSnapshot.current = true;
         setSpec(msg.spec);
         // Drop selection that no longer exists in the new spec.
@@ -198,6 +235,7 @@ export default function UIMockCanvas({
         });
         setEditingId(null);
       } else if (msg.type === 'append_screen') {
+        flashPulse(new Set(), new Set([msg.screen.id]));
         skipNextSnapshot.current = true;
         setSpec((prev) => ({
           ...prev,
@@ -205,6 +243,10 @@ export default function UIMockCanvas({
         }));
       }
     });
+    return () => {
+      unsubscribe();
+      if (pulseTimer.current !== null) window.clearTimeout(pulseTimer.current);
+    };
   }, []);
 
   // ── Browser → server snapshot (debounced) ──────────────────────────────
@@ -1186,7 +1228,11 @@ export default function UIMockCanvas({
                 if (el) screenRefs.current.set(screen.id, el);
                 else screenRefs.current.delete(screen.id);
               }}
-              className="relative bg-background"
+              className={cn(
+                'relative bg-background',
+                pulse.screens.has(screen.id) &&
+                  'outline outline-2 outline-primary/70',
+              )}
               data-screen-id={screen.id}
               style={{
                 width: screen.frame.w,
@@ -1210,6 +1256,7 @@ export default function UIMockCanvas({
                   key={node.id}
                   node={node}
                   isSelected={selectedIds.includes(node.id)}
+                  isPulsing={pulse.nodes.has(node.id)}
                   isEditing={editingId === node.id}
                   refsMap={nodeRefs}
                   onSelectOnly={selectOnly}
@@ -1397,6 +1444,7 @@ export default function UIMockCanvas({
 const NodeWrapper = memo(function NodeWrapper({
   node,
   isSelected,
+  isPulsing,
   isEditing,
   refsMap,
   onSelectOnly,
@@ -1407,6 +1455,7 @@ const NodeWrapper = memo(function NodeWrapper({
 }: {
   node: UINode;
   isSelected: boolean;
+  isPulsing: boolean;
   isEditing: boolean;
   refsMap: RefObject<Map<string, HTMLDivElement>>;
   onSelectOnly: (id: string) => void;
@@ -1475,6 +1524,7 @@ const NodeWrapper = memo(function NodeWrapper({
       className={cn(
         'box-border',
         isSelected && 'ring-1 ring-ring/50',
+        isPulsing && 'outline outline-2 outline-primary/70',
       )}
       style={style}
       onPointerDown={onPointerDown}

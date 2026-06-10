@@ -113,6 +113,53 @@ export function appendScreenToSpec(spec: UISpec, screen: UIScreen): UISpec {
   return { ...spec, screens: [...spec.screens, screen] };
 }
 
+// Duplicate one screen as a new screen appended at the end — the cheap first
+// step of a variation (duplicate, then patch deltas with updateNodesInSpec).
+// Node ids are remapped onto the new screen id: a `<sourceId>-` prefix is
+// swapped for `<newId>-`, anything else gets `<newId>-` prepended. sourceFile
+// is NOT copied (a duplicate doesn't mirror the original's source file).
+// Errors (collected): unknown source screen, newScreenId already taken, any
+// remapped node id colliding globally or within the duplicate.
+export function duplicateScreenInSpec(
+  spec: UISpec,
+  sourceScreenId: string,
+  newScreenId: string,
+  newTitle?: string,
+): UISpec {
+  const errors: string[] = [];
+  const source = spec.screens.find((s) => s.id === sourceScreenId);
+  if (!source) errors.push(`Unknown screen id: ${sourceScreenId}`);
+  if (spec.screens.some((s) => s.id === newScreenId)) {
+    errors.push(`Screen id already exists: ${newScreenId}`);
+  }
+  if (errors.length) fail(errors);
+  const existing = collectIds(spec);
+  const remapped = new Set<string>();
+  const prefix = `${sourceScreenId}-`;
+  const nodes = source!.nodes.map((node) => {
+    const id = node.id.startsWith(prefix)
+      ? `${newScreenId}-${node.id.slice(prefix.length)}`
+      : `${newScreenId}-${node.id}`;
+    if (remapped.has(id)) {
+      errors.push(`Duplicate node id within duplicated screen: ${id}`);
+    }
+    remapped.add(id);
+    if (existing.has(id)) {
+      errors.push(`Node id already exists in the mock: ${id}`);
+    }
+    return { ...node, id };
+  });
+  if (errors.length) fail(errors);
+  const { sourceFile: _dropped, ...rest } = source!;
+  const screen: UIScreen = {
+    ...rest,
+    id: newScreenId,
+    title: newTitle ?? `${source!.title} copy`,
+    nodes,
+  };
+  return { ...spec, screens: [...spec.screens, screen] };
+}
+
 // Remove one screen (and all its nodes) by id. Errors if the screen doesn't
 // exist. Remaining screens keep object identity.
 export function removeScreenFromSpec(spec: UISpec, screenId: string): UISpec {
@@ -141,6 +188,64 @@ export function updateNodeInSpec(
   }));
   if (!found) fail([`Unknown node id: ${nodeId}`]);
   return { ...spec, screens };
+}
+
+// Bulk node patches in one call — the delta path for restyles (one tool call,
+// many small patches, instead of regenerating nodes or N round-trips).
+// All-or-nothing: unknown ids are collected and thrown before any mutation.
+// Multiple patches to the same node merge in order. Untouched screens and
+// nodes keep object identity (the React.memo contract).
+export function updateNodesInSpec(
+  spec: UISpec,
+  patches: Array<{ nodeId: string; patch: NodePatch }>,
+): UISpec {
+  const existing = collectIds(spec);
+  const missing = [
+    ...new Set(patches.filter((p) => !existing.has(p.nodeId)).map((p) => p.nodeId)),
+  ];
+  if (missing.length) fail(missing.map((id) => `Unknown node id: ${id}`));
+  const merged = new Map<string, NodePatch>();
+  for (const { nodeId, patch } of patches) {
+    merged.set(nodeId, { ...merged.get(nodeId), ...patch });
+  }
+  return {
+    ...spec,
+    screens: spec.screens.map((screen) => {
+      if (!screen.nodes.some((n) => merged.has(n.id))) return screen;
+      return {
+        ...screen,
+        nodes: screen.nodes.map((node) => {
+          const patch = merged.get(node.id);
+          return patch ? { ...node, ...patch, id: node.id } : node;
+        }),
+      };
+    }),
+  };
+}
+
+// Patch screen-level fields (title, frame). The id is immutable — export
+// filenames and the preview's show_screen are keyed on it. Nodes keep object
+// identity; other screens keep screen identity.
+export function updateScreenInSpec(
+  spec: UISpec,
+  screenId: string,
+  patch: { title?: string; frame?: { w: number; h: number } },
+): UISpec {
+  if (!spec.screens.some((s) => s.id === screenId)) {
+    fail([`Unknown screen id: ${screenId}`]);
+  }
+  return {
+    ...spec,
+    screens: spec.screens.map((s) =>
+      s.id === screenId
+        ? {
+            ...s,
+            ...(patch.title !== undefined ? { title: patch.title } : {}),
+            ...(patch.frame !== undefined ? { frame: patch.frame } : {}),
+          }
+        : s,
+    ),
+  };
 }
 
 // Remove node(s) by id. All-or-nothing: if ANY id is missing, throws and

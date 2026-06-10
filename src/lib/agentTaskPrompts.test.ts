@@ -24,7 +24,6 @@ describe('buildVariationsPrompt', () => {
   it('pins the load-bearing safety phrases', () => {
     const prompt = buildVariationsPrompt(screenScope);
     expect(prompt).toContain('get_ui_mock');
-    expect(prompt).toContain('add_ui_screen');
     expect(prompt).toContain('NEVER call set_ui_mock or clear_ui_mock');
     expect(prompt).toContain('never modify the original');
     expect(prompt).toContain('globally unique');
@@ -32,12 +31,14 @@ describe('buildVariationsPrompt', () => {
     expect(prompt).toContain('· v1');
   });
 
-  it('pins the parallel fan-out instructions for screen variations', () => {
+  it('pins the duplicate-then-patch delta path for screen variations', () => {
     const prompt = buildVariationsPrompt(screenScope);
-    expect(prompt).toContain('Task tool IN PARALLEL');
-    expect(prompt).toContain('a single message');
-    expect(prompt).toContain('exactly one add_ui_screen call');
-    expect(prompt).toContain('repeat the hard rules verbatim');
+    expect(prompt).toContain('get_ui_mock with screenId "login"');
+    expect(prompt).toContain('duplicate_ui_screen({ screenId: "login", newScreenId: "login-v1"');
+    expect(prompt).toContain('ONE update_ui_nodes call');
+    expect(prompt).toContain('emit only the fields that change');
+    expect(prompt).toContain('only patch node ids carrying the new screen prefix');
+    expect(prompt).not.toContain('add_ui_screen');
   });
 
   it('interpolates the scope ids and title into the fresh-id and titling rules', () => {
@@ -81,7 +82,9 @@ describe('buildCustomPrompt', () => {
     expect(prompt).toContain('Make the header bolder');
     expect(prompt).not.toContain('  Make the header bolder  ');
     expect(prompt).toContain('Call get_ui_mock first');
-    expect(prompt).toContain('update_ui_node / add_ui_nodes / remove_ui_node / reorder_ui_node');
+    expect(prompt).toContain('screenId "login"');
+    expect(prompt).toContain('ONE update_ui_nodes call');
+    expect(prompt).toContain('duplicate_ui_screen');
     expect(prompt).toContain('add_ui_screen');
     expect(prompt).toContain('Avoid set_ui_mock');
   });
