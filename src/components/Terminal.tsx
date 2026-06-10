@@ -144,6 +144,22 @@ export default function Terminal({
 
     const unsubscribeBus = terminalBus._onSend((text) => sendBinary(text));
 
+    // Canvas tasks flatten to PTY keystrokes via the bus's submit queue —
+    // the same serializer the Send button uses, so tasks and Sends can never
+    // interleave inside the text/'\r' window (a fused chunk reads as a paste
+    // and the Enter doesn't fire).
+    const unsubscribeTask = terminalBus._onTask((task) => {
+      terminalBus.submitToTerminal(task.prompt);
+    });
+
+    // Presentational agent-state channel for the canvas popout. While 'tango'
+    // is selected this component isn't mounted; if a PTY ever opens under it
+    // anyway, the server falls back to launching Claude Code.
+    terminalBus._setAgentState({
+      kind: 'pty',
+      agent: terminalAgent === 'tango' ? 'claude' : terminalAgent,
+    });
+
     let resizeTimer: ReturnType<typeof setTimeout> | null = null;
     const ro = new ResizeObserver(() => {
       if (resizeTimer) clearTimeout(resizeTimer);
@@ -160,6 +176,8 @@ export default function Terminal({
 
     return () => {
       unsubscribeBus();
+      unsubscribeTask();
+      terminalBus._setAgentState({ kind: 'none' });
       dataDisposable.dispose();
       ro.disconnect();
       if (resizeTimer) clearTimeout(resizeTimer);

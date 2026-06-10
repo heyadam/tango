@@ -86,6 +86,20 @@ export function screenTypeName(id: string, taken: Set<string>): string {
   return name;
 }
 
+// screenId → '<TypeName>.swift' for every screen in the spec. The single home
+// for the order-dependent naming pass (dedupe suffixes are assigned against a
+// whole-spec taken set, seeded with the root view's name), shared by
+// specToSwiftUI() itself and any UI that wants to show a screen's export
+// target — derive it live from the spec, never store it.
+export function screenFileNames(spec: UISpec): Map<string, string> {
+  const taken = new Set<string>(['TangoGeneratedRootView']);
+  const names = new Map<string, string>();
+  for (const screen of spec.screens) {
+    names.set(screen.id, `${screenTypeName(screen.id, taken)}.swift`);
+  }
+  return names;
+}
+
 function swiftColor(c: RGBA): string {
   return `Color(tangoR: ${c.r}, g: ${c.g}, b: ${c.b}, a: ${fmt(c.a)})`;
 }
@@ -523,10 +537,11 @@ export function specToSwiftUI(
   opts?: SwiftCodegenOpts,
 ): { files: GeneratedFile[]; embedTypeNames: string[] } {
   const resolved = resolveSpec(spec);
-  const taken = new Set<string>(['TangoGeneratedRootView']);
+  // resolveSpec preserves screen ids/order 1:1, so the lookup is total.
+  const names = screenFileNames(spec);
   const screens = resolved.screens.map((screen) => ({
     screen,
-    typeName: screenTypeName(screen.id, taken),
+    typeName: names.get(screen.id)!.replace(/\.swift$/, ''),
   }));
 
   const files: GeneratedFile[] = [

@@ -8,7 +8,7 @@
 // honest. Validation collects ALL problems before throwing, so callers get
 // one useful error instead of a fix-one-retry loop.
 
-import type { UINode, UISpec } from './uiMockProtocol';
+import type { UINode, UIScreen, UISpec } from './uiMockProtocol';
 
 export type ReorderOp = 'front' | 'back' | 'forward' | 'backward';
 
@@ -31,6 +31,7 @@ export type ScreenLayers = {
   id: string;
   title: string;
   frame: { w: number; h: number };
+  sourceFile?: string;
   layers: LayerInfo[];
 };
 
@@ -86,6 +87,39 @@ export function addNodesToScreen(
       s.id === screenId ? { ...s, nodes: [...s.nodes, ...nodes] } : s,
     ),
   };
+}
+
+// Append one screen to the spec. Errors (collected): a screen id that already
+// exists, a node id duplicated within the incoming screen, or a node id that
+// already exists anywhere in the spec (node ids are globally unique).
+// Pre-existing screens keep object identity.
+export function appendScreenToSpec(spec: UISpec, screen: UIScreen): UISpec {
+  const errors: string[] = [];
+  if (spec.screens.some((s) => s.id === screen.id)) {
+    errors.push(`Screen id already exists: ${screen.id}`);
+  }
+  const existing = collectIds(spec);
+  const screenSeen = new Set<string>();
+  for (const node of screen.nodes) {
+    if (screenSeen.has(node.id)) {
+      errors.push(`Duplicate node id within screen: ${node.id}`);
+    }
+    screenSeen.add(node.id);
+    if (existing.has(node.id)) {
+      errors.push(`Node id already exists in the mock: ${node.id}`);
+    }
+  }
+  if (errors.length) fail(errors);
+  return { ...spec, screens: [...spec.screens, screen] };
+}
+
+// Remove one screen (and all its nodes) by id. Errors if the screen doesn't
+// exist. Remaining screens keep object identity.
+export function removeScreenFromSpec(spec: UISpec, screenId: string): UISpec {
+  if (!spec.screens.some((s) => s.id === screenId)) {
+    fail([`Unknown screen id: ${screenId}`]);
+  }
+  return { ...spec, screens: spec.screens.filter((s) => s.id !== screenId) };
 }
 
 // Shallow-merge a patch into a single node, found by id across all screens.
@@ -178,6 +212,9 @@ export function describeLayers(spec: UISpec, screenId?: string): LayersOutline {
       id: screen.id,
       title: screen.title,
       frame: screen.frame,
+      ...(screen.sourceFile !== undefined
+        ? { sourceFile: screen.sourceFile }
+        : {}),
       layers: screen.nodes.map((node, z) => ({
         z,
         id: node.id,

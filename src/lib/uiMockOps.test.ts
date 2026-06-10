@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   addNodesToScreen,
+  appendScreenToSpec,
   describeLayers,
   removeNodesFromSpec,
+  removeScreenFromSpec,
   reorderNodeInSpec,
   updateNodeInSpec,
 } from './uiMockOps';
@@ -74,6 +76,76 @@ describe('addNodesToScreen', () => {
     expect(() =>
       addNodesToScreen(fixture(), 'Z', [node('a1'), node('a1')]),
     ).toThrow(/errors:/);
+  });
+});
+
+describe('appendScreenToSpec', () => {
+  it('appends the screen and preserves identity of pre-existing screens', () => {
+    const input = fixture();
+    const incoming = screen('C', [node('c1')]);
+    const out = appendScreenToSpec(input, incoming);
+    expect(out.screens.map((s) => s.id)).toEqual(['A', 'B', 'C']);
+    expect(out.screens[0]).toBe(input.screens[0]);
+    expect(out.screens[1]).toBe(input.screens[1]);
+    expect(out.screens[2]).toBe(incoming);
+  });
+
+  it('does not mutate the input spec', () => {
+    const input = fixture();
+    appendScreenToSpec(input, screen('C', [node('c1')]));
+    expect(input.screens).toHaveLength(2);
+  });
+
+  it('rejects a duplicate screen id', () => {
+    expect(() => appendScreenToSpec(fixture(), screen('A'))).toThrow(
+      /Screen id already exists: A/,
+    );
+  });
+
+  it('rejects a node id duplicated within the incoming screen', () => {
+    expect(() =>
+      appendScreenToSpec(fixture(), screen('C', [node('c1'), node('c1')])),
+    ).toThrow(/Duplicate node id within screen: c1/);
+  });
+
+  it('rejects a node id colliding with an existing node', () => {
+    expect(() =>
+      appendScreenToSpec(fixture(), screen('C', [node('b1')])),
+    ).toThrow(/Node id already exists in the mock: b1/);
+  });
+
+  it('collects ALL errors into one throw', () => {
+    let message = '';
+    try {
+      appendScreenToSpec(fixture(), screen('A', [node('a1'), node('a1')]));
+    } catch (err) {
+      message = (err as Error).message;
+    }
+    expect(message).toMatch(/errors:/);
+    expect(message).toMatch(/Screen id already exists: A/);
+    expect(message).toMatch(/Duplicate node id within screen: a1/);
+    expect(message).toMatch(/Node id already exists in the mock: a1/);
+  });
+});
+
+describe('removeScreenFromSpec', () => {
+  it('throws on an unknown screen id', () => {
+    expect(() => removeScreenFromSpec(fixture(), 'Z')).toThrow(
+      /Unknown screen id: Z/,
+    );
+  });
+
+  it('removes only the target and keeps survivor identity', () => {
+    const input = fixture();
+    const out = removeScreenFromSpec(input, 'A');
+    expect(out.screens.map((s) => s.id)).toEqual(['B']);
+    expect(out.screens[0]).toBe(input.screens[1]);
+  });
+
+  it('does not mutate the input spec', () => {
+    const input = fixture();
+    removeScreenFromSpec(input, 'B');
+    expect(input.screens).toHaveLength(2);
   });
 });
 
@@ -211,5 +283,15 @@ describe('describeLayers', () => {
     const out = describeLayers(spec([screen('A', [node('a1', { text: long })])]));
     expect(out.screens[0].layers[0].text!.length).toBeLessThanOrEqual(40);
     expect(out.screens[0].layers[0].text!.endsWith('…')).toBe(true);
+  });
+
+  it('passes sourceFile through when present and omits it when absent', () => {
+    const withSource: UIScreen = {
+      ...screen('A', [node('a1')]),
+      sourceFile: 'MyApp/LoginView.swift',
+    };
+    const out = describeLayers(spec([withSource, screen('B', [node('b1')])]));
+    expect(out.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
+    expect('sourceFile' in out.screens[1]).toBe(false);
   });
 });

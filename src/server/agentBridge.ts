@@ -261,6 +261,12 @@ export function attachAgent(ws: WebSocket): void {
         const ev = msg.event;
         if (ev.type === 'content_block_start') {
           blockTypes.set(ev.index, ev.content_block.type);
+          if (ev.content_block.type === 'tool_use') {
+            send({
+              type: 'tool_pending',
+              name: displayToolName(ev.content_block.name),
+            });
+          }
           return;
         }
         if (ev.type === 'content_block_delta' && ev.delta.type === 'text_delta') {

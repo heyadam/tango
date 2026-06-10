@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   fmt,
+  screenFileNames,
   screenTypeName,
   specToSwiftUI,
   swiftStringLiteral,
@@ -92,6 +93,31 @@ describe('screenTypeName', () => {
 
   it('survives ids with no usable characters', () => {
     expect(screenTypeName('---', new Set())).toBe('TangoScreen');
+  });
+});
+
+describe('screenFileNames', () => {
+  it('matches the screen .swift paths specToSwiftUI emits for the golden fixtures', () => {
+    for (const spec of [KITCHEN_SINK, TWO_SCREEN_FLOW]) {
+      const names = screenFileNames(spec);
+      const emitted = specToSwiftUI(spec).files.map((f) => f.path);
+      expect(emitted).toEqual([
+        'TangoSupport.swift',
+        ...spec.screens.map((s) => names.get(s.id)!),
+        'TangoGeneratedIndex.swift',
+      ]);
+    }
+  });
+
+  it('dedupes collisions in spec order: reversing screen order swaps the suffix', () => {
+    const a = { id: 'login-screen', title: 'Login', frame: { w: 390, h: 844 }, nodes: [] };
+    const b = { id: 'login_screen', title: 'Login 2', frame: { w: 390, h: 844 }, nodes: [] };
+    const forward = screenFileNames({ screens: [a, b] });
+    expect(forward.get('login-screen')).toBe('TangoLoginScreen.swift');
+    expect(forward.get('login_screen')).toBe('TangoLoginScreen2.swift');
+    const reversed = screenFileNames({ screens: [b, a] });
+    expect(reversed.get('login_screen')).toBe('TangoLoginScreen.swift');
+    expect(reversed.get('login-screen')).toBe('TangoLoginScreen2.swift');
   });
 });
 

@@ -127,6 +127,7 @@ You're running inside the **tango** workspace. The user is viewing a direct-mani
 - \`add_ui_nodes\` — add node(s) to one screen on the LIVE spec (preserves the user's other tweaks; prefer over \`set_ui_mock\` for incremental adds)
 - \`update_ui_node\` — patch a single node by id (move/resize/restyle/text) without replacing the whole spec
 - \`remove_ui_node\` — delete node(s) by id
+- \`remove_ui_screen\` — delete one screen (and its nodes) without touching the others; prefer over \`set_ui_mock\` for discarding variations
 - \`reorder_ui_node\` — change a node's z-order within its screen (front/back/forward/backward)
 - \`clear_ui_mock\` — empty the spec
 
@@ -228,7 +229,7 @@ The canvas renders real shadcn primitives — Button, Input, Badge, Separator, T
 
 ## Tools
 
-\`get_ui_mock\`, \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
+\`get_ui_mock\`, \`get_ui_layers\`, \`get_ui_viewport\`, \`set_ui_mock\`, \`add_ui_screen\`, \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`remove_ui_screen\`, \`reorder_ui_node\`, \`clear_ui_mock\` (from the \`tango-canvas\` MCP server, same as the canvas tools). The spec shape:
 
 \`\`\`ts
 type UISpec = { screens: UIScreen[] };
@@ -237,6 +238,7 @@ type UIScreen = {
   title: string;       // shown above the frame in the panel
   frame: { w: number; h: number };  // pixels
   nodes: UINode[];
+  sourceFile?: string; // import provenance — see below
 };
 type UINode = {
   id: string;          // stable
@@ -257,6 +259,12 @@ type UINode = {
   };
 };
 \`\`\`
+
+\`sourceFile\` is import provenance: the workspace-relative Swift file the screen was imported from. Set it only when the screen mirrors a real file, and preserve it when re-emitting an existing screen. Export filenames are always derived from the screen id at export time — never stored, so don't try to record them here.
+
+## Screen variations
+
+When asked for variations of a screen, append each one as its own screen with one \`add_ui_screen\` call per variation — never \`set_ui_mock\` or \`clear_ui_mock\` (they clobber the user's other screens). Give every variation a fresh, globally-unique screen id (\`'<screenId>-v1'\` style) and prefix its node ids with the new screen id so node ids stay unique across the whole mock. Copy the source screen's frame exactly, title it \`'<Title> · vN'\`, and do not copy \`sourceFile\` — a variation is not an import of that file.
 
 ## Playbook (down: codebase → mock)
 
@@ -351,6 +359,7 @@ Always \`get_ui_mock\` first.
 - \`add_ui_nodes({ screenId, nodes })\` — drop new node(s) onto a screen; they land on top of the z-order. Ids must be unique across the whole mock.
 - \`update_ui_node({ nodeId, patch })\` — change one node's fields (any except \`id\`).
 - \`remove_ui_node({ nodeIds })\` — delete node(s); all-or-nothing on unknown ids.
+- \`remove_ui_screen({ screenId })\` — delete a whole screen; the safe rejection path for unwanted variations.
 - \`reorder_ui_node({ nodeId, op })\` — \`front\`/\`back\`/\`forward\`/\`backward\` within the node's screen (later in the array = rendered on top).
 
 The user has the same controls in the panel (an Add palette and a Layers panel), so your edits and theirs converge on one spec.
@@ -427,7 +436,7 @@ Both flows live in this terminal-Claude session. The user does not see SwiftUI b
 You'll combine your filesystem tools with tango's MCP tools:
 
 - **Filesystem (built-in)**: \`Read\` / \`Write\` / \`Edit\` / \`Glob\` for \`.swift\` files.
-- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\`, \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`.
+- **Design canvas (\`tango-canvas\` MCP)**: \`get_ui_mock\`, \`get_ui_layers\`, \`set_ui_mock\`, \`clear_ui_mock\`, \`get_ui_viewport\`, \`add_ui_screen\`, \`remove_ui_screen\` (delete one screen without touching the others), plus node-level edits on the live spec — \`add_ui_nodes\`, \`update_ui_node\`, \`remove_ui_node\`, \`reorder_ui_node\`. Spec shape is \`{screens: [{id, title, frame:{w,h}, nodes: UINode[]}]}\` — see \`.claude/skills/tango-ui-mock/SKILL.md\` for the full schema, type union, and per-type \`props\`. Imported screens carry an optional \`sourceFile\` (workspace-relative provenance); export filenames are always derived (\`Tango<Pascal(id)>Screen.swift\`, order-dependent dedupe), never stored.
 
 For SwiftUI that uses heavy custom drawing (\`Path\`, \`Canvas\`, complex \`GeometryReader\` math) the node types can't represent, render the closest structural approximation (a \`div\` placeholder with a label) and tell the user what was approximated.
 
@@ -465,7 +474,7 @@ Every leaf becomes one \`UINode\` with absolute pixel coords inside a frame. Inf
 
 ### 5. Push it
 
-\`set_ui_mock({ spec: { screens: [{ id, title, frame, nodes }] } })\`. Use the file's stem as both \`id\` and \`title\` (e.g. \`OnboardingView\`). One screen per top-level View; if the file declares multiple Views, emit a screen per View. \`get_ui_mock\` first to avoid trampling existing screens — use \`add_ui_screen\` to append alongside them.
+\`set_ui_mock({ spec: { screens: [{ id, title, frame, nodes }] } })\`. Use the file's stem as both \`id\` and \`title\` (e.g. \`OnboardingView\`). One screen per top-level View; if the file declares multiple Views, emit a screen per View. Set each screen's \`sourceFile\` to the workspace-relative path of the .swift file it was translated from (omit it for screens that don't mirror a single real file, and for TangoGenerated re-imports). \`get_ui_mock\` first to avoid trampling existing screens — use \`add_ui_screen\` to append alongside them.
 
 ### 6. Verify
 
@@ -775,6 +784,10 @@ screen \`id\` and \`title\` (e.g. \`OnboardingView\`).
 
 - Canvas empty (\`get_ui_mock\` → no screens)? \`set_ui_mock\` with all screens.
 - Canvas has screens worth keeping? \`add_ui_screen\` per new screen.
+- Set each emitted screen's \`sourceFile\` to the workspace-relative path of the
+  .swift file it was translated from (omit for screens that don't mirror a
+  single real file, and for TangoGenerated re-imports — the canvas keeps prior
+  provenance when it's omitted).
 
 ### 4. Verify + record
 

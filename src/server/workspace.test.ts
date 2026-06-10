@@ -350,6 +350,36 @@ describe('ensureWorkspace skill emission', () => {
     expect((await fs.stat(codexWrapperPath)).mode & 0o111).not.toBe(0);
   });
 
+  it('documents remove_ui_screen, sourceFile, and the variations convention', async () => {
+    await ensureWorkspace(3000, dir);
+
+    const tangoMd = await fs.readFile(
+      path.join(dir, '.claude', 'tango.md'),
+      'utf8',
+    );
+    expect(tangoMd).toContain('`remove_ui_screen`');
+    expect(tangoMd).toContain('prefer over `set_ui_mock` for discarding variations');
+
+    const uiMockSkill = await fs.readFile(
+      path.join(dir, '.claude', 'skills', 'tango-ui-mock', 'SKILL.md'),
+      'utf8',
+    );
+    expect(uiMockSkill).toContain('`remove_ui_screen`');
+    expect(uiMockSkill).toContain('`remove_ui_screen({ screenId })`');
+    expect(uiMockSkill).toContain('sourceFile?: string');
+    expect(uiMockSkill).toContain('import provenance');
+    expect(uiMockSkill).toContain('## Screen variations');
+    expect(uiMockSkill).toContain("'<screenId>-v1'");
+    expect(uiMockSkill).toContain("'<Title> · vN'");
+
+    const swiftuiSkill = await fs.readFile(
+      path.join(dir, '.claude', 'skills', 'tango-swiftui', 'SKILL.md'),
+      'utf8',
+    );
+    expect(swiftuiSkill).toContain('`remove_ui_screen`');
+    expect(swiftuiSkill).toContain('`sourceFile`');
+  });
+
   it('points at tango-swiftui from the always-loaded tango.md', async () => {
     await ensureWorkspace(3000, dir);
     const tangoMd = await fs.readFile(

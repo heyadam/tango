@@ -122,6 +122,26 @@ describe('applyEmittedScreen', () => {
     expect(next.screens.map((s) => s.id)).toEqual(['Other', 'LoginView']);
     expect(next.screens[1].title).toBe('Login (v2)');
   });
+
+  it('preserves the prior sourceFile when the replacement omits it', () => {
+    const prior: UIScreen = { ...SCREEN, sourceFile: 'MyApp/LoginView.swift' };
+    const updated: UIScreen = { ...SCREEN, title: 'Login (v2)' };
+    const next = applyEmittedScreen({ screens: [prior] }, updated);
+    expect(next.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
+    expect(next.screens[0].title).toBe('Login (v2)');
+  });
+
+  it('overwrites the prior sourceFile when the replacement sets one', () => {
+    const prior: UIScreen = { ...SCREEN, sourceFile: 'MyApp/Old.swift' };
+    const updated: UIScreen = { ...SCREEN, sourceFile: 'MyApp/LoginView.swift' };
+    const next = applyEmittedScreen({ screens: [prior] }, updated);
+    expect(next.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
+  });
+
+  it('appends without provenance when none is given', () => {
+    const next = applyEmittedScreen({ screens: [] }, SCREEN);
+    expect('sourceFile' in next.screens[0]).toBe(false);
+  });
 });
 
 describe('lintScreen', () => {
@@ -303,6 +323,106 @@ describe('runUiImport', () => {
     }>;
     expect(lastContent[0].type).toBe('tool_result');
     expect(lastContent[0].is_error).toBe(true);
+  });
+
+  it('stamps a valid source_file onto the applied screen', async () => {
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'emit_screen', {
+            screen: SCREEN,
+            source_file: 'MyApp/LoginView.swift',
+          }),
+        ],
+      },
+      { stop_reason: 'end_turn', content: [text('done')] },
+    ]);
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    expect(d.setSpec).toHaveBeenCalledWith({
+      screens: [{ ...SCREEN, sourceFile: 'MyApp/LoginView.swift' }],
+    });
+  });
+
+  it('drops a hallucinated source_file with a non-fatal note', async () => {
+    const seenMessages: unknown[][] = [];
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t1', 'emit_screen', {
+            screen: SCREEN,
+            source_file: 'MyApp/NotInTheList.swift',
+          }),
+        ],
+      },
+      { stop_reason: 'end_turn', content: [text('done')] },
+    ]);
+    const inner = d.createMessage;
+    d.createMessage = async (params) => {
+      seenMessages.push(params.messages.map((m) => m.content));
+      return inner(params);
+    };
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    const applied = d.setSpec.mock.calls[0][0] as UISpec;
+    expect('sourceFile' in applied.screens[0]).toBe(false);
+    const secondTurn = seenMessages[1];
+    const lastContent = secondTurn[secondTurn.length - 1] as Array<{
+      type: string;
+      content: string;
+      is_error?: boolean;
+    }>;
+    expect(lastContent[0].type).toBe('tool_result');
+    expect(lastContent[0].is_error).toBeUndefined();
+    expect(lastContent[0].content).toContain(
+      'not in the provided file list — provenance not recorded',
+    );
+  });
+
+  it('treats a TangoGenerated source_file as omitted, keeping prior provenance', async () => {
+    const d = scriptedDeps(
+      [
+        {
+          stop_reason: 'tool_use',
+          content: [
+            toolUse('t1', 'emit_screen', {
+              screen: SCREEN,
+              source_file: 'TangoGenerated/TangoLoginScreen.swift',
+            }),
+          ],
+        },
+        { stop_reason: 'end_turn', content: [text('done')] },
+      ],
+      {
+        getSpec: () => ({
+          screens: [{ ...SCREEN, sourceFile: 'MyApp/LoginView.swift' }],
+        }),
+      },
+    );
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    const applied = d.setSpec.mock.calls[0][0] as UISpec;
+    expect(applied.screens[0].sourceFile).toBe('MyApp/LoginView.swift');
+  });
+
+  it('strips a model-embedded screen.sourceFile without a source_file param', async () => {
+    const d = scriptedDeps([
+      {
+        stop_reason: 'tool_use',
+        content: [
+          toolUse('t2', 'emit_screen', {
+            screen: { ...SCREEN, sourceFile: 'MyApp/LoginView.swift' },
+          }),
+        ],
+      },
+      { stop_reason: 'end_turn', content: [text('done')] },
+    ]);
+    const state = await runUiImport(d);
+    expect(state.phase).toBe('done');
+    const applied = d.setSpec.mock.calls[0][0] as UISpec;
+    expect('sourceFile' in applied.screens[0]).toBe(false);
   });
 
   it('rejects reads outside the file list', async () => {

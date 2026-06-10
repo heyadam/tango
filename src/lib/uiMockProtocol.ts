@@ -60,6 +60,10 @@ export type UIScreen = {
   // resize coordinates are always in this native frame space.
   frame: { w: number; h: number };
   nodes: UINode[];
+  // Workspace-relative Swift source this screen was imported from (provenance
+  // only). The export target is NEVER stored — always derived live via
+  // screenFileNames() in specToSwiftUI.ts (order-dependent dedupe).
+  sourceFile?: string;
 };
 
 export type UISpec = {
