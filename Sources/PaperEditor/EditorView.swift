@@ -16,6 +16,21 @@ public struct EditorScene: Scene {
         .defaultSize(width: 1440, height: 900)
         .commands { EditorCommands() }
 
+        // Presented at launch in place of the Open panel a document app would show.
+        Window("Welcome to Tango", id: WelcomeView.windowID) {
+            WelcomeView()
+                .toolbar(removing: .title)
+                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                .containerBackground(.thickMaterial, for: .window)
+        }
+        .windowResizability(.contentSize)
+        .windowStyle(.hiddenTitleBar)
+        .windowBackgroundDragBehavior(.enabled)
+        .restorationBehavior(.disabled)
+        .defaultLaunchBehavior(.presented)
+        .defaultPosition(.center)
+        .keyboardShortcut("1", modifiers: [.command, .shift])
+
         Window("Example Gallery", id: GalleryView.windowID) {
             GalleryView()
         }
