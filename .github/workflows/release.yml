@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   release:
-    runs-on: macos-26
+    runs-on: xcode-27   # GitHub's Xcode 27 image (public preview); macos-26 stops at Xcode 26.6
     timeout-minutes: 60
     env:
       VERSION: ${{ inputs.version || github.ref_name }}
@@ -31,7 +31,7 @@ jobs:
 
       - name: Pick Xcode 27
         run: |
-          XCODE="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -1)"
+          XCODE="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | grep -v beta | sort -V | tail -1)"
           if [[ -z "$XCODE" ]]; then echo "No Xcode 27 on this runner"; ls /Applications; exit 1; fi
           sudo xcode-select -s "$XCODE"
           xcodebuild -version

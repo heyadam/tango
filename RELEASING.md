@@ -64,7 +64,7 @@ gh release create v0.2 build/release/Tango-0.2.dmg build/release/Tango-0.2.dmg.s
 
 - **Notarization: Invalid.** The script prints Apple's log. Usually a binary in the bundle that is not signed with the hardened runtime and a timestamp. Everything in the app today is built by Xcode, so it is signed; anything added that ships its own binary must be signed too.
 - **"No Developer ID Application certificate in the keychain."** The certificate is missing, or only its public half is there (the private key must be under it in Keychain Access).
-- **CI: "No Xcode 27 on this runner."** The `macos-26` image has not got the Xcode the project needs yet. Change `runs-on`, or run the script on this Mac.
+- **CI: "No Xcode 27 on this runner."** The runner image has not got the Xcode the project needs. Change `runs-on`, or run the script on this Mac.
 - **The camera, microphone or location never asks.** The hardened runtime blocks them without the entitlement; the script checks that the entitlements survived signing.
 
 ## Not yet
