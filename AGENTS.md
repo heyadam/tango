@@ -13,6 +13,8 @@ xcodebuild -project Tango.xcodeproj -scheme Tango -configuration Debug -derivedD
 open build/Build/Products/Debug/Tango.app
 ```
 
+Releases (a signed, notarized DMG on GitHub, from a `v*` tag) are `scripts/release.sh` and `.github/workflows/release.yml`; `RELEASING.md` has the steps and the signing setup. Hardened runtime is on in Release only, so a new device capability needs its entitlement in `project.yml`.
+
 Requires Xcode 27 / Swift 6.2 / macOS 26, and `brew install xcodegen`. The assistant also needs Node.js 18 or later at run time; nothing else does.
 
 `papertool` drives the same code without showing a window:

@@ -21,8 +21,8 @@ targets:
       properties:
         CFBundleName: tango
         CFBundleDisplayName: tango
-        CFBundleShortVersionString: "0.1"
-        CFBundleVersion: "1"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSApplicationCategoryType: public.app-category.graphics-design
         NSHighResolutionCapable: true
         NSCameraUsageDescription: A prototype you are running shows the camera or takes a photo.
@@ -50,12 +50,23 @@ targets:
             UTTypeTagSpecification:
               public.filename-extension:
                 - tango
+    entitlements:
+      path: App/Tango.entitlements
+      properties:
+        com.apple.security.device.camera: true
+        com.apple.security.device.audio-input: true
+        com.apple.security.personal-information.location: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tango.app
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
         PRODUCT_NAME: Tango
         SWIFT_VERSION: "6.0"
         CODE_SIGN_STYLE: Manual
         CODE_SIGN_IDENTITY: "-"
         ENABLE_HARDENED_RUNTIME: NO
         ENABLE_APP_SANDBOX: NO
+      configs:
+        Release:
+          ENABLE_HARDENED_RUNTIME: YES   # notarization requires it (scripts/release.sh)
