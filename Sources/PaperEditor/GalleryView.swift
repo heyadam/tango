@@ -19,9 +19,7 @@ struct GalleryView: View {
                     VStack(alignment: .leading, spacing: 14) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(section.rawValue).font(.title2.bold())
-                            Text(section == .examples
-                                ? "Whole prototypes to explore and take apart."
-                                : "One reusable solution each. Copy the views and patches into your own work.")
+                            Text(section.blurb)
                                 .foregroundStyle(.secondary)
                         }
                         LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
@@ -91,6 +89,16 @@ struct GalleryView: View {
             NSDocumentController.shared.openDocument(withContentsOf: url, display: true) { _, _, _ in }
         } catch {
             NSApp.presentError(error)
+        }
+    }
+}
+
+private extension GalleryItem.Section {
+    var blurb: String {
+        switch self {
+        case .showcase: "Finished-looking prototypes: shaders, glass and motion working together."
+        case .examples: "Whole prototypes to explore and take apart."
+        case .patterns: "One reusable solution each. Copy the views and patches into your own work."
         }
     }
 }

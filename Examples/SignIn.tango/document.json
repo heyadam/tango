@@ -3,155 +3,277 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "356AD9B5-87BF-4B1A-AD7F-9BB3E63FB607",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 288,
+          "width" : 240
+        },
+        "text" : "Text · As it is typed"
+      },
+      {
+        "id" : "B37C34AF-2F83-440C-B55C-DC9A4D6DC1D4",
+        "origin" : {
+          "x" : 312,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 180,
+          "width" : 240
+        },
+        "text" : "Greet · Hello and the name"
+      },
+      {
+        "id" : "72555F9E-6E28-42E0-A0C2-ABCD7739F4CF",
+        "origin" : {
+          "x" : 312,
+          "y" : 264
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 816
+        },
+        "text" : "Wake · Empty keeps the button dim"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "B1AB9546-9C09-46C6-B480-6021C52FF4CC",
+          "node" : "64819015-8A8F-4760-AB7B-BCF793C0844E",
           "port" : "text"
         },
         "to" : {
-          "node" : "E3EC4147-2347-4653-9878-E3CC1F08A617",
+          "node" : "156ECA19-4F98-4044-8843-3530AB75BBF4",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "E3EC4147-2347-4653-9878-E3CC1F08A617",
+          "node" : "156ECA19-4F98-4044-8843-3530AB75BBF4",
           "port" : "text"
         },
         "to" : {
-          "node" : "671A2764-17A5-4E15-83FD-B7FBD1748F76",
+          "node" : "903818AA-C0F0-4E7F-9E88-8A5A409EF250",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "B1AB9546-9C09-46C6-B480-6021C52FF4CC",
+          "node" : "64819015-8A8F-4760-AB7B-BCF793C0844E",
           "port" : "text"
         },
         "to" : {
-          "node" : "2FD3F540-86FF-4EBD-B0A4-99B0C91682B6",
+          "node" : "0FFF2EDA-6FF0-49B7-8F81-429A511929CB",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "2FD3F540-86FF-4EBD-B0A4-99B0C91682B6",
+          "node" : "0FFF2EDA-6FF0-49B7-8F81-429A511929CB",
           "port" : "empty"
         },
         "to" : {
-          "node" : "7E1FD859-DB8E-4C65-94AD-D5B385899A26",
+          "node" : "3E502E51-08ED-47D5-A2BF-EDF1E35B9376",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "7E1FD859-DB8E-4C65-94AD-D5B385899A26",
+          "node" : "3E502E51-08ED-47D5-A2BF-EDF1E35B9376",
           "port" : "value"
         },
         "to" : {
-          "node" : "3CFCE3CA-1292-477C-81A5-14703254A752",
+          "node" : "5BEFEFB9-288F-4AC0-BCED-44DE2A42051D",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "3CFCE3CA-1292-477C-81A5-14703254A752",
+          "node" : "5BEFEFB9-288F-4AC0-BCED-44DE2A42051D",
           "port" : "value"
         },
         "to" : {
-          "node" : "7EE63E5E-9BC7-448D-A869-C0D4E9287870",
+          "node" : "4F343325-E561-47FF-8C09-D2E586AFF1D8",
           "port" : "opacity"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "5FE685E0-20F0-46F4-B010-B1E8AC01A46F",
+        "id" : "97FC9B64-2730-40C3-9F6F-9E2C6A7E0982",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "81F80EF4-EF76-43D8-89BE-906D1340F9D5",
+        "layerID" : "D1F3BB97-B972-4795-8C26-B069B92E537A",
         "position" : {
-          "x" : 1344,
-          "y" : 84
+          "x" : 1488,
+          "y" : 96
         }
       },
       {
-        "id" : "A2741B73-05B5-4950-B46E-43D937AA0364",
+        "id" : "7D11BA52-2E29-4BFF-8FB1-99EC90760511",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "401F6FE6-E9F0-499D-8BC9-B0B4A0847638",
+        "layerID" : "356993D2-B0F4-470E-A00B-52E65BB8215B",
         "position" : {
-          "x" : 1632,
-          "y" : 84
+          "x" : 1776,
+          "y" : 96
         }
       },
       {
-        "id" : "4966167C-4C13-4E6A-A4FD-373D7A275713",
+        "id" : "56C1BCEC-6A6D-42EA-88E8-BB6A8D782E8A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "76E50536-AE72-4C1A-A74C-2C90F5469E54",
-        "position" : {
-          "x" : 1632,
-          "y" : 228
-        }
-      },
-      {
-        "id" : "671A2764-17A5-4E15-83FD-B7FBD1748F76",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "7D5415C6-E1F5-41F0-9E45-604B1B66439A",
-        "position" : {
-          "x" : 564,
-          "y" : 84
-        }
-      },
-      {
-        "id" : "7EE63E5E-9BC7-448D-A869-C0D4E9287870",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "DCA00408-4736-4696-B720-BFF43D5C211C",
-        "position" : {
-          "x" : 1056,
-          "y" : 240
-        }
-      },
-      {
-        "id" : "8ED45238-DEBA-4F79-9E96-0091FFE22DAF",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "9BA46ED0-E74C-4DF9-B68F-CD2FEFF42AE2",
+        "layerID" : "0D2656A1-DEDA-4439-BFD9-06236980FC2B",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "B1AB9546-9C09-46C6-B480-6021C52FF4CC",
+        "id" : "7FF41E21-3166-4D34-8BD8-AEFA21131862",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "611D873A-8D22-440F-BBBF-009281F2C6B2",
+        "position" : {
+          "x" : 1776,
+          "y" : 288
+        }
+      },
+      {
+        "id" : "55B961D9-DA92-4FA6-B370-7597ED0E9FCD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "40E8C25F-46D0-42A4-8D6E-9E6D500FC1C2",
+        "position" : {
+          "x" : 1776,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "CAA1C5EB-13F6-487D-8BC6-E29471070F85",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A62AEAE3-919E-4494-AB1A-2615A13D50FB",
+        "position" : {
+          "x" : 1776,
+          "y" : 576
+        }
+      },
+      {
+        "id" : "903818AA-C0F0-4E7F-9E88-8A5A409EF250",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "13E7D406-7BA0-4F17-B677-A1FE389DA2F9",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "18FB8261-5749-4310-A884-14AFACBBB6E0",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EAF19431-071D-405A-8510-93EA15FCDA65",
+        "position" : {
+          "x" : 624,
+          "y" : 468
+        }
+      },
+      {
+        "id" : "481B74E6-AF25-4F20-962A-6E415845B398",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "30DE41E9-BA7A-49C2-8AC2-6178579E4DEE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "60E214CF-6A70-4D3E-8897-1FE0BAA5E87A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5BFAC439-8489-48CF-9D25-53BE9E05684F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "CB398B47-F6E5-4ED0-BFAC-9608E6179D08",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D2BFA778-A831-4823-90DD-7D2D2C8DC992",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "4F343325-E561-47FF-8C09-D2E586AFF1D8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "70EDA96D-DD28-4446-AFDA-B90CD0F9E98A",
+        "position" : {
+          "x" : 1200,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "12970470-9BA1-447D-BF7C-471D445D0FA1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3A28801A-71D1-442C-8CD1-A9AF27C98D8B",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "64819015-8A8F-4760-AB7B-BCF793C0844E",
         "inputs" : {
 
         },
         "kind" : "textInput",
-        "layerID" : "76E50536-AE72-4C1A-A74C-2C90F5469E54",
+        "layerID" : "A62AEAE3-919E-4494-AB1A-2615A13D50FB",
         "position" : {
-          "x" : 36,
-          "y" : 84
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "E3EC4147-2347-4653-9878-E3CC1F08A617",
+        "id" : "156ECA19-4F98-4044-8843-3530AB75BBF4",
         "inputs" : {
           "a" : {
             "type" : "text",
@@ -161,23 +283,23 @@
         "kind" : "joinText",
         "name" : "Greeting",
         "position" : {
-          "x" : 300,
-          "y" : 84
+          "x" : 336,
+          "y" : 96
         }
       },
       {
-        "id" : "2FD3F540-86FF-4EBD-B0A4-99B0C91682B6",
+        "id" : "0FFF2EDA-6FF0-49B7-8F81-429A511929CB",
         "inputs" : {
 
         },
         "kind" : "textLength",
         "position" : {
-          "x" : 300,
-          "y" : 240
+          "x" : 336,
+          "y" : 312
         }
       },
       {
-        "id" : "7E1FD859-DB8E-4C65-94AD-D5B385899A26",
+        "id" : "3E502E51-08ED-47D5-A2BF-EDF1E35B9376",
         "inputs" : {
           "else" : {
             "type" : "number",
@@ -191,13 +313,13 @@
         "kind" : "if",
         "name" : "Ready",
         "position" : {
-          "x" : 564,
-          "y" : 240
+          "x" : 624,
+          "y" : 312
         },
         "valueType" : "number"
       },
       {
-        "id" : "3CFCE3CA-1292-477C-81A5-14703254A752",
+        "id" : "5BEFEFB9-288F-4AC0-BCED-44DE2A42051D",
         "inputs" : {
           "target" : {
             "type" : "number",
@@ -206,8 +328,8 @@
         },
         "kind" : "spring",
         "position" : {
-          "x" : 804,
-          "y" : 240
+          "x" : 912,
+          "y" : 312
         }
       }
     ]
@@ -216,15 +338,104 @@
     "children" : [
       {
         "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "0D2656A1-DEDA-4439-BFD9-06236980FC2B",
+            "kind" : "symbol",
+            "name" : "Wave",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 30,
+                  "width" : 30
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "hand.wave.fill"
+              }
+            }
+          }
+        ],
+        "id" : "356993D2-B0F4-470E-A00B-52E65BB8215B",
+        "kind" : "view",
+        "name" : "Badge",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9411764705882353,
+              "green" : 0.3607843137254902,
+              "red" : 0.29411764705882354
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 112
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 64,
+              "width" : 64
+            }
+          }
+        }
+      },
+      {
+        "children" : [
 
         ],
-        "id" : "401F6FE6-E9F0-499D-8BC9-B0B4A0847638",
+        "id" : "611D873A-8D22-440F-BBBF-009281F2C6B2",
         "kind" : "text",
         "name" : "Title",
         "properties" : {
           "fontSize" : {
             "type" : "number",
-            "value" : 28
+            "value" : 32
           },
           "fontWeight" : {
             "type" : "number",
@@ -232,67 +443,38 @@
           },
           "heightMode" : {
             "type" : "text",
-            "value" : "Auto"
+            "value" : "Fixed"
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 120
-            }
-          },
-          "text" : {
-            "type" : "text",
-            "value" : "What should we call you?"
-          },
-          "textColor" : {
-            "type" : "color",
-            "value" : {
-              "alpha" : 1,
-              "blue" : 0,
-              "green" : 0,
-              "red" : 0
-            }
-          },
-          "widthMode" : {
-            "type" : "text",
-            "value" : "Auto"
-          }
-        }
-      },
-      {
-        "children" : [
-
-        ],
-        "id" : "76E50536-AE72-4C1A-A74C-2C90F5469E54",
-        "kind" : "textField",
-        "name" : "Name",
-        "properties" : {
-          "cornerRadius" : {
-            "type" : "number",
-            "value" : 14
-          },
-          "padding" : {
-            "type" : "number",
-            "value" : 16
-          },
-          "placeholder" : {
-            "type" : "text",
-            "value" : "Your name"
-          },
-          "position" : {
-            "type" : "point",
-            "value" : {
-              "x" : 24,
-              "y" : 184
+              "x" : 20,
+              "y" : 200
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 52,
-              "width" : 342
+              "height" : 84,
+              "width" : 362
             }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "What should\nwe call you?"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.11372549019607843,
+              "green" : 0.09411764705882353,
+              "red" : 0.09411764705882353
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
           }
         }
       },
@@ -300,13 +482,13 @@
         "children" : [
 
         ],
-        "id" : "7D5415C6-E1F5-41F0-9E45-604B1B66439A",
+        "id" : "40E8C25F-46D0-42A4-8D6E-9E6D500FC1C2",
         "kind" : "text",
-        "name" : "Greeting",
+        "name" : "Subtitle",
         "properties" : {
           "fontSize" : {
             "type" : "number",
-            "value" : 20
+            "value" : 17
           },
           "fontWeight" : {
             "type" : "number",
@@ -319,8 +501,116 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 264
+              "x" : 20,
+              "y" : 292
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "We'll only use it to say hello."
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.4588235294117647,
+              "green" : 0.4235294117647059,
+              "red" : 0.43137254901960786
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A62AEAE3-919E-4494-AB1A-2615A13D50FB",
+        "kind" : "textField",
+        "name" : "Name",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "fontSize" : {
+            "type" : "number",
+            "value" : 18
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 18
+          },
+          "placeholder" : {
+            "type" : "text",
+            "value" : "Your name"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 344
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 362
+            }
+          },
+          "strokeColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.8549019607843137,
+              "green" : 0.8862745098039215,
+              "red" : 0.9019607843137255
+            }
+          },
+          "strokeWidth" : {
+            "type" : "number",
+            "value" : 1
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "13E7D406-7BA0-4F17-B677-A1FE389DA2F9",
+        "kind" : "text",
+        "name" : "Greeting",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 26
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 432
             }
           },
           "text" : {
@@ -331,9 +621,9 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.4,
-              "green" : 0.4,
-              "red" : 0.4
+              "blue" : 0.9411764705882353,
+              "green" : 0.3607843137254902,
+              "red" : 0.29411764705882354
             }
           },
           "widthMode" : {
@@ -346,37 +636,246 @@
         "children" : [
           {
             "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5BFAC439-8489-48CF-9D25-53BE9E05684F",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9411764705882353,
+                      "green" : 0.3607843137254902,
+                      "red" : 0.29411764705882354
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "keyboard"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "D2BFA778-A831-4823-90DD-7D2D2C8DC992",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Click the field and type a name"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.11372549019607843,
+                      "green" : 0.09411764705882353,
+                      "red" : 0.09411764705882353
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "30DE41E9-BA7A-49C2-8AC2-6178579E4DEE",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.92,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.12,
+                  "blue" : 0.2,
+                  "green" : 0.08,
+                  "red" : 0.1
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8549019607843137,
+                  "green" : 0.8862745098039215,
+                  "red" : 0.9019607843137255
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "EAF19431-071D-405A-8510-93EA15FCDA65",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 704
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
 
             ],
-            "id" : "9BA46ED0-E74C-4DF9-B68F-CD2FEFF42AE2",
+            "id" : "3A28801A-71D1-442C-8CD1-A9AF27C98D8B",
             "kind" : "text",
             "name" : "Label",
             "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
               "fontWeight" : {
                 "type" : "number",
                 "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
               },
               "position" : {
                 "type" : "point",
                 "value" : {
                   "x" : 0,
-                  "y" : 16
-                }
-              },
-              "size" : {
-                "type" : "size",
-                "value" : {
-                  "height" : 22,
-                  "width" : 342
+                  "y" : 0
                 }
               },
               "text" : {
                 "type" : "text",
                 "value" : "Continue"
-              },
-              "textAlignment" : {
-                "type" : "text",
-                "value" : "Center"
               },
               "textColor" : {
                 "type" : "color",
@@ -386,26 +885,46 @@
                   "green" : 1,
                   "red" : 1
                 }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
               }
             }
           }
         ],
-        "id" : "DCA00408-4736-4696-B720-BFF43D5C211C",
+        "id" : "70EDA96D-DD28-4446-AFDA-B90CD0F9E98A",
         "kind" : "view",
         "name" : "Continue",
         "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
           "cornerRadius" : {
             "type" : "number",
-            "value" : 16
+            "value" : 27
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
           },
           "fill" : {
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.9686274509803922,
-              "green" : 0.4823529411764706,
-              "red" : 0.23921568627450981
+              "blue" : 0.9411764705882353,
+              "green" : 0.3607843137254902,
+              "red" : 0.29411764705882354
             }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
           },
           "opacity" : {
             "type" : "number",
@@ -414,21 +933,21 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 330
+              "x" : 20,
+              "y" : 770
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 54,
-              "width" : 342
+              "width" : 362
             }
           }
         }
       }
     ],
-    "id" : "81F80EF4-EF76-43D8-89BE-906D1340F9D5",
+    "id" : "D1F3BB97-B972-4795-8C26-B069B92E537A",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -436,9 +955,16 @@
         "type" : "color",
         "value" : {
           "alpha" : 1,
-          "blue" : 1,
-          "green" : 1,
-          "red" : 1
+          "blue" : 0.9333333333333333,
+          "green" : 0.9490196078431372,
+          "red" : 0.9568627450980393
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

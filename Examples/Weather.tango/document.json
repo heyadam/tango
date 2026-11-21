@@ -1,0 +1,1850 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "6910D22D-F6C0-4E3D-8AB8-1BA939FADD73",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 1104
+        },
+        "text" : "Scrub · Held, the hour follows the finger"
+      },
+      {
+        "id" : "971B97C9-4ECF-4270-9857-CCD6B9A36606",
+        "origin" : {
+          "x" : 312,
+          "y" : 384
+        },
+        "size" : {
+          "height" : 180,
+          "width" : 1104
+        },
+        "text" : "Stay · Let go, it rests where it was left"
+      },
+      {
+        "id" : "F2E92186-3D4F-46D8-9CDE-C33ABB9E223E",
+        "origin" : {
+          "x" : 888,
+          "y" : 648
+        },
+        "size" : {
+          "height" : 252,
+          "width" : 240
+        },
+        "text" : "Words · A script reads the hour"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "BD206980-C714-4A5F-8C3B-C3600A996589",
+          "port" : "position"
+        },
+        "to" : {
+          "node" : "121B7DE0-A4B1-43E1-8FE0-078520F78F7D",
+          "port" : "point"
+        }
+      },
+      {
+        "from" : {
+          "node" : "121B7DE0-A4B1-43E1-8FE0-078520F78F7D",
+          "port" : "x"
+        },
+        "to" : {
+          "node" : "DA3F3BF6-725C-47EC-AF54-B21CD0E729A6",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "DA3F3BF6-725C-47EC-AF54-B21CD0E729A6",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BD206980-C714-4A5F-8C3B-C3600A996589",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BD206980-C714-4A5F-8C3B-C3600A996589",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "7A431C60-1833-412C-9F77-8722442410D3",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8B5896A0-1F5B-4D05-BA8A-72965E55BDBD",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8B5896A0-1F5B-4D05-BA8A-72965E55BDBD",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "59E3BBF5-2750-4F66-BEE2-04FA43B6A5B6",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7A431C60-1833-412C-9F77-8722442410D3",
+          "port" : "turnedOff"
+        },
+        "to" : {
+          "node" : "59E3BBF5-2750-4F66-BEE2-04FA43B6A5B6",
+          "port" : "sample"
+        }
+      },
+      {
+        "from" : {
+          "node" : "59E3BBF5-2750-4F66-BEE2-04FA43B6A5B6",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "1CD10148-8915-42A3-BB21-25E76C165FA9",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1CD10148-8915-42A3-BB21-25E76C165FA9",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "F24CDF30-54F2-4DD1-A273-C384D9AB50B1",
+          "port" : "shader.hour"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+          "port" : "hour"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+          "port" : "temperature"
+        },
+        "to" : {
+          "node" : "2BDB4415-95DD-41B1-AE04-5D0EAD77825E",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+          "port" : "condition"
+        },
+        "to" : {
+          "node" : "030D3D18-8C15-4084-B633-5A18E5C002C7",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+          "port" : "time"
+        },
+        "to" : {
+          "node" : "D076FF6C-7A0C-43D5-8EBB-E4BA747B06E8",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+          "port" : "symbol"
+        },
+        "to" : {
+          "node" : "F122C175-075D-4A59-B824-9A25AFB690B3",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+          "port" : "knob"
+        },
+        "to" : {
+          "node" : "0EAE440D-22FE-4C9F-A486-39873D842BCC",
+          "port" : "x"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "4BB0BF03-9C99-46B7-97BB-BF17B289FC2A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0A09789F-B512-4514-9BAE-E9BD72685DD3",
+        "position" : {
+          "x" : 1776,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "F24CDF30-54F2-4DD1-A273-C384D9AB50B1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "57CB0DE6-EC2D-4FAB-9912-382E13B7F1FA",
+        "position" : {
+          "x" : 1488,
+          "y" : 96
+        },
+        "script" : "\/\/ A whole day's sky from one number: `hour`, from 0 to 24. The sun rises at six on the\n\/\/ left and sets at six on the right, the moon takes its place, the colors follow, stars\n\/\/ come out at night and clouds drift all the time.\nstruct Inputs {\n    float hour = 17.5;\n};\n\nfloat sky_hash(float2 p) {\n    return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);\n}\n\nfloat sky_noise(float2 p) {\n    float2 cell = floor(p);\n    float2 f = fract(p);\n    f = f * f * (3.0 - 2.0 * f);\n    float top = mix(sky_hash(cell), sky_hash(cell + float2(1, 0)), f.x);\n    float bottom = mix(sky_hash(cell + float2(0, 1)), sky_hash(cell + float2(1, 1)), f.x);\n    return mix(top, bottom, f.y);\n}\n\nfloat sky_clouds(float2 p) {\n    float sum = 0.0;\n    float weight = 0.5;\n    for (int i = 0; i < 4; i++) {\n        sum += sky_noise(p) * weight;\n        p = p * 2.03 + float2(1.7, 9.2);\n        weight *= 0.5;\n    }\n    return sum;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float h = fmod(fmod(in.hour, 24.0) + 24.0, 24.0);\n    \/\/ How high the sun is: -1 at midnight, 1 at noon.\n    float height = -cos(h \/ 24.0 * 6.2831853);\n    float day = smoothstep(-0.2, 0.35, height);\n    float golden = exp(-pow(height * 3.0, 2.0));\n    float night = 1.0 - smoothstep(-0.35, 0.0, height);\n    float2 uv = frame.uv;\n\n    float3 top = mix(float3(0.02, 0.03, 0.10), float3(0.13, 0.42, 0.90), day);\n    float3 low = mix(float3(0.07, 0.09, 0.24), float3(0.60, 0.80, 1.00), day);\n    top = mix(top, float3(0.28, 0.22, 0.52), golden * 0.6);\n    low = mix(low, float3(1.00, 0.52, 0.30), golden * 0.9);\n    float3 color = mix(top, low, smoothstep(0.0, 0.78, uv.y));\n\n    \/\/ The sun along its arc, and the moon twelve hours behind it.\n    float along = (h - 6.0) \/ 12.0;\n    float2 sun = float2(0.1 + 0.8 * along, 0.66 - 0.5 * height) * frame.size;\n    float r = length(frame.position - sun);\n    float3 sunColor = mix(float3(1.0, 0.50, 0.28), float3(1.0, 0.97, 0.88), day);\n    float up = smoothstep(-0.25, 0.0, height);\n    color += sunColor * exp(-r * r \/ 20000.0) * 0.55 * up;\n    color = mix(color, sunColor, smoothstep(30.0, 27.0, r) * up);\n    float moonAlong = fmod(h + 6.0, 24.0) \/ 12.0;\n    float2 moon = float2(0.1 + 0.8 * moonAlong, 0.66 + 0.5 * height) * frame.size;\n    float m = length(frame.position - moon);\n    float moonUp = smoothstep(-0.25, 0.0, -height);\n    color += float3(0.6, 0.7, 1.0) * exp(-m * m \/ 9000.0) * 0.25 * moonUp;\n    color = mix(color, float3(0.92, 0.94, 1.0), smoothstep(20.0, 18.0, m) * moonUp);\n\n    \/\/ Stars, which twinkle.\n    float star = sky_hash(floor(frame.position \/ 3.0));\n    float twinkle = 0.55 + 0.45 * sin(frame.time * 2.5 + star * 60.0);\n    color += step(0.995, star) * twinkle * night * (1.0 - uv.y);\n\n    \/\/ Clouds drift; their color follows the light.\n    float2 drift = float2(uv.x * 2.6 + frame.time * 0.012, uv.y * 7.0);\n    float cloud = smoothstep(0.52, 0.82, sky_clouds(drift)) * smoothstep(0.7, 0.1, uv.y);\n    float3 cloudColor = mix(float3(0.13, 0.14, 0.26), float3(1.0), day);\n    cloudColor = mix(cloudColor, float3(1.0, 0.68, 0.55), golden * 0.7);\n    color = mix(color, cloudColor, cloud * 0.8);\n\n    \/\/ Two lines of hills.\n    float far = 0.70 + 0.035 * sin(uv.x * 6.0 + 1.0) + 0.015 * sin(uv.x * 17.0);\n    float near = 0.79 + 0.045 * sin(uv.x * 3.5 + 2.4) + 0.012 * sin(uv.x * 23.0);\n    float3 hills = mix(float3(0.05, 0.06, 0.15), float3(0.28, 0.46, 0.62), day);\n    hills = mix(hills, float3(0.46, 0.28, 0.44), golden * 0.5);\n    color = mix(color, hills, smoothstep(far, far + 0.003, uv.y));\n    color = mix(color, hills * 0.55, smoothstep(near, near + 0.003, uv.y));\n    return float4(color, 1);\n}"
+      },
+      {
+        "id" : "484EF01F-FD3B-4AD6-B2E9-372DC0E354F7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4B9AAFF0-BEEE-4A84-A32F-1779563D6FB7",
+        "position" : {
+          "x" : 1488,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "672672FF-783F-41BD-A355-A2FDD1E5CBE5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DD9D6D6D-A5A6-440F-A553-88735F3C0848",
+        "position" : {
+          "x" : 1488,
+          "y" : 456
+        }
+      },
+      {
+        "id" : "2BDB4415-95DD-41B1-AE04-5D0EAD77825E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D12ABAC1-BB04-4089-A8B6-5828E92B5E20",
+        "position" : {
+          "x" : 1200,
+          "y" : 648
+        }
+      },
+      {
+        "id" : "030D3D18-8C15-4084-B633-5A18E5C002C7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "939A3C9E-7D17-415B-8AB1-9525FC768688",
+        "position" : {
+          "x" : 1200,
+          "y" : 816
+        }
+      },
+      {
+        "id" : "BB5A2599-A271-489A-BEE2-58728CA9A3C1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A43E8AF2-FF63-4F7F-B049-F25B945D6C15",
+        "position" : {
+          "x" : 1200,
+          "y" : 960
+        }
+      },
+      {
+        "id" : "3F337A01-8144-4203-A683-9D22BEBC74E1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B28C0A8F-5C11-4EB8-8C31-01994E44EBA2",
+        "position" : {
+          "x" : 1200,
+          "y" : 1104
+        },
+        "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+      },
+      {
+        "id" : "321ACC90-19EE-46D6-8CE2-B7F51B187008",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "942DC40D-46AE-4ABB-B81C-DF1AE5420F91",
+        "position" : {
+          "x" : 1488,
+          "y" : 984
+        }
+      },
+      {
+        "id" : "D076FF6C-7A0C-43D5-8EBB-E4BA747B06E8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C70FFB2F-E7C2-4BAF-9D8B-552AAECB5295",
+        "position" : {
+          "x" : 1200,
+          "y" : 984
+        }
+      },
+      {
+        "id" : "F122C175-075D-4A59-B824-9A25AFB690B3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "686AB03F-8527-434A-A65F-4D921347976D",
+        "position" : {
+          "x" : 1200,
+          "y" : 1152
+        }
+      },
+      {
+        "id" : "D9A3E3A5-643D-440D-9B91-A37B8A8F4966",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0A2B4BD9-C216-4D43-9F71-AB97CDB15DFA",
+        "position" : {
+          "x" : 1200,
+          "y" : 1512
+        }
+      },
+      {
+        "id" : "0EAE440D-22FE-4C9F-A486-39873D842BCC",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "91CBB4F6-9BB9-42CD-8529-0C089CCA186D",
+        "position" : {
+          "x" : 1200,
+          "y" : 1320
+        }
+      },
+      {
+        "id" : "AB0823FF-4154-4208-8920-DBA0C53D5175",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C49A463E-EF5F-43CD-ACEC-A7538B2DE56A",
+        "position" : {
+          "x" : 1200,
+          "y" : 1704
+        }
+      },
+      {
+        "id" : "52AA7CA6-23FF-4EDD-9618-3816FC1F72DB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0051DC6D-EB2A-416F-B86D-8FE19C0DC942",
+        "position" : {
+          "x" : 1440,
+          "y" : 1128
+        }
+      },
+      {
+        "id" : "7E743177-85A9-46ED-BC27-CBCF22788922",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CA5E20EF-A15A-4089-A627-EDE7F4E8ED75",
+        "position" : {
+          "x" : 1440,
+          "y" : 1272
+        }
+      },
+      {
+        "id" : "469772E1-FBB3-4A45-81C5-FDE0F3D3FCE5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "751FE7FA-9AFA-4194-825E-23D734737AF6",
+        "position" : {
+          "x" : 1440,
+          "y" : 1416
+        }
+      },
+      {
+        "id" : "2A698A16-5302-460C-BDCA-5B4EF27EB346",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "57FBF9BA-B07C-4787-84F2-FF933EC7761C",
+        "position" : {
+          "x" : 1440,
+          "y" : 1560
+        }
+      },
+      {
+        "id" : "A3D520B4-0734-4885-B619-221B96292F48",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "051CFB46-013F-4DC4-A645-17CA2AE9EC85",
+        "position" : {
+          "x" : 1440,
+          "y" : 648
+        }
+      },
+      {
+        "id" : "327D1B86-6ABB-4213-8323-884323165B00",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "88E2FDD3-AB61-42E8-8B1F-265ED7B57ED4",
+        "position" : {
+          "x" : 1440,
+          "y" : 840
+        }
+      },
+      {
+        "id" : "6CEA9209-E515-4E14-AE6A-D92F102FCA39",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ACFDAF23-9B63-4104-A06C-6C6BB81A3BC6",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "0995B45A-FB5E-4D8A-BA91-C25212EF5081",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C0BAE394-F6E5-4CA2-AC5A-90F7187795F3",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DB2B6DD2-D249-4FF2-B50B-2E9164C9E491",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E00A9421-C937-4914-90E8-E4F92E0C4485",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "BD206980-C714-4A5F-8C3B-C3600A996589",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "051CFB46-013F-4DC4-A645-17CA2AE9EC85",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "121B7DE0-A4B1-43E1-8FE0-078520F78F7D",
+        "inputs" : {
+
+        },
+        "kind" : "splitPoint",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "DA3F3BF6-725C-47EC-AF54-B21CD0E729A6",
+        "inputs" : {
+          "b" : {
+            "type" : "number",
+            "value" : 0.07453416149068323
+          }
+        },
+        "kind" : "multiply",
+        "name" : "In Hours",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "0AA9135E-E817-4717-9968-1A4A33D6CC8C",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.5
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 17.5
+          }
+        },
+        "kind" : "spring",
+        "name" : "Hour",
+        "position" : {
+          "x" : 912,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "7A431C60-1833-412C-9F77-8722442410D3",
+        "inputs" : {
+
+        },
+        "kind" : "pulse",
+        "name" : "Touch Began \/ Ended",
+        "position" : {
+          "x" : 336,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "8B5896A0-1F5B-4D05-BA8A-72965E55BDBD",
+        "inputs" : {
+          "b" : {
+            "type" : "number",
+            "value" : 17.5
+          }
+        },
+        "kind" : "subtract",
+        "name" : "From the Start",
+        "position" : {
+          "x" : 624,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "59E3BBF5-2750-4F66-BEE2-04FA43B6A5B6",
+        "inputs" : {
+
+        },
+        "kind" : "sampleHold",
+        "name" : "Let Go At",
+        "position" : {
+          "x" : 912,
+          "y" : 432
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "1CD10148-8915-42A3-BB21-25E76C165FA9",
+        "inputs" : {
+          "b" : {
+            "type" : "number",
+            "value" : 17.5
+          }
+        },
+        "kind" : "add",
+        "name" : "Resting Hour",
+        "position" : {
+          "x" : 1200,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "E843E98A-7BB7-4437-BD05-22FF3C8E1ECB",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Forecast",
+        "position" : {
+          "x" : 912,
+          "y" : 696
+        },
+        "script" : "\/\/ What the screen says at an hour of the day: the time, the temperature, a few\n\/\/ words and a symbol, and where the knob is along the track.\ninputs = { hour: 17.5 };\noutputs = { time: \"\", temperature: \"\", condition: \"\", symbol: \"\", knob: 0 };\n\nfunction evaluate(inputs, outputs) {\n  const h = ((inputs.hour % 24) + 24) % 24;\n  const minutes = Math.floor(h * 60) % 1440;\n  const hh = Math.floor(minutes \/ 60), mm = minutes % 60;\n  const twelve = hh % 12 === 0 ? 12 : hh % 12;\n  outputs.time = twelve + \":\" + String(Math.floor(mm \/ 15) * 15).padStart(2, \"0\") + (hh < 12 ? \" AM\" : \" PM\");\n  \/\/ Coolest just before dawn, warmest late in the afternoon.\n  const warmth = 0.5 - 0.5 * Math.cos((h - 4.5) \/ 24 * 2 * Math.PI);\n  outputs.temperature = Math.round(12 + 10 * warmth) + \"°\";\n  const [words, symbol] =\n    h < 5 ? [\"Clear night\", \"moon.stars.fill\"] :\n    h < 7.5 ? [\"Sunrise\", \"sunrise.fill\"] :\n    h < 11 ? [\"Bright morning\", \"sun.max.fill\"] :\n    h < 15.5 ? [\"Sunny\", \"sun.max.fill\"] :\n    h < 18 ? [\"Golden hour\", \"sun.haze.fill\"] :\n    h < 19.5 ? [\"Sunset\", \"sunset.fill\"] :\n    [\"Clear night\", \"moon.stars.fill\"];\n  outputs.condition = words;\n  outputs.symbol = symbol;\n  outputs.knob = 24.0 + h \/ 24 * 322.0 - 11;\n}"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "57CB0DE6-EC2D-4FAB-9912-382E13B7F1FA",
+        "kind" : "view",
+        "name" : "Sky",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 874,
+              "width" : 402
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "hour" : {
+              "type" : "number",
+              "value" : 17.5
+            }
+          },
+          "source" : "\/\/ A whole day's sky from one number: `hour`, from 0 to 24. The sun rises at six on the\n\/\/ left and sets at six on the right, the moon takes its place, the colors follow, stars\n\/\/ come out at night and clouds drift all the time.\nstruct Inputs {\n    float hour = 17.5;\n};\n\nfloat sky_hash(float2 p) {\n    return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);\n}\n\nfloat sky_noise(float2 p) {\n    float2 cell = floor(p);\n    float2 f = fract(p);\n    f = f * f * (3.0 - 2.0 * f);\n    float top = mix(sky_hash(cell), sky_hash(cell + float2(1, 0)), f.x);\n    float bottom = mix(sky_hash(cell + float2(0, 1)), sky_hash(cell + float2(1, 1)), f.x);\n    return mix(top, bottom, f.y);\n}\n\nfloat sky_clouds(float2 p) {\n    float sum = 0.0;\n    float weight = 0.5;\n    for (int i = 0; i < 4; i++) {\n        sum += sky_noise(p) * weight;\n        p = p * 2.03 + float2(1.7, 9.2);\n        weight *= 0.5;\n    }\n    return sum;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float h = fmod(fmod(in.hour, 24.0) + 24.0, 24.0);\n    \/\/ How high the sun is: -1 at midnight, 1 at noon.\n    float height = -cos(h \/ 24.0 * 6.2831853);\n    float day = smoothstep(-0.2, 0.35, height);\n    float golden = exp(-pow(height * 3.0, 2.0));\n    float night = 1.0 - smoothstep(-0.35, 0.0, height);\n    float2 uv = frame.uv;\n\n    float3 top = mix(float3(0.02, 0.03, 0.10), float3(0.13, 0.42, 0.90), day);\n    float3 low = mix(float3(0.07, 0.09, 0.24), float3(0.60, 0.80, 1.00), day);\n    top = mix(top, float3(0.28, 0.22, 0.52), golden * 0.6);\n    low = mix(low, float3(1.00, 0.52, 0.30), golden * 0.9);\n    float3 color = mix(top, low, smoothstep(0.0, 0.78, uv.y));\n\n    \/\/ The sun along its arc, and the moon twelve hours behind it.\n    float along = (h - 6.0) \/ 12.0;\n    float2 sun = float2(0.1 + 0.8 * along, 0.66 - 0.5 * height) * frame.size;\n    float r = length(frame.position - sun);\n    float3 sunColor = mix(float3(1.0, 0.50, 0.28), float3(1.0, 0.97, 0.88), day);\n    float up = smoothstep(-0.25, 0.0, height);\n    color += sunColor * exp(-r * r \/ 20000.0) * 0.55 * up;\n    color = mix(color, sunColor, smoothstep(30.0, 27.0, r) * up);\n    float moonAlong = fmod(h + 6.0, 24.0) \/ 12.0;\n    float2 moon = float2(0.1 + 0.8 * moonAlong, 0.66 + 0.5 * height) * frame.size;\n    float m = length(frame.position - moon);\n    float moonUp = smoothstep(-0.25, 0.0, -height);\n    color += float3(0.6, 0.7, 1.0) * exp(-m * m \/ 9000.0) * 0.25 * moonUp;\n    color = mix(color, float3(0.92, 0.94, 1.0), smoothstep(20.0, 18.0, m) * moonUp);\n\n    \/\/ Stars, which twinkle.\n    float star = sky_hash(floor(frame.position \/ 3.0));\n    float twinkle = 0.55 + 0.45 * sin(frame.time * 2.5 + star * 60.0);\n    color += step(0.995, star) * twinkle * night * (1.0 - uv.y);\n\n    \/\/ Clouds drift; their color follows the light.\n    float2 drift = float2(uv.x * 2.6 + frame.time * 0.012, uv.y * 7.0);\n    float cloud = smoothstep(0.52, 0.82, sky_clouds(drift)) * smoothstep(0.7, 0.1, uv.y);\n    float3 cloudColor = mix(float3(0.13, 0.14, 0.26), float3(1.0), day);\n    cloudColor = mix(cloudColor, float3(1.0, 0.68, 0.55), golden * 0.7);\n    color = mix(color, cloudColor, cloud * 0.8);\n\n    \/\/ Two lines of hills.\n    float far = 0.70 + 0.035 * sin(uv.x * 6.0 + 1.0) + 0.015 * sin(uv.x * 17.0);\n    float near = 0.79 + 0.045 * sin(uv.x * 3.5 + 2.4) + 0.012 * sin(uv.x * 23.0);\n    float3 hills = mix(float3(0.05, 0.06, 0.15), float3(0.28, 0.46, 0.62), day);\n    hills = mix(hills, float3(0.46, 0.28, 0.44), golden * 0.5);\n    color = mix(color, hills, smoothstep(far, far + 0.003, uv.y));\n    color = mix(color, hills * 0.55, smoothstep(near, near + 0.003, uv.y));\n    return float4(color, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "4B9AAFF0-BEEE-4A84-A32F-1779563D6FB7",
+        "kind" : "text",
+        "name" : "Place",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 82
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 16.900000000000002,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "MY LOCATION"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.8,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "DD9D6D6D-A5A6-440F-A553-88735F3C0848",
+        "kind" : "text",
+        "name" : "City",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 102
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44.2,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Lisbon"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "D12ABAC1-BB04-4089-A8B6-5828E92B5E20",
+        "kind" : "text",
+        "name" : "Temperature",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 104
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 200
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 140
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 135.20000000000002,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "22°"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "939A3C9E-7D17-415B-8AB1-9525FC768688",
+        "kind" : "text",
+        "name" : "Condition",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 500
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 272
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 26,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Golden hour"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A43E8AF2-FF63-4F7F-B049-F25B945D6C15",
+        "kind" : "text",
+        "name" : "Range",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 500
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 300
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 22.1,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "H 22°  L 12°"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.8,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "942DC40D-46AE-4ABB-B81C-DF1AE5420F91",
+            "kind" : "text",
+            "name" : "Heading",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 22
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "THROUGH THE DAY"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.7,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "C70FFB2F-E7C2-4BAF-9D8B-552AAECB5295",
+            "kind" : "text",
+            "name" : "Clock",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 30
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 46
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "5:30 PM"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "686AB03F-8527-434A-A65F-4D921347976D",
+            "kind" : "symbol",
+            "name" : "Icon",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 314,
+                  "y" : 48
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 32,
+                  "width" : 32
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "sun.haze.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "0A2B4BD9-C216-4D43-9F71-AB97CDB15DFA",
+            "kind" : "view",
+            "name" : "Rail",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 2
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.3,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 128
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 4,
+                  "width" : 322
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "91CBB4F6-9BB9-42CD-8529-0C089CCA186D",
+            "kind" : "ellipse",
+            "name" : "Knob",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 247.79166666666663,
+                  "y" : 119
+                }
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.9,
+                  "blue" : 0.5,
+                  "green" : 0.85,
+                  "red" : 1
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 10
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 22
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "C49A463E-EF5F-43CD-ACEC-A7538B2DE56A",
+            "kind" : "text",
+            "name" : "Tick 1",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 11
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : -6,
+                  "y" : 150
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.3,
+                  "width" : 60
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "12 AM"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.6,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "0051DC6D-EB2A-416F-B86D-8FE19C0DC942",
+            "kind" : "text",
+            "name" : "Tick 2",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 11
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74.5,
+                  "y" : 150
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.3,
+                  "width" : 60
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "6 AM"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.6,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "CA5E20EF-A15A-4089-A627-EDE7F4E8ED75",
+            "kind" : "text",
+            "name" : "Tick 3",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 11
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 155,
+                  "y" : 150
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.3,
+                  "width" : 60
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "12 PM"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.6,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "751FE7FA-9AFA-4194-825E-23D734737AF6",
+            "kind" : "text",
+            "name" : "Tick 4",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 11
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 235.5,
+                  "y" : 150
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.3,
+                  "width" : 60
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "6 PM"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.6,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "57FBF9BA-B07C-4787-84F2-FF933EC7761C",
+            "kind" : "text",
+            "name" : "Tick 5",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 11
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 316,
+                  "y" : 150
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.3,
+                  "width" : 60
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "12 AM"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.6,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
+        ],
+        "id" : "B28C0A8F-5C11-4EB8-8C31-01994E44EBA2",
+        "kind" : "view",
+        "name" : "Card",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 30
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 596
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 190,
+              "width" : 370
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "radius" : {
+              "type" : "number",
+              "value" : 30
+            },
+            "tint" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 0.16,
+                "blue" : 1,
+                "green" : 1,
+                "red" : 1
+              }
+            }
+          },
+          "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "051CFB46-013F-4DC4-A645-17CA2AE9EC85",
+        "kind" : "view",
+        "name" : "Scrubber",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 596
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 190,
+              "width" : 370
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "C0BAE394-F6E5-4CA2-AC5A-90F7187795F3",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.draw.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "E00A9421-C937-4914-90E8-E4F92E0C4485",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Drag across the card to change the hour"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "ACFDAF23-9B63-4104-A06C-6C6BB81A3BC6",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "88E2FDD3-AB61-42E8-8B1F-265ED7B57ED4",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 800
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
+      }
+    ],
+    "id" : "0A09789F-B512-4514-9BAE-E9BD72685DD3",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
+    }
+  },
+  "version" : 4
+}

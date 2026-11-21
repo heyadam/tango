@@ -52,7 +52,7 @@ extension SampleDocuments {
 
         public static let spacing: Double = 12
         public static let shelves: [Shelf] = [
-            Shelf(name: "Featured", kicker: "MEMORY", card: Size2(width: 350, height: 260), page: 350 + spacing,
+            Shelf(name: "Featured", kicker: "MEMORY", card: Size2(width: 362, height: 260), page: 362 + spacing,
                   titles: ["Summer in Lisbon", "Weekend Hikes", "Ocean Days", "Night Lights"],
                   colors: ["#F28C38", "#3E8E5E", "#2F7FD8", "#5B4BC4"],
                   symbols: ["sun.max.fill", "mountain.2.fill", "water.waves", "moon.stars.fill"]),
@@ -72,12 +72,11 @@ extension SampleDocuments {
     /// A tap on a card still reaches it: the heart fills and the card gives a small bump.
     public static func nestedScroll() -> NestedScroll {
         typealias Nested = NestedScroll
-        let gray = ColorValue(white: 0.45)
         let heading = Layer(name: "Heading", kind: .view, properties: [
             .layout: .text("Stack"), .spacing: .number(2), .paddingHorizontal: .number(20),
             .widthMode: .text("Grow"), .heightMode: .text("Auto"),
         ], children: [
-            caption("Date", "TUESDAY, NOVEMBER 18", size: 13, weight: 600, color: gray),
+            caption("Date", "TUESDAY, NOVEMBER 21", size: 13, weight: 600, color: ExampleStyle.secondary),
             caption("Title", "For You", size: 34, weight: 700),
         ])
 
@@ -113,7 +112,7 @@ extension SampleDocuments {
             ], children: inside)
             var carousel = Layer.new(.scrollView, name: shelf.name)
             carousel.set(.axis, .text("Horizontal"))
-            carousel.set(.size, .size(Size2(width: 390, height: shelf.card.height)))
+            carousel.set(.size, .size(Size2(width: ExampleStyle.device.width, height: shelf.card.height)))
             carousel.set(.widthMode, .text("Grow"))
             carousel.set(.spacing, .number(Nested.spacing))
             carousel.set(.paddingHorizontal, .number(20))
@@ -131,14 +130,14 @@ extension SampleDocuments {
         }
 
         var feed = Layer.new(.scrollView, name: "Feed")
-        feed.set(.size, .size(Size2(width: 390, height: 844)))
+        feed.set(.size, .size(ExampleStyle.device))
         feed.set(.spacing, .number(28))
-        feed.set(.paddingTop, .number(64))
-        feed.set(.paddingBottom, .number(48))
+        feed.set(.paddingTop, .number(ExampleStyle.top + 14))
+        feed.set(.paddingBottom, .number(100))
         feed.children = [heading] + sections
         let screen = Layer(name: "Screen", kind: .screen, properties: [
-            .fill: .color(.white),
-        ], children: [feed])
+            .fill: .color(ExampleStyle.paper),
+        ], children: [feed, ExampleStyle.hint("Drag across a row, or down the page", symbol: "hand.draw.fill")])
 
         var b = Builder(screen: screen)
         let feedPatch = b.view(feed.id, at: Point2(x: 40, y: 60))
@@ -240,9 +239,9 @@ extension SampleDocuments {
             Picture(sky: "#E0C3FC", ground: "#8E7CC3", subject: "music.note"),
             Picture(sky: "#96E6A1", ground: "#4DA167", subject: "bicycle"),
         ]
-        public static let top: Double = 116
+        public static let top: Double = 124
         public static let spacing: Double = 2
-        public static let side: Double = 129
+        public static let side: Double = (402 - 2 * 2) / 3
         /// How much smaller a selected photo is drawn.
         public static let selectedScale: Double = 0.9
     }
@@ -301,19 +300,19 @@ extension SampleDocuments {
             .widthMode: .text("Grow"), .heightMode: .text("Auto"),
         ], children: [photo])
         var library = Layer.new(.scrollView, name: "Library")
-        library.set(.size, .size(Size2(width: 390, height: 844)))
+        library.set(.size, .size(ExampleStyle.device))
         library.set(.paddingTop, .number(Photos.top))
-        library.set(.paddingBottom, .number(40))
+        library.set(.paddingBottom, .number(100))
         library.children = [grid]
 
-        let title = caption("Title", "Library", at: Point2(x: 20, y: 60), size: 34, weight: 700)
+        let title = caption("Title", "Library", at: Point2(x: 20, y: 70), size: 34, weight: 700)
         let buttonLabel = Layer(name: "Label", kind: .text, properties: [
             .position: .point(Point2(x: 0, y: 8)), .size: .size(Size2(width: 84, height: 20)),
             .text: .text("Select"), .fontSize: .number(16), .fontWeight: .number(600),
             .textAlignment: .text("Center"),
         ])
         let button = Layer(name: "Select", kind: .view, properties: [
-            .position: .point(Point2(x: 286, y: 66)), .size: .size(Size2(width: 84, height: 36)),
+            .position: .point(Point2(x: 298, y: 76)), .size: .size(Size2(width: 84, height: 36)),
             .fill: .color(ColorValue(white: 0.92)), .cornerRadius: .number(18),
         ], children: [buttonLabel])
         let mark = Layer(name: "Mark", kind: .view, properties: [
@@ -324,11 +323,11 @@ extension SampleDocuments {
             .size: .size(Size2(width: 0, height: 1)), .opacity: .number(0),
         ], children: [mark])
         let bar = Layer(name: "Bar", kind: .view, properties: [
-            .size: .size(Size2(width: 390, height: Photos.top - 6)), .fill: .color(ColorValue(white: 1, alpha: 0.94)),
+            .size: .size(Size2(width: ExampleStyle.device.width, height: Photos.top - 6)), .fill: .color(ColorValue(white: 1, alpha: 0.94)),
         ], children: [tally, title, button])
         let screen = Layer(name: "Screen", kind: .screen, properties: [
             .fill: .color(.white),
-        ], children: [library, bar])
+        ], children: [library, bar, ExampleStyle.hint("Tap Select, then tap a few photos")])
 
         var b = Builder(screen: screen)
         // Selecting or not: the button flips it, and it decides whether photos take taps.
@@ -425,6 +424,11 @@ extension SampleDocuments {
         b.connect(selecting, "on", to: heading, "condition")
         b.connect(anything, "value", to: heading, "then")
         b.connect(heading, "value", to: titleText, "value")
+
+        b.note("Mode · Select starts and ends choosing", around: [tapButton, selecting, buttonText, ended, modeSpring])
+        b.note("Photos · One per value", around: [skies, hills, subjects])
+        b.note("Pick · Each photo remembers it is picked", around: [touch, picked, pickSpring, shrink, round, fade, pop])
+        b.note("Count · Picked photos, counted", around: [counted, anything, heading])
 
         return PhotoSelection(
             document: b.document, library: library.id, photo: photo.id, check: check.id, title: title.id,

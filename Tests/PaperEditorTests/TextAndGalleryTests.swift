@@ -81,13 +81,13 @@ import PaperRender
     @Test func gesturesReachASnapshot() throws {
         let pinch = SampleDocuments.pinchZoom().document
         let pictures = ViewerSnapshot.bitmaps(of: pinch, steps: [
-            .look, .pinch(at: Point2(x: 195, y: 400), scale: 1.2, rotation: 25, seconds: 0.3), .look,
+            .look, .pinch(at: Point2(x: 201, y: 341), scale: 1.2, rotation: 25, seconds: 0.3), .look,
         ]).compactMap { $0.representation(using: .png, properties: [:]) }
         #expect(pictures.count == 2)
         #expect(pictures[0] != pictures[1])
 
         let hover = SampleDocuments.hoverButton().document
-        let hovered = ViewerSnapshot.bitmaps(of: hover, steps: [.look, .hover(Point2(x: 195, y: 410)), .wait(1), .look])
+        let hovered = ViewerSnapshot.bitmaps(of: hover, steps: [.look, .hover(Point2(x: 201, y: 518)), .wait(1), .look])
             .compactMap { $0.representation(using: .png, properties: [:]) }
         #expect(hovered[0] != hovered[1])
     }

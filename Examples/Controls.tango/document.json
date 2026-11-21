@@ -10477,325 +10477,448 @@
     }
   ],
   "graph" : {
+    "comments" : [
+      {
+        "home" : "61FEE22D-0CD1-4067-8ADB-00DEC5FF7FE8",
+        "id" : "DFA6606D-DD6D-45D0-9DB0-0801A93650A2",
+        "origin" : {
+          "x" : 312,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 204,
+          "width" : 240
+        },
+        "text" : "Toggle · Picks the detail"
+      },
+      {
+        "id" : "39F2C68C-143D-43FD-8355-548AD2E0979D",
+        "origin" : {
+          "x" : 312,
+          "y" : 336
+        },
+        "size" : {
+          "height" : 156,
+          "width" : 240
+        },
+        "text" : "Slider · As a percentage"
+      },
+      {
+        "id" : "C64960A8-7FBF-47E9-8C19-2841A1AF8387",
+        "origin" : {
+          "x" : 312,
+          "y" : 816
+        },
+        "size" : {
+          "height" : 228,
+          "width" : 528
+        },
+        "text" : "Button · Flips its title"
+      },
+      {
+        "id" : "C7637298-D309-4662-A0DC-7318E8F99AE1",
+        "origin" : {
+          "x" : 600,
+          "y" : 1056
+        },
+        "size" : {
+          "height" : 228,
+          "width" : 240
+        },
+        "text" : "Tab Bar · Names the screen"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "4B5C36BC-9AFA-4839-AC59-D78E76C9EC4F",
+          "node" : "C29B8590-02E7-46B8-8A65-9ECCB47C1908",
           "port" : "2B152E3E-9FA3-10EE-5E46-4987D983ABC7"
         },
         "to" : {
-          "node" : "87AF26F2-00B0-4355-BF88-6A87CBF4EF86",
+          "node" : "863B12B2-9C9A-4E76-8D39-D8104C945762",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "87AF26F2-00B0-4355-BF88-6A87CBF4EF86",
+          "node" : "863B12B2-9C9A-4E76-8D39-D8104C945762",
           "port" : "value"
         },
         "to" : {
-          "node" : "5116B718-DB29-4406-B76B-AFB4B2FEDD6E",
+          "node" : "BE3A0619-BCC7-42B9-B24B-2E7DF39A83DA",
           "port" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB"
         }
       },
       {
         "from" : {
-          "node" : "799001EE-6D5A-41CB-B272-AC49CEC888F0",
+          "node" : "CBACE5E7-9FDD-4A3A-A8A5-4F49A1C77F18",
           "port" : "4F8D3046-0DFA-6F75-023D-832542101ADE"
         },
         "to" : {
-          "node" : "0A62BAFF-4386-45A5-A08F-DC2884DFC7C4",
+          "node" : "9F963010-58C6-4921-83BA-D291A6F98194",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "0A62BAFF-4386-45A5-A08F-DC2884DFC7C4",
+          "node" : "9F963010-58C6-4921-83BA-D291A6F98194",
           "port" : "text"
         },
         "to" : {
-          "node" : "3A169D47-9079-4832-BAE4-DA88C4CAF6F3",
+          "node" : "FD799F9F-A03D-4819-BE34-7C8F4C526879",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "7D7904E4-1911-448A-A647-319BA5D8429E",
+          "node" : "E16C0BE6-612C-48FA-8EE5-04760373A98E",
           "port" : "3C9D8831-22CE-E5B4-3B61-513ADD5E715F"
         },
         "to" : {
-          "node" : "338B72C8-7707-429F-B300-209958DD8AB2",
+          "node" : "E300455D-D2B9-4DE3-9EEE-6C1A5E964042",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "F7DECA87-F280-4413-ACE8-88251CDFB9CB",
+          "node" : "776685E9-64C0-43A8-A838-C9E2EBB8DF5E",
           "port" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF"
         },
         "to" : {
-          "node" : "BC9D2CEB-2B96-4DBB-98C2-37FC4BD72520",
+          "node" : "7DEEBC4D-1CCA-4BF7-8041-754E8B9C3D5C",
           "port" : "flip"
         }
       },
       {
         "from" : {
-          "node" : "BC9D2CEB-2B96-4DBB-98C2-37FC4BD72520",
+          "node" : "7DEEBC4D-1CCA-4BF7-8041-754E8B9C3D5C",
           "port" : "on"
         },
         "to" : {
-          "node" : "CADC9313-537E-4996-9C94-28CAF55C5535",
+          "node" : "2402447B-0E8A-4D14-AA90-CFDC840560A2",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "CADC9313-537E-4996-9C94-28CAF55C5535",
+          "node" : "2402447B-0E8A-4D14-AA90-CFDC840560A2",
           "port" : "value"
         },
         "to" : {
-          "node" : "F7DECA87-F280-4413-ACE8-88251CDFB9CB",
+          "node" : "776685E9-64C0-43A8-A838-C9E2EBB8DF5E",
           "port" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF"
         }
       },
       {
         "from" : {
-          "node" : "BE7D91BA-1AAB-4332-875F-4372653FEE96",
+          "node" : "DD5369EE-085B-40B1-940C-148F4BFE652F",
           "port" : "FD58172F-7536-6552-2AEA-60C151468735"
         },
         "to" : {
-          "node" : "E23C8BFB-1D9A-4213-B96B-AD958E7409DC",
+          "node" : "A2B60387-4256-4F0D-A5FB-95D17FB5D19D",
           "port" : "option"
         }
       },
       {
         "from" : {
-          "node" : "E23C8BFB-1D9A-4213-B96B-AD958E7409DC",
+          "node" : "A2B60387-4256-4F0D-A5FB-95D17FB5D19D",
           "port" : "value"
         },
         "to" : {
-          "node" : "381D17BC-01BB-4352-A667-EF64B8E8808F",
+          "node" : "50756EAB-9F6C-4066-9E13-D6981E0F680A",
           "port" : "40883A47-469E-DC46-1BEA-407D66DD1F63"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "25AAAE81-6BE2-4200-8C4B-63C644EF775B",
+        "id" : "F6DCCC73-9A65-4CD5-B96C-BBCEC65D7198",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "4DAC5882-764F-4A53-A86B-29E76261550C",
+        "layerID" : "C2C5970E-E990-443C-865E-FD8C2737F4BF",
         "position" : {
-          "x" : 1044,
-          "y" : 36
+          "x" : 1488,
+          "y" : 384
         }
       },
       {
         "componentID" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
-        "id" : "381D17BC-01BB-4352-A667-EF64B8E8808F",
+        "id" : "50756EAB-9F6C-4066-9E13-D6981E0F680A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "358B5AEF-14C4-4D4D-B0E5-D7BC0574F0A0",
+        "layerID" : "FD58EA9D-15D4-4DF4-A26D-C612A1853002",
         "position" : {
-          "x" : 756,
-          "y" : 984
+          "x" : 1200,
+          "y" : 1104
         }
       },
       {
-        "id" : "779DD4DD-5D2F-489B-8CDB-460BF2D3BDD4",
+        "id" : "2CCDFEC5-879A-4A40-9EA8-BAE460D88CE1",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "25E9DA49-703C-4266-8959-A83C11649A61",
+        "layerID" : "63AEEB9A-EFFB-457F-ADF6-FA2C9A6FB9BB",
         "position" : {
-          "x" : 756,
-          "y" : 408
+          "x" : 1200,
+          "y" : 1416
         }
       },
       {
-        "id" : "0D807FEC-36DF-41BB-93B9-4380266AA511",
+        "id" : "3EE4AD6E-5CE8-4939-9585-D94BD97F858C",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "55E6C329-E530-44C6-B27B-D7660061392B",
+        "layerID" : "61FEE22D-0CD1-4067-8ADB-00DEC5FF7FE8",
         "position" : {
-          "x" : 804,
-          "y" : 36
+          "x" : 1200,
+          "y" : 1560
         }
       },
       {
-        "id" : "5A47884B-E77C-4CBA-A566-4603D6BAA8D4",
+        "id" : "84664320-C9B6-4DB2-906D-B0D883F350D7",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C9D7EDC9-86DC-4C7E-B8A8-CBC00DA4CABA",
+        "layerID" : "4D25987B-7CED-4EA4-BD14-6B7C19F9CA5E",
         "position" : {
-          "x" : 324,
-          "y" : 36
+          "x" : 912,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "B19B4A86-DF97-4D75-8525-7C6430A30FC4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2B2326C8-3BE0-4559-B6D3-B231714D5F0E",
+        "position" : {
+          "x" : 336,
+          "y" : 96
         }
       },
       {
         "componentID" : "AFCB6006-7ED8-3338-4214-E5432A45DC03",
-        "id" : "4B5C36BC-9AFA-4839-AC59-D78E76C9EC4F",
+        "id" : "C29B8590-02E7-46B8-8A65-9ECCB47C1908",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "17571901-8996-4BCA-9FE9-7F188563E274",
+        "layerID" : "7569407F-9E88-4754-96A7-C01F3F8E4DC3",
         "position" : {
-          "x" : 36,
-          "y" : 36
+          "x" : 48,
+          "y" : 96
         }
       },
       {
         "componentID" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
-        "id" : "5116B718-DB29-4406-B76B-AFB4B2FEDD6E",
+        "id" : "BE3A0619-BCC7-42B9-B24B-2E7DF39A83DA",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "BF042DF8-F4DB-449B-A72A-9435307AA747",
+        "layerID" : "CF855ABB-D00C-45A2-AC8B-5D729AFE7091",
         "position" : {
-          "x" : 516,
-          "y" : 36
+          "x" : 624,
+          "y" : 96
         }
       },
       {
         "componentID" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
-        "id" : "42B35405-83C1-4C18-A2F3-667012B21B1C",
+        "id" : "18BA337D-6CD6-4B4F-8099-5D6D81D0AA80",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "4F3714A6-5CF8-4703-975D-EB7BE2115ABE",
+        "layerID" : "A33F737F-35D7-4A0A-B07D-C56E34200A92",
         "position" : {
-          "x" : 516,
-          "y" : 492
+          "x" : 624,
+          "y" : 552
+        }
+      },
+      {
+        "id" : "54816A7D-795D-41C5-9D9B-03DBFF4AAF38",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "576D4E35-CBBB-4907-B633-4420804E2D73",
+        "position" : {
+          "x" : 1200,
+          "y" : 1752
         }
       },
       {
         "componentID" : "408D500D-C505-CCF6-531B-5633D95C4900",
-        "id" : "64BD766B-F6A1-4E5C-B735-7767E8E7BFB0",
+        "id" : "24DE29E2-55C3-4BA2-B103-844FA1CA39A0",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6B15C012-E630-401B-86F0-3E9666053128",
+        "layerID" : "0818FC81-1E5A-4505-A787-A0EB7329BC20",
         "position" : {
-          "x" : 756,
-          "y" : 600
+          "x" : 1440,
+          "y" : 1104
         }
       },
       {
-        "id" : "4334A298-AB7A-48BE-9ED7-41BF4BEC93C6",
+        "id" : "CA4E79B0-51BE-46F5-B5CF-04837761BFB8",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "3E9E8076-E079-4F88-A35D-03E583D7EE26",
+        "layerID" : "52AF867A-1CA7-45DB-AA1D-534D31DB5BCF",
         "position" : {
-          "x" : 756,
-          "y" : 840
+          "x" : 1440,
+          "y" : 1344
         }
       },
       {
-        "id" : "3A169D47-9079-4832-BAE4-DA88C4CAF6F3",
+        "id" : "FD799F9F-A03D-4819-BE34-7C8F4C526879",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E2B4C05B-5422-44FB-AB0A-394DD3291AFE",
+        "layerID" : "48664B08-B2F6-4D01-B1B6-F8B0D92DA6AA",
         "position" : {
-          "x" : 564,
-          "y" : 264
+          "x" : 624,
+          "y" : 384
         }
       },
       {
         "componentID" : "DA8847B3-0DB9-874A-8703-EA61E1A5BF48",
-        "id" : "799001EE-6D5A-41CB-B272-AC49CEC888F0",
+        "id" : "CBACE5E7-9FDD-4A3A-A8A5-4F49A1C77F18",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "EFD46D55-9C65-4B97-A590-FAABF9CC1719",
+        "layerID" : "90438B75-60A1-4658-A0F0-F4C7EDEAAFAC",
         "position" : {
-          "x" : 36,
-          "y" : 264
+          "x" : 48,
+          "y" : 384
         }
       },
       {
-        "id" : "314D0B4F-2AE1-44ED-860F-45D6A5DDEFF0",
+        "id" : "1CAF209F-55E2-4D94-9285-65BC10AD7C99",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8AD6954E-8563-45E7-98E0-CACB0358B4DD",
+        "layerID" : "BA542F83-D0A7-477F-ADB4-6C8277E7A50D",
         "position" : {
-          "x" : 36,
-          "y" : 1116
+          "x" : 48,
+          "y" : 648
         }
       },
       {
-        "id" : "338B72C8-7707-429F-B300-209958DD8AB2",
+        "id" : "E300455D-D2B9-4DE3-9EEE-6C1A5E964042",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "86C00150-2E45-4E1C-87CB-C1AFFDE7C324",
+        "layerID" : "CD8674EE-9238-49C4-8FFA-CE0DF014C4AE",
         "position" : {
-          "x" : 276,
-          "y" : 444
+          "x" : 336,
+          "y" : 624
         }
       },
       {
         "componentID" : "38B74954-CC1A-9292-3FC9-26EF196D45BD",
-        "id" : "7D7904E4-1911-448A-A647-319BA5D8429E",
+        "id" : "E16C0BE6-612C-48FA-8EE5-04760373A98E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6C02FD94-18BF-44DF-8D8F-74AC21BBA1AE",
+        "layerID" : "1EA3F8BA-9F66-4B5C-A8ED-37E118866175",
         "position" : {
-          "x" : 36,
-          "y" : 1404
+          "x" : 48,
+          "y" : 1176
         }
       },
       {
         "componentID" : "73352973-FA64-522D-12FF-D91C3C81517F",
-        "id" : "F7DECA87-F280-4413-ACE8-88251CDFB9CB",
+        "id" : "776685E9-64C0-43A8-A838-C9E2EBB8DF5E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "70894B8A-BC58-4F6F-8299-6804605F1D0A",
+        "layerID" : "AFF58CD2-1174-4F16-8783-4EB814EB2C0E",
         "position" : {
-          "x" : 516,
-          "y" : 984
+          "x" : 48,
+          "y" : 864
+        }
+      },
+      {
+        "id" : "0FB7E3FC-AA59-4853-8360-B6A68F674719",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "132088C3-B90A-49D5-9439-3518EC54D3F9",
+        "position" : {
+          "x" : 48,
+          "y" : 1440
+        }
+      },
+      {
+        "id" : "1770A8E7-E0D4-4B87-9F82-5611305BFDA3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "051EA47C-36BE-46DA-A712-DF31D77AD974",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B30C28EB-EC32-4269-AB18-B8B0FB492D39",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5189C6C3-DD1A-4053-B2F8-43752D017147",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E8D48126-449E-4C81-B33C-3AD521D81862",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F059BD6E-58C0-4F89-80C3-83C04EE12070",
+        "position" : {
+          "x" : 48,
+          "y" : 192
         }
       },
       {
         "componentID" : "4F6BE97A-2E03-5BA6-D458-45031BDB3345",
-        "id" : "BE7D91BA-1AAB-4332-875F-4372653FEE96",
+        "id" : "DD5369EE-085B-40B1-940C-148F4BFE652F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "77165E16-F905-4CBC-A2CD-F767D85864D5",
+        "layerID" : "55948F6B-9901-4247-96C3-3CDA971D9EBE",
         "position" : {
-          "x" : 36,
-          "y" : 804
+          "x" : 48,
+          "y" : 1776
         }
       },
       {
-        "home" : "25E9DA49-703C-4266-8959-A83C11649A61",
-        "id" : "87AF26F2-00B0-4355-BF88-6A87CBF4EF86",
+        "home" : "61FEE22D-0CD1-4067-8ADB-00DEC5FF7FE8",
+        "id" : "863B12B2-9C9A-4E76-8D39-D8104C945762",
         "inputs" : {
           "else" : {
             "type" : "text",
@@ -10809,38 +10932,38 @@
         "kind" : "if",
         "name" : "Wi-Fi State",
         "position" : {
-          "x" : 276,
-          "y" : 36
+          "x" : 336,
+          "y" : 96
         },
         "valueType" : "text"
       },
       {
-        "id" : "0A62BAFF-4386-45A5-A08F-DC2884DFC7C4",
+        "id" : "9F963010-58C6-4921-83BA-D291A6F98194",
         "inputs" : {
 
         },
         "kind" : "javascript",
         "name" : "Percent",
         "position" : {
-          "x" : 276,
-          "y" : 264
+          "x" : 336,
+          "y" : 384
         },
         "script" : "\/\/ Turns a value from 0 to 1 into text such as \"50%\".\ninputs = { value: 0 };\noutputs = { text: \"\" };\n\nfunction evaluate(inputs, outputs) {\n  outputs.text = Math.round(inputs.value * 100) + \"%\";\n}"
       },
       {
-        "id" : "BC9D2CEB-2B96-4DBB-98C2-37FC4BD72520",
+        "id" : "7DEEBC4D-1CCA-4BF7-8041-754E8B9C3D5C",
         "inputs" : {
 
         },
         "kind" : "switch",
         "name" : "Confirmed",
         "position" : {
-          "x" : 36,
-          "y" : 624
+          "x" : 336,
+          "y" : 864
         }
       },
       {
-        "id" : "CADC9313-537E-4996-9C94-28CAF55C5535",
+        "id" : "2402447B-0E8A-4D14-AA90-CFDC840560A2",
         "inputs" : {
           "else" : {
             "type" : "text",
@@ -10854,13 +10977,13 @@
         "kind" : "if",
         "name" : "Button Title",
         "position" : {
-          "x" : 276,
-          "y" : 624
+          "x" : 624,
+          "y" : 864
         },
         "valueType" : "text"
       },
       {
-        "id" : "E23C8BFB-1D9A-4213-B96B-AD958E7409DC",
+        "id" : "A2B60387-4256-4F0D-A5FB-95D17FB5D19D",
         "inputs" : {
           "value0" : {
             "type" : "text",
@@ -10878,8 +11001,8 @@
         "kind" : "optionPicker",
         "name" : "Screen Title",
         "position" : {
-          "x" : 396,
-          "y" : 804
+          "x" : 624,
+          "y" : 1104
         },
         "valueType" : "text"
       }
@@ -10904,7 +11027,7 @@
             }
           }
         },
-        "id" : "358B5AEF-14C4-4D4D-B0E5-D7BC0574F0A0",
+        "id" : "FD58EA9D-15D4-4DF4-A26D-C612A1853002",
         "kind" : "component",
         "name" : "Navigation Bar",
         "properties" : {
@@ -10912,7 +11035,7 @@
             "type" : "point",
             "value" : {
               "x" : 0,
-              "y" : 47
+              "y" : 62
             }
           },
           "size" : {
@@ -10926,13 +11049,59 @@
       },
       {
         "children" : [
+
+        ],
+        "id" : "63AEEB9A-EFFB-457F-ADF6-FA2C9A6FB9BB",
+        "kind" : "text",
+        "name" : "Network Caption",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 32,
+              "y" : 124
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "NETWORK"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
           {
             "children" : [
               {
                 "children" : [
 
                 ],
-                "id" : "C9D7EDC9-86DC-4C7E-B8A8-CBC00DA4CABA",
+                "id" : "2B2326C8-3BE0-4559-B6D3-B231714D5F0E",
                 "kind" : "text",
                 "name" : "Wi-Fi Label",
                 "properties" : {
@@ -10967,7 +11136,7 @@
                     }
                   }
                 },
-                "id" : "17571901-8996-4BCA-9FE9-7F188563E274",
+                "id" : "7569407F-9E88-4754-96A7-C01F3F8E4DC3",
                 "kind" : "component",
                 "name" : "Toggle",
                 "properties" : {
@@ -10988,7 +11157,7 @@
                 }
               }
             ],
-            "id" : "55E6C329-E530-44C6-B27B-D7660061392B",
+            "id" : "4D25987B-7CED-4EA4-BD14-6B7C19F9CA5E",
             "kind" : "view",
             "name" : "Wi-Fi Row",
             "properties" : {
@@ -11016,7 +11185,7 @@
                 "type" : "size",
                 "value" : {
                   "height" : 52,
-                  "width" : 358
+                  "width" : 370
                 }
               },
               "widthMode" : {
@@ -11038,7 +11207,7 @@
                 }
               }
             },
-            "id" : "BF042DF8-F4DB-449B-A72A-9435307AA747",
+            "id" : "CF855ABB-D00C-45A2-AC8B-5D729AFE7091",
             "kind" : "component",
             "name" : "Network Row",
             "properties" : {
@@ -11075,7 +11244,7 @@
                 }
               }
             },
-            "id" : "4F3714A6-5CF8-4703-975D-EB7BE2115ABE",
+            "id" : "A33F737F-35D7-4A0A-B07D-C56E34200A92",
             "kind" : "component",
             "name" : "General Row",
             "properties" : {
@@ -11100,7 +11269,7 @@
             }
           }
         ],
-        "id" : "25E9DA49-703C-4266-8959-A83C11649A61",
+        "id" : "61FEE22D-0CD1-4067-8ADB-00DEC5FF7FE8",
         "kind" : "view",
         "name" : "Table",
         "properties" : {
@@ -11110,7 +11279,7 @@
           },
           "cornerRadius" : {
             "type" : "number",
-            "value" : 12
+            "value" : 26
           },
           "fill" : {
             "type" : "color",
@@ -11133,15 +11302,61 @@
             "type" : "point",
             "value" : {
               "x" : 16,
-              "y" : 110
+              "y" : 146
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 100,
-              "width" : 358
+              "width" : 370
             }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "576D4E35-CBBB-4907-B633-4420804E2D73",
+        "kind" : "text",
+        "name" : "Range Caption",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 32,
+              "y" : 328
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "RANGE"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
           }
         }
       },
@@ -11158,7 +11373,7 @@
             }
           }
         },
-        "id" : "6B15C012-E630-401B-86F0-3E9666053128",
+        "id" : "0818FC81-1E5A-4505-A787-A0EB7329BC20",
         "kind" : "component",
         "name" : "Segmented Control",
         "properties" : {
@@ -11166,14 +11381,14 @@
             "type" : "point",
             "value" : {
               "x" : 16,
-              "y" : 290
+              "y" : 350
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 32,
-              "width" : 358
+              "width" : 370
             }
           }
         }
@@ -11182,13 +11397,17 @@
         "children" : [
 
         ],
-        "id" : "3E9E8076-E079-4F88-A35D-03E583D7EE26",
+        "id" : "52AF867A-1CA7-45DB-AA1D-534D31DB5BCF",
         "kind" : "text",
         "name" : "Brightness Title",
         "properties" : {
           "fontSize" : {
             "type" : "number",
             "value" : 17
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
           },
           "heightMode" : {
             "type" : "text",
@@ -11198,7 +11417,7 @@
             "type" : "point",
             "value" : {
               "x" : 16,
-              "y" : 352
+              "y" : 412
             }
           },
           "text" : {
@@ -11224,13 +11443,17 @@
         "children" : [
 
         ],
-        "id" : "E2B4C05B-5422-44FB-AB0A-394DD3291AFE",
+        "id" : "48664B08-B2F6-4D01-B1B6-F8B0D92DA6AA",
         "kind" : "text",
         "name" : "Brightness Value",
         "properties" : {
           "fontSize" : {
             "type" : "number",
             "value" : 17
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
           },
           "heightMode" : {
             "type" : "text",
@@ -11239,8 +11462,8 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 322,
-              "y" : 352
+              "x" : 342,
+              "y" : 412
             }
           },
           "text" : {
@@ -11272,7 +11495,7 @@
 
           }
         },
-        "id" : "EFD46D55-9C65-4B97-A590-FAABF9CC1719",
+        "id" : "90438B75-60A1-4658-A0F0-F4C7EDEAAFAC",
         "kind" : "component",
         "name" : "Slider",
         "properties" : {
@@ -11280,14 +11503,14 @@
             "type" : "point",
             "value" : {
               "x" : 16,
-              "y" : 386
+              "y" : 444
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 32,
-              "width" : 358
+              "width" : 370
             }
           }
         }
@@ -11296,13 +11519,17 @@
         "children" : [
 
         ],
-        "id" : "8AD6954E-8563-45E7-98E0-CACB0358B4DD",
+        "id" : "BA542F83-D0A7-477F-ADB4-6C8277E7A50D",
         "kind" : "text",
         "name" : "Count Title",
         "properties" : {
           "fontSize" : {
             "type" : "number",
             "value" : 17
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
           },
           "heightMode" : {
             "type" : "text",
@@ -11312,7 +11539,7 @@
             "type" : "point",
             "value" : {
               "x" : 16,
-              "y" : 452
+              "y" : 512
             }
           },
           "text" : {
@@ -11338,13 +11565,17 @@
         "children" : [
 
         ],
-        "id" : "86C00150-2E45-4E1C-87CB-C1AFFDE7C324",
+        "id" : "CD8674EE-9238-49C4-8FFA-CE0DF014C4AE",
         "kind" : "text",
         "name" : "Count Value",
         "properties" : {
           "fontSize" : {
             "type" : "number",
             "value" : 17
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
           },
           "heightMode" : {
             "type" : "text",
@@ -11353,8 +11584,8 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 240,
-              "y" : 452
+              "x" : 246,
+              "y" : 512
             }
           },
           "text" : {
@@ -11386,15 +11617,15 @@
 
           }
         },
-        "id" : "6C02FD94-18BF-44DF-8D8F-74AC21BBA1AE",
+        "id" : "1EA3F8BA-9F66-4B5C-A8ED-37E118866175",
         "kind" : "component",
         "name" : "Stepper",
         "properties" : {
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 280,
-              "y" : 446
+              "x" : 292,
+              "y" : 506
             }
           },
           "size" : {
@@ -11419,7 +11650,7 @@
             }
           }
         },
-        "id" : "70894B8A-BC58-4F6F-8299-6804605F1D0A",
+        "id" : "AFF58CD2-1174-4F16-8783-4EB814EB2C0E",
         "kind" : "component",
         "name" : "Button",
         "properties" : {
@@ -11427,14 +11658,226 @@
             "type" : "point",
             "value" : {
               "x" : 16,
-              "y" : 530
+              "y" : 584
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 50,
-              "width" : 358
+              "width" : 370
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5189C6C3-DD1A-4053-B2F8-43752D017147",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9411764705882353,
+                      "green" : 0.3607843137254902,
+                      "red" : 0.29411764705882354
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "slider.horizontal.3"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "F059BD6E-58C0-4F89-80C3-83C04EE12070",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Every control here is wired to something"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.11372549019607843,
+                      "green" : 0.09411764705882353,
+                      "red" : 0.09411764705882353
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "051EA47C-36BE-46DA-A712-DF31D77AD974",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.92,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.12,
+                  "blue" : 0.2,
+                  "green" : 0.08,
+                  "red" : 0.1
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8549019607843137,
+                  "green" : 0.8862745098039215,
+                  "red" : 0.9019607843137255
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "132088C3-B90A-49D5-9439-3518EC54D3F9",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 690
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
             }
           }
         }
@@ -11456,7 +11899,7 @@
             }
           }
         },
-        "id" : "77165E16-F905-4CBC-A2CD-F767D85864D5",
+        "id" : "55948F6B-9901-4247-96C3-3CDA971D9EBE",
         "kind" : "component",
         "name" : "Tab Bar",
         "properties" : {
@@ -11464,7 +11907,7 @@
             "type" : "point",
             "value" : {
               "x" : 0,
-              "y" : 761
+              "y" : 791
             }
           },
           "size" : {
@@ -11477,7 +11920,7 @@
         }
       }
     ],
-    "id" : "4DAC5882-764F-4A53-A86B-29E76261550C",
+    "id" : "C2C5970E-E990-443C-865E-FD8C2737F4BF",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -11488,6 +11931,13 @@
           "blue" : 0.9686274509803922,
           "green" : 0.9490196078431372,
           "red" : 0.9490196078431372
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

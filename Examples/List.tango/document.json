@@ -3,423 +3,1361 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "1D33705C-A84A-427F-939F-D26C06186BF2",
+        "origin" : {
+          "x" : 312,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 156,
+          "width" : 240
+        },
+        "text" : "Send · The scroll offset"
+      },
+      {
+        "id" : "CBBD7FD6-7768-42D8-AF90-71685FF52146",
+        "origin" : {
+          "x" : 24,
+          "y" : 360
+        },
+        "size" : {
+          "height" : 204,
+          "width" : 816
+        },
+        "text" : "Receive · Pulled down, the title fades out"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "1B999ECF-360C-43AB-B78D-442C3B9DB3C8",
+          "node" : "FF4B4DB6-0FB9-4A44-9C7B-B4B6BB6B89C1",
           "port" : "offset"
         },
         "to" : {
-          "node" : "1EB1194D-CD12-4543-B56A-7EF6BD340BDE",
+          "node" : "852AD361-A401-429C-A88F-46A74054B8EE",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "2CEDB71F-5F9A-47C2-93B3-335322C38825",
+          "node" : "C4856941-250F-4798-ACD0-89F22A4E3BB9",
           "port" : "value"
         },
         "to" : {
-          "node" : "DD164590-E172-467D-908A-E9D8CACC42EE",
+          "node" : "D5A6C5FF-BBC0-453D-8FF6-11CAC35D8548",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "DD164590-E172-467D-908A-E9D8CACC42EE",
+          "node" : "D5A6C5FF-BBC0-453D-8FF6-11CAC35D8548",
           "port" : "progress"
         },
         "to" : {
-          "node" : "082D3ABF-4B6D-4293-A10C-0D9AE213B3F7",
+          "node" : "063572C9-BF61-469A-BF9E-B10C40402517",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "082D3ABF-4B6D-4293-A10C-0D9AE213B3F7",
+          "node" : "063572C9-BF61-469A-BF9E-B10C40402517",
           "port" : "result"
         },
         "to" : {
-          "node" : "20B2A9FA-4D18-46B6-A64E-6840F859EB78",
+          "node" : "BE7788AE-6B09-4D69-B101-79E144F58C36",
           "port" : "opacity"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "61018F32-A945-423A-918A-A515A37C338D",
+        "id" : "A4A15E4E-4EFE-4346-AA93-9DB36AF0CC6C",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6A5B8771-9A28-457F-B8EF-E24607288CBA",
+        "layerID" : "47A704B8-95CB-41FB-8314-29EF7254A796",
         "position" : {
-          "x" : 1068,
-          "y" : 60
+          "x" : 1200,
+          "y" : 96
         }
       },
       {
-        "id" : "1B999ECF-360C-43AB-B78D-442C3B9DB3C8",
+        "id" : "FF4B4DB6-0FB9-4A44-9C7B-B4B6BB6B89C1",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "A8E20D15-1A9C-4F8C-B765-C0DBE7606775",
+        "layerID" : "E9403CBA-BCB3-43B1-B58F-46993C5AC4E0",
         "position" : {
-          "x" : 36,
-          "y" : 60
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "6AACE360-62D4-4E3E-A81B-BD434766011F",
+        "id" : "60E3938C-99DD-437A-BEE4-C675484AC081",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "CAB0EB1E-877C-492B-A26B-29E4E9BE9980",
+        "layerID" : "9843DF32-5237-4A82-A7A7-5C9B5A670058",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "29F68C56-2D04-44C9-9DD2-B34A999D596F",
+        "id" : "A77136A5-7F6D-4F3F-AE4A-09ACEB4A61ED",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F274BFEE-CCAF-49DC-AF4D-2BC84BBBB153",
+        "layerID" : "13F756FA-AECC-4698-ADD4-556C288CBF43",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "54BE619C-0A32-4226-A5E9-A2334FAC658E",
+        "id" : "3B5C5FDE-951C-462B-9AE7-92FEC525BEBD",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "452008F4-930D-46E3-A77C-B9321B5F1572",
+        "layerID" : "7B5E8198-A8CD-4D88-9B0F-5B77719BE32E",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "6F07E335-54AA-48FF-927B-14A7FE6D430A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "95EE0D70-F3D9-4634-85A4-9142A642649A",
         "position" : {
           "x" : 48,
           "y" : 240
         }
       },
       {
-        "id" : "42AB4ECD-FEB7-4FCF-8630-C7113B4C8462",
+        "id" : "37AE3A32-D35C-4232-9725-E4FF1DC86FA5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "61931FDC-90A8-45BB-AEE2-F778C33A211F",
+        "layerID" : "8D75D67E-EAE3-461B-A90F-758ECFBC42B7",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "19281697-90A7-4DA0-BE21-2ED2D5616D87",
+        "id" : "8E0A506A-A12F-4718-A5DB-33453C2BFC5E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C5133809-CE5F-499D-8560-E80A8F73A78C",
+        "layerID" : "E4F4B4F4-D40B-47DF-A7DA-C1123431C78D",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "EAAC93FE-9588-440F-9284-531FEFAE4623",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DCF025EC-5C70-4EE1-AD4A-E1785D4B42D4",
         "position" : {
           "x" : 48,
           "y" : 432
         }
       },
       {
-        "id" : "7CEDC6C3-E39B-4394-9881-931B29659712",
+        "id" : "FA7C9C2A-B49E-4F02-BC98-26AE46CCD605",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "40128CB3-C710-4B92-8908-36FE0F5FA74B",
+        "layerID" : "D2EAB7F9-1AA7-4786-98C1-2231D9086685",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "DBADCA19-2E6C-48C1-B34A-60DDEE544D9C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DF631CA9-A26F-4BEE-98DD-195FB1202583",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "F6229E1D-CCC4-4FB2-8BB2-9D435C6BFA9A",
+        "id" : "A1F15C27-A0B1-497D-BCB9-5AE0ED107A4D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E7946668-C0E8-4DAB-952B-0161C572A318",
+        "layerID" : "42F6DE0D-081A-4C61-BCE4-9B22A32438E6",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DE5BAA5C-7188-44DC-80A4-FB1DFCC27132",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F787E7A6-1E6A-409E-9E28-4CAEA3B0D5F2",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "C6C878F0-C937-4015-BC1D-7F584D709B0C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0057D345-0424-4012-979C-C2C761646E10",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "53244F60-7B07-43D1-9311-0BCDF32076DB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CAD9A0CC-EEB3-4339-A971-58EE88227805",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "4491873D-ADE3-4F26-95B5-44B698B258D3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5E0BE576-CC5E-4767-ACE6-63CCFE1C5C25",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "8AE0B3BB-0196-4A0D-B4BA-B7B4662D4216",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "49CCCA11-A881-4FD3-87BB-EE13C46A7A79",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "0FDE5147-0B08-4A0B-8AFB-4E9DF99CB14C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "460D5E88-0267-44FE-8F65-A9BC6AE9D7DD",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "FCF4A3DE-A844-4EA0-9996-79226B9A23A8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B95EA454-C65C-4CDA-A3A5-A59B2B4E91B0",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "CEEA189E-CFA6-44A6-B9CA-C8CD2C7AC71C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "69E22786-1F1B-428D-BFA4-75B6D15A5FA9",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "1D805159-B443-4555-8313-A5B76B91936F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ED201C7C-8091-4A46-B4B6-A89C9B1AEDF4",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "18250C91-D388-443A-9CCA-A7A2F10F42EB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5C0077DB-44EB-4D86-95B0-4CC2A824F506",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "BE64C7DC-84D8-4E2D-8DDB-99C0EE60F0F3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4D1329BB-C892-448C-8728-D0A8B7F188D8",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "164F68D3-4018-4E0D-ABB1-65F4DCC1849E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CE8B3AC2-A9BC-4415-A458-6C2BE797C8B3",
         "position" : {
           "x" : 48,
           "y" : 624
         }
       },
       {
-        "id" : "85D418C0-F22E-4791-B5BA-876962F5716B",
+        "id" : "7549E4CA-B2F2-41B1-948A-47A7D044698A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "72F687AB-C850-491E-BBDF-F1D1560A3EEB",
+        "layerID" : "6804E96E-D216-46EE-AEC7-2B312F2B84F0",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "19772671-BB46-438C-916D-66689A55ABCD",
+        "id" : "A65A8098-5906-488D-AC58-8F286EDE813D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "789AB02F-1451-47FF-A958-9429AA61CF30",
+        "layerID" : "85D8B90D-38EF-4D24-8B37-8086972FCBB5",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "91D3D1E2-F60F-43D8-946D-DD9CEAF4A1D1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B87C813F-2CB4-4AA0-912B-65A6C4C0F951",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "297315D7-F75D-49E0-8F9F-4AFF1617DB35",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "184E9AC1-3CAE-45E8-BAD3-18611E6EA32E",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "98C51306-A856-44EF-A4D7-38BD56668208",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "87EFA369-93B5-4631-8456-F8173A67BC32",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "86ADEBEC-1CC7-4D35-8297-53F3CC1A75FB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "068C9711-D957-4AEA-A40C-130287C40496",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "614E2E8E-0405-439F-95A0-5608EF7895E3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "95A658CD-CE3A-426D-BE9C-B9491313A3C8",
         "position" : {
           "x" : 48,
           "y" : 816
         }
       },
       {
-        "id" : "364DAFB3-D93C-4EDA-918A-3C38355AB4AA",
+        "id" : "6EEBA83D-49FF-4AC6-ABD1-AD26A3C4D7A9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6333B546-4AAC-46CE-8FBB-159C5EA8ADDB",
+        "layerID" : "3986BAAE-1550-4649-9DC6-14DFCA22CB4B",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "E1662219-8999-47A9-83C9-5E2682565E60",
+        "id" : "9EB20E11-1D30-4A08-854B-90AE5623FE96",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "66A9EB79-2DB0-4FDE-8706-9CE634C3BAF2",
+        "layerID" : "267056E2-03E1-450D-99D3-2154D686223C",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "1AF26B57-B685-4E58-8A64-0C57104E95E3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "69BAEDCC-C8DB-4067-B6B0-7EB57472F6DE",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "5B47EA1B-559A-478C-B581-8E67E08F508E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5553EEFD-F47F-485C-8D1C-7D99E0E8BD2F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "23B96462-5240-466A-9746-90B6A817770A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "032B0ED4-DF87-4ECE-AB45-60E4952444E7",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "6258B4F7-D662-44BB-8E0F-F3A89E7FA38A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "77DA4A1B-295B-4601-AD08-D3733BA021E1",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "5BD3B27C-492C-4F05-9182-0D1C9245C610",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5572D76B-B5AB-4BF6-B4C6-3A26FB19DD89",
         "position" : {
           "x" : 288,
           "y" : 48
         }
       },
       {
-        "id" : "51B5B383-C5A2-4373-961C-015DE169496D",
+        "id" : "72637C22-4778-4735-8DE2-99A31F2794B4",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "CE8B7F23-08D7-4CFD-84E7-6277376598C0",
+        "layerID" : "2ECDDA3E-D408-4869-9775-278A7055EED9",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "8CF48773-F95D-49AF-BE33-7612708575EC",
+        "id" : "48B5A7EA-AC30-4ECC-814A-E396E1E2F90C",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "34B64E35-E213-4F7A-B8D6-61A9CD3B1D28",
+        "layerID" : "41164467-9252-4BDF-BC87-7E3FFF686B3C",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A0E95A4C-1663-4F49-9660-4252CF3AE1D8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E7A91A71-8861-4B3B-8304-9FD5B9B24011",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "CF0018BE-98D3-4F98-8177-614B98270796",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6D1D8B65-24A3-4C83-B977-692B95C15C35",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "247136AD-7CD3-46BB-9AAA-8EA538C37459",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8E4444FD-935F-4E47-A8AD-C437E28E3447",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "1F212923-0DAF-4426-8B94-B195FA504CF1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4BE1F7A3-E7C0-43D2-AE41-3E70ADC159B3",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "EDF53F4B-AF15-44E5-8849-FA6422DA309C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ED7A4A3F-2568-4481-9D0A-DD2C0E031871",
         "position" : {
           "x" : 288,
           "y" : 240
         }
       },
       {
-        "id" : "DCBBEE07-4484-4341-96D4-0AA87C9C8355",
+        "id" : "DA53C6EF-52AE-423A-991C-8AA8B40A2A0B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "11398ACC-A007-43ED-9692-83D3635B86FD",
+        "layerID" : "CF2EA77B-9518-4464-8C44-CECE7F492878",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "461478B5-9A72-4B5B-A713-9F055D20FDE4",
+        "id" : "3C4EB921-66B6-4FF8-93CA-58BA8534F35B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "ABA6C20D-2DD4-4F95-AA3E-B6B23E8D9C71",
+        "layerID" : "EAC1AC43-B351-4274-AB2E-A46B5D136D71",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "F3118DC4-3AEC-4784-99EA-EBFE96AF99AB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1DEEA2D9-4580-401B-B4C3-D4213E87325A",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "FF1B5219-FFF3-4C6F-898D-F1332D6170F4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "664BB66D-D31C-4443-A493-459EA6EECCFE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "637EEF0F-F406-4289-A784-262C4C353104",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4AFFC80B-3306-48B8-84DC-A5BBE5D54396",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "F7DF9D6E-E15F-46CF-9075-BC3D667AFD9A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E19BBB33-06E9-4C24-99E7-9371550E8227",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "FBFEF464-928F-4A2F-AC70-E9A3603CC90A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1C9D6DC9-C2B9-4E11-9222-5D246DCEF34E",
         "position" : {
           "x" : 288,
           "y" : 432
         }
       },
       {
-        "id" : "326A6796-74B6-47A4-90CC-7C6AF303D282",
+        "id" : "E658DB75-B506-4776-82C0-745DE8B803FE",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "0C1DA20A-F519-4B90-98E1-977BD3E06DFC",
+        "layerID" : "374B8997-4AE3-44D9-89E8-6C6030F64FCD",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "00663543-D111-4558-83B9-B039153DA9B9",
+        "id" : "D2D449E2-83AC-416B-B2D8-F766EA7FCB22",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E6296CCA-720A-4A0F-8174-5C6E222C923C",
+        "layerID" : "2B6198B5-7DA3-4BB7-9182-64FCB65FE5F5",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "FE4C45C2-1716-47DF-99EB-3E611F10323B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9187B14E-6B65-4858-8A35-FA9FB304EE44",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "1F33CC55-571B-4A22-96FF-837DA64CC13F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7EC493FF-BA6E-4DC2-93E7-652E9DE76B08",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B20A3E25-EFE8-4D9A-B2CF-3C2959B272F5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B0EA3E6E-8BE8-41F0-9319-9F47FF38BDEB",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "0BDF02E2-9472-4CE6-AD6C-B7846B4423FD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B76AE862-9788-405D-990C-7A6E0DE495BA",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "BA7E8567-101F-439C-9316-53AE950848E3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "98003779-D03D-4CA1-83D3-5573290D1575",
         "position" : {
           "x" : 288,
           "y" : 624
         }
       },
       {
-        "id" : "09DF19F9-A374-422F-B7A5-78F7B6285733",
+        "id" : "320B23F0-F412-47D4-B9C2-9D11779C204F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F407961D-9C8C-4315-93A9-45A62FCC5089",
+        "layerID" : "372B422D-CDEB-4030-9BA1-9EB7501D8F57",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "C234986E-4379-432F-B083-514D2D6C6B9F",
+        "id" : "61320A32-7206-4098-8268-50CEACF3EB5B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "408B412F-942B-4A4E-9D1C-E28C99021B77",
+        "layerID" : "D29B6E59-CE33-4783-A0DD-C51C8467775F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "058A72CE-589B-4D79-85D4-8DB8CFBE55BA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "132BA1D0-0810-4BC8-8E1E-2F584034D919",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "DF002C30-3133-4CB9-8FDD-CF4BBEDFF40F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "17AE10B0-1D19-4CC5-81E2-066098891703",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "FA2888E3-4A73-4B78-93A7-1171311EBE20",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "99AEC617-413D-4A88-A198-71171D22C55E",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "7671F966-5569-43B5-AEDB-A81B355F9521",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7F2A6BC7-59EB-4268-8932-58246A40E59A",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "D490F90D-D0AB-42B2-99B6-D047F37D6A30",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5807302F-FDCE-49FB-B45E-98B0CA8A8842",
         "position" : {
           "x" : 288,
           "y" : 816
         }
       },
       {
-        "id" : "DF37D15E-7149-42C2-BED9-AE89EF456D3B",
+        "id" : "1CC0AE8D-5344-4BA5-8AD3-7826604DA3C9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "A736A237-94FA-461A-A746-55BC9FA6B996",
+        "layerID" : "ACA28FE2-F15A-4476-8845-378BD82BC490",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "6C23D99B-C118-4675-9B7D-E90B041E8F82",
+        "id" : "98C493F6-5CA9-49A5-9FD8-AC1AF5B4577C",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "DF5695A9-EB57-496A-AF30-8C96A64F0C75",
+        "layerID" : "2C224C84-093D-497B-A1A8-D80120ECDCC9",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "3EBA113D-2B7A-4E8E-93BB-BD6654BCA4A4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F161F974-A230-42A8-A74F-F5B1E52F6E61",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "C474BC16-3A46-41D3-A2BD-07C27428FDE3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "34389B92-D666-4D62-A9F0-6FD816305815",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "7EE5707D-BE13-40AD-8B81-17760B86FBB6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "322FBD45-0D83-4940-9DC2-33E14074ACF2",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "2F4C3A35-5FED-46BB-914F-659F8D0FE4F5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FCDC57A0-79C9-4F3A-A872-365C7EA4AB52",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "BA840CDD-9005-4498-B2CE-4D684142A1B1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BE7EB793-72F2-4913-9D57-BFCFD8B72785",
         "position" : {
           "x" : 528,
           "y" : 48
         }
       },
       {
-        "id" : "808C86F0-1365-461C-9E3F-EAF9508EE1E8",
+        "id" : "28F6BA93-F9CD-46C4-BB4D-2C1356D04017",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "26577A88-8AD4-4897-BCE1-7BBA1DBCF773",
+        "layerID" : "5D877DB6-EF42-461D-9F08-98142E6490EE",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "76E1FC45-DE1A-4191-A20C-BC0F18BA6B5C",
+        "id" : "B833A66D-99FF-4A6F-98C7-B1E9B3815488",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "399C0AC6-C9AB-444A-8758-B692D86BD944",
+        "layerID" : "9A5C8FB3-3ABE-46A3-BC6D-0B8F262EA921",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "5BBCB19D-7037-421C-95BC-2C4C45552984",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F8D5C40A-6B3B-4587-BF9B-5D1786FA9477",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "E23B2C72-213B-4EDE-898F-D4EFB9D46D3D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FF907704-71E7-4648-BC12-F0A21E1611C6",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B2BC8460-1E69-461C-88A5-561A9B098475",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3663B3F6-FB60-4E16-AB02-1E2FB691212E",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "0C68C4F8-607B-4B00-9975-4E265442160C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "301ACC66-A217-4064-9B5A-51E326721EB9",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "5C23417E-353D-4EFB-B066-C0137B2C3862",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3518EAEF-9F54-4152-AD08-6CDFEE951D32",
         "position" : {
           "x" : 528,
           "y" : 240
         }
       },
       {
-        "id" : "4FC76691-E960-479B-95A8-938B289964B1",
+        "id" : "DB40E702-739A-4608-8F7B-27402AEC4F83",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "018B4698-5EF5-440E-823B-3051E7743388",
+        "layerID" : "2FF79FB1-869A-48E3-9280-C009906DF827",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "C4B0E5B0-7BD6-40DD-932E-06924439885A",
+        "id" : "FB13F677-6532-4788-9434-1F844989029E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "755C2AD6-C525-4632-BBB8-8A94166D9500",
+        "layerID" : "18599002-63F5-44A7-BCDD-3F0087351626",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "3F427119-8FE7-41AC-8181-5B14CC91F8B2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3EB2D671-2D5A-464F-B8DF-0D3E5E276A07",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "46B6CDB6-7F27-437E-81C6-5CE96BBE40A8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BB1D1C4E-E76B-45A4-858A-5B9B8D68FA30",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2937367D-E636-488D-9F6F-727E427569EA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5F05C0C1-210A-48C0-A278-ACBC7F63FB64",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "A4327F5E-D121-4344-84E5-3CFA5D5D0B84",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "36C1192F-63A4-4AD6-9D09-E78DD3449EF1",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "7FE1833C-B985-466A-AF46-B9B064691B50",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F1F0B5C0-03BF-43FE-B5B7-D45271A39D3C",
         "position" : {
           "x" : 528,
           "y" : 432
         }
       },
       {
-        "id" : "B2CA104C-C31A-4DFC-9F0B-0D4C2C20F390",
+        "id" : "89FE333E-1B7B-4009-AB5B-1BF35D9CB85F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8A50C114-D539-4965-9927-5CBC8A6B5703",
+        "layerID" : "B67AA54B-7975-4337-9B4C-ED5B37E65407",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "BA93A0F2-1307-4CCA-810E-F3B9D3DA8992",
+        "id" : "D3858155-7AB9-4FF9-A452-0AC555E47D9A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "43F3AD0E-363D-44EC-845B-C4CFA80EA642",
+        "layerID" : "1D9376CF-FFC1-4D58-A6A0-88951FC41A71",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "45BB2A63-B017-4BD7-AAA1-1AB0EE97E441",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7C4BF019-BE2E-40EE-9DBB-3959389598B0",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "1E8FA37D-3185-4E12-82C2-089978E7A2A6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D141E069-6451-41B3-8087-645FDA080F89",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "8C860E79-E347-495F-9815-3CFEC8F6216B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AB93D380-12FF-4478-B94F-904B2D9CDA83",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "87DC2889-BD24-4204-92C2-E44487C85DA2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B696B53C-5001-40B1-80F6-46C8E5422EBF",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "70BFB350-A1FE-4FB9-AF55-69C0971876F9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BAC84CA2-51DC-4BF1-90D8-512F8BF0E1CD",
         "position" : {
           "x" : 528,
           "y" : 624
         }
       },
       {
-        "id" : "0C3A53AF-9CCF-4152-844A-DFBC108802BB",
+        "id" : "BD1926D8-D614-415B-8EE1-790436E408AC",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "60E1F617-E879-4A99-B13D-0FEA2A5F5460",
+        "layerID" : "24FE23A7-614B-4DD3-A21C-9768395B83AD",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "20B2A9FA-4D18-46B6-A64E-6840F859EB78",
+        "id" : "0FEFFB80-87C3-430A-BC6D-58EAB508FF2B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "CCED1549-B6AB-4AD2-99F4-F97F28242F64",
+        "layerID" : "43CA440D-A4A7-436D-896E-EBF951F30D48",
         "position" : {
-          "x" : 780,
-          "y" : 396
+          "x" : 48,
+          "y" : 48
         }
       },
       {
-        "id" : "1EB1194D-CD12-4543-B56A-7EF6BD340BDE",
+        "id" : "AF8F537D-8CBE-4A8A-9450-C1DFEACB0890",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3A5363B9-9BDD-47A1-8C5E-D71DE24B1CEA",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "2B80E092-438A-4858-8384-D9B390B08404",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DEB8C985-3331-4D17-BF1A-122FD71545BE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "6723F701-D91D-4473-8C92-53F566186C11",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F12EB400-A2B4-4FE0-93E5-A5E4782592F3",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "D6CEE4AB-4EED-413D-A56B-87528A34AB60",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DE9407D9-A01C-4355-8F8F-6560D6035044",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "BE7788AE-6B09-4D69-B101-79E144F58C36",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7323BEEE-D950-4A20-A935-7127227C3213",
+        "position" : {
+          "x" : 912,
+          "y" : 408
+        }
+      },
+      {
+        "id" : "92287A46-E47B-4FCC-92F0-43EF38022DE1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5697AA9A-C350-4E10-97D7-EDE1FF984B43",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "84AD2C92-3CFC-464E-8D97-4DC5416F8283",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "18EB4848-3DF9-4928-8B9B-5CAC16703CB7",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "9E788CC8-A33D-4885-8AD0-205C68F3343E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9FD3150E-A642-48ED-854E-D956040D8B83",
+        "position" : {
+          "x" : 912,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "CD5FCB94-A7A8-4DC3-BC45-013A7C13F071",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4095F0DA-9B1C-40C4-A088-049C59280C90",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "80F542A7-36B5-4AF8-B67E-1E207416FBA8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D085ABE2-8CF2-45AA-9BF8-4799BA63482D",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2B699B0D-A865-46CD-A669-47B1B5FCE71D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D3E647B0-C51A-4AEC-A5B0-3F7B1CB08ACC",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "852AD361-A401-429C-A88F-46A74054B8EE",
         "inputs" : {
           "name" : {
             "type" : "text",
@@ -428,13 +1366,13 @@
         },
         "kind" : "broadcast",
         "position" : {
-          "x" : 300,
-          "y" : 60
+          "x" : 336,
+          "y" : 96
         },
         "valueType" : "number"
       },
       {
-        "id" : "2CEDB71F-5F9A-47C2-93B3-335322C38825",
+        "id" : "C4856941-250F-4798-ACD0-89F22A4E3BB9",
         "inputs" : {
           "name" : {
             "type" : "text",
@@ -443,13 +1381,13 @@
         },
         "kind" : "receive",
         "position" : {
-          "x" : 36,
-          "y" : 396
+          "x" : 48,
+          "y" : 408
         },
         "valueType" : "number"
       },
       {
-        "id" : "DD164590-E172-467D-908A-E9D8CACC42EE",
+        "id" : "D5A6C5FF-BBC0-453D-8FF6-11CAC35D8548",
         "inputs" : {
           "end" : {
             "type" : "number",
@@ -463,19 +1401,19 @@
         "kind" : "progress",
         "name" : "Header Fade",
         "position" : {
-          "x" : 300,
-          "y" : 396
+          "x" : 336,
+          "y" : 408
         }
       },
       {
-        "id" : "082D3ABF-4B6D-4293-A10C-0D9AE213B3F7",
+        "id" : "063572C9-BF61-469A-BF9E-B10C40402517",
         "inputs" : {
 
         },
         "kind" : "clamp",
         "position" : {
-          "x" : 540,
-          "y" : 396
+          "x" : 624,
+          "y" : 408
         }
       }
     ]
@@ -488,27 +1426,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "7B5E8198-A8CD-4D88-9B0F-5B77719BE32E",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "MI"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "13F756FA-AECC-4698-ADD4-556C288CBF43",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.34901960784313724,
+                      "green" : 0.4392156862745098,
+                      "red" : 1
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "8D75D67E-EAE3-461B-A90F-758ECFBC42B7",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Mika Ito"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "E4F4B4F4-D40B-47DF-A7DA-C1123431C78D",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Photos from Kyoto"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "95EE0D70-F3D9-4634-85A4-9142A642649A",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "F274BFEE-CCAF-49DC-AF4D-2BC84BBBB153",
+                "id" : "DCF025EC-5C70-4EE1-AD4A-E1785D4B42D4",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 1"
+                    "value" : "9:41"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -517,7 +1679,7 @@
                 }
               }
             ],
-            "id" : "CAB0EB1E-877C-492B-A26B-29E4E9BE9980",
+            "id" : "9843DF32-5237-4A82-A7A7-5C9B5A670058",
             "kind" : "view",
             "name" : "Row 1",
             "properties" : {
@@ -531,7 +1693,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -548,11 +1710,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -560,6 +1722,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -571,27 +1737,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "42F6DE0D-081A-4C61-BCE4-9B22A32438E6",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "SO"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "DF631CA9-A26F-4BEE-98DD-195FB1202583",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.6627450980392157,
+                      "red" : 0.35294117647058826
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "0057D345-0424-4012-979C-C2C761646E10",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Sam Okafor"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "CAD9A0CC-EEB3-4339-A971-58EE88227805",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Re: Friday's plan"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "F787E7A6-1E6A-409E-9E28-4CAEA3B0D5F2",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "61931FDC-90A8-45BB-AEE2-F778C33A211F",
+                "id" : "5E0BE576-CC5E-4767-ACE6-63CCFE1C5C25",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 2"
+                    "value" : "9:12"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -600,7 +1990,7 @@
                 }
               }
             ],
-            "id" : "452008F4-930D-46E3-A77C-B9321B5F1572",
+            "id" : "D2EAB7F9-1AA7-4786-98C1-2231D9086685",
             "kind" : "view",
             "name" : "Row 2",
             "properties" : {
@@ -614,15 +2004,15 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
+                  "green" : 1,
+                  "red" : 1
                 }
               },
               "layout" : {
@@ -631,11 +2021,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -643,6 +2033,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -654,27 +2048,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "B95EA454-C65C-4CDA-A3A5-A59B2B4E91B0",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "LP"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "460D5E88-0267-44FE-8F65-A9BC6AE9D7DD",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5411764705882353,
+                      "green" : 0.7058823529411765,
+                      "red" : 0.36470588235294116
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "ED201C7C-8091-4A46-B4B6-A89C9B1AEDF4",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Lena Park"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "5C0077DB-44EB-4D86-95B0-4CC2A824F506",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "The deck, with your notes"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "69E22786-1F1B-428D-BFA4-75B6D15A5FA9",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "40128CB3-C710-4B92-8908-36FE0F5FA74B",
+                "id" : "4D1329BB-C892-448C-8728-D0A8B7F188D8",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 3"
+                    "value" : "8:55"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -683,7 +2301,7 @@
                 }
               }
             ],
-            "id" : "C5133809-CE5F-499D-8560-E80A8F73A78C",
+            "id" : "49CCCA11-A881-4FD3-87BB-EE13C46A7A79",
             "kind" : "view",
             "name" : "Row 3",
             "properties" : {
@@ -697,7 +2315,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -714,11 +2332,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -726,6 +2344,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -737,27 +2359,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "85D8B90D-38EF-4D24-8B37-8086972FCBB5",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "TG"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "6804E96E-D216-46EE-AEC7-2B312F2B84F0",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9607843137254902,
+                      "green" : 0.4,
+                      "red" : 0.5176470588235295
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "184E9AC1-3CAE-45E8-BAD3-18611E6EA32E",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Theo Grant"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "87EFA369-93B5-4631-8456-F8173A67BC32",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Lunch?"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "B87C813F-2CB4-4AA0-912B-65A6C4C0F951",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "72F687AB-C850-491E-BBDF-F1D1560A3EEB",
+                "id" : "068C9711-D957-4AEA-A40C-130287C40496",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 4"
+                    "value" : "8:30"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -766,7 +2612,7 @@
                 }
               }
             ],
-            "id" : "E7946668-C0E8-4DAB-952B-0161C572A318",
+            "id" : "CE8B3AC2-A9BC-4415-A458-6C2BE797C8B3",
             "kind" : "view",
             "name" : "Row 4",
             "properties" : {
@@ -780,15 +2626,15 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
+                  "green" : 1,
+                  "red" : 1
                 }
               },
               "layout" : {
@@ -797,11 +2643,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -809,6 +2655,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -820,27 +2670,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "267056E2-03E1-450D-99D3-2154D686223C",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "ID"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "3986BAAE-1550-4649-9DC6-14DFCA22CB4B",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.25098039215686274,
+                      "green" : 0.7019607843137254,
+                      "red" : 1
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "5553EEFD-F47F-485C-8D1C-7D99E0E8BD2F",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Ines Duarte"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "032B0ED4-DF87-4ECE-AB45-60E4952444E7",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Your order has shipped"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "69BAEDCC-C8DB-4067-B6B0-7EB57472F6DE",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "6333B546-4AAC-46CE-8FBB-159C5EA8ADDB",
+                "id" : "77DA4A1B-295B-4601-AD08-D3733BA021E1",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 5"
+                    "value" : "Yesterday"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -849,7 +2923,7 @@
                 }
               }
             ],
-            "id" : "789AB02F-1451-47FF-A958-9429AA61CF30",
+            "id" : "95A658CD-CE3A-426D-BE9C-B9491313A3C8",
             "kind" : "view",
             "name" : "Row 5",
             "properties" : {
@@ -863,7 +2937,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -880,11 +2954,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -892,6 +2966,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -903,27 +2981,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "41164467-9252-4BDF-BC87-7E3FFF686B3C",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "NK"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "2ECDDA3E-D408-4869-9775-278A7055EED9",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6078431372549019,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.13333333333333333
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "6D1D8B65-24A3-4C83-B977-692B95C15C35",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Noah Kim"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "8E4444FD-935F-4E47-A8AD-C437E28E3447",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Climbing on Sunday"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "E7A91A71-8861-4B3B-8304-9FD5B9B24011",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "CE8B7F23-08D7-4CFD-84E7-6277376598C0",
+                "id" : "4BE1F7A3-E7C0-43D2-AE41-3E70ADC159B3",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 6"
+                    "value" : "Yesterday"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -932,7 +3234,7 @@
                 }
               }
             ],
-            "id" : "66A9EB79-2DB0-4FDE-8706-9CE634C3BAF2",
+            "id" : "5572D76B-B5AB-4BF6-B4C6-3A26FB19DD89",
             "kind" : "view",
             "name" : "Row 6",
             "properties" : {
@@ -946,15 +3248,15 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
+                  "green" : 1,
+                  "red" : 1
                 }
               },
               "layout" : {
@@ -963,11 +3265,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -975,6 +3277,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -986,27 +3292,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "EAC1AC43-B351-4274-AB2E-A46B5D136D71",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "AB"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "CF2EA77B-9518-4464-8C44-CECE7F492878",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5568627450980392,
+                      "green" : 0.403921568627451,
+                      "red" : 0.9490196078431372
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "664BB66D-D31C-4443-A493-459EA6EECCFE",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Ava Brooks"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "4AFFC80B-3306-48B8-84DC-A5BBE5D54396",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Draft for the newsletter"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "1DEEA2D9-4580-401B-B4C3-D4213E87325A",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "11398ACC-A007-43ED-9692-83D3635B86FD",
+                "id" : "E19BBB33-06E9-4C24-99E7-9371550E8227",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 7"
+                    "value" : "Yesterday"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1015,7 +3545,7 @@
                 }
               }
             ],
-            "id" : "34B64E35-E213-4F7A-B8D6-61A9CD3B1D28",
+            "id" : "ED7A4A3F-2568-4481-9D0A-DD2C0E031871",
             "kind" : "view",
             "name" : "Row 7",
             "properties" : {
@@ -1029,7 +3559,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -1046,11 +3576,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1058,6 +3588,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -1069,27 +3603,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "2B6198B5-7DA3-4BB7-9182-64FCB65FE5F5",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "RS"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "374B8997-4AE3-44D9-89E8-6C6030F64FCD",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.34901960784313724,
+                      "green" : 0.4392156862745098,
+                      "red" : 1
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "7EC493FF-BA6E-4DC2-93E7-652E9DE76B08",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Ravi Shah"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "B0EA3E6E-8BE8-41F0-9319-9F47FF38BDEB",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Quick question"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "9187B14E-6B65-4858-8A35-FA9FB304EE44",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "0C1DA20A-F519-4B90-98E1-977BD3E06DFC",
+                "id" : "B76AE862-9788-405D-990C-7A6E0DE495BA",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 8"
+                    "value" : "Mon"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1098,7 +3856,7 @@
                 }
               }
             ],
-            "id" : "ABA6C20D-2DD4-4F95-AA3E-B6B23E8D9C71",
+            "id" : "1C9D6DC9-C2B9-4E11-9222-5D246DCEF34E",
             "kind" : "view",
             "name" : "Row 8",
             "properties" : {
@@ -1112,15 +3870,15 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
+                  "green" : 1,
+                  "red" : 1
                 }
               },
               "layout" : {
@@ -1129,11 +3887,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1141,6 +3899,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -1152,27 +3914,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "D29B6E59-CE33-4783-A0DD-C51C8467775F",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "ZM"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "372B422D-CDEB-4030-9BA1-9EB7501D8F57",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.6627450980392157,
+                      "red" : 0.35294117647058826
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "17AE10B0-1D19-4CC5-81E2-066098891703",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Zoe Martin"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "99AEC617-413D-4A88-A198-71171D22C55E",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Tickets for the 14th"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "132BA1D0-0810-4BC8-8E1E-2F584034D919",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "F407961D-9C8C-4315-93A9-45A62FCC5089",
+                "id" : "7F2A6BC7-59EB-4268-8932-58246A40E59A",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 9"
+                    "value" : "Mon"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1181,7 +4167,7 @@
                 }
               }
             ],
-            "id" : "E6296CCA-720A-4A0F-8174-5C6E222C923C",
+            "id" : "98003779-D03D-4CA1-83D3-5573290D1575",
             "kind" : "view",
             "name" : "Row 9",
             "properties" : {
@@ -1195,7 +4181,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -1212,11 +4198,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1224,6 +4210,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -1235,27 +4225,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "2C224C84-093D-497B-A1A8-D80120ECDCC9",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "OH"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "ACA28FE2-F15A-4476-8845-378BD82BC490",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5411764705882353,
+                      "green" : 0.7058823529411765,
+                      "red" : 0.36470588235294116
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "34389B92-D666-4D62-A9F0-6FD816305815",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Omar Haddad"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "322FBD45-0D83-4940-9DC2-33E14074ACF2",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Notes from the review"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "F161F974-A230-42A8-A74F-F5B1E52F6E61",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "A736A237-94FA-461A-A746-55BC9FA6B996",
+                "id" : "FCDC57A0-79C9-4F3A-A872-365C7EA4AB52",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 10"
+                    "value" : "Sun"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1264,7 +4478,7 @@
                 }
               }
             ],
-            "id" : "408B412F-942B-4A4E-9D1C-E28C99021B77",
+            "id" : "5807302F-FDCE-49FB-B45E-98B0CA8A8842",
             "kind" : "view",
             "name" : "Row 10",
             "properties" : {
@@ -1278,15 +4492,15 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
+                  "green" : 1,
+                  "red" : 1
                 }
               },
               "layout" : {
@@ -1295,11 +4509,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1307,6 +4521,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -1318,27 +4536,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "9A5C8FB3-3ABE-46A3-BC6D-0B8F262EA921",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "EN"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "5D877DB6-EF42-461D-9F08-98142E6490EE",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9607843137254902,
+                      "green" : 0.4,
+                      "red" : 0.5176470588235295
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "FF907704-71E7-4648-BC12-F0A21E1611C6",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Ella Novak"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "3663B3F6-FB60-4E16-AB02-1E2FB691212E",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Recipe you asked for"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "F8D5C40A-6B3B-4587-BF9B-5D1786FA9477",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "26577A88-8AD4-4897-BCE1-7BBA1DBCF773",
+                "id" : "301ACC66-A217-4064-9B5A-51E326721EB9",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 11"
+                    "value" : "Sat"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1347,7 +4789,7 @@
                 }
               }
             ],
-            "id" : "DF5695A9-EB57-496A-AF30-8C96A64F0C75",
+            "id" : "BE7EB793-72F2-4913-9D57-BFCFD8B72785",
             "kind" : "view",
             "name" : "Row 11",
             "properties" : {
@@ -1361,7 +4803,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -1378,11 +4820,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1390,6 +4832,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -1401,27 +4847,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "18599002-63F5-44A7-BCDD-3F0087351626",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "JR"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "2FF79FB1-869A-48E3-9280-C009906DF827",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.25098039215686274,
+                      "green" : 0.7019607843137254,
+                      "red" : 1
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "BB1D1C4E-E76B-45A4-858A-5B9B8D68FA30",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Jon Reyes"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "5F05C0C1-210A-48C0-A278-ACBC7F63FB64",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Re: The cabin"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "3EB2D671-2D5A-464F-B8DF-0D3E5E276A07",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "018B4698-5EF5-440E-823B-3051E7743388",
+                "id" : "36C1192F-63A4-4AD6-9D09-E78DD3449EF1",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 12"
+                    "value" : "Sat"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1430,7 +5100,7 @@
                 }
               }
             ],
-            "id" : "399C0AC6-C9AB-444A-8758-B692D86BD944",
+            "id" : "3518EAEF-9F54-4152-AD08-6CDFEE951D32",
             "kind" : "view",
             "name" : "Row 12",
             "properties" : {
@@ -1444,90 +5114,7 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
-              },
-              "fill" : {
-                "type" : "color",
-                "value" : {
-                  "alpha" : 1,
-                  "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
-                }
-              },
-              "layout" : {
-                "type" : "text",
-                "value" : "Stack"
-              },
-              "paddingHorizontal" : {
-                "type" : "number",
-                "value" : 18
-              },
-              "paddingVertical" : {
-                "type" : "number",
-                "value" : 18
-              },
-              "size" : {
-                "type" : "size",
-                "value" : {
-                  "height" : 76,
-                  "width" : 100
-                }
-              },
-              "widthMode" : {
-                "type" : "text",
-                "value" : "Grow"
-              }
-            }
-          },
-          {
-            "children" : [
-              {
-                "children" : [
-
-                ],
-                "id" : "8A50C114-D539-4965-9927-5CBC8A6B5703",
-                "kind" : "text",
-                "name" : "Title",
-                "properties" : {
-                  "fontSize" : {
-                    "type" : "number",
-                    "value" : 17
-                  },
-                  "fontWeight" : {
-                    "type" : "number",
-                    "value" : 600
-                  },
-                  "heightMode" : {
-                    "type" : "text",
-                    "value" : "Auto"
-                  },
-                  "text" : {
-                    "type" : "text",
-                    "value" : "Row 13"
-                  },
-                  "widthMode" : {
-                    "type" : "text",
-                    "value" : "Auto"
-                  }
-                }
-              }
-            ],
-            "id" : "755C2AD6-C525-4632-BBB8-8A94166D9500",
-            "kind" : "view",
-            "name" : "Row 13",
-            "properties" : {
-              "alignment" : {
-                "type" : "text",
-                "value" : "Center"
-              },
-              "axis" : {
-                "type" : "text",
-                "value" : "Horizontal"
-              },
-              "cornerRadius" : {
-                "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
@@ -1544,11 +5131,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1556,6 +5143,10 @@
                   "height" : 76,
                   "width" : 100
                 }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
               },
               "widthMode" : {
                 "type" : "text",
@@ -1567,27 +5158,251 @@
             "children" : [
               {
                 "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "1D9376CF-FFC1-4D58-A6A0-88951FC41A71",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "MC"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "B67AA54B-7975-4337-9B4C-ED5B37E65407",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6078431372549019,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.13333333333333333
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "D141E069-6451-41B3-8087-645FDA080F89",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Mia Chen"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "AB93D380-12FF-4478-B94F-904B2D9CDA83",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Moving day!"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "7C4BF019-BE2E-40EE-9DBB-3959389598B0",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
 
                 ],
-                "id" : "60E1F617-E879-4A99-B13D-0FEA2A5F5460",
+                "id" : "B696B53C-5001-40B1-80F6-46C8E5422EBF",
                 "kind" : "text",
-                "name" : "Title",
+                "name" : "Time",
                 "properties" : {
                   "fontSize" : {
                     "type" : "number",
-                    "value" : 17
+                    "value" : 13
                   },
                   "fontWeight" : {
                     "type" : "number",
-                    "value" : 600
+                    "value" : 400
                   },
                   "heightMode" : {
                     "type" : "text",
                     "value" : "Auto"
                   },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
                   "text" : {
                     "type" : "text",
-                    "value" : "Row 14"
+                    "value" : "Fri"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1596,7 +5411,318 @@
                 }
               }
             ],
-            "id" : "43F3AD0E-363D-44EC-845B-C4CFA80EA642",
+            "id" : "F1F0B5C0-03BF-43FE-B5B7-D45271A39D3C",
+            "kind" : "view",
+            "name" : "Row 13",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 20
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 76,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "43CA440D-A4A7-436D-896E-EBF951F30D48",
+                    "kind" : "text",
+                    "name" : "Initials",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 16.72
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "LR"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "24FE23A7-614B-4DD3-A21C-9768395B83AD",
+                "kind" : "view",
+                "name" : "Avatar",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5568627450980392,
+                      "green" : 0.403921568627451,
+                      "red" : 0.9490196078431372
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 44,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "DEB8C985-3331-4D17-BF1A-122FD71545BE",
+                    "kind" : "text",
+                    "name" : "Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 17
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Leo Rossi"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "F12EB400-A2B4-4FE0-93E5-A5E4782592F3",
+                    "kind" : "text",
+                    "name" : "Subject",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Thanks again"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.4588235294117647,
+                          "green" : 0.4235294117647059,
+                          "red" : 0.43137254901960786
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "3A5363B9-9BDD-47A1-8C5E-D71DE24B1CEA",
+                "kind" : "view",
+                "name" : "Words",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "DE9407D9-A01C-4355-8F8F-6560D6035044",
+                "kind" : "text",
+                "name" : "Time",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Thu"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6823529411764706,
+                      "green" : 0.6509803921568628,
+                      "red" : 0.6588235294117647
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "BAC84CA2-51DC-4BF1-90D8-512F8BF0E1CD",
             "kind" : "view",
             "name" : "Row 14",
             "properties" : {
@@ -1610,15 +5736,15 @@
               },
               "cornerRadius" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 20
               },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.9529411764705882,
-                  "red" : 0.9333333333333333
+                  "green" : 1,
+                  "red" : 1
                 }
               },
               "layout" : {
@@ -1627,11 +5753,11 @@
               },
               "paddingHorizontal" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "paddingVertical" : {
                 "type" : "number",
-                "value" : 18
+                "value" : 16
               },
               "size" : {
                 "type" : "size",
@@ -1640,6 +5766,10 @@
                   "width" : 100
                 }
               },
+              "spacing" : {
+                "type" : "number",
+                "value" : 14
+              },
               "widthMode" : {
                 "type" : "text",
                 "value" : "Grow"
@@ -1647,7 +5777,7 @@
             }
           }
         ],
-        "id" : "A8E20D15-1A9C-4F8C-B765-C0DBE7606775",
+        "id" : "E9403CBA-BCB3-43B1-B58F-46993C5AC4E0",
         "kind" : "view",
         "name" : "List",
         "properties" : {
@@ -1671,7 +5801,7 @@
             "type" : "point",
             "value" : {
               "x" : 0,
-              "y" : 110
+              "y" : 124
             }
           },
           "scrolls" : {
@@ -1681,55 +5811,347 @@
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 734,
-              "width" : 390
+              "height" : 750,
+              "width" : 402
             }
           },
           "spacing" : {
             "type" : "number",
-            "value" : 12
+            "value" : 10
           }
         }
       },
       {
         "children" : [
+          {
+            "children" : [
 
+            ],
+            "id" : "5697AA9A-C350-4E10-97D7-EDE1FF984B43",
+            "kind" : "text",
+            "name" : "Kicker",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 76
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "14 UNREAD"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "18EB4848-3DF9-4928-8B9B-5CAC16703CB7",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 34
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 96
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Inbox"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
         ],
-        "id" : "CCED1549-B6AB-4AD2-99F4-F97F28242F64",
-        "kind" : "text",
+        "id" : "7323BEEE-D950-4A20-A935-7127227C3213",
+        "kind" : "view",
         "name" : "Header",
         "properties" : {
-          "fontSize" : {
-            "type" : "number",
-            "value" : 34
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
           },
-          "fontWeight" : {
-            "type" : "number",
-            "value" : 700
-          },
-          "heightMode" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 124,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "D085ABE2-8CF2-45AA-9BF8-4799BA63482D",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9411764705882353,
+                      "green" : 0.3607843137254902,
+                      "red" : 0.29411764705882354
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.draw.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "D3E647B0-C51A-4AEC-A5B0-3F7B1CB08ACC",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Drag the list up and down"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.11372549019607843,
+                      "green" : 0.09411764705882353,
+                      "red" : 0.09411764705882353
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "4095F0DA-9B1C-40C4-A088-049C59280C90",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.92,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.12,
+                  "blue" : 0.2,
+                  "green" : 0.08,
+                  "red" : 0.1
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8549019607843137,
+                  "green" : 0.8862745098039215,
+                  "red" : 0.9019607843137255
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "9FD3150E-A642-48ED-854E-D956040D8B83",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
             "type" : "text",
-            "value" : "Auto"
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 16,
-              "y" : 56
+              "x" : 0,
+              "y" : 792
             }
           },
-          "text" : {
-            "type" : "text",
-            "value" : "Inbox"
-          },
-          "widthMode" : {
-            "type" : "text",
-            "value" : "Auto"
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
           }
         }
       }
     ],
-    "id" : "6A5B8771-9A28-457F-B8EF-E24607288CBA",
+    "id" : "47A704B8-95CB-41FB-8314-29EF7254A796",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -1737,9 +6159,16 @@
         "type" : "color",
         "value" : {
           "alpha" : 1,
-          "blue" : 0.95,
-          "green" : 0.95,
-          "red" : 0.95
+          "blue" : 0.9333333333333333,
+          "green" : 0.9490196078431372,
+          "red" : 0.9568627450980393
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

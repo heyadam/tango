@@ -75,9 +75,9 @@ import PaperModel
         typealias List = SampleDocuments.ScrollingList
         var tree = ResolvedLayer(document.screen).laidOut()
         // The list is a scroll view as tall as the screen below the header; its content is longer.
-        #expect(tree.find(example.list)?.size == Size2(width: 390, height: 844 - List.top))
+        #expect(tree.find(example.list)?.size == Size2(width: 402, height: 874 - List.top))
         #expect(tree.find(example.list)?.contentLength == List.contentHeight)
-        #expect(tree.find(example.rows[1])?.frame == CGRect(x: 16, y: 16 + 76 + 12, width: 358, height: 76))
+        #expect(tree.find(example.rows[1])?.frame == CGRect(x: 16, y: 16 + 76 + List.spacing, width: 370, height: 76))
 
         // Fewer rows and a narrower list: everything follows.
         document.screen.update(example.list) { list in
@@ -85,7 +85,7 @@ import PaperModel
             list.set(.size, .size(Size2(width: 300, height: 100)))
         }
         tree = ResolvedLayer(document.screen).laidOut()
-        #expect(tree.find(example.list)?.contentLength == List.contentHeight - 4 * (76 + 12))
+        #expect(tree.find(example.list)?.contentLength == List.contentHeight - 4 * (76 + List.spacing))
         #expect(tree.find(example.rows[0])?.size.width == 268)
     }
 }
@@ -113,7 +113,7 @@ import PaperModel
         let (runtime, example) = run()
         // The scroll view stays where it is; its rows move inside it.
         func y() -> Double { runtime.resolved.find(example.rows[0])!.position.y }
-        #expect(runtime.resolved.find(example.list)!.position.y == 110)
+        #expect(runtime.resolved.find(example.list)!.position.y == SampleDocuments.ScrollingList.top)
         #expect(y() == 16)
         drag(runtime, by: -120, frames: 10)
         // The first ten points told a scroll from a tap; the content follows from there.
@@ -127,7 +127,7 @@ import PaperModel
         #expect(rested < afterRelease)
         #expect(runtime.needsAnotherFrame == false)
         #expect(y() == 16 + rested)
-        #expect(runtime.resolved.find(example.list)!.position.y == 110)
+        #expect(runtime.resolved.find(example.list)!.position.y == SampleDocuments.ScrollingList.top)
     }
 
     @Test func pullingPastTheTopRubberBandsAndSpringsBack() {
@@ -141,7 +141,7 @@ import PaperModel
 
     @Test func aFlingStopsAtTheEnd() {
         let (runtime, example) = run()
-        let low = 844 - 110 - SampleDocuments.ScrollingList.contentHeight
+        let low = ExampleStyle.device.height - SampleDocuments.ScrollingList.top - SampleDocuments.ScrollingList.contentHeight
         for _ in 0..<4 {
             drag(runtime, by: -400, frames: 5)
             runtime.advance(seconds: 0.3)

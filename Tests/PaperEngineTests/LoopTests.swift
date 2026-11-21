@@ -136,9 +136,9 @@ import PaperModel
         #expect(titles.map { $0.value(.text).textValue } == People.names)
         // Layout arranges the repetitions like any other children.
         let tops = rows.map { Double($0.frame.minY) }
-        let expected = People.names.indices.map { People.padding + Double($0) * (People.rowHeight + People.spacing) }
+        let expected = People.names.indices.map { Double($0) * (People.rowHeight + People.spacing) }
         #expect(tops == expected)
-        #expect(rows.allSatisfy { $0.size.width == 390 - People.padding * 2 })
+        #expect(rows.allSatisfy { $0.size.width == ExampleStyle.device.width - People.padding * 2 })
     }
 
     @Test func tappingARepeatedLayerIdentifiesWhichOne() {
@@ -151,7 +151,7 @@ import PaperModel
         #expect(header() == "Ada")
 
         // Tap the fourth row.
-        let y = People.top + People.padding + 3 * (People.rowHeight + People.spacing) + 20
+        let y = People.top + 3 * (People.rowHeight + People.spacing) + 20
         runtime.send(.touchDown(Point2(x: 120, y: y)))
         runtime.tick(dt: 1 / 60)
         runtime.send(.touchUp(Point2(x: 120, y: y)))
@@ -159,7 +159,7 @@ import PaperModel
 
         #expect(runtime.outputValue(PortRef(node: example.selection, port: "option")) == .number(3))
         #expect(header() == "Margaret")
-        let blue = ColorValue(hex: "#3D7BF7")!
+        let blue = ExampleStyle.accent
         for (index, fill) in fills().enumerated() {
             let expected = index == 3 ? blue : ColorValue.white
             #expect(abs(fill.red - expected.red) < 0.01 && abs(fill.blue - expected.blue) < 0.01)

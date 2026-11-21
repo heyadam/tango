@@ -33,6 +33,19 @@ import PaperModel
         runtime.advance(seconds: 1.5)
     }
 
+    /// Where a view's middle is on the screen, after layout.
+    func middle(_ runtime: Runtime, _ id: LayerID) -> Point2 {
+        func walk(_ layer: ResolvedLayer, _ origin: Point2) -> Point2? {
+            let frame = layer.frame
+            let corner = Point2(x: origin.x + frame.minX, y: origin.y + frame.minY)
+            if layer.id == id { return Point2(x: corner.x + frame.width / 2, y: corner.y + frame.height / 2) }
+            return layer.children.lazy.compactMap { walk($0, corner) }.first
+        }
+        return walk(runtime.resolved, .zero)!
+    }
+
+    func tap(_ runtime: Runtime, _ point: Point2) { tap(runtime, point.x, point.y) }
+
     func started() -> (Runtime, SampleDocuments.Controls) {
         let example = SampleDocuments.controls()
         let runtime = Runtime(document: example.document)
@@ -620,13 +633,14 @@ import PaperModel
         #expect(detail() == "Home Wi-Fi")
         #expect(abs(knob() - 24) < 0.01)
 
-        tap(runtime, 332, 136)
+        let toggle = middle(runtime, example.toggle)
+        tap(runtime, toggle)
         #expect(runtime.outputValue(on) == .bool(false))
         #expect(detail() == "Off")
         #expect(abs(knob() - 2) < 0.01)
         #expect(inside(runtime, example.toggle, "Track")!.value(.fill).colorValue.hex == "#D0D0D1")
 
-        tap(runtime, 332, 136)
+        tap(runtime, toggle)
         #expect(runtime.outputValue(on) == .bool(true))
         #expect(!runtime.needsAnotherFrame)
     }
@@ -635,49 +649,55 @@ import PaperModel
         let (runtime, example) = started()
         func knob() -> Double { inside(runtime, example.slider, "Knob")!.position.x }
         func label() -> String { runtime.resolved.find(example.brightness)!.value(.text).textValue }
-        // It stretched to the instance's width: travel is 358 less the knob's 37.
-        #expect(abs(knob() - 160.5) < 0.01)
-        #expect(inside(runtime, example.slider, "Track")!.size.width == 358)
+        // It stretched to the instance's width: travel is 370 less the knob's 37.
+        let width = ExampleStyle.device.width - 32, travel = width - 37
+        #expect(abs(knob() - travel / 2) < 0.01)
+        #expect(inside(runtime, example.slider, "Track")!.size.width == width)
         #expect(label() == "50%")
 
-        runtime.send(.touchDown(Point2(x: 195, y: 400)))
+        let start = middle(runtime, example.slider)
+        runtime.send(.touchDown(start))
         runtime.tick(dt: 1 / 60)
         // A fifth of the way the knob can travel.
-        runtime.send(.touchMoved(Point2(x: 259.2, y: 404)))
+        let fifth = Point2(x: start.x + travel / 5, y: start.y + 4)
+        runtime.send(.touchMoved(fifth))
         runtime.advance(seconds: 0.1)
-        #expect(abs(knob() - 224.7) < 0.75)
+        #expect(abs(knob() - travel * 0.7) < 0.75)
         #expect(label() == "70%")
-        runtime.send(.touchUp(Point2(x: 259.2, y: 404)))
+        runtime.send(.touchUp(fifth))
         runtime.advance(seconds: 1)
-        #expect(abs(knob() - 224.7) < 0.75)
+        #expect(abs(knob() - travel * 0.7) < 0.75)
 
         // Dragging far past the end stops at the end.
-        runtime.send(.touchDown(Point2(x: 261, y: 400)))
+        runtime.send(.touchDown(Point2(x: fifth.x + 2, y: start.y)))
         runtime.tick(dt: 1 / 60)
-        runtime.send(.touchMoved(Point2(x: 900, y: 400)))
+        runtime.send(.touchMoved(Point2(x: 900, y: start.y)))
         runtime.advance(seconds: 0.1)
-        runtime.send(.touchUp(Point2(x: 900, y: 400)))
+        runtime.send(.touchUp(Point2(x: 900, y: start.y)))
         runtime.advance(seconds: 0.5)
         #expect(label() == "100%")
-        #expect(abs(knob() - 321) < 0.01)
+        #expect(abs(knob() - travel) < 0.01)
     }
 
     @Test func buttonStepperAndTabBarReportToTheGraph() {
         let (runtime, example) = started()
         func buttonTitle() -> String { inside(runtime, example.button, "Label")!.value(.text).textValue }
         #expect(buttonTitle() == "Continue")
-        tap(runtime, 195, 555)
+        tap(runtime, middle(runtime, example.button))
         #expect(buttonTitle() == "Done")
 
-        tap(runtime, 351, 462)
-        tap(runtime, 351, 462)
-        tap(runtime, 303, 462)
+        // The stepper's plus is in its right half, its minus in its left.
+        let stepper = middle(runtime, example.stepper)
+        tap(runtime, stepper.x + 24, stepper.y)
+        tap(runtime, stepper.x + 24, stepper.y)
+        tap(runtime, stepper.x - 24, stepper.y)
         #expect(runtime.resolved.find(example.count)!.value(.text).textValue == "1")
 
         #expect(all(runtime, named: "Tab").count == 3)
         #expect(all(runtime, named: "Label").filter { $0.kind == .text }.map { $0.value(.text).textValue }
             .contains("Profile"))
-        tap(runtime, 325, 816)
+        let tabs = middle(runtime, example.tabBar)
+        tap(runtime, tabs.x + 86, tabs.y)
         #expect(all(runtime, named: "Title").first!.value(.text).textValue == "Profile")
         let icons = all(runtime, named: "Icon").map { $0.value(.fill).colorValue.hex }
         #expect(icons == ["#000000", "#000000", "#007AFF"])
@@ -685,10 +705,11 @@ import PaperModel
 
     @Test func aButtonDimsWhilePressed() {
         let (runtime, example) = started()
-        runtime.send(.touchDown(Point2(x: 195, y: 555)))
+        let button = middle(runtime, example.button)
+        runtime.send(.touchDown(button))
         runtime.advance(seconds: 0.5)
         #expect(abs(inside(runtime, example.button, "Background")!.opacity - 0.55) < 0.01)
-        runtime.send(.touchUp(Point2(x: 195, y: 555)))
+        runtime.send(.touchUp(button))
         runtime.advance(seconds: 0.5)
         #expect(abs(inside(runtime, example.button, "Background")!.opacity - 1) < 0.01)
     }

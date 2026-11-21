@@ -1,0 +1,2076 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "6C2AA6E6-668E-4E49-BCEA-9BAB9E7182AD",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 288,
+          "width" : 816
+        },
+        "text" : "Play · A tap flips Playing"
+      },
+      {
+        "id" : "9E8C4AC5-51CA-4DD7-B64C-A97C61625BC0",
+        "origin" : {
+          "x" : 312,
+          "y" : 360
+        },
+        "size" : {
+          "height" : 372,
+          "width" : 528
+        },
+        "text" : "Energy · Both shaders and the cover follow one spring"
+      },
+      {
+        "id" : "2158F551-B2DC-4A04-8C72-69EDE987D549",
+        "origin" : {
+          "x" : 312,
+          "y" : 792
+        },
+        "size" : {
+          "height" : 204,
+          "width" : 816
+        },
+        "text" : "Clock · Runs while playing"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "C9107E75-8DE2-43C9-8028-E7D6782D4286",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "D25EC1BF-82DB-49B9-B659-46B36F9044AC",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D25EC1BF-82DB-49B9-B659-46B36F9044AC",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "AAFEB67B-CD9D-4E09-9112-332E19DBE5C2",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AAFEB67B-CD9D-4E09-9112-332E19DBE5C2",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8808E2FC-DB0F-4B23-80DD-4BE6770AA6FA",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D25EC1BF-82DB-49B9-B659-46B36F9044AC",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "032034D0-E61C-433F-AEB5-82B04496D484",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "032034D0-E61C-433F-AEB5-82B04496D484",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "47DD0712-550F-4842-AEB8-BB94648080F1",
+          "port" : "shader.energy"
+        }
+      },
+      {
+        "from" : {
+          "node" : "032034D0-E61C-433F-AEB5-82B04496D484",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8957DA7A-5024-4003-9862-BDDF469EEE21",
+          "port" : "shader.energy"
+        }
+      },
+      {
+        "from" : {
+          "node" : "032034D0-E61C-433F-AEB5-82B04496D484",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "20196EC3-D1D7-4485-96A8-86927EA14DBC",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "032034D0-E61C-433F-AEB5-82B04496D484",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D4609328-F0AF-4B52-9CAC-6E1753779638",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "20196EC3-D1D7-4485-96A8-86927EA14DBC",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8957DA7A-5024-4003-9862-BDDF469EEE21",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D4609328-F0AF-4B52-9CAC-6E1753779638",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8957DA7A-5024-4003-9862-BDDF469EEE21",
+          "port" : "shadowRadius"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D25EC1BF-82DB-49B9-B659-46B36F9044AC",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "D1E499BE-D6C1-4D09-B871-0640B9C4C589",
+          "port" : "running"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D1E499BE-D6C1-4D09-B871-0640B9C4C589",
+          "port" : "time"
+        },
+        "to" : {
+          "node" : "BF211025-3652-40F1-AA76-890839951727",
+          "port" : "seconds"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BF211025-3652-40F1-AA76-890839951727",
+          "port" : "elapsed"
+        },
+        "to" : {
+          "node" : "65FC8729-5A0E-456E-9C3F-AA50EE4DC5AD",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BF211025-3652-40F1-AA76-890839951727",
+          "port" : "remaining"
+        },
+        "to" : {
+          "node" : "393C61E2-DC8E-409B-9013-A9918F7E9AB4",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BF211025-3652-40F1-AA76-890839951727",
+          "port" : "progress"
+        },
+        "to" : {
+          "node" : "7D520C71-7CCE-4525-8084-4043D20871DD",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7D520C71-7CCE-4525-8084-4043D20871DD",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "B433A3E4-3EE1-43BE-AF76-3C96C3DBD512",
+          "port" : "width"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "1FF877D8-12E2-4F5C-8CCD-90A18E5685D9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "25F6653A-2476-45C4-A6BD-78023B4C7376",
+        "position" : {
+          "x" : 1488,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "47DD0712-550F-4842-AEB8-BB94648080F1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "17443B2F-8E1A-478E-882B-10AF0AE1DFFA",
+        "position" : {
+          "x" : 912,
+          "y" : 408
+        },
+        "script" : "\/\/ A living mesh of color: four soft lights drift and swirl over a dark ground.\n\/\/ Energy makes them brighter, bigger and quicker; at 0 they barely move.\nstruct Inputs {\n    float energy = 1;\n    float4 ground = float4(0.05, 0.03, 0.10, 1);\n    float4 first = float4(0.98, 0.33, 0.42, 1);\n    float4 second = float4(0.52, 0.24, 0.95, 1);\n    float4 third = float4(0.10, 0.50, 0.95, 1);\n    float4 fourth = float4(1.0, 0.60, 0.26, 1);\n};\n\nfloat mesh_hash(float2 p) {\n    return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);\n}\n\nfloat3 mesh_light(float2 p, float2 center, float reach, float3 color) {\n    float2 d = p - center;\n    return color * exp(-dot(d, d) \/ (reach * reach));\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float tall = frame.size.y \/ max(frame.size.x, 1.0);\n    float2 p = float2(frame.uv.x, frame.uv.y * tall);\n    float t = frame.time * (0.08 + 0.32 * in.energy);\n    \/\/ The space itself swirls a little, so the lights bend as they pass.\n    p += 0.05 * float2(sin(p.y * 5.0 + t * 1.3), cos(p.x * 4.0 - t));\n    float reach = 0.34 + 0.14 * in.energy;\n    float3 c = in.ground.rgb;\n    c += mesh_light(p, float2(0.20 + 0.25 * sin(t * 0.9), tall * (0.22 + 0.10 * cos(t * 0.7))), reach, in.first.rgb);\n    c += mesh_light(p, float2(0.85 + 0.15 * cos(t * 0.6), tall * (0.40 + 0.12 * sin(t * 0.8))), reach, in.second.rgb);\n    c += mesh_light(p, float2(0.30 + 0.20 * cos(t * 0.5 + 2.0), tall * (0.72 + 0.10 * sin(t * 0.6))), reach * 1.2, in.third.rgb);\n    c += mesh_light(p, float2(0.75 + 0.20 * sin(t * 0.7 + 1.0), tall * (0.92 + 0.06 * cos(t))), reach, in.fourth.rgb);\n    \/\/ Softly brought down where the lights add up, and dimmer at rest.\n    c = c \/ (1.0 + c * 0.55);\n    c *= 0.5 + 0.5 * in.energy;\n    \/\/ A fine grain, as in print.\n    c += (mesh_hash(frame.position + fract(frame.time) * 91.0) - 0.5) * 0.035;\n    return float4(c, 1);\n}"
+      },
+      {
+        "id" : "3B2D68F0-B5BC-43AD-B288-C282B1CB64BC",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3E343243-F915-474F-91D3-E3688DCBDC9D",
+        "position" : {
+          "x" : 912,
+          "y" : 996
+        },
+        "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+      },
+      {
+        "id" : "8F35BE26-1B48-48C9-A0F4-60F447664418",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F18A77B8-D6EB-4E89-8DD0-7769ABC526A6",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "09B9E85D-2061-436F-855D-6E9B55CA3832",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A80C078E-F1B4-40A6-861B-3B4AEDB1C7BD",
+        "position" : {
+          "x" : 1152,
+          "y" : 1320
+        }
+      },
+      {
+        "id" : "BAEFF9B7-9BC9-4BF3-BF7B-8B785D71ADE2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BCAB2CB1-2207-4906-9EF7-F04DE338A556",
+        "position" : {
+          "x" : 1152,
+          "y" : 1464
+        }
+      },
+      {
+        "id" : "3A5EE72E-32FB-4933-9533-D4B6AD7F173D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AF715C03-07B0-497E-B1DD-51F5491FE8C9",
+        "position" : {
+          "x" : 1152,
+          "y" : 1608
+        },
+        "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+      },
+      {
+        "id" : "9D520FA5-9077-41C5-B226-E7790594DEF6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DF7DF0AD-9337-4970-AC78-8286349607A6",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "8957DA7A-5024-4003-9862-BDDF469EEE21",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C014788F-7172-4BA2-8D26-43D3DBDBEE81",
+        "position" : {
+          "x" : 1200,
+          "y" : 408
+        },
+        "script" : "\/\/ The album's cover: a moon over the sea at dusk, its path on the water shimmering.\n\/\/ Energy is how fast the water moves.\nstruct Inputs {\n    float energy = 1;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 uv = frame.uv;\n    float t = frame.time * (0.3 + 0.9 * in.energy);\n    float horizon = 0.6;\n    float2 moon = float2(0.5, 0.36);\n    float3 color;\n    if (uv.y < horizon) {\n        color = mix(float3(0.12, 0.06, 0.28), float3(0.98, 0.45, 0.48), pow(uv.y \/ horizon, 1.7));\n        float d = length(uv - moon);\n        color += float3(1.0, 0.62, 0.55) * 0.45 * exp(-d * d * 28.0);\n        color = mix(color, float3(1.0, 0.95, 0.85), smoothstep(0.125, 0.118, d));\n    } else {\n        float depth = (uv.y - horizon) \/ (1.0 - horizon);\n        color = mix(float3(0.42, 0.14, 0.38), float3(0.04, 0.03, 0.13), sqrt(depth));\n        \/\/ The moon's path: broken stripes that ripple and narrow toward the horizon.\n        float ripple = 0.5 + 0.5 * sin(uv.y * 150.0 - t * 2.5 + sin(uv.x * 30.0 + t) * 2.0);\n        float width = 0.03 + depth * 0.2;\n        float path = smoothstep(width, 0.0, abs(uv.x - 0.5 + 0.015 * sin(uv.y * 40.0 + t)));\n        color += float3(1.0, 0.78, 0.62) * path * smoothstep(0.35, 0.75, ripple) * (1.0 - depth * 0.5);\n    }\n    return float4(color, 1);\n}"
+      },
+      {
+        "id" : "2A5530F8-B7FD-459A-97E1-38233CAF0A00",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3EDFF6A1-9EB9-490C-A7C4-DFD3F02A7CDB",
+        "position" : {
+          "x" : 1200,
+          "y" : 1992
+        }
+      },
+      {
+        "id" : "F91ABD90-4F93-48AF-921F-06AE3D71DFF9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C635BAEF-1771-4733-BC43-793E57F8EED8",
+        "position" : {
+          "x" : 1440,
+          "y" : 408
+        }
+      },
+      {
+        "id" : "19D41183-D51F-4946-8F33-A834132E754F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6345BF5A-A72A-43B7-8D74-502B8C368DF1",
+        "position" : {
+          "x" : 1440,
+          "y" : 552
+        }
+      },
+      {
+        "id" : "2DCBEF70-C02A-4A70-8D99-8789ACC68DDD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A71822B7-815C-4EDD-8D9C-364682A3F60B",
+        "position" : {
+          "x" : 1440,
+          "y" : 696
+        }
+      },
+      {
+        "id" : "B433A3E4-3EE1-43BE-AF76-3C96C3DBD512",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DD17E75E-EA10-4B52-9D65-079470D62856",
+        "position" : {
+          "x" : 1200,
+          "y" : 1128
+        }
+      },
+      {
+        "id" : "65FC8729-5A0E-456E-9C3F-AA50EE4DC5AD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "80A2B415-9239-4D54-8E3A-8156175452ED",
+        "position" : {
+          "x" : 1200,
+          "y" : 792
+        }
+      },
+      {
+        "id" : "393C61E2-DC8E-409B-9013-A9918F7E9AB4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2E2F218E-04E1-4552-A1D6-186437FE2419",
+        "position" : {
+          "x" : 1200,
+          "y" : 960
+        }
+      },
+      {
+        "id" : "982E3554-E8A5-4F10-9808-9EF16883EA0C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8C0E579C-7E99-4E14-9DCA-B69E5665643C",
+        "position" : {
+          "x" : 1200,
+          "y" : 2136
+        }
+      },
+      {
+        "id" : "9C076754-E718-4A3D-982A-8E1F40132792",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B33723D4-C132-4B05-A5D9-4A8688DE0491",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "5C3AFE2A-8D7C-4637-89A2-27B6E7152A7C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C53B44B4-E7E2-432B-A1AE-510A340B0E60",
+        "position" : {
+          "x" : 336,
+          "y" : 240
+        },
+        "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+      },
+      {
+        "id" : "8808E2FC-DB0F-4B23-80DD-4BE6770AA6FA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DFEEF2DF-B79B-4752-B1CB-FA834663527C",
+        "position" : {
+          "x" : 912,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "FCD4F315-D33B-49BA-826B-B437EB8D93D3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "90835049-A0A9-4523-95DF-E56A792CD9A5",
+        "position" : {
+          "x" : 336,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "1318FA59-1EC9-4A70-A50B-A6F010BD32C3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FFDA6F84-3ED6-475D-81E8-1DA10D6FC9A3",
+        "position" : {
+          "x" : 1440,
+          "y" : 888
+        }
+      },
+      {
+        "id" : "4C0ACC9C-7928-4451-872E-5B0149E4FEC3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FEAC72A7-DDBB-4D6F-9CF5-D2575A6A5649",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "5E3AB71D-33D2-4D50-BC36-14C87CA48012",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E9436D7F-F734-445B-ADD1-B8EB8F3C8914",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "EC228531-8059-4C2F-8192-68D71F1F7DBB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "448B856D-3CF8-4A9D-B243-691C23B2212D",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "A5AB12D4-F74B-4C22-9252-933518085DDF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2C3F69F8-CF7A-4D45-A2F4-F45C1BA8B730",
+        "position" : {
+          "x" : 1680,
+          "y" : 408
+        },
+        "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+      },
+      {
+        "id" : "F19F7F49-4BCB-4963-9D5A-BD4F424E8E67",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9B9E61C9-5082-41E9-B0EC-533EDD3DA5D2",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "81049016-96A6-4406-B17B-60728F3CD765",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4FF174BA-4E72-441D-99B5-5486629023A4",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "5E6073F4-6A5D-4D38-BB01-79D01A85A6B5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "709E2BAF-1681-42C9-AD9D-407828B65264",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "C9107E75-8DE2-43C9-8028-E7D6782D4286",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "C53B44B4-E7E2-432B-A1AE-510A340B0E60",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "D25EC1BF-82DB-49B9-B659-46B36F9044AC",
+        "inputs" : {
+          "start" : {
+            "type" : "bool",
+            "value" : true
+          }
+        },
+        "kind" : "switch",
+        "name" : "Playing",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "AAFEB67B-CD9D-4E09-9112-332E19DBE5C2",
+        "inputs" : {
+          "else" : {
+            "type" : "text",
+            "value" : "play.fill"
+          },
+          "then" : {
+            "type" : "text",
+            "value" : "pause.fill"
+          }
+        },
+        "kind" : "if",
+        "name" : "Play or Pause",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "032034D0-E61C-433F-AEB5-82B04496D484",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.9
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "spring",
+        "name" : "Energy",
+        "position" : {
+          "x" : 336,
+          "y" : 408
+        }
+      },
+      {
+        "id" : "20196EC3-D1D7-4485-96A8-86927EA14DBC",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0.82
+          }
+        },
+        "kind" : "transition",
+        "name" : "Cover Size",
+        "position" : {
+          "x" : 624,
+          "y" : 408
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "D4609328-F0AF-4B52-9CAC-6E1753779638",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 36
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 12
+          }
+        },
+        "kind" : "transition",
+        "name" : "Cover Shadow",
+        "position" : {
+          "x" : 624,
+          "y" : 576
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "D1E499BE-D6C1-4D09-B871-0640B9C4C589",
+        "inputs" : {
+
+        },
+        "kind" : "time",
+        "position" : {
+          "x" : 336,
+          "y" : 840
+        }
+      },
+      {
+        "id" : "BF211025-3652-40F1-AA76-890839951727",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Clock",
+        "position" : {
+          "x" : 624,
+          "y" : 840
+        },
+        "script" : "\/\/ Seconds played, as the times beside the bar and how far along it is.\ninputs = { seconds: 0 };\noutputs = { elapsed: \"\", remaining: \"\", progress: 0 };\n\nconst length = 223, start = 72;\nfunction clock(s) {\n  s = Math.max(0, Math.floor(s));\n  return Math.floor(s \/ 60) + \":\" + String(s % 60).padStart(2, \"0\");\n}\nfunction evaluate(inputs, outputs) {\n  const at = (start + inputs.seconds) % length;\n  outputs.elapsed = clock(at);\n  outputs.remaining = \"-\" + clock(length - at);\n  outputs.progress = at \/ length;\n}"
+      },
+      {
+        "id" : "7D520C71-7CCE-4525-8084-4043D20871DD",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 330
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Played Width",
+        "position" : {
+          "x" : 912,
+          "y" : 840
+        },
+        "valueType" : "number"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "17443B2F-8E1A-478E-882B-10AF0AE1DFFA",
+        "kind" : "view",
+        "name" : "Light",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 874,
+              "width" : 402
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ A living mesh of color: four soft lights drift and swirl over a dark ground.\n\/\/ Energy makes them brighter, bigger and quicker; at 0 they barely move.\nstruct Inputs {\n    float energy = 1;\n    float4 ground = float4(0.05, 0.03, 0.10, 1);\n    float4 first = float4(0.98, 0.33, 0.42, 1);\n    float4 second = float4(0.52, 0.24, 0.95, 1);\n    float4 third = float4(0.10, 0.50, 0.95, 1);\n    float4 fourth = float4(1.0, 0.60, 0.26, 1);\n};\n\nfloat mesh_hash(float2 p) {\n    return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);\n}\n\nfloat3 mesh_light(float2 p, float2 center, float reach, float3 color) {\n    float2 d = p - center;\n    return color * exp(-dot(d, d) \/ (reach * reach));\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float tall = frame.size.y \/ max(frame.size.x, 1.0);\n    float2 p = float2(frame.uv.x, frame.uv.y * tall);\n    float t = frame.time * (0.08 + 0.32 * in.energy);\n    \/\/ The space itself swirls a little, so the lights bend as they pass.\n    p += 0.05 * float2(sin(p.y * 5.0 + t * 1.3), cos(p.x * 4.0 - t));\n    float reach = 0.34 + 0.14 * in.energy;\n    float3 c = in.ground.rgb;\n    c += mesh_light(p, float2(0.20 + 0.25 * sin(t * 0.9), tall * (0.22 + 0.10 * cos(t * 0.7))), reach, in.first.rgb);\n    c += mesh_light(p, float2(0.85 + 0.15 * cos(t * 0.6), tall * (0.40 + 0.12 * sin(t * 0.8))), reach, in.second.rgb);\n    c += mesh_light(p, float2(0.30 + 0.20 * cos(t * 0.5 + 2.0), tall * (0.72 + 0.10 * sin(t * 0.6))), reach * 1.2, in.third.rgb);\n    c += mesh_light(p, float2(0.75 + 0.20 * sin(t * 0.7 + 1.0), tall * (0.92 + 0.06 * cos(t))), reach, in.fourth.rgb);\n    \/\/ Softly brought down where the lights add up, and dimmer at rest.\n    c = c \/ (1.0 + c * 0.55);\n    c *= 0.5 + 0.5 * in.energy;\n    \/\/ A fine grain, as in print.\n    c += (mesh_hash(frame.position + fract(frame.time) * 91.0) - 0.5) * 0.035;\n    return float4(c, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "F18A77B8-D6EB-4E89-8DD0-7769ABC526A6",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16,
+                  "width" : 16
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "chevron.down"
+              }
+            }
+          }
+        ],
+        "id" : "3E343243-F915-474F-91D3-E3688DCBDC9D",
+        "kind" : "view",
+        "name" : "Collapse",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 70
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 44
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "radius" : {
+              "type" : "number",
+              "value" : 22
+            },
+            "tint" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 0.12,
+                "blue" : 1,
+                "green" : 1,
+                "red" : 1
+              }
+            }
+          },
+          "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A80C078E-F1B4-40A6-861B-3B4AEDB1C7BD",
+        "kind" : "text",
+        "name" : "Source",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 11
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 80,
+              "y" : 72
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 14.3,
+              "width" : 242
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "PLAYING FROM PLAYLIST"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.6,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "BCAB2CB1-2207-4906-9EF7-F04DE338A556",
+        "kind" : "text",
+        "name" : "Playlist",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 80,
+              "y" : 89
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 19.5,
+              "width" : 242
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Late Drive"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "DF7DF0AD-9337-4970-AC78-8286349607A6",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 18,
+                  "width" : 18
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "ellipsis"
+              }
+            }
+          }
+        ],
+        "id" : "AF715C03-07B0-497E-B1DD-51F5491FE8C9",
+        "kind" : "view",
+        "name" : "More",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 338,
+              "y" : 70
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 44
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "radius" : {
+              "type" : "number",
+              "value" : 22
+            },
+            "tint" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 0.12,
+                "blue" : 1,
+                "green" : 1,
+                "red" : 1
+              }
+            }
+          },
+          "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "C014788F-7172-4BA2-8D26-43D3DBDBEE81",
+        "kind" : "view",
+        "name" : "Cover",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 24
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 142
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.45,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 18
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 36
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 330,
+              "width" : 330
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ The album's cover: a moon over the sea at dusk, its path on the water shimmering.\n\/\/ Energy is how fast the water moves.\nstruct Inputs {\n    float energy = 1;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 uv = frame.uv;\n    float t = frame.time * (0.3 + 0.9 * in.energy);\n    float horizon = 0.6;\n    float2 moon = float2(0.5, 0.36);\n    float3 color;\n    if (uv.y < horizon) {\n        color = mix(float3(0.12, 0.06, 0.28), float3(0.98, 0.45, 0.48), pow(uv.y \/ horizon, 1.7));\n        float d = length(uv - moon);\n        color += float3(1.0, 0.62, 0.55) * 0.45 * exp(-d * d * 28.0);\n        color = mix(color, float3(1.0, 0.95, 0.85), smoothstep(0.125, 0.118, d));\n    } else {\n        float depth = (uv.y - horizon) \/ (1.0 - horizon);\n        color = mix(float3(0.42, 0.14, 0.38), float3(0.04, 0.03, 0.13), sqrt(depth));\n        \/\/ The moon's path: broken stripes that ripple and narrow toward the horizon.\n        float ripple = 0.5 + 0.5 * sin(uv.y * 150.0 - t * 2.5 + sin(uv.x * 30.0 + t) * 2.0);\n        float width = 0.03 + depth * 0.2;\n        float path = smoothstep(width, 0.0, abs(uv.x - 0.5 + 0.015 * sin(uv.y * 40.0 + t)));\n        color += float3(1.0, 0.78, 0.62) * path * smoothstep(0.35, 0.75, ripple) * (1.0 - depth * 0.5);\n    }\n    return float4(color, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "3EDFF6A1-9EB9-490C-A7C4-DFD3F02A7CDB",
+        "kind" : "text",
+        "name" : "Song",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 26
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 500
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Night Swim"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "C635BAEF-1771-4733-BC43-793E57F8EED8",
+        "kind" : "text",
+        "name" : "Artist",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 19
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 534
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Moon Static"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.62,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "6345BF5A-A72A-43B7-8D74-502B8C368DF1",
+        "kind" : "symbol",
+        "name" : "Heart",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.9,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 340,
+              "y" : 512
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 24,
+              "width" : 24
+            }
+          },
+          "symbol" : {
+            "type" : "text",
+            "value" : "heart.fill"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A71822B7-815C-4EDD-8D9C-364682A3F60B",
+        "kind" : "view",
+        "name" : "Track",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 3
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 588
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 6,
+              "width" : 330
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "DD17E75E-EA10-4B52-9D65-079470D62856",
+        "kind" : "view",
+        "name" : "Played",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 3
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 588
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 6,
+              "width" : 106
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "80A2B415-9239-4D54-8E3A-8156175452ED",
+        "kind" : "text",
+        "name" : "Elapsed",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 604
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "1:12"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.55,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "2E2F218E-04E1-4552-A1D6-186437FE2419",
+        "kind" : "text",
+        "name" : "Remaining",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 306,
+              "y" : 604
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 16.900000000000002,
+              "width" : 60
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "-2:31"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Right"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.55,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "B33723D4-C132-4B05-A5D9-4A8688DE0491",
+            "kind" : "symbol",
+            "name" : "Back",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 34,
+                  "width" : 34
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "backward.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "DFEEF2DF-B79B-4752-B1CB-FA834663527C",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 30,
+                      "width" : 30
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "pause.fill"
+                  }
+                }
+              }
+            ],
+            "id" : "C53B44B4-E7E2-432B-A1AE-510A340B0E60",
+            "kind" : "view",
+            "name" : "Play",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 42
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 84,
+                  "width" : 84
+                }
+              }
+            },
+            "shader" : {
+              "inputs" : {
+                "radius" : {
+                  "type" : "number",
+                  "value" : 42
+                },
+                "tint" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 0.18,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                }
+              },
+              "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "90835049-A0A9-4523-95DF-E56A792CD9A5",
+            "kind" : "symbol",
+            "name" : "Forward",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 34,
+                  "width" : 34
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "forward.fill"
+              }
+            }
+          }
+        ],
+        "id" : "8C0E579C-7E99-4E14-9DCA-B69E5665643C",
+        "kind" : "view",
+        "name" : "Controls",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 642
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 84,
+              "width" : 402
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 44
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "E9436D7F-F734-445B-ADD1-B8EB8F3C8914",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.tap.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "448B856D-3CF8-4A9D-B243-691C23B2212D",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Tap pause, then play"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "FEAC72A7-DDBB-4D6F-9CF5-D2575A6A5649",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "FFDA6F84-3ED6-475D-81E8-1DA10D6FC9A3",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 740
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "9B9E61C9-5082-41E9-B0EC-533EDD3DA5D2",
+            "kind" : "symbol",
+            "name" : "Lyrics",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.85,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 20,
+                  "width" : 20
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "quote.bubble"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "4FF174BA-4E72-441D-99B5-5486629023A4",
+            "kind" : "symbol",
+            "name" : "Output",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.85,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 20,
+                  "width" : 20
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "airplayaudio"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "709E2BAF-1681-42C9-AD9D-407828B65264",
+            "kind" : "symbol",
+            "name" : "Queue",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.85,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 20,
+                  "width" : 20
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "list.bullet"
+              }
+            }
+          }
+        ],
+        "id" : "2C3F69F8-CF7A-4D45-A2F4-F45C1BA8B730",
+        "kind" : "view",
+        "name" : "Dock",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 26
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 96,
+              "y" : 786
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 52,
+              "width" : 210
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 44
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "radius" : {
+              "type" : "number",
+              "value" : 26
+            },
+            "tint" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 0.12,
+                "blue" : 1,
+                "green" : 1,
+                "red" : 1
+              }
+            }
+          },
+          "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+        }
+      }
+    ],
+    "id" : "25F6653A-2476-45C4-A6BD-78023B4C7376",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
+    }
+  },
+  "version" : 4
+}

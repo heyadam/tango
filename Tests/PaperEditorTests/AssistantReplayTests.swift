@@ -449,7 +449,7 @@ import PaperModel
         }
         func card(_ view: ViewerView) -> ResolvedLayer? { view.runtime.resolved.children.first { $0.name == "Card" } }
         let height = try #require(card(shown)?.size.height)
-        #expect(height > 201 && height < 559)
+        #expect(height > SampleDocuments.Card.collapsedSize.height && height < SampleDocuments.Card.expandedSize.height)
         #expect(height == card(hidden)?.size.height)
         #expect(card(shown)?.position == card(hidden)?.position)
     }
