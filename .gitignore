@@ -6,3 +6,9 @@ DerivedData/
 xcuserdata/
 .swiftpm/
 node_modules/
+
+# Signing credentials: never commit (see RELEASING.md)
+*.p12
+*.p8
+*.cer
+*.certSigningRequest
