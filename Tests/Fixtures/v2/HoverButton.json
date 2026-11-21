@@ -1,0 +1,273 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "9CFB622F-2EBD-4F30-850B-50ED6648EEE5",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 19
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 230
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Point at me"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            }
+          }
+        ],
+        "id" : "17F19EAD-E770-488B-B88C-026499A81ECB",
+        "kind" : "group",
+        "name" : "Button",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 30
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.8392156862745098,
+              "green" : 0.3568627450980392,
+              "red" : 0.3568627450980392
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 80,
+              "y" : 380
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.45,
+              "blue" : 0.839,
+              "green" : 0.357,
+              "red" : 0.357
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 8
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 60,
+              "width" : 230
+            }
+          }
+        }
+      }
+    ],
+    "id" : "257C0A3D-597A-419B-A209-C7759F204562",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.96,
+          "green" : 0.96,
+          "red" : 0.96
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "0003462B-C9E3-4420-A645-82B9567179F5",
+          "port" : "hovering"
+        },
+        "to" : {
+          "node" : "30342457-0CAD-4984-9207-631EF20C6F26",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "30342457-0CAD-4984-9207-631EF20C6F26",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E7F0FF2C-67C9-4E03-BFDB-F25705ABC659",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "30342457-0CAD-4984-9207-631EF20C6F26",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D3874679-EE47-430A-8A7C-DAA938B1E7E1",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E7F0FF2C-67C9-4E03-BFDB-F25705ABC659",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E26E27A2-EC37-4D35-B564-21C30C718EB1",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D3874679-EE47-430A-8A7C-DAA938B1E7E1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "B9BAAFD3-2332-42E4-9D5E-3D84ED97FA0B",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "0003462B-C9E3-4420-A645-82B9567179F5",
+        "inputs" : {
+
+        },
+        "kind" : "hover",
+        "layerID" : "17F19EAD-E770-488B-B88C-026499A81ECB",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "30342457-0CAD-4984-9207-631EF20C6F26",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.65
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "E7F0FF2C-67C9-4E03-BFDB-F25705ABC659",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 1.08
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Lift",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "D3874679-EE47-430A-8A7C-DAA938B1E7E1",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 18
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Glow",
+        "position" : {
+          "x" : 564,
+          "y" : 240
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "E26E27A2-EC37-4D35-B564-21C30C718EB1",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "17F19EAD-E770-488B-B88C-026499A81ECB",
+        "position" : {
+          "x" : 816,
+          "y" : 84
+        },
+        "property" : "scale"
+      },
+      {
+        "id" : "B9BAAFD3-2332-42E4-9D5E-3D84ED97FA0B",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "17F19EAD-E770-488B-B88C-026499A81ECB",
+        "position" : {
+          "x" : 816,
+          "y" : 240
+        },
+        "property" : "shadowRadius"
+      }
+    ]
+  },
+  "version" : 2
+}

@@ -1,0 +1,492 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "57119414-2BF4-4389-8D76-8603337517B3",
+          "port" : "left"
+        },
+        "to" : {
+          "node" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+          "port" : "turnOn"
+        }
+      },
+      {
+        "from" : {
+          "node" : "57119414-2BF4-4389-8D76-8603337517B3",
+          "port" : "right"
+        },
+        "to" : {
+          "node" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+          "port" : "turnOff"
+        }
+      },
+      {
+        "from" : {
+          "node" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "BFDA1D2D-B241-4D4F-8F41-FDF820ED8287",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BFDA1D2D-B241-4D4F-8F41-FDF820ED8287",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "060BC25B-53D3-4747-BA21-66C18463152C",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "060BC25B-53D3-4747-BA21-66C18463152C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "17D70B35-24A3-4A6F-A1D2-4DDB3AAB6651",
+          "port" : "position"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "0EAA680A-04C2-40B2-8107-26EF3CFB4D97",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "96E8E6EE-4BB1-4D71-9097-B9C09D34FCA7",
+        "position" : {
+          "x" : 1344,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "FD3E3533-9B9C-4D1C-8921-B341B54A1F11",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0EF7CD46-1383-4003-B116-E31BB7E6537B",
+        "position" : {
+          "x" : 1632,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "EC344086-5B85-4F6D-9D39-A4AEBBD86DF8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5B809B46-F967-4AF5-8A60-67D33E8BC91A",
+        "position" : {
+          "x" : 1632,
+          "y" : 228
+        }
+      },
+      {
+        "id" : "2D87FA44-EDAC-4009-9A14-7B66086BADE9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "841109CA-2D13-4B47-8467-B51A02D66912",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "17D70B35-24A3-4A6F-A1D2-4DDB3AAB6651",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "74BC0B4F-AD22-4778-BA3E-9E3734F3C870",
+        "position" : {
+          "x" : 1056,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "4E2F28C9-5305-429D-8E18-7671394FECB2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A705B8FD-8A0D-49F5-8E14-07BEDD4732D4",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "EB46C9CF-3E3C-49CB-9B9C-06A9C86ED150",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B677B5EB-3552-45D6-B5EE-18E79FF95890",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "57119414-2BF4-4389-8D76-8603337517B3",
+        "inputs" : {
+
+        },
+        "kind" : "swipe",
+        "layerID" : "74BC0B4F-AD22-4778-BA3E-9E3734F3C870",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Revealed",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "BFDA1D2D-B241-4D4F-8F41-FDF820ED8287",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.85
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 540,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "060BC25B-53D3-4747-BA21-66C18463152C",
+        "inputs" : {
+          "end" : {
+            "type" : "point",
+            "value" : {
+              "x" : -72,
+              "y" : 140
+            }
+          },
+          "start" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 140
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Slide",
+        "position" : {
+          "x" : 804,
+          "y" : 84
+        },
+        "valueType" : "point"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "0EF7CD46-1383-4003-B116-E31BB7E6537B",
+        "kind" : "text",
+        "name" : "Header",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 72
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Inbox"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "841109CA-2D13-4B47-8467-B51A02D66912",
+            "kind" : "symbol",
+            "name" : "Trash",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 306,
+                  "y" : 26
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 28
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "trash.fill"
+              }
+            }
+          }
+        ],
+        "id" : "5B809B46-F967-4AF5-8A60-67D33E8BC91A",
+        "kind" : "view",
+        "name" : "Delete",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.18823529411764706,
+              "green" : 0.23137254901960785,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 140
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 80,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "A705B8FD-8A0D-49F5-8E14-07BEDD4732D4",
+            "kind" : "text",
+            "name" : "Sender",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 16
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Ada Lovelace"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "B677B5EB-3552-45D6-B5EE-18E79FF95890",
+            "kind" : "text",
+            "name" : "Preview",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 42
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Swipe me left, then right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.45,
+                  "green" : 0.45,
+                  "red" : 0.45
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "74BC0B4F-AD22-4778-BA3E-9E3734F3C870",
+        "kind" : "view",
+        "name" : "Row",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 140
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.08,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 80,
+              "width" : 358
+            }
+          }
+        }
+      }
+    ],
+    "id" : "96E8E6EE-4BB1-4D71-9097-B9C09D34FCA7",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.95,
+          "green" : 0.95,
+          "red" : 0.95
+        }
+      }
+    }
+  },
+  "version" : 4
+}

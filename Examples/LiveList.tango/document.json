@@ -1,0 +1,4922 @@
+{
+  "components" : [
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "40883A47-469E-DC46-1BEA-407D66DD1F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "179E6819-7C4C-AC55-DEA4-F29B961CD384",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "382E0B3A-960A-6D72-41C4-A30D2ABE8185",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "833FBE4C-1D9E-9558-9611-1390B3471239",
+              "port" : "opacity"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "833FBE4C-1D9E-9558-9611-1390B3471239",
+              "port" : "enabled"
+            }
+          },
+          {
+            "from" : {
+              "node" : "AF9F8908-6BEB-80A3-DE56-5CD5265E20B0",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "15A38908-6BED-80A3-7853-5CD5265C20B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "62A18908-6BEC-80A3-2B55-5CD5265D20B0",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "62A18908-6BEC-80A3-2B55-5CD5265D20B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "179E6819-7C4C-AC55-DEA4-F29B961CD384",
+              "port" : "textColor"
+            }
+          },
+          {
+            "from" : {
+              "node" : "62A18908-6BEC-80A3-2B55-5CD5265D20B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "1582695D-5B23-9E74-0017-E985D8E3F1A7",
+              "port" : "textColor"
+            }
+          },
+          {
+            "from" : {
+              "node" : "15A38908-6BED-80A3-7853-5CD5265C20B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "E3988908-6BE7-80A3-AA5D-5CD5266220B0",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E3988908-6BE7-80A3-AA5D-5CD5266220B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "5D9FA595-C765-2BE2-E441-B8BC59083DEB",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "30978908-6BE6-80A3-5D5F-5CD5266320B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "969A8908-6BE8-80A3-F75B-5CD5266120B0",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "969A8908-6BE8-80A3-F75B-5CD5266120B0",
+              "port" : "empty"
+            },
+            "to" : {
+              "node" : "47AD8908-6BF3-80A3-4649-5CD5265620B0",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "30978908-6BE6-80A3-5D5F-5CD5266320B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "1582695D-5B23-9E74-0017-E985D8E3F1A7",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "47AD8908-6BF3-80A3-4649-5CD5265620B0",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "8114A4C3-4D03-07F5-3CF2-BB279587B07A",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "499C8908-6BE9-80A3-445A-5CD5266020B0",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "94AB8908-6BF2-80A3-F94A-5CD5265720B0",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F4628108-6BF9-76A3-553D-59D526D81CB0",
+              "port" : "width"
+            },
+            "to" : {
+              "node" : "A7648108-6BFA-76A3-A23B-59D526D71CB0",
+              "port" : "x"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A7648108-6BFA-76A3-A23B-59D526D71CB0",
+              "port" : "point"
+            },
+            "to" : {
+              "node" : "93A8BE8B-D78F-CB6E-FA5C-6D764A3BA799",
+              "port" : "size"
+            }
+          },
+          {
+            "from" : {
+              "node" : "15A38908-6BED-80A3-7853-5CD5265C20B0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "5A668108-6BFB-76A3-EF39-59D526D61CB0",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5A668108-6BFB-76A3-EF39-59D526D61CB0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "833FBE4C-1D9E-9558-9611-1390B3471239",
+              "port" : "shader.tint"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5A668108-6BFB-76A3-EF39-59D526D61CB0",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "8114A4C3-4D03-07F5-3CF2-BB279587B07A",
+              "port" : "shader.tint"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "3DBF1CB5-B42A-54EC-D090-1AC9BBE5F78A",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "C16105BA-9574-D3C6-DC38-5C9B15BC908C",
+            "position" : {
+              "x" : 1020,
+              "y" : 288
+            }
+          },
+          {
+            "id" : "93A8BE8B-D78F-CB6E-FA5C-6D764A3BA799",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 504,
+              "y" : 1848
+            }
+          },
+          {
+            "id" : "179E6819-7C4C-AC55-DEA4-F29B961CD384",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "5B5E05BA-9572-D3C6-423C-5C9B15BE908C",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "833FBE4C-1D9E-9558-9611-1390B3471239",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "position" : {
+              "x" : 504,
+              "y" : 288
+            },
+            "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+          },
+          {
+            "id" : "5D9FA595-C765-2BE2-E441-B8BC59083DEB",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "8D6805BA-9578-D3C6-1032-5C9B15B8908C",
+            "position" : {
+              "x" : 504,
+              "y" : 1224
+            }
+          },
+          {
+            "id" : "382E0B3A-960A-6D72-41C4-A30D2ABE8185",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "DA6605BA-9577-D3C6-C333-5C9B15B9908C",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            }
+          },
+          {
+            "id" : "B362E16B-BE76-33E1-7E6B-DFC814EF9421",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "276505BA-9576-D3C6-7635-5C9B15BA908C",
+            "position" : {
+              "x" : 504,
+              "y" : 876
+            }
+          },
+          {
+            "id" : "8114A4C3-4D03-07F5-3CF2-BB279587B07A",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "746305BA-9575-D3C6-2937-5C9B15BB908C",
+            "position" : {
+              "x" : 732,
+              "y" : 1812
+            },
+            "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+          },
+          {
+            "id" : "1582695D-5B23-9E74-0017-E985D8E3F1A7",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "295405BA-956C-D3C6-7446-5C9B15C4908C",
+            "position" : {
+              "x" : 504,
+              "y" : 1068
+            }
+          },
+          {
+            "home" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "id" : "40883A47-469E-DC46-1BEA-407D66DD1F63",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Title"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "home" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "id" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Back"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Back Title",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : true
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Shows Back",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "BDA13A47-46AD-DC46-02E5-407D66DA1F63",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 528
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "AF9F8908-6BEB-80A3-DE56-5CD5265E20B0",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "position" : {
+              "x" : 36,
+              "y" : 708
+            }
+          },
+          {
+            "id" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Back",
+            "position" : {
+              "x" : 504,
+              "y" : 768
+            },
+            "valueType" : "pulse"
+          },
+          {
+            "id" : "15A38908-6BED-80A3-7853-5CD5265C20B0",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : false
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Dark",
+            "position" : {
+              "x" : 36,
+              "y" : 924
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "62A18908-6BEC-80A3-2B55-5CD5265D20B0",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Text Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1068
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "E3988908-6BE7-80A3-AA5D-5CD5266220B0",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Glyph Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1224
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "30978908-6BE6-80A3-5D5F-5CD5266320B0",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : ""
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Action",
+            "position" : {
+              "x" : 36,
+              "y" : 1404
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "499C8908-6BE9-80A3-445A-5CD5266020B0",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "746305BA-9575-D3C6-2937-5C9B15BB908C",
+            "position" : {
+              "x" : 36,
+              "y" : 1548
+            }
+          },
+          {
+            "id" : "969A8908-6BE8-80A3-F75B-5CD5266120B0",
+            "inputs" : {
+
+            },
+            "kind" : "textLength",
+            "position" : {
+              "x" : 276,
+              "y" : 1404
+            }
+          },
+          {
+            "id" : "47AD8908-6BF3-80A3-4649-5CD5265620B0",
+            "inputs" : {
+
+            },
+            "kind" : "not",
+            "name" : "Has Action",
+            "position" : {
+              "x" : 504,
+              "y" : 1404
+            }
+          },
+          {
+            "id" : "94AB8908-6BF2-80A3-F94A-5CD5265720B0",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Action",
+            "position" : {
+              "x" : 732,
+              "y" : 1704
+            },
+            "valueType" : "pulse"
+          },
+          {
+            "id" : "F4628108-6BF9-76A3-553D-59D526D81CB0",
+            "inputs" : {
+
+            },
+            "kind" : "layerSize",
+            "layerID" : "C16105BA-9574-D3C6-DC38-5C9B15BC908C",
+            "position" : {
+              "x" : 36,
+              "y" : 1848
+            }
+          },
+          {
+            "id" : "A7648108-6BFA-76A3-A23B-59D526D71CB0",
+            "inputs" : {
+              "y" : {
+                "type" : "number",
+                "value" : 44
+              }
+            },
+            "kind" : "makePoint",
+            "name" : "Title Row Size",
+            "position" : {
+              "x" : 276,
+              "y" : 1848
+            }
+          },
+          {
+            "id" : "5A668108-6BFB-76A3-EF39-59D526D61CB0",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.275,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.655,
+                  "blue" : 0.174,
+                  "green" : 0.174,
+                  "red" : 0.174
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Glass Tint",
+            "position" : {
+              "x" : 276,
+              "y" : 1368
+            },
+            "valueType" : "color"
+          }
+        ]
+      },
+      "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+      "library" : "iOS",
+      "name" : "Navigation Bar",
+      "placement" : "top",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5B5E05BA-9572-D3C6-423C-5C9B15BE908C",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Title"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "kind" : "view",
+            "name" : "Title Row",
+            "properties" : {
+              "absolute" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 402
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "8D6805BA-9578-D3C6-1032-5C9B15B8908C",
+                "kind" : "symbol",
+                "name" : "Chevron",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 500
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 22,
+                      "width" : 13
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "chevron.left"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "DA6605BA-9577-D3C6-C333-5C9B15B9908C",
+                "kind" : "text",
+                "name" : "Back Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Back"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "visible" : {
+                    "type" : "bool",
+                    "value" : false
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "kind" : "view",
+            "name" : "Back",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.08,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 3
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 10
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 44
+                }
+              }
+            },
+            "shader" : {
+              "inputs" : {
+                "radius" : {
+                  "type" : "number",
+                  "value" : 22
+                }
+              },
+              "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "276505BA-9576-D3C6-7635-5C9B15BA908C",
+            "kind" : "view",
+            "name" : "Space",
+            "properties" : {
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 10
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "295405BA-956C-D3C6-7446-5C9B15C4908C",
+                "kind" : "text",
+                "name" : "Action Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : ""
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "746305BA-9575-D3C6-2937-5C9B15BB908C",
+            "kind" : "view",
+            "name" : "Action",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 15.5
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.08,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 3
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 10
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 44
+                }
+              },
+              "visible" : {
+                "type" : "bool",
+                "value" : false
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            },
+            "shader" : {
+              "inputs" : {
+                "radius" : {
+                  "type" : "number",
+                  "value" : 22
+                }
+              },
+              "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+            }
+          }
+        ],
+        "id" : "C16105BA-9574-D3C6-DC38-5C9B15BC908C",
+        "kind" : "view",
+        "name" : "Navigation Bar",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingHorizontal" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "paddingVertical" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 402
+            }
+          }
+        }
+      },
+      "summary" : "A title in the middle with glass buttons at its ends, as on iOS 26: Back, and a button at the other end when Action names one. Both report taps. No bar is drawn behind them; Tint and Back Title are kept for documents that set them and change nothing."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "85D702B3-B581-B820-68F3-0867EC421149",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "7D719E76-2C7E-6BBD-34CB-6D6318E04733",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "E06D2117-5FB4-BEB4-990D-8A37E4793F9F",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "C358721C-C478-0845-CAC7-20EA84A49E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "C358721C-C478-0845-CAC7-20EA84A49E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "85D702B3-B581-B820-68F3-0867EC421149",
+              "port" : "textColor"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "765A721C-C479-0845-17C6-20EA84A39E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "765A721C-C479-0845-17C6-20EA84A39E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "7D719E76-2C7E-6BBD-34CB-6D6318E04733",
+              "port" : "textColor"
+            }
+          },
+          {
+            "from" : {
+              "node" : "765A721C-C479-0845-17C6-20EA84A39E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "B4BA1C77-5380-351D-5952-00AD483F0446",
+              "port" : "textColor"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "295C721C-C47A-0845-64C4-20EA84A29E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "295C721C-C47A-0845-64C4-20EA84A29E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "8AA89E82-C60C-8014-4BC0-6C629FA08BE7",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "DC5D721C-C47B-0845-B1C2-20EA84A19E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DC5D721C-C47B-0845-B1C2-20EA84A19E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+              "port" : "start"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "8F5F721C-C47C-0845-FEC0-20EA84A09E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "8F5F721C-C47C-0845-FEC0-20EA84A09E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+              "port" : "end"
+            }
+          },
+          {
+            "from" : {
+              "node" : "4261721C-C47D-0845-4BBF-20EA849F9E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "B4BA1C77-5380-351D-5952-00AD483F0446",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "4261721C-C47D-0845-4BBF-20EA849F9E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F562721C-C47E-0845-98BD-20EA849E9E3E",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F562721C-C47E-0845-98BD-20EA849E9E3E",
+              "port" : "empty"
+            },
+            "to" : {
+              "node" : "A864721C-C47F-0845-E5BB-20EA849D9E3E",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A864721C-C47F-0845-E5BB-20EA849D9E3E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "B4BA1C77-5380-351D-5952-00AD483F0446",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5B66721C-C480-0845-32BA-20EA849C9E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "480139B8-49BB-4487-45DB-8904DB38036E",
+              "port" : "symbol"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5B66721C-C480-0845-32BA-20EA849C9E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "78C87A1C-C488-1245-59AE-23EA840CA23E",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "78C87A1C-C488-1245-59AE-23EA840CA23E",
+              "port" : "empty"
+            },
+            "to" : {
+              "node" : "91CD7A1C-C48B-1245-40A9-23EA8409A23E",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "91CD7A1C-C48B-1245-40A9-23EA8409A23E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "6A14BFA5-DBBF-DC1B-7B29-E4CD1FC07FA1",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2BCA7A1C-C489-1245-A6AC-23EA840BA23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "C462A6F1-84CA-9A10-E13B-5430B815116D",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DECB7A1C-C48A-1245-F3AA-23EA840AA23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F7D07A1C-C48D-1245-72B3-23EA840FA23E",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DECB7A1C-C48A-1245-F3AA-23EA840AA23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "44CF7A1C-C48C-1245-25B5-23EA8410A23E",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DECB7A1C-C48A-1245-F3AA-23EA840AA23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "5DD47A1C-C48F-1245-0CB0-23EA840DA23E",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F7D07A1C-C48D-1245-72B3-23EA840FA23E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "AAD27A1C-C48E-1245-BFB1-23EA840EA23E",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "AAD27A1C-C48E-1245-BFB1-23EA840EA23E",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "AAD27A1C-C48E-1245-BFB1-23EA840EA23E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "8AA89E82-C60C-8014-4BC0-6C629FA08BE7",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "44CF7A1C-C48C-1245-25B5-23EA8410A23E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "503BC9D1-AB4E-307B-3DA4-9376A59C7CDB",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5DD47A1C-C48F-1245-0CB0-23EA840DA23E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "51BCD9CF-9BCB-3295-D4EE-2BE5F882F601",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A2B0771C-C403-0F45-2FC6-26EA8491A53E",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "55B2771C-C404-0F45-7CC4-26EA8490A53E",
+              "port" : "flip"
+            }
+          },
+          {
+            "from" : {
+              "node" : "55B2771C-C404-0F45-7CC4-26EA8490A53E",
+              "port" : "on"
+            },
+            "to" : {
+              "node" : "3CAD771C-C401-0F45-95C9-26EA8493A53E",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "93BC7A1C-C481-1245-3EBA-23EA8413A23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "3CAD771C-C401-0F45-95C9-26EA8493A53E",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "3CAD771C-C401-0F45-95C9-26EA8493A53E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "EFAE771C-C402-0F45-E2C7-26EA8492A53E",
+              "port" : "target"
+            }
+          },
+          {
+            "from" : {
+              "node" : "EFAE771C-C402-0F45-E2C7-26EA8492A53E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "D6A9771C-C4FF-0E45-63BF-26EA848DA53E",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "EFAE771C-C402-0F45-E2C7-26EA8492A53E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "89AB771C-C400-0F45-B0BD-26EA848CA53E",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "70A6771C-C4FD-0E45-C9C2-26EA848FA53E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "70A6771C-C4FD-0E45-C9C2-26EA848FA53E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "89AB771C-C400-0F45-B0BD-26EA848CA53E",
+              "port" : "start"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E0BA7A1C-C480-1245-F1BB-23EA8414A23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "89AB771C-C400-0F45-B0BD-26EA848CA53E",
+              "port" : "end"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E0BA7A1C-C480-1245-F1BB-23EA8414A23E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "503BC9D1-AB4E-307B-3DA4-9376A59C7CDB",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "D6A9771C-C4FF-0E45-63BF-26EA848DA53E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CDC10C98-FC11-1168-34FC-9EAAAE9B4626",
+              "port" : "position"
+            }
+          },
+          {
+            "from" : {
+              "node" : "89AB771C-C400-0F45-B0BD-26EA848CA53E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "402033A4-8EC1-E796-E1CD-E240FA772B28",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "3CAD771C-C401-0F45-95C9-26EA8493A53E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "23A8771C-C4FE-0E45-16C1-26EA848EA53E",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A2B0771C-C403-0F45-2FC6-26EA8491A53E",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "3ABE771C-C40B-0F45-C7D3-26EA8499A53E",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BD23801C-C415-1945-D0FC-12EA84078E3E",
+              "port" : "width"
+            },
+            "to" : {
+              "node" : "0A22801C-C414-1945-83FE-12EA84088E3E",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0A22801C-C414-1945-83FE-12EA84088E3E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "5720801C-C413-1945-3600-13EA84098E3E",
+              "port" : "x"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BD23801C-C415-1945-D0FC-12EA84078E3E",
+              "port" : "height"
+            },
+            "to" : {
+              "node" : "A41E801C-C412-1945-E901-13EA840A8E3E",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A41E801C-C412-1945-E901-13EA840A8E3E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "F11C801C-C411-1945-9C03-13EA840B8E3E",
+              "port" : "y"
+            }
+          },
+          {
+            "from" : {
+              "node" : "EDBF771C-C40C-0F45-14D2-26EA8498A53E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "DAECD93B-4520-B212-2330-0367E7A04BB7",
+              "port" : "visible"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5720801C-C413-1945-3600-13EA84098E3E",
+              "port" : "point"
+            },
+            "to" : {
+              "node" : "DAECD93B-4520-B212-2330-0367E7A04BB7",
+              "port" : "size"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F11C801C-C411-1945-9C03-13EA840B8E3E",
+              "port" : "point"
+            },
+            "to" : {
+              "node" : "DAECD93B-4520-B212-2330-0367E7A04BB7",
+              "port" : "position"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "3E1B801C-C410-1945-4F05-13EA840C8E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "3E1B801C-C410-1945-4F05-13EA840C8E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "DAECD93B-4520-B212-2330-0367E7A04BB7",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5B66721C-C480-0845-32BA-20EA849C9E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "8B19801C-C40F-1945-0207-13EA840D8E3E",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "8B19801C-C40F-1945-0207-13EA840D8E3E",
+              "port" : "empty"
+            },
+            "to" : {
+              "node" : "D817801C-C40E-1945-B508-13EA840E8E3E",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "D817801C-C40E-1945-B508-13EA840E8E3E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "2516801C-C40D-1945-680A-13EA840F8E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5DD47A1C-C48F-1245-0CB0-23EA840DA23E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "7214801C-C40C-1945-1B0C-13EA84108E3E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "D817801C-C40E-1945-B508-13EA840E8E3E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "B4E37D1C-C40F-1645-D93C-15EA840D913E",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2516801C-C40D-1945-680A-13EA840F8E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "E06D2117-5FB4-BEB4-990D-8A37E4793F9F",
+              "port" : "paddingLeft"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7214801C-C40C-1945-1B0C-13EA84108E3E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "E06D2117-5FB4-BEB4-990D-8A37E4793F9F",
+              "port" : "paddingRight"
+            }
+          },
+          {
+            "from" : {
+              "node" : "B4E37D1C-C40F-1645-D93C-15EA840D913E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F11C801C-C411-1945-9C03-13EA840B8E3E",
+              "port" : "x"
+            }
+          },
+          {
+            "from" : {
+              "node" : "B4E37D1C-C40F-1645-D93C-15EA840D913E",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "67E57D1C-C410-1645-263B-15EA840C913E",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "67E57D1C-C410-1645-263B-15EA840C913E",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "0A22801C-C414-1945-83FE-12EA84088E3E",
+              "port" : "b"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "E06D2117-5FB4-BEB4-990D-8A37E4793F9F",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 504,
+              "y" : 1128
+            }
+          },
+          {
+            "id" : "6A14BFA5-DBBF-DC1B-7B29-E4CD1FC07FA1",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "position" : {
+              "x" : 732,
+              "y" : 2124
+            }
+          },
+          {
+            "id" : "C462A6F1-84CA-9A10-E13B-5430B815116D",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "9C050B7D-92A6-3D69-F159-D76296ECE152",
+            "position" : {
+              "x" : 732,
+              "y" : 2124
+            }
+          },
+          {
+            "id" : "480139B8-49BB-4487-45DB-8904DB38036E",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "4F070B7D-92A7-3D69-3E58-D76296EBE152",
+            "position" : {
+              "x" : 732,
+              "y" : 2004
+            }
+          },
+          {
+            "id" : "0A9722CC-1A91-217E-7F80-D9D3AD85E985",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "36020B7D-92A4-3D69-575D-D76296EEE152",
+            "position" : {
+              "x" : 732,
+              "y" : 3000
+            }
+          },
+          {
+            "id" : "85D702B3-B581-B820-68F3-0867EC421149",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "E9030B7D-92A5-3D69-A45B-D76296EDE152",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "B4BA1C77-5380-351D-5952-00AD483F0446",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "D0FE0A7D-92A2-3D69-BD60-D76296F0E152",
+            "position" : {
+              "x" : 504,
+              "y" : 1164
+            }
+          },
+          {
+            "id" : "7D719E76-2C7E-6BBD-34CB-6D6318E04733",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "83000B7D-92A3-3D69-0A5F-D76296EFE152",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            }
+          },
+          {
+            "id" : "8AA89E82-C60C-8014-4BC0-6C629FA08BE7",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "9A160B7D-92B0-3D69-F348-D76296E2E152",
+            "position" : {
+              "x" : 504,
+              "y" : 1392
+            }
+          },
+          {
+            "id" : "503BC9D1-AB4E-307B-3DA4-9376A59C7CDB",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "4D180B7D-92B1-3D69-4047-D76296E1E152",
+            "position" : {
+              "x" : 732,
+              "y" : 2448
+            }
+          },
+          {
+            "id" : "51BCD9CF-9BCB-3295-D4EE-2BE5F882F601",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "FFDFC279-EAA8-D1DE-3846-E5F389D234AD",
+            "position" : {
+              "x" : 732,
+              "y" : 3204
+            }
+          },
+          {
+            "id" : "402033A4-8EC1-E796-E1CD-E240FA772B28",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "4CDEC279-EAA7-D1DE-EB47-E5F389D334AD",
+            "position" : {
+              "x" : 1188,
+              "y" : 2964
+            }
+          },
+          {
+            "id" : "CDC10C98-FC11-1168-34FC-9EAAAE9B4626",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "65E3C279-EAAA-D1DE-9E49-E5F389D434AD",
+            "position" : {
+              "x" : 1188,
+              "y" : 2748
+            }
+          },
+          {
+            "id" : "DAECD93B-4520-B212-2330-0367E7A04BB7",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "B2E1C279-EAA9-D1DE-514B-E5F389D534AD",
+            "position" : {
+              "x" : 732,
+              "y" : 3420
+            }
+          },
+          {
+            "home" : "36020B7D-92A4-3D69-575D-D76296EEE152",
+            "id" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Title"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : ""
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Detail",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : true
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Shows Chevron",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 36,
+              "y" : 528
+            }
+          },
+          {
+            "id" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+            "inputs" : {
+              "end" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8392156862745098,
+                  "green" : 0.8196078431372549,
+                  "red" : 0.8196078431372549
+                }
+              },
+              "start" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Highlight",
+            "position" : {
+              "x" : 276,
+              "y" : 528
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Tap",
+            "position" : {
+              "x" : 504,
+              "y" : 684
+            },
+            "valueType" : "pulse"
+          },
+          {
+            "id" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : false
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Dark",
+            "position" : {
+              "x" : 36,
+              "y" : 864
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "C358721C-C478-0845-CAC7-20EA84A49E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Title Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1008
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "765A721C-C479-0845-17C6-20EA84A39E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.6235294117647059,
+                  "green" : 0.596078431372549,
+                  "red" : 0.596078431372549
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Detail Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1164
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "295C721C-C47A-0845-64C4-20EA84A29E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.7803921568627451
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.2901960784313726,
+                  "green" : 0.2823529411764706,
+                  "red" : 0.2823529411764706
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Chevron Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1308
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "DC5D721C-C47B-0845-B1C2-20EA84A19E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11764705882352941,
+                  "green" : 0.10980392156862745,
+                  "red" : 0.10980392156862745
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Row Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1464
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "8F5F721C-C47C-0845-FEC0-20EA84A09E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8392156862745098,
+                  "green" : 0.8196078431372549,
+                  "red" : 0.8196078431372549
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.23529411764705882,
+                  "green" : 0.22745098039215686,
+                  "red" : 0.22745098039215686
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Pressed Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1608
+            },
+            "valueType" : "color"
+          },
+          {
+            "home" : "36020B7D-92A4-3D69-575D-D76296EEE152",
+            "id" : "4261721C-C47D-0845-4BBF-20EA849F9E3E",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : ""
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Subtitle",
+            "position" : {
+              "x" : 36,
+              "y" : 1848
+            },
+            "valueType" : "text"
+          },
+          {
+            "home" : "36020B7D-92A4-3D69-575D-D76296EEE152",
+            "id" : "F562721C-C47E-0845-98BD-20EA849E9E3E",
+            "inputs" : {
+
+            },
+            "kind" : "textLength",
+            "position" : {
+              "x" : 276,
+              "y" : 1848
+            }
+          },
+          {
+            "home" : "36020B7D-92A4-3D69-575D-D76296EEE152",
+            "id" : "A864721C-C47F-0845-E5BB-20EA849D9E3E",
+            "inputs" : {
+
+            },
+            "kind" : "not",
+            "name" : "Has Subtitle",
+            "position" : {
+              "x" : 504,
+              "y" : 1848
+            }
+          },
+          {
+            "id" : "5B66721C-C480-0845-32BA-20EA849C9E3E",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : ""
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Symbol",
+            "position" : {
+              "x" : 36,
+              "y" : 2004
+            },
+            "valueType" : "text"
+          },
+          {
+            "home" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "id" : "2BCA7A1C-C489-1245-A6AC-23EA840BA23E",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Symbol Color",
+            "position" : {
+              "x" : 36,
+              "y" : 2148
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "78C87A1C-C488-1245-59AE-23EA840CA23E",
+            "inputs" : {
+
+            },
+            "kind" : "textLength",
+            "position" : {
+              "x" : 276,
+              "y" : 2004
+            }
+          },
+          {
+            "id" : "91CD7A1C-C48B-1245-40A9-23EA8409A23E",
+            "inputs" : {
+
+            },
+            "kind" : "not",
+            "name" : "Has Symbol",
+            "position" : {
+              "x" : 504,
+              "y" : 2004
+            }
+          },
+          {
+            "id" : "DECB7A1C-C48A-1245-F3AA-23EA840AA23E",
+            "inputs" : {
+              "options" : {
+                "type" : "text",
+                "value" : "Chevron, None, Checkmark, Switch"
+              },
+              "value" : {
+                "type" : "text",
+                "value" : "Chevron"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Accessory",
+            "position" : {
+              "x" : 36,
+              "y" : 2304
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "F7D07A1C-C48D-1245-72B3-23EA840FA23E",
+            "inputs" : {
+              "search" : {
+                "type" : "text",
+                "value" : "Chevron"
+              }
+            },
+            "kind" : "textContains",
+            "name" : "Is Chevron",
+            "position" : {
+              "x" : 276,
+              "y" : 2304
+            }
+          },
+          {
+            "id" : "44CF7A1C-C48C-1245-25B5-23EA8410A23E",
+            "inputs" : {
+              "search" : {
+                "type" : "text",
+                "value" : "Checkmark"
+              }
+            },
+            "kind" : "textContains",
+            "name" : "Is Checkmark",
+            "position" : {
+              "x" : 276,
+              "y" : 2448
+            }
+          },
+          {
+            "id" : "5DD47A1C-C48F-1245-0CB0-23EA840DA23E",
+            "inputs" : {
+              "search" : {
+                "type" : "text",
+                "value" : "Switch"
+              }
+            },
+            "kind" : "textContains",
+            "name" : "Is Switch",
+            "position" : {
+              "x" : 276,
+              "y" : 2604
+            }
+          },
+          {
+            "id" : "AAD27A1C-C48E-1245-BFB1-23EA840EA23E",
+            "inputs" : {
+
+            },
+            "kind" : "and",
+            "name" : "Chevron Shows",
+            "position" : {
+              "x" : 504,
+              "y" : 2304
+            }
+          },
+          {
+            "id" : "93BC7A1C-C481-1245-3EBA-23EA8413A23E",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : false
+              }
+            },
+            "kind" : "component.input",
+            "name" : "On",
+            "position" : {
+              "x" : 36,
+              "y" : 2748
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "E0BA7A1C-C480-1245-F1BB-23EA8414A23E",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.34901960784313724,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.20392156862745098
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 2904
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "A2B0771C-C403-0F45-2FC6-26EA8491A53E",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "FFDFC279-EAA8-D1DE-3846-E5F389D234AD",
+            "position" : {
+              "x" : 36,
+              "y" : 3048
+            }
+          },
+          {
+            "id" : "55B2771C-C404-0F45-7CC4-26EA8490A53E",
+            "inputs" : {
+
+            },
+            "kind" : "switch",
+            "name" : "Flipped",
+            "position" : {
+              "x" : 276,
+              "y" : 3048
+            }
+          },
+          {
+            "id" : "3CAD771C-C401-0F45-95C9-26EA8493A53E",
+            "inputs" : {
+
+            },
+            "kind" : "notEqual",
+            "name" : "Is On",
+            "position" : {
+              "x" : 504,
+              "y" : 2748
+            }
+          },
+          {
+            "id" : "EFAE771C-C402-0F45-E2C7-26EA8492A53E",
+            "inputs" : {
+              "damping" : {
+                "type" : "number",
+                "value" : 0.8
+              },
+              "response" : {
+                "type" : "number",
+                "value" : 0.3
+              }
+            },
+            "kind" : "spring",
+            "position" : {
+              "x" : 732,
+              "y" : 2748
+            }
+          },
+          {
+            "id" : "D6A9771C-C4FF-0E45-63BF-26EA848DA53E",
+            "inputs" : {
+              "end" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 2
+                }
+              },
+              "start" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 2,
+                  "y" : 2
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Knob Position",
+            "position" : {
+              "x" : 960,
+              "y" : 2748
+            },
+            "valueType" : "point"
+          },
+          {
+            "id" : "89AB771C-C400-0F45-B0BD-26EA848CA53E",
+            "inputs" : {
+
+            },
+            "kind" : "transition",
+            "name" : "Track Color",
+            "position" : {
+              "x" : 960,
+              "y" : 2904
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "70A6771C-C4FD-0E45-C9C2-26EA848FA53E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8196078431372549,
+                  "green" : 0.8156862745098039,
+                  "red" : 0.8156862745098039
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.23921568627450981,
+                  "green" : 0.2235294117647059,
+                  "red" : 0.2235294117647059
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Off Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1764
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "23A8771C-C4FE-0E45-16C1-26EA848EA53E",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "On",
+            "position" : {
+              "x" : 1188,
+              "y" : 3048
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "3ABE771C-C40B-0F45-C7D3-26EA8499A53E",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Changed",
+            "position" : {
+              "x" : 1188,
+              "y" : 3204
+            },
+            "valueType" : "pulse"
+          },
+          {
+            "id" : "EDBF771C-C40C-0F45-14D2-26EA8498A53E",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : false
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Separator",
+            "position" : {
+              "x" : 36,
+              "y" : 3348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "BD23801C-C415-1945-D0FC-12EA84078E3E",
+            "inputs" : {
+
+            },
+            "kind" : "layerSize",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 36,
+              "y" : 3504
+            }
+          },
+          {
+            "id" : "0A22801C-C414-1945-83FE-12EA84088E3E",
+            "inputs" : {
+
+            },
+            "kind" : "subtract",
+            "name" : "Line Width",
+            "position" : {
+              "x" : 276,
+              "y" : 3504
+            }
+          },
+          {
+            "id" : "5720801C-C413-1945-3600-13EA84098E3E",
+            "inputs" : {
+              "y" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "makePoint",
+            "position" : {
+              "x" : 504,
+              "y" : 3504
+            }
+          },
+          {
+            "id" : "A41E801C-C412-1945-E901-13EA840A8E3E",
+            "inputs" : {
+              "b" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "subtract",
+            "name" : "Line Y",
+            "position" : {
+              "x" : 276,
+              "y" : 3648
+            }
+          },
+          {
+            "id" : "F11C801C-C411-1945-9C03-13EA840B8E3E",
+            "inputs" : {
+
+            },
+            "kind" : "makePoint",
+            "position" : {
+              "x" : 504,
+              "y" : 3648
+            }
+          },
+          {
+            "id" : "3E1B801C-C410-1945-4F05-13EA840C8E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9294117647058824,
+                  "green" : 0.9254901960784314,
+                  "red" : 0.9254901960784314
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.1803921568627451,
+                  "green" : 0.17254901960784313,
+                  "red" : 0.17254901960784313
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Separator Color",
+            "position" : {
+              "x" : 276,
+              "y" : 1908
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "8B19801C-C40F-1945-0207-13EA840D8E3E",
+            "inputs" : {
+
+            },
+            "kind" : "textLength",
+            "position" : {
+              "x" : 276,
+              "y" : 3948
+            }
+          },
+          {
+            "id" : "D817801C-C40E-1945-B508-13EA840E8E3E",
+            "inputs" : {
+
+            },
+            "kind" : "not",
+            "name" : "Symbol Shows",
+            "position" : {
+              "x" : 504,
+              "y" : 3948
+            }
+          },
+          {
+            "id" : "2516801C-C40D-1945-680A-13EA840F8E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "then" : {
+                "type" : "number",
+                "value" : 14
+              }
+            },
+            "kind" : "if",
+            "name" : "Leading Inset",
+            "position" : {
+              "x" : 732,
+              "y" : 3948
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "7214801C-C40C-1945-1B0C-13EA84108E3E",
+            "inputs" : {
+              "else" : {
+                "type" : "number",
+                "value" : 16.5
+              },
+              "then" : {
+                "type" : "number",
+                "value" : 14
+              }
+            },
+            "kind" : "if",
+            "name" : "Trailing Inset",
+            "position" : {
+              "x" : 732,
+              "y" : 4104
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "B4E37D1C-C40F-1645-D93C-15EA840D913E",
+            "inputs" : {
+              "else" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "then" : {
+                "type" : "number",
+                "value" : 56
+              }
+            },
+            "kind" : "if",
+            "name" : "Line Start",
+            "position" : {
+              "x" : 732,
+              "y" : 4248
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "67E57D1C-C410-1645-263B-15EA840C913E",
+            "inputs" : {
+              "b" : {
+                "type" : "number",
+                "value" : 16
+              }
+            },
+            "kind" : "add",
+            "name" : "Line Insets",
+            "position" : {
+              "x" : 960,
+              "y" : 4248
+            }
+          }
+        ]
+      },
+      "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+      "library" : "iOS",
+      "name" : "List Row",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "4F070B7D-92A7-3D69-3E58-D76296EBE152",
+                    "kind" : "symbol",
+                    "name" : "Glyph",
+                    "properties" : {
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 20,
+                          "width" : 20
+                        }
+                      },
+                      "symbol" : {
+                        "type" : "text",
+                        "value" : "wifi"
+                      }
+                    }
+                  }
+                ],
+                "id" : "9C050B7D-92A6-3D69-F159-D76296ECE152",
+                "kind" : "view",
+                "name" : "Tile",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 7
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.47843137254901963,
+                      "red" : 0
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 28
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "kind" : "view",
+            "name" : "Symbol",
+            "properties" : {
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 32
+                }
+              },
+              "visible" : {
+                "type" : "bool",
+                "value" : false
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "E9030B7D-92A5-3D69-A45B-D76296EDE152",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Title"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "D0FE0A7D-92A2-3D69-BD60-D76296F0E152",
+                "kind" : "text",
+                "name" : "Subtitle",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : ""
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5764705882352941,
+                      "green" : 0.5568627450980392,
+                      "red" : 0.5568627450980392
+                    }
+                  },
+                  "visible" : {
+                    "type" : "bool",
+                    "value" : false
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "36020B7D-92A4-3D69-575D-D76296EEE152",
+            "kind" : "view",
+            "name" : "Texts",
+            "properties" : {
+              "axis" : {
+                "type" : "text",
+                "value" : "Vertical"
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 2
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "83000B7D-92A3-3D69-0A5F-D76296EFE152",
+            "kind" : "text",
+            "name" : "Detail",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : ""
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "9A160B7D-92B0-3D69-F348-D76296E2E152",
+            "kind" : "symbol",
+            "name" : "Chevron",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.7803921568627451
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 17,
+                  "width" : 11.5
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "chevron.right"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "4D180B7D-92B1-3D69-4047-D76296E1E152",
+            "kind" : "symbol",
+            "name" : "Checkmark",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16,
+                  "width" : 16
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "checkmark"
+              },
+              "visible" : {
+                "type" : "bool",
+                "value" : false
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "4CDEC279-EAA7-D1DE-EB47-E5F389D334AD",
+                "kind" : "view",
+                "name" : "Track",
+                "properties" : {
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.8196078431372549,
+                      "green" : 0.8156862745098039,
+                      "red" : 0.8156862745098039
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 63
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "65E3C279-EAAA-D1DE-9E49-E5F389D434AD",
+                "kind" : "view",
+                "name" : "Knob",
+                "properties" : {
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 2,
+                      "y" : 2
+                    }
+                  },
+                  "shadowColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.22,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "shadowOffset" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 2
+                    }
+                  },
+                  "shadowRadius" : {
+                    "type" : "number",
+                    "value" : 4
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 24,
+                      "width" : 37
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "FFDFC279-EAA8-D1DE-3846-E5F389D234AD",
+            "kind" : "view",
+            "name" : "Switch",
+            "properties" : {
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 63
+                }
+              },
+              "visible" : {
+                "type" : "bool",
+                "value" : false
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "B2E1C279-EAA9-D1DE-514B-E5F389D534AD",
+            "kind" : "view",
+            "name" : "Separator",
+            "properties" : {
+              "absolute" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9294117647058824,
+                  "green" : 0.9254901960784314,
+                  "red" : 0.9254901960784314
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 51
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 1,
+                  "width" : 330
+                }
+              },
+              "visible" : {
+                "type" : "bool",
+                "value" : false
+              }
+            }
+          }
+        ],
+        "id" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+        "kind" : "view",
+        "name" : "List Row",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingHorizontal" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "paddingVertical" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 52,
+              "width" : 370
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 10
+          }
+        }
+      },
+      "summary" : "A table row: a title, with an optional symbol, subtitle and detail, and a chevron, checkmark or switch at the end. It highlights while pressed and reports taps."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "87A5D050-26AD-67F8-CA01-DB9FEFF9890A",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+              "port" : "target"
+            }
+          },
+          {
+            "from" : {
+              "node" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "BC98443B-306A-27C5-7196-3631A72CFCCB",
+              "port" : "opacity"
+            }
+          },
+          {
+            "from" : {
+              "node" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7C207281-D803-6C64-5311-0D9BB2D068EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "BC98443B-306A-27C5-7196-3631A72CFCCB",
+              "port" : "cornerRadius"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2C6704F5-E344-C615-216E-4B777D1247DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "87A5D050-26AD-67F8-CA01-DB9FEFF9890A",
+              "port" : "fontWeight"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DF6804F5-E345-C615-6E6C-4B777D1147DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "926A04F5-E346-C615-BB6A-4B777D1047DC",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DF6804F5-E345-C615-6E6C-4B777D1147DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "456C04F5-E347-C615-0869-4B777D0F47DC",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DF6804F5-E345-C615-6E6C-4B777D1147DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "606004F5-E340-C615-ED74-4B777D1647DC",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "136204F5-E341-C615-3A73-4B777D1547DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "796504F5-E343-C615-D46F-4B777D1347DC",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "796504F5-E343-C615-D46F-4B777D1347DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "C66304F5-E342-C615-8771-4B777D1447DC",
+              "port" : "start"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "C66304F5-E342-C615-8771-4B777D1447DC",
+              "port" : "end"
+            }
+          },
+          {
+            "from" : {
+              "node" : "926A04F5-E346-C615-BB6A-4B777D1047DC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "C47404F5-E34C-C615-8960-4B777D0A47DC",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "C66304F5-E342-C615-8771-4B777D1447DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "C47404F5-E34C-C615-8960-4B777D0A47DC",
+              "port" : "then"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "C47404F5-E34C-C615-8960-4B777D0A47DC",
+              "port" : "else"
+            }
+          },
+          {
+            "from" : {
+              "node" : "136204F5-E341-C615-3A73-4B777D1547DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "777604F5-E34D-C615-D65E-4B777D0947DC",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "456C04F5-E347-C615-0869-4B777D0F47DC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "47DA0CF5-E356-D015-AA87-4E777D984ADC",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "777604F5-E34D-C615-D65E-4B777D0947DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "47DA0CF5-E356-D015-AA87-4E777D984ADC",
+              "port" : "then"
+            }
+          },
+          {
+            "from" : {
+              "node" : "C47404F5-E34C-C615-8960-4B777D0A47DC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "47DA0CF5-E356-D015-AA87-4E777D984ADC",
+              "port" : "else"
+            }
+          },
+          {
+            "from" : {
+              "node" : "606004F5-E340-C615-ED74-4B777D1647DC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "94D80CF5-E355-D015-5D89-4E777D994ADC",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "47DA0CF5-E356-D015-AA87-4E777D984ADC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "94D80CF5-E355-D015-5D89-4E777D994ADC",
+              "port" : "else"
+            }
+          },
+          {
+            "from" : {
+              "node" : "94D80CF5-E355-D015-5D89-4E777D994ADC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "BC98443B-306A-27C5-7196-3631A72CFCCB",
+              "port" : "fill"
+            }
+          },
+          {
+            "from" : {
+              "node" : "926A04F5-E346-C615-BB6A-4B777D1047DC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "ADDD0CF5-E358-D015-4484-4E777D964ADC",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "456C04F5-E347-C615-0869-4B777D0F47DC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "ADDD0CF5-E358-D015-4484-4E777D964ADC",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "ADDD0CF5-E358-D015-4484-4E777D964ADC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "FADB0CF5-E357-D015-F785-4E777D974ADC",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "606004F5-E340-C615-ED74-4B777D1647DC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "FADB0CF5-E357-D015-F785-4E777D974ADC",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FADB0CF5-E357-D015-F785-4E777D974ADC",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "7BD30CF5-E352-D015-DE80-4E777D944ADC",
+              "port" : "condition"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "7BD30CF5-E352-D015-DE80-4E777D944ADC",
+              "port" : "then"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7BD30CF5-E352-D015-DE80-4E777D944ADC",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "87A5D050-26AD-67F8-CA01-DB9FEFF9890A",
+              "port" : "textColor"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "4827DCDE-4B88-F02C-2D54-C1646E1462AD",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+            "position" : {
+              "x" : 1476,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "BC98443B-306A-27C5-7196-3631A72CFCCB",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "position" : {
+              "x" : 732,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "87A5D050-26AD-67F8-CA01-DB9FEFF9890A",
+            "inputs" : {
+
+            },
+            "kind" : "view",
+            "layerID" : "48587B42-D9D9-17A0-F5A7-95C23E258359",
+            "position" : {
+              "x" : 732,
+              "y" : 48
+            }
+          },
+          {
+            "home" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "id" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Button"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            }
+          },
+          {
+            "id" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+            "inputs" : {
+              "damping" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "response" : {
+                "type" : "number",
+                "value" : 0.18
+              }
+            },
+            "kind" : "spring",
+            "position" : {
+              "x" : 276,
+              "y" : 348
+            }
+          },
+          {
+            "id" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+            "inputs" : {
+              "end" : {
+                "type" : "number",
+                "value" : 0.55
+              },
+              "start" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "transition",
+            "name" : "Dim",
+            "position" : {
+              "x" : 504,
+              "y" : 348
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Tap",
+            "position" : {
+              "x" : 732,
+              "y" : 504
+            },
+            "valueType" : "pulse"
+          },
+          {
+            "id" : "7C207281-D803-6C64-5311-0D9BB2D068EF",
+            "inputs" : {
+              "value" : {
+                "type" : "number",
+                "value" : 100
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Corner Radius",
+            "position" : {
+              "x" : 36,
+              "y" : 648
+            },
+            "valueType" : "number"
+          },
+          {
+            "home" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "id" : "2C6704F5-E344-C615-216E-4B777D1247DC",
+            "inputs" : {
+              "value" : {
+                "type" : "number",
+                "value" : 400
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Weight",
+            "position" : {
+              "x" : 36,
+              "y" : 804
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "DF6804F5-E345-C615-6E6C-4B777D1147DC",
+            "inputs" : {
+              "options" : {
+                "type" : "text",
+                "value" : "Filled, Tinted, Gray, Plain"
+              },
+              "value" : {
+                "type" : "text",
+                "value" : "Filled"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Style",
+            "position" : {
+              "x" : 36,
+              "y" : 948
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "926A04F5-E346-C615-BB6A-4B777D1047DC",
+            "inputs" : {
+              "search" : {
+                "type" : "text",
+                "value" : "Tinted"
+              }
+            },
+            "kind" : "textContains",
+            "name" : "Is Tinted",
+            "position" : {
+              "x" : 276,
+              "y" : 948
+            }
+          },
+          {
+            "id" : "456C04F5-E347-C615-0869-4B777D0F47DC",
+            "inputs" : {
+              "search" : {
+                "type" : "text",
+                "value" : "Gray"
+              }
+            },
+            "kind" : "textContains",
+            "name" : "Is Gray",
+            "position" : {
+              "x" : 276,
+              "y" : 1104
+            }
+          },
+          {
+            "id" : "606004F5-E340-C615-ED74-4B777D1647DC",
+            "inputs" : {
+              "search" : {
+                "type" : "text",
+                "value" : "Plain"
+              }
+            },
+            "kind" : "textContains",
+            "name" : "Is Plain",
+            "position" : {
+              "x" : 276,
+              "y" : 1248
+            }
+          },
+          {
+            "id" : "136204F5-E341-C615-3A73-4B777D1547DC",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : false
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Dark",
+            "position" : {
+              "x" : 36,
+              "y" : 1404
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "C66304F5-E342-C615-8771-4B777D1447DC",
+            "inputs" : {
+              "progress" : {
+                "type" : "number",
+                "value" : 0.15
+              }
+            },
+            "kind" : "transition",
+            "name" : "Tinted Fill",
+            "position" : {
+              "x" : 504,
+              "y" : 948
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "796504F5-E343-C615-D46F-4B777D1347DC",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11764705882352941,
+                  "green" : 0.10980392156862745,
+                  "red" : 0.10980392156862745
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Surface",
+            "position" : {
+              "x" : 276,
+              "y" : 1548
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "C47404F5-E34C-C615-8960-4B777D0A47DC",
+            "inputs" : {
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Tinted or Filled",
+            "position" : {
+              "x" : 732,
+              "y" : 948
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "777604F5-E34D-C615-D65E-4B777D0947DC",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9098039215686274,
+                  "green" : 0.8901960784313725,
+                  "red" : 0.8901960784313725
+                }
+              },
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.1803921568627451,
+                  "green" : 0.17254901960784313,
+                  "red" : 0.17254901960784313
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Gray Fill",
+            "position" : {
+              "x" : 276,
+              "y" : 1704
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "47DA0CF5-E356-D015-AA87-4E777D984ADC",
+            "inputs" : {
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Gray or That",
+            "position" : {
+              "x" : 960,
+              "y" : 948
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "94D80CF5-E355-D015-5D89-4E777D994ADC",
+            "inputs" : {
+              "then" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Fill",
+            "position" : {
+              "x" : 1188,
+              "y" : 948
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "ADDD0CF5-E358-D015-4484-4E777D964ADC",
+            "inputs" : {
+
+            },
+            "kind" : "or",
+            "name" : "Tinted or Gray",
+            "position" : {
+              "x" : 504,
+              "y" : 1164
+            }
+          },
+          {
+            "id" : "FADB0CF5-E357-D015-F785-4E777D974ADC",
+            "inputs" : {
+
+            },
+            "kind" : "or",
+            "name" : "Not Filled",
+            "position" : {
+              "x" : 732,
+              "y" : 1164
+            }
+          },
+          {
+            "id" : "7BD30CF5-E352-D015-DE80-4E777D944ADC",
+            "inputs" : {
+              "else" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "if",
+            "name" : "Title Color",
+            "position" : {
+              "x" : 960,
+              "y" : 1164
+            },
+            "valueType" : "color"
+          }
+        ]
+      },
+      "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+      "library" : "iOS",
+      "name" : "Button",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "48587B42-D9D9-17A0-F5A7-95C23E258359",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Button"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "kind" : "view",
+            "name" : "Background",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 100
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+        "kind" : "view",
+        "name" : "Button",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 50,
+              "width" : 200
+            }
+          }
+        }
+      },
+      "summary" : "A button that dims while pressed and reports taps: Filled, Tinted, Gray or Plain. A large corner radius makes it a capsule."
+    }
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "BBC83BFA-9E31-4FAA-AF62-0601CB22DACD",
+        "origin" : {
+          "x" : 280,
+          "y" : 0
+        },
+        "size" : {
+          "height" : 390,
+          "width" : 990
+        },
+        "text" : "Data · A request returns JSON; each item of its array becomes a row"
+      },
+      {
+        "id" : "6B2C1DE7-72A5-4D54-8463-F9E5321D7A52",
+        "origin" : {
+          "x" : 1280,
+          "y" : 0
+        },
+        "size" : {
+          "height" : 200,
+          "width" : 720
+        },
+        "text" : "Selection · Which row was tapped"
+      },
+      {
+        "id" : "AEB091D0-EF14-4EAA-9156-3F534F7BC057",
+        "origin" : {
+          "x" : 20,
+          "y" : 410
+        },
+        "size" : {
+          "height" : 440,
+          "width" : 800
+        },
+        "text" : "States · Loading and failure"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+          "port" : "response"
+        },
+        "to" : {
+          "node" : "C1E441B3-BEDB-42B4-9319-48A5E5E40647",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C1E441B3-BEDB-42B4-9319-48A5E5E40647",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "C4A9A9C6-402D-4EDB-BAE9-E0AC7601675C",
+          "port" : "json"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C1E441B3-BEDB-42B4-9319-48A5E5E40647",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "60FD4A6D-9DCE-4DEE-B253-472B545FC0AB",
+          "port" : "json"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C4A9A9C6-402D-4EDB-BAE9-E0AC7601675C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "77E86C4E-0E3E-494E-9473-171293D80B48",
+          "port" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB"
+        }
+      },
+      {
+        "from" : {
+          "node" : "60FD4A6D-9DCE-4DEE-B253-472B545FC0AB",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "77E86C4E-0E3E-494E-9473-171293D80B48",
+          "port" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB"
+        }
+      },
+      {
+        "from" : {
+          "node" : "77E86C4E-0E3E-494E-9473-171293D80B48",
+          "port" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB"
+        },
+        "to" : {
+          "node" : "6786CCCB-5832-42F7-A5CF-BB289EF9E206",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C4A9A9C6-402D-4EDB-BAE9-E0AC7601675C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "049999ED-90DD-4B40-A3F7-0D6F7F4937E1",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6786CCCB-5832-42F7-A5CF-BB289EF9E206",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "049999ED-90DD-4B40-A3F7-0D6F7F4937E1",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "049999ED-90DD-4B40-A3F7-0D6F7F4937E1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "62408CA8-7626-4392-8FE5-AD34DE5E3F35",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "C06D7320-18FA-4A29-8FC5-136B0222EE1E",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+          "port" : "hasError"
+        },
+        "to" : {
+          "node" : "01DE4B15-93F7-4078-BCC5-63C7DCC3909F",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+          "port" : "hasError"
+        },
+        "to" : {
+          "node" : "01DE4B15-93F7-4078-BCC5-63C7DCC3909F",
+          "port" : "enabled"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+          "port" : "error"
+        },
+        "to" : {
+          "node" : "56780C5F-B9DA-49A5-8899-4C309D5F53B6",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "72DE648D-FC8E-49BD-A470-E2E482887149",
+          "port" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF"
+        },
+        "to" : {
+          "node" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+          "port" : "send"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "CD0FFB08-04E0-43E5-A786-356991EE3087",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8D346203-3D3C-4C84-9552-83A97F2F29C3",
+        "position" : {
+          "x" : 2064,
+          "y" : 36
+        }
+      },
+      {
+        "componentID" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+        "id" : "8DF632D2-8141-4CC6-9D43-D11C63117C48",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A108C6D3-2AA8-43C8-98C5-E27B04C65189",
+        "position" : {
+          "x" : 2352,
+          "y" : 36
+        }
+      },
+      {
+        "id" : "389E51EA-C470-4D7B-8499-BA9A785D9D3E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "288BF4EE-F02D-461A-8911-8D8CB703B6D4",
+        "position" : {
+          "x" : 2352,
+          "y" : 348
+        }
+      },
+      {
+        "id" : "62408CA8-7626-4392-8FE5-AD34DE5E3F35",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "23693D2E-3D92-4270-B488-8C51265B89A4",
+        "position" : {
+          "x" : 1776,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "3249A803-3BCB-4278-B710-4EFEBF1A7225",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3A2A6146-A34A-46BD-B8FD-F6B996A3C5F3",
+        "position" : {
+          "x" : 1776,
+          "y" : 204
+        }
+      },
+      {
+        "componentID" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+        "id" : "77E86C4E-0E3E-494E-9473-171293D80B48",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "48AF301B-47B8-4B59-AD07-5C79E67E8571",
+        "position" : {
+          "x" : 1044,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "C06D7320-18FA-4A29-8FC5-136B0222EE1E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D4320357-D789-4695-9CB1-7EA0DB0C1AE6",
+        "position" : {
+          "x" : 600,
+          "y" : 456
+        }
+      },
+      {
+        "id" : "01DE4B15-93F7-4078-BCC5-63C7DCC3909F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4DC71B8B-2763-4DF1-811B-7426195B0A8A",
+        "position" : {
+          "x" : 600,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "56780C5F-B9DA-49A5-8899-4C309D5F53B6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A21AB443-663D-4FCE-B7D6-2A6100A8336E",
+        "position" : {
+          "x" : 600,
+          "y" : 756
+        }
+      },
+      {
+        "componentID" : "73352973-FA64-522D-12FF-D91C3C81517F",
+        "id" : "72DE648D-FC8E-49BD-A470-E2E482887149",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "41B1A035-38B8-4F0B-8C16-AE43A8DA7AAD",
+        "position" : {
+          "x" : 36,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "9BC3447F-D65D-4648-8AB0-B21ADE5F74AB",
+        "inputs" : {
+          "url" : {
+            "type" : "text",
+            "value" : "https:\/\/jsonplaceholder.typicode.com\/users"
+          }
+        },
+        "kind" : "networkRequest",
+        "name" : "People Request",
+        "position" : {
+          "x" : 300,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "C1E441B3-BEDB-42B4-9319-48A5E5E40647",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Person",
+        "position" : {
+          "x" : 564,
+          "y" : 60
+        },
+        "valueType" : "json"
+      },
+      {
+        "id" : "C4A9A9C6-402D-4EDB-BAE9-E0AC7601675C",
+        "inputs" : {
+          "path" : {
+            "type" : "text",
+            "value" : "name"
+          }
+        },
+        "kind" : "jsonValue",
+        "name" : "Name",
+        "position" : {
+          "x" : 804,
+          "y" : 36
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "60FD4A6D-9DCE-4DEE-B253-472B545FC0AB",
+        "inputs" : {
+          "path" : {
+            "type" : "text",
+            "value" : "username"
+          }
+        },
+        "kind" : "jsonValue",
+        "name" : "Username",
+        "position" : {
+          "x" : 804,
+          "y" : 192
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "6786CCCB-5832-42F7-A5CF-BB289EF9E206",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Selected Row",
+        "position" : {
+          "x" : 1296,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "049999ED-90DD-4B40-A3F7-0D6F7F4937E1",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Selected Person",
+        "position" : {
+          "x" : 1536,
+          "y" : 60
+        },
+        "valueType" : "text"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+          "inputs" : {
+            "0AA03A47-46AC-DC46-B5E6-407D66DB1F63" : {
+              "type" : "bool",
+              "value" : false
+            },
+            "40883A47-469E-DC46-1BEA-407D66DD1F63" : {
+              "type" : "text",
+              "value" : "People"
+            }
+          }
+        },
+        "id" : "A108C6D3-2AA8-43C8-98C5-E27B04C65189",
+        "kind" : "component",
+        "name" : "Navigation Bar",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 47
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "288BF4EE-F02D-461A-8911-8D8CB703B6D4",
+        "kind" : "text",
+        "name" : "Selected Caption",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 32,
+              "y" : 108
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "SELECTED"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "23693D2E-3D92-4270-B488-8C51265B89A4",
+        "kind" : "text",
+        "name" : "Selected Name",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 120,
+              "y" : 106
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : ""
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "component" : {
+              "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+              "inputs" : {
+
+              }
+            },
+            "id" : "48AF301B-47B8-4B59-AD07-5C79E67E8571",
+            "kind" : "component",
+            "name" : "Row",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 52,
+                  "width" : 370
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "3A2A6146-A34A-46BD-B8FD-F6B996A3C5F3",
+        "kind" : "view",
+        "name" : "List",
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 12
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 136
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "D4320357-D789-4695-9CB1-7EA0DB0C1AE6",
+        "kind" : "text",
+        "name" : "Loading",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 400
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 24,
+              "width" : 390
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Loading…"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "A21AB443-663D-4FCE-B7D6-2A6100A8336E",
+            "kind" : "text",
+            "name" : "Message",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Something went wrong."
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "component" : {
+              "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+              "inputs" : {
+                "7A317281-D80D-6C64-5122-0D9BB2DA68EF" : {
+                  "type" : "text",
+                  "value" : "Try Again"
+                }
+              }
+            },
+            "id" : "41B1A035-38B8-4F0B-8C16-AE43A8DA7AAD",
+            "kind" : "component",
+            "name" : "Try Again",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 50,
+                  "width" : 200
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "4DC71B8B-2763-4DF1-811B-7426195B0A8A",
+        "kind" : "view",
+        "name" : "Problem",
+        "properties" : {
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 32,
+              "y" : 360
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 120,
+              "width" : 326
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 16
+          }
+        }
+      }
+    ],
+    "id" : "8D346203-3D3C-4C84-9552-83A97F2F29C3",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.9686274509803922,
+          "green" : 0.9490196078431372,
+          "red" : 0.9490196078431372
+        }
+      }
+    }
+  },
+  "version" : 4
+}

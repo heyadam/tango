@@ -1,0 +1,363 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "8429B0CB-5DC7-4DCD-BA5B-FFFB7A33E4FC",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 70
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Contacts"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A67AB5BC-D94B-40A9-B97B-1994EAAB8D23",
+        "kind" : "textField",
+        "name" : "Search",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9098039215686274,
+              "green" : 0.8901960784313725,
+              "red" : 0.8901960784313725
+            }
+          },
+          "placeholder" : {
+            "type" : "text",
+            "value" : "Search"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 124
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 40,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "88ACDE80-8DFF-4804-AD41-828E6A65FCE6",
+                "kind" : "text",
+                "name" : "Name",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "51C7B7F0-AD20-48F3-BCE5-2B416AE615E5",
+            "kind" : "group",
+            "name" : "Row",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 56,
+                  "width" : 358
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "5B712CD0-C785-4B74-A9CC-E1AF48146F72",
+        "kind" : "group",
+        "name" : "List",
+        "properties" : {
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 180
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 358
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      }
+    ],
+    "id" : "F53A3F45-F15C-4486-B814-5FDAD44F6B2E",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.9686274509803922,
+          "green" : 0.9490196078431372,
+          "red" : 0.9490196078431372
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "CB28C344-6E39-4CB9-90AA-19A4A54FEC52",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "C9ACDE52-1CA8-4AE8-A664-E64D382B3BA9",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7463259B-4DD7-4E7C-9A88-6E31C6803008",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "C9ACDE52-1CA8-4AE8-A664-E64D382B3BA9",
+          "port" : "search"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C9ACDE52-1CA8-4AE8-A664-E64D382B3BA9",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "25668F01-4A80-4BBC-A7D4-18FD42E2B496",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "25668F01-4A80-4BBC-A7D4-18FD42E2B496",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8E6541AC-B115-4143-BDE1-6D98429C21BD",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "25668F01-4A80-4BBC-A7D4-18FD42E2B496",
+          "port" : "index"
+        },
+        "to" : {
+          "node" : "64E118DE-B16F-4AA2-8D8A-55B76B249B29",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "64E118DE-B16F-4AA2-8D8A-55B76B249B29",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "A5E067AE-58EE-4B16-BE90-414BE39340B3",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "CB28C344-6E39-4CB9-90AA-19A4A54FEC52",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Ada Lovelace, Grace Hopper, Alan Turing, Linus Torvalds, Margaret Hamilton, Barbara Liskov"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Names",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "7463259B-4DD7-4E7C-9A88-6E31C6803008",
+        "inputs" : {
+
+        },
+        "kind" : "textInput",
+        "layerID" : "A67AB5BC-D94B-40A9-B97B-1994EAAB8D23",
+        "position" : {
+          "x" : 36,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "C9ACDE52-1CA8-4AE8-A664-E64D382B3BA9",
+        "inputs" : {
+
+        },
+        "kind" : "filterArray",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "25668F01-4A80-4BBC-A7D4-18FD42E2B496",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "8E6541AC-B115-4143-BDE1-6D98429C21BD",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "88ACDE80-8DFF-4804-AD41-828E6A65FCE6",
+        "position" : {
+          "x" : 816,
+          "y" : 84
+        },
+        "property" : "text"
+      },
+      {
+        "id" : "64E118DE-B16F-4AA2-8D8A-55B76B249B29",
+        "inputs" : {
+
+        },
+        "kind" : "greaterEqual",
+        "name" : "Every Row",
+        "position" : {
+          "x" : 816,
+          "y" : 216
+        }
+      },
+      {
+        "id" : "A5E067AE-58EE-4B16-BE90-414BE39340B3",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "51C7B7F0-AD20-48F3-BCE5-2B416AE615E5",
+        "position" : {
+          "x" : 1080,
+          "y" : 216
+        },
+        "property" : "opacity"
+      }
+    ]
+  },
+  "version" : 2
+}

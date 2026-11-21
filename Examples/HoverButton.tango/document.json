@@ -1,0 +1,283 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "E5FA4C3F-2ECF-4F88-9AC4-D7BD9FAEEB26",
+          "port" : "hovering"
+        },
+        "to" : {
+          "node" : "3D1B19F7-F754-4B36-ACA1-CBD01B9559A0",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D1B19F7-F754-4B36-ACA1-CBD01B9559A0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D09B028F-7ADE-4E62-A55D-C2E0AAECBA4C",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D1B19F7-F754-4B36-ACA1-CBD01B9559A0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8E265699-EDD2-4B5C-A568-840FEE6E6614",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D09B028F-7ADE-4E62-A55D-C2E0AAECBA4C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8F2190CB-9FE2-443E-97D6-2A6ADD0BB563",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8E265699-EDD2-4B5C-A568-840FEE6E6614",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8F2190CB-9FE2-443E-97D6-2A6ADD0BB563",
+          "port" : "shadowRadius"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "96B70E37-1966-455F-AC9D-08C39536F96A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6F44B554-A8E1-446A-B608-B7B88727BCC6",
+        "position" : {
+          "x" : 1104,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "8F2190CB-9FE2-443E-97D6-2A6ADD0BB563",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "27F6BBA8-AA38-452B-AF70-860166847591",
+        "position" : {
+          "x" : 816,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "F29EE63E-CAB5-4BB3-92B6-02B89388D161",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C0078AFB-F992-4815-9CA8-EF9A4EEB8544",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E5FA4C3F-2ECF-4F88-9AC4-D7BD9FAEEB26",
+        "inputs" : {
+
+        },
+        "kind" : "hover",
+        "layerID" : "27F6BBA8-AA38-452B-AF70-860166847591",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "3D1B19F7-F754-4B36-ACA1-CBD01B9559A0",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.65
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "D09B028F-7ADE-4E62-A55D-C2E0AAECBA4C",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 1.08
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Lift",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "8E265699-EDD2-4B5C-A568-840FEE6E6614",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 18
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Glow",
+        "position" : {
+          "x" : 564,
+          "y" : 240
+        },
+        "valueType" : "number"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "C0078AFB-F992-4815-9CA8-EF9A4EEB8544",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 19
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 230
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Point at me"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            }
+          }
+        ],
+        "id" : "27F6BBA8-AA38-452B-AF70-860166847591",
+        "kind" : "view",
+        "name" : "Button",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 30
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.8392156862745098,
+              "green" : 0.3568627450980392,
+              "red" : 0.3568627450980392
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 80,
+              "y" : 380
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.45,
+              "blue" : 0.839,
+              "green" : 0.357,
+              "red" : 0.357
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 8
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 60,
+              "width" : 230
+            }
+          }
+        }
+      }
+    ],
+    "id" : "6F44B554-A8E1-446A-B608-B7B88727BCC6",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.96,
+          "green" : 0.96,
+          "red" : 0.96
+        }
+      }
+    }
+  },
+  "version" : 4
+}

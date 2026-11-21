@@ -1,0 +1,537 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "8CFA0DAE-D652-4AED-9FDC-66B604EDD5B6",
+        "kind" : "camera",
+        "name" : "Viewfinder",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 110
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 520,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "1CCA738F-7294-43E2-BB3B-337C67F5F594",
+        "kind" : "text",
+        "name" : "Notice",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 420
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 22,
+              "width" : 390
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Camera not available"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.6,
+              "green" : 0.6,
+              "red" : 0.6
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "6BBE35D6-9667-45A8-8EE1-6FEDA37B071F",
+        "kind" : "oval",
+        "name" : "Ring",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 155,
+              "y" : 692
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 80,
+              "width" : 80
+            }
+          },
+          "strokeColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "strokeWidth" : {
+            "type" : "number",
+            "value" : 4
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "DF8051FA-7BE6-4A8B-90AD-3300BCD84627",
+        "kind" : "oval",
+        "name" : "Shutter",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 163,
+              "y" : 700
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 64,
+              "width" : 64
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "15A94B9E-2DD4-4410-B9D7-70A7CD7FF80B",
+        "kind" : "image",
+        "name" : "Last Photo",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 28,
+              "y" : 704
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 56
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "46C8145B-B456-4BFC-8B7D-37D74F7FB499",
+        "kind" : "rectangle",
+        "name" : "Flash",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          }
+        }
+      }
+    ],
+    "id" : "F7218902-5787-472E-8B3B-4722E8ACA45E",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "7E0DD7A3-AAB6-45AB-BFB0-79742E707D2D",
+        "origin" : {
+          "x" : 20,
+          "y" : 0
+        },
+        "size" : {
+          "height" : 250,
+          "width" : 1020
+        },
+        "text" : "Capture · The shutter takes a photo; the photo becomes the thumbnail"
+      },
+      {
+        "id" : "43FDCF7F-1F78-45A1-B66A-9227EAF8152A",
+        "origin" : {
+          "x" : 300,
+          "y" : 280
+        },
+        "size" : {
+          "height" : 560,
+          "width" : 740
+        },
+        "text" : "Feedback · What the person feels, sees and hears"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "B2E5601A-E034-4160-93B3-B8D3EDF8E444",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "954C4FD1-7A9E-4733-8B48-F1C11F4E2121",
+          "port" : "capture"
+        }
+      },
+      {
+        "from" : {
+          "node" : "954C4FD1-7A9E-4733-8B48-F1C11F4E2121",
+          "port" : "photo"
+        },
+        "to" : {
+          "node" : "C597AA59-ACF9-4BE9-9885-9CAC2B5BB9B5",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "954C4FD1-7A9E-4733-8B48-F1C11F4E2121",
+          "port" : "available"
+        },
+        "to" : {
+          "node" : "088C630E-BCB7-46ED-8BDE-A2BFB5CF4ED3",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "088C630E-BCB7-46ED-8BDE-A2BFB5CF4ED3",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "CDA80ABE-230A-4142-B59B-C81F3816B120",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B2E5601A-E034-4160-93B3-B8D3EDF8E444",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "DDBD819B-F5FB-49B6-835C-57CC29960AA7",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "DDBD819B-F5FB-49B6-835C-57CC29960AA7",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "28927C1C-72E8-429E-BBDD-A611B8F9565B",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "28927C1C-72E8-429E-BBDD-A611B8F9565B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "7BACE9B3-8693-4443-981A-F14363A27A77",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B2E5601A-E034-4160-93B3-B8D3EDF8E444",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "E315B51B-3B50-4F46-8B36-5AE9EB231146",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E315B51B-3B50-4F46-8B36-5AE9EB231146",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "2C1DE83C-1285-4B3F-BF74-15CE2EB6263B",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B2E5601A-E034-4160-93B3-B8D3EDF8E444",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "40E91023-D1DA-4354-ABE8-8767C41EFEFA",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B2E5601A-E034-4160-93B3-B8D3EDF8E444",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "4692375A-D4A2-4365-8890-3DA63D778898",
+          "port" : "trigger"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "B2E5601A-E034-4160-93B3-B8D3EDF8E444",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "DF8051FA-7BE6-4A8B-90AD-3300BCD84627",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "954C4FD1-7A9E-4733-8B48-F1C11F4E2121",
+        "inputs" : {
+
+        },
+        "kind" : "camera",
+        "position" : {
+          "x" : 324,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "C597AA59-ACF9-4BE9-9885-9CAC2B5BB9B5",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "15A94B9E-2DD4-4410-B9D7-70A7CD7FF80B",
+        "position" : {
+          "x" : 600,
+          "y" : 36
+        },
+        "property" : "image"
+      },
+      {
+        "id" : "088C630E-BCB7-46ED-8BDE-A2BFB5CF4ED3",
+        "inputs" : {
+
+        },
+        "kind" : "not",
+        "name" : "No Camera",
+        "position" : {
+          "x" : 600,
+          "y" : 156
+        }
+      },
+      {
+        "id" : "CDA80ABE-230A-4142-B59B-C81F3816B120",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "1CCA738F-7294-43E2-BB3B-337C67F5F594",
+        "position" : {
+          "x" : 816,
+          "y" : 156
+        },
+        "property" : "opacity"
+      },
+      {
+        "id" : "DDBD819B-F5FB-49B6-835C-57CC29960AA7",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.8
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.2
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 324,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "28927C1C-72E8-429E-BBDD-A611B8F9565B",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.86
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Squeeze",
+        "position" : {
+          "x" : 564,
+          "y" : 336
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "7BACE9B3-8693-4443-981A-F14363A27A77",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "DF8051FA-7BE6-4A8B-90AD-3300BCD84627",
+        "position" : {
+          "x" : 804,
+          "y" : 336
+        },
+        "property" : "scale"
+      },
+      {
+        "id" : "E315B51B-3B50-4F46-8B36-5AE9EB231146",
+        "inputs" : {
+          "duration" : {
+            "type" : "number",
+            "value" : 0.4
+          }
+        },
+        "kind" : "impulse",
+        "name" : "Flash",
+        "position" : {
+          "x" : 324,
+          "y" : 564
+        }
+      },
+      {
+        "id" : "2C1DE83C-1285-4B3F-BF74-15CE2EB6263B",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "46C8145B-B456-4BFC-8B7D-37D74F7FB499",
+        "position" : {
+          "x" : 564,
+          "y" : 564
+        },
+        "property" : "opacity"
+      },
+      {
+        "id" : "40E91023-D1DA-4354-ABE8-8767C41EFEFA",
+        "inputs" : {
+          "sound" : {
+            "type" : "text",
+            "value" : "Shutter"
+          }
+        },
+        "kind" : "playSound",
+        "position" : {
+          "x" : 324,
+          "y" : 696
+        }
+      },
+      {
+        "id" : "4692375A-D4A2-4365-8890-3DA63D778898",
+        "inputs" : {
+
+        },
+        "kind" : "hapticFeedback",
+        "position" : {
+          "x" : 564,
+          "y" : 696
+        }
+      }
+    ]
+  },
+  "version" : 2
+}

@@ -1,0 +1,401 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "4E744A15-E933-4301-80B9-1F7EEC0774BD",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 120
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "What should we call you?"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "48DE03D8-0199-47A2-B1C6-F54B8A476DC5",
+        "kind" : "textField",
+        "name" : "Name",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 14
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "placeholder" : {
+            "type" : "text",
+            "value" : "Your name"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 184
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 52,
+              "width" : 342
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "62578E38-0743-4CCC-9B46-C12070F6F4E0",
+        "kind" : "text",
+        "name" : "Greeting",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 264
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Hello"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.4,
+              "green" : 0.4,
+              "red" : 0.4
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "227DDBD6-EA61-4850-8CBD-B5DD0EB20BC7",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 16
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 342
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Continue"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            }
+          }
+        ],
+        "id" : "73D1BDB7-372A-4296-BD33-3C3393EEA8D1",
+        "kind" : "group",
+        "name" : "Continue",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9686274509803922,
+              "green" : 0.4823529411764706,
+              "red" : 0.23921568627450981
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0.35
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 330
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 54,
+              "width" : 342
+            }
+          }
+        }
+      }
+    ],
+    "id" : "F1979516-9BA5-4F69-A65A-BDA8F07FF0C4",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 1,
+          "green" : 1,
+          "red" : 1
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "D34ADAFA-090C-4398-9CC3-1A18EBC88CA1",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "0178726A-65D9-4289-A8D5-7FAB588435E1",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0178726A-65D9-4289-A8D5-7FAB588435E1",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "F40D9898-8D77-4B1F-AFED-7BF750C5B6DA",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D34ADAFA-090C-4398-9CC3-1A18EBC88CA1",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "817D41FD-51FA-406F-8C6F-DDCB535B379A",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "817D41FD-51FA-406F-8C6F-DDCB535B379A",
+          "port" : "empty"
+        },
+        "to" : {
+          "node" : "3BD1DBC6-AA07-40C0-AFA5-33B55576B707",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3BD1DBC6-AA07-40C0-AFA5-33B55576B707",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "EAFF42C2-5C6C-4297-92AE-CE7947B2432D",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "EAFF42C2-5C6C-4297-92AE-CE7947B2432D",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "331091D4-C34D-407A-9413-EE4B1CC74EA7",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "D34ADAFA-090C-4398-9CC3-1A18EBC88CA1",
+        "inputs" : {
+
+        },
+        "kind" : "textInput",
+        "layerID" : "48DE03D8-0199-47A2-B1C6-F54B8A476DC5",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "0178726A-65D9-4289-A8D5-7FAB588435E1",
+        "inputs" : {
+          "a" : {
+            "type" : "text",
+            "value" : "Hello, "
+          }
+        },
+        "kind" : "joinText",
+        "name" : "Greeting",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "F40D9898-8D77-4B1F-AFED-7BF750C5B6DA",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "62578E38-0743-4CCC-9B46-C12070F6F4E0",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        },
+        "property" : "text"
+      },
+      {
+        "id" : "817D41FD-51FA-406F-8C6F-DDCB535B379A",
+        "inputs" : {
+
+        },
+        "kind" : "textLength",
+        "position" : {
+          "x" : 300,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "3BD1DBC6-AA07-40C0-AFA5-33B55576B707",
+        "inputs" : {
+          "else" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "then" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "if",
+        "name" : "Ready",
+        "position" : {
+          "x" : 564,
+          "y" : 240
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "EAFF42C2-5C6C-4297-92AE-CE7947B2432D",
+        "inputs" : {
+          "target" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 804,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "331091D4-C34D-407A-9413-EE4B1CC74EA7",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "73D1BDB7-372A-4296-BD33-3C3393EEA8D1",
+        "position" : {
+          "x" : 1056,
+          "y" : 240
+        },
+        "property" : "opacity"
+      }
+    ]
+  },
+  "version" : 2
+}

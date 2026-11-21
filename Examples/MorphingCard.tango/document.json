@@ -1,0 +1,695 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "E7F701FD-F3D9-4F8C-8C3A-E5CE1669C66D",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "C42BA5BC-A0F9-4554-869E-F52CB9889FCF",
+          "port" : "go"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3989D940-40E7-417A-8307-6550452349D2",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "4ABC608A-3395-4ED5-B6C6-4945A49F4A26",
+          "port" : "go"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "534A0F02-2378-49FA-B95F-ED3AC2C88895",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AE5F1E95-9056-4333-9276-AFE21EB78D96",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "E481B24D-8985-467E-899F-5A442B11F97A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A7D93C15-8F20-449A-98BA-A89D4BCAA549",
+        "position" : {
+          "x" : 336,
+          "y" : 252
+        }
+      },
+      {
+        "id" : "2AB866B2-AD69-4B4E-B21C-993B2C59C8CC",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "43BB6B0D-F257-4077-8931-75525D73D596",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "8C8C9721-C1EE-4917-809B-047258EED40E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9515FE8C-954F-447B-B447-4635E0E1F609",
+        "position" : {
+          "x" : 624,
+          "y" : 324
+        }
+      },
+      {
+        "id" : "591418B0-E707-46AD-9645-CC3C70D8006A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C9D46509-649F-4EBF-AA2B-E9ADE9F19AAC",
+        "position" : {
+          "x" : 624,
+          "y" : 552
+        }
+      },
+      {
+        "id" : "9F1AF5C3-A7C2-4DFF-B03A-2F469CFCED43",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "65EA15E8-2473-4E9C-B4F5-AB3D0F88A590",
+        "position" : {
+          "x" : 624,
+          "y" : 780
+        }
+      },
+      {
+        "id" : "8DDA16FE-961F-438D-ABDE-B0169452E467",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "68C94D9C-0992-4E15-8241-8F719B09EBC1",
+        "position" : {
+          "x" : 336,
+          "y" : 348
+        }
+      },
+      {
+        "id" : "48D911CE-853B-4767-A68E-83A7E590E673",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B4758AF6-D89B-49B9-8736-1900437C9ED9",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "6533798B-0569-4C2E-A5CC-34DB48144541",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E2ADA5F1-2834-482D-BC7A-AB317A78A88B",
+        "position" : {
+          "x" : 624,
+          "y" : 324
+        }
+      },
+      {
+        "id" : "E46746CA-7B2F-4DC8-B439-A1DD4C87C019",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FF901E8A-7F88-4E8C-AF5A-77FCDCC6DE4E",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B03E4938-7B38-4086-8975-743A8A94EB24",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "868BDB6C-DD52-4040-BCD4-2AA3F0B679D7",
+        "position" : {
+          "x" : 624,
+          "y" : 552
+        }
+      },
+      {
+        "id" : "CE4207F1-7C31-4F1A-81AC-35760952B8AA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "81779327-9C8D-457C-A629-EBFA69959708",
+        "position" : {
+          "x" : 624,
+          "y" : 780
+        }
+      },
+      {
+        "id" : "E7F701FD-F3D9-4F8C-8C3A-E5CE1669C66D",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "9515FE8C-954F-447B-B447-4635E0E1F609",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "3989D940-40E7-417A-8307-6550452349D2",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "E2ADA5F1-2834-482D-BC7A-AB317A78A88B",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "home" : "68C94D9C-0992-4E15-8241-8F719B09EBC1",
+        "id" : "4ABC608A-3395-4ED5-B6C6-4945A49F4A26",
+        "inputs" : {
+
+        },
+        "kind" : "navigateBack",
+        "name" : "Close",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "C42BA5BC-A0F9-4554-869E-F52CB9889FCF",
+        "inputs" : {
+          "response" : {
+            "type" : "number",
+            "value" : 0.5
+          },
+          "style" : {
+            "type" : "text",
+            "value" : "Morph"
+          }
+        },
+        "kind" : "navigate",
+        "layerID" : "68C94D9C-0992-4E15-8241-8F719B09EBC1",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "43BB6B0D-F257-4077-8931-75525D73D596",
+            "kind" : "text",
+            "name" : "Header",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 34
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 72
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Discover"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "9515FE8C-954F-447B-B447-4635E0E1F609",
+            "kind" : "view",
+            "name" : "Card",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9019607843137255,
+                  "green" : 0.3607843137254902,
+                  "red" : 0.3686274509803922
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 136
+                }
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.15,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 220,
+                  "width" : 358
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "C9D46509-649F-4EBF-AA2B-E9ADE9F19AAC",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 372
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Northern Lights"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "65EA15E8-2473-4E9C-B4F5-AB3D0F88A590",
+            "kind" : "text",
+            "name" : "Hint",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 404
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Tap the card"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.45,
+                  "green" : 0.45,
+                  "red" : 0.45
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "A7D93C15-8F20-449A-98BA-A89D4BCAA549",
+        "kind" : "view",
+        "name" : "Feed",
+        "page" : true,
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.96,
+              "green" : 0.96,
+              "red" : 0.96
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "B4758AF6-D89B-49B9-8736-1900437C9ED9",
+            "kind" : "view",
+            "name" : "Card",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9019607843137255,
+                  "green" : 0.3607843137254902,
+                  "red" : 0.3686274509803922
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 420,
+                  "width" : 390
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "FF901E8A-7F88-4E8C-AF5A-77FCDCC6DE4E",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 20,
+                      "y" : 10
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Close"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "E2ADA5F1-2834-482D-BC7A-AB317A78A88B",
+            "kind" : "view",
+            "name" : "Close",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 20
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.9,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 56
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 84
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "868BDB6C-DD52-4040-BCD4-2AA3F0B679D7",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 34
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 444
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Northern Lights"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "81779327-9C8D-457C-A629-EBFA69959708",
+            "kind" : "text",
+            "name" : "Body",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 500
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "The card grew into this screen. It has the\nsame name on both, and the flow's style\nis Morph."
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.35,
+                  "green" : 0.35,
+                  "red" : 0.35
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "68C94D9C-0992-4E15-8241-8F719B09EBC1",
+        "kind" : "view",
+        "name" : "Detail",
+        "page" : true,
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.96,
+              "green" : 0.96,
+              "red" : 0.96
+            }
+          }
+        }
+      }
+    ],
+    "id" : "AE5F1E95-9056-4333-9276-AFE21EB78D96",
+    "kind" : "screen",
+    "name" : "Device",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      }
+    }
+  },
+  "version" : 4
+}

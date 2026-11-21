@@ -1,0 +1,523 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "331C6D23-E7B5-41A2-AF23-4FDDF81C378F",
+        "kind" : "rectangle",
+        "name" : "Content",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.29411764705882354,
+              "green" : 0.7215686274509804,
+              "red" : 0.9490196078431372
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 96
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 220,
+              "width" : 342
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "EFAB01D1-AC0A-4040-B5A0-53932C56E4B1",
+        "kind" : "rectangle",
+        "name" : "Dim",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "927B168C-E31E-42BE-B9AD-07EE0C72F4A7",
+            "kind" : "rectangle",
+            "name" : "Handle",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 2.5
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.75,
+                  "green" : 0.75,
+                  "red" : 0.75
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 175,
+                  "y" : 10
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 5,
+                  "width" : 40
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "4558E5E6-2081-4B00-9FFF-2A83EC6F58CF",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 36
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 30,
+                  "width" : 342
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Drag me"
+              }
+            }
+          }
+        ],
+        "id" : "037DB330-4BAD-4623-AB73-7190280B5FE8",
+        "kind" : "group",
+        "name" : "Sheet",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 644
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 760,
+              "width" : 390
+            }
+          }
+        }
+      }
+    ],
+    "id" : "6A162B27-9B4D-4584-AA02-4F2FA4BC490F",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.96,
+          "green" : 0.96,
+          "red" : 0.96
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "53BBC615-8B64-401C-A26B-E6ED82CB2ED9",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "F82B6830-85DA-45DE-8072-69CACE34216D",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "53BBC615-8B64-401C-A26B-E6ED82CB2ED9",
+          "port" : "drag"
+        },
+        "to" : {
+          "node" : "3076ED42-7E90-4800-9958-67CEC2F5FDF5",
+          "port" : "point"
+        }
+      },
+      {
+        "from" : {
+          "node" : "53BBC615-8B64-401C-A26B-E6ED82CB2ED9",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3076ED42-7E90-4800-9958-67CEC2F5FDF5",
+          "port" : "y"
+        },
+        "to" : {
+          "node" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "F3FE2EA5-AE77-4430-88F1-FCFCC02D00A7",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F3FE2EA5-AE77-4430-88F1-FCFCC02D00A7",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "F5E41AA3-E0C4-4F69-B94C-00B996B4EB37",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F82B6830-85DA-45DE-8072-69CACE34216D",
+          "port" : "turnedOff"
+        },
+        "to" : {
+          "node" : "F5E41AA3-E0C4-4F69-B94C-00B996B4EB37",
+          "port" : "sample"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F5E41AA3-E0C4-4F69-B94C-00B996B4EB37",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "4FBA12D2-B784-4640-A066-446CC95E0A43",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4FBA12D2-B784-4640-A066-446CC95E0A43",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "C8F2FDBA-EB14-4E06-9335-89168EA9CDF0",
+          "port" : "y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C8F2FDBA-EB14-4E06-9335-89168EA9CDF0",
+          "port" : "point"
+        },
+        "to" : {
+          "node" : "A29F8658-B409-4C10-8FFE-94199468AE53",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "6D6FF153-8790-4DBB-BF27-120160202873",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6D6FF153-8790-4DBB-BF27-120160202873",
+          "port" : "progress"
+        },
+        "to" : {
+          "node" : "2A89B7C3-9437-4F6B-9951-45733C56847A",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2A89B7C3-9437-4F6B-9951-45733C56847A",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "82427C69-7D0D-454C-9BBB-2AED553041B0",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "53BBC615-8B64-401C-A26B-E6ED82CB2ED9",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "037DB330-4BAD-4623-AB73-7190280B5FE8",
+        "position" : {
+          "x" : 36,
+          "y" : 120
+        }
+      },
+      {
+        "id" : "3076ED42-7E90-4800-9958-67CEC2F5FDF5",
+        "inputs" : {
+
+        },
+        "kind" : "splitPoint",
+        "name" : "Drag Y",
+        "position" : {
+          "x" : 264,
+          "y" : 204
+        }
+      },
+      {
+        "id" : "F82B6830-85DA-45DE-8072-69CACE34216D",
+        "inputs" : {
+
+        },
+        "kind" : "pulse",
+        "name" : "Touch Began \/ Ended",
+        "position" : {
+          "x" : 264,
+          "y" : 36
+        }
+      },
+      {
+        "id" : "4BBB1A8B-19C4-43BE-90B2-3721EDF386D0",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.85
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.4
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 936,
+          "y" : 120
+        }
+      },
+      {
+        "id" : "F3FE2EA5-AE77-4430-88F1-FCFCC02D00A7",
+        "inputs" : {
+          "b" : {
+            "type" : "number",
+            "value" : 394
+          }
+        },
+        "kind" : "less",
+        "name" : "Above Threshold",
+        "position" : {
+          "x" : 264,
+          "y" : 396
+        }
+      },
+      {
+        "id" : "F5E41AA3-E0C4-4F69-B94C-00B996B4EB37",
+        "inputs" : {
+
+        },
+        "kind" : "sampleHold",
+        "name" : "Open",
+        "position" : {
+          "x" : 480,
+          "y" : 444
+        },
+        "valueType" : "bool"
+      },
+      {
+        "id" : "4FBA12D2-B784-4640-A066-446CC95E0A43",
+        "inputs" : {
+          "else" : {
+            "type" : "number",
+            "value" : 644
+          },
+          "then" : {
+            "type" : "number",
+            "value" : 144
+          }
+        },
+        "kind" : "if",
+        "name" : "Destination",
+        "position" : {
+          "x" : 696,
+          "y" : 444
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "C8F2FDBA-EB14-4E06-9335-89168EA9CDF0",
+        "inputs" : {
+
+        },
+        "kind" : "makePoint",
+        "position" : {
+          "x" : 1176,
+          "y" : 120
+        }
+      },
+      {
+        "id" : "A29F8658-B409-4C10-8FFE-94199468AE53",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "037DB330-4BAD-4623-AB73-7190280B5FE8",
+        "position" : {
+          "x" : 1404,
+          "y" : 120
+        },
+        "property" : "position"
+      },
+      {
+        "id" : "6D6FF153-8790-4DBB-BF27-120160202873",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 144
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 644
+          }
+        },
+        "kind" : "progress",
+        "position" : {
+          "x" : 1176,
+          "y" : 276
+        }
+      },
+      {
+        "id" : "2A89B7C3-9437-4F6B-9951-45733C56847A",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.4
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Dimming",
+        "position" : {
+          "x" : 1404,
+          "y" : 276
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "82427C69-7D0D-454C-9BBB-2AED553041B0",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "EFAB01D1-AC0A-4040-B5A0-53932C56E4B1",
+        "position" : {
+          "x" : 1644,
+          "y" : 276
+        },
+        "property" : "opacity"
+      }
+    ]
+  },
+  "version" : 2
+}

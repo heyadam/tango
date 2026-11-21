@@ -1,0 +1,61 @@
+name: Tango
+options:
+  bundleIdPrefix: com.tango
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+packages:
+  TangoKit:
+    path: .
+targets:
+  Tango:
+    type: application
+    platform: macOS
+    sources:
+      - App
+    dependencies:
+      - package: TangoKit
+        product: PaperEditor
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleName: tango
+        CFBundleDisplayName: tango
+        CFBundleShortVersionString: "0.1"
+        CFBundleVersion: "1"
+        LSApplicationCategoryType: public.app-category.graphics-design
+        NSHighResolutionCapable: true
+        NSCameraUsageDescription: A prototype you are running shows the camera or takes a photo.
+        NSMicrophoneUsageDescription: A prototype you are running reacts to how loud it is, or listens to what you say.
+        NSLocationWhenInUseUsageDescription: A prototype you are running uses your location.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: tango Prototype
+            CFBundleTypeRole: Editor
+            LSHandlerRank: Owner
+            LSTypeIsPackage: true
+            LSItemContentTypes:
+              - com.tango.document
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: com.tango.extension
+            UTTypeDescription: tango Extension
+            UTTypeConformsTo:
+              - com.apple.package
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - paperextension
+          - UTTypeIdentifier: com.tango.document
+            UTTypeDescription: tango Prototype
+            UTTypeConformsTo:
+              - com.apple.package
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - tango
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tango.app
+        PRODUCT_NAME: Tango
+        SWIFT_VERSION: "6.0"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        ENABLE_HARDENED_RUNTIME: NO
+        ENABLE_APP_SANDBOX: NO

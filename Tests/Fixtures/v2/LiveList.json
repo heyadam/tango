@@ -1,0 +1,1936 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+          "inputs" : {
+            "0C8F3A47-46A2-DC46-E7F0-407D66E11F63" : {
+              "type" : "bool",
+              "value" : false
+            },
+            "72923A47-46A4-DC46-4DF4-407D66E31F63" : {
+              "type" : "text",
+              "value" : "People"
+            }
+          }
+        },
+        "id" : "3B2B7E76-E8BC-4510-8DFE-D6274C4206DC",
+        "kind" : "component",
+        "name" : "Navigation Bar",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 47
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "0D88FEC9-0654-448C-8D1E-889ED5D29DD1",
+        "kind" : "text",
+        "name" : "Selected Caption",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 32,
+              "y" : 108
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "SELECTED"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "F5B93CA4-9551-4CB4-91E7-A32A67BC74B7",
+        "kind" : "text",
+        "name" : "Selected Name",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 120,
+              "y" : 106
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : ""
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "component" : {
+              "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+              "inputs" : {
+
+              }
+            },
+            "id" : "6BBE8311-8C53-452B-81D5-FD554E1404B2",
+            "kind" : "component",
+            "name" : "Row",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 358
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "ABE20AB7-92C9-41C7-A90D-72624F1CDEF9",
+        "kind" : "group",
+        "name" : "List",
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 12
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 136
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A3728776-9FB8-4042-A6AD-9B8993094EBD",
+        "kind" : "text",
+        "name" : "Loading",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 400
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 24,
+              "width" : 390
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Loading…"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "54935FC9-46D1-4C93-8B1E-E8D4750C9C20",
+            "kind" : "text",
+            "name" : "Message",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Something went wrong."
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "component" : {
+              "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+              "inputs" : {
+                "C72F7281-D80C-6C64-381D-0D9BB2D768EF" : {
+                  "type" : "text",
+                  "value" : "Try Again"
+                }
+              }
+            },
+            "id" : "DD6C0940-B221-49D0-ABBA-CAF4D15D1817",
+            "kind" : "component",
+            "name" : "Try Again",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 50,
+                  "width" : 200
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "BE91CEC9-B575-4D37-B737-3F5385C3570E",
+        "kind" : "group",
+        "name" : "Problem",
+        "properties" : {
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 32,
+              "y" : 360
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 120,
+              "width" : 326
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 16
+          }
+        }
+      }
+    ],
+    "id" : "BEDC4C22-A2DB-4D93-B034-21E82A02CB1E",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.9686274509803922,
+          "green" : 0.9490196078431372,
+          "red" : 0.9490196078431372
+        }
+      }
+    }
+  },
+  "components" : [
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "72923A47-46A4-DC46-4DF4-407D66E31F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "598D3A47-46A1-DC46-CEEB-407D66DE1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "25943A47-46A5-DC46-9AF2-407D66E21F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "40883A47-469E-DC46-1BEA-407D66DD1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0C8F3A47-46A2-DC46-E7F0-407D66E11F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0C8F3A47-46A2-DC46-E7F0-407D66E11F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BF903A47-46A3-DC46-34EF-407D66E01F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "BDA13A47-46AD-DC46-02E5-407D66DA1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BF903A47-46A3-DC46-34EF-407D66E01F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "AF9F8908-6BEB-80A3-DE56-5CD5265E20B0",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A68B3A47-46A0-DC46-81ED-407D66DF1F63",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "72923A47-46A4-DC46-4DF4-407D66E31F63",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Title"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "25943A47-46A5-DC46-9AF2-407D66E21F63",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Back"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Back Title",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "0C8F3A47-46A2-DC46-E7F0-407D66E11F63",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : true
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Shows Back",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "BF903A47-46A3-DC46-34EF-407D66E01F63",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 528
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "A68B3A47-46A0-DC46-81ED-407D66DF1F63",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 36,
+              "y" : 708
+            }
+          },
+          {
+            "id" : "598D3A47-46A1-DC46-CEEB-407D66DE1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "8D6805BA-9578-D3C6-1032-5C9B15B8908C",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "40883A47-469E-DC46-1BEA-407D66DD1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 504,
+              "y" : 288
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 504,
+              "y" : 408
+            },
+            "property" : "enabled"
+          },
+          {
+            "id" : "BDA13A47-46AD-DC46-02E5-407D66DA1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "5B5E05BA-9572-D3C6-423C-5C9B15BE908C",
+            "position" : {
+              "x" : 504,
+              "y" : 528
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "AF9F8908-6BEB-80A3-DE56-5CD5265E20B0",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "position" : {
+              "x" : 504,
+              "y" : 648
+            },
+            "property" : "textColor"
+          },
+          {
+            "id" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Back",
+            "position" : {
+              "x" : 504,
+              "y" : 768
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+      "library" : "iOS",
+      "name" : "Navigation Bar",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5B5E05BA-9572-D3C6-423C-5C9B15BE908C",
+                "kind" : "symbol",
+                "name" : "Chevron",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.47843137254901963,
+                      "red" : 0
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 20,
+                      "width" : 12
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "chevron.left"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+                "kind" : "text",
+                "name" : "Back Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Back"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.47843137254901963,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "kind" : "group",
+            "name" : "Back",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 84
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "8D6805BA-9578-D3C6-1032-5C9B15B8908C",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Title"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "DA6605BA-9577-D3C6-C333-5C9B15B9908C",
+            "kind" : "group",
+            "name" : "Balance",
+            "properties" : {
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 84
+                }
+              }
+            }
+          }
+        ],
+        "id" : "C16105BA-9574-D3C6-DC38-5C9B15BC908C",
+        "kind" : "group",
+        "name" : "Navigation Bar",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9764705882352941,
+              "green" : 0.9764705882352941,
+              "red" : 0.9764705882352941
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 8
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 390
+            }
+          }
+        }
+      },
+      "summary" : "A title with a Back button that reports taps."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "8024FCD0-9BC5-1C88-3F90-24A4DAD1AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "9929FCD0-9BC8-1C88-F291-24A4DAD2AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E627FCD0-9BC7-1C88-A593-24A4DAD3AECB",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E627FCD0-9BC7-1C88-A593-24A4DAD3AECB",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Title"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "8024FCD0-9BC5-1C88-3F90-24A4DAD1AECB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : ""
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Detail",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "9929FCD0-9BC8-1C88-F291-24A4DAD2AECB",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : true
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Shows Chevron",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "E627FCD0-9BC7-1C88-A593-24A4DAD3AECB",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 36,
+              "y" : 528
+            }
+          },
+          {
+            "id" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+            "inputs" : {
+              "end" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8392156862745098,
+                  "green" : 0.8196078431372549,
+                  "red" : 0.8196078431372549
+                }
+              },
+              "start" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Highlight",
+            "position" : {
+              "x" : 276,
+              "y" : 528
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "9C050B7D-92A6-3D69-F159-D76296ECE152",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "4F070B7D-92A7-3D69-3E58-D76296EBE152",
+            "position" : {
+              "x" : 504,
+              "y" : 288
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 504,
+              "y" : 528
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Tap",
+            "position" : {
+              "x" : 504,
+              "y" : 684
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+      "library" : "iOS",
+      "name" : "List Row",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Title"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "9C050B7D-92A6-3D69-F159-D76296ECE152",
+            "kind" : "text",
+            "name" : "Detail",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : ""
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "4F070B7D-92A7-3D69-3E58-D76296EBE152",
+            "kind" : "symbol",
+            "name" : "Chevron",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.7803921568627451
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 15,
+                  "width" : 9
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "chevron.right"
+              }
+            }
+          }
+        ],
+        "id" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+        "kind" : "group",
+        "name" : "List Row",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 358
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      "summary" : "A table row with a title, optional detail and chevron. It highlights while pressed and reports taps."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "C72F7281-D80C-6C64-381D-0D9BB2D768EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "142E7281-D80B-6C64-EB1E-0D9BB2D868EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2D337281-D80E-6C64-9E20-0D9BB2D968EF",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+              "port" : "target"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2D337281-D80E-6C64-9E20-0D9BB2D968EF",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "C72F7281-D80C-6C64-381D-0D9BB2D768EF",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Button"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "142E7281-D80B-6C64-EB1E-0D9BB2D868EF",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "2D337281-D80E-6C64-9E20-0D9BB2D968EF",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            }
+          },
+          {
+            "id" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+            "inputs" : {
+              "damping" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "response" : {
+                "type" : "number",
+                "value" : 0.18
+              }
+            },
+            "kind" : "spring",
+            "position" : {
+              "x" : 276,
+              "y" : 348
+            }
+          },
+          {
+            "id" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+            "inputs" : {
+              "end" : {
+                "type" : "number",
+                "value" : 0.55
+              },
+              "start" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "transition",
+            "name" : "Dim",
+            "position" : {
+              "x" : 504,
+              "y" : 348
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "48587B42-D9D9-17A0-F5A7-95C23E258359",
+            "position" : {
+              "x" : 732,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "position" : {
+              "x" : 732,
+              "y" : 204
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "position" : {
+              "x" : 732,
+              "y" : 348
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Tap",
+            "position" : {
+              "x" : 732,
+              "y" : 504
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+      "library" : "iOS",
+      "name" : "Button",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "48587B42-D9D9-17A0-F5A7-95C23E258359",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Button"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "kind" : "group",
+            "name" : "Background",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 100
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+        "kind" : "group",
+        "name" : "Button",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 50,
+              "width" : 200
+            }
+          }
+        }
+      },
+      "summary" : "A filled button that dims while pressed and reports taps."
+    }
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "C47C13FD-AE29-4039-861A-04A4EDEA9634",
+        "origin" : {
+          "x" : 280,
+          "y" : 0
+        },
+        "size" : {
+          "height" : 390,
+          "width" : 990
+        },
+        "text" : "Data · A request returns JSON; each item of its array becomes a row"
+      },
+      {
+        "id" : "6670F1F2-2172-4DE5-82C6-299977481FA6",
+        "origin" : {
+          "x" : 1280,
+          "y" : 0
+        },
+        "size" : {
+          "height" : 200,
+          "width" : 720
+        },
+        "text" : "Selection · Which row was tapped"
+      },
+      {
+        "id" : "05FF143A-8F35-437E-A3B3-B864528E0360",
+        "origin" : {
+          "x" : 20,
+          "y" : 410
+        },
+        "size" : {
+          "height" : 440,
+          "width" : 800
+        },
+        "text" : "States · Loading and failure"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+          "port" : "response"
+        },
+        "to" : {
+          "node" : "8791BE11-42CB-412A-985D-068B9D661EF1",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8791BE11-42CB-412A-985D-068B9D661EF1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "B0427F2B-591D-4DB2-BE40-AA2A0F9A053B",
+          "port" : "json"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8791BE11-42CB-412A-985D-068B9D661EF1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "181E9CBE-E72B-4795-A97C-BADC88CA3A0D",
+          "port" : "json"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B0427F2B-591D-4DB2-BE40-AA2A0F9A053B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "85BEEFA8-A647-4C67-91C5-D121AA087499",
+          "port" : "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB"
+        }
+      },
+      {
+        "from" : {
+          "node" : "181E9CBE-E72B-4795-A97C-BADC88CA3A0D",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "85BEEFA8-A647-4C67-91C5-D121AA087499",
+          "port" : "8024FCD0-9BC5-1C88-3F90-24A4DAD1AECB"
+        }
+      },
+      {
+        "from" : {
+          "node" : "85BEEFA8-A647-4C67-91C5-D121AA087499",
+          "port" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB"
+        },
+        "to" : {
+          "node" : "7569399F-3ABD-4F6D-9873-B38B1F1E19CF",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B0427F2B-591D-4DB2-BE40-AA2A0F9A053B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "46E1C4B1-1F52-4F63-BA54-760A80A1A14A",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7569399F-3ABD-4F6D-9873-B38B1F1E19CF",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "46E1C4B1-1F52-4F63-BA54-760A80A1A14A",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "46E1C4B1-1F52-4F63-BA54-760A80A1A14A",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "804E9729-B87E-4B01-BB21-090F0A9244CF",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "32313FD2-B825-48FD-9504-B8B89280E8A1",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+          "port" : "hasError"
+        },
+        "to" : {
+          "node" : "9EBAE40C-65E4-4FC7-8131-CC3D28D85F66",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+          "port" : "hasError"
+        },
+        "to" : {
+          "node" : "974BE78E-4BE4-41C8-B801-99600756DB75",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+          "port" : "error"
+        },
+        "to" : {
+          "node" : "38922961-4B2C-4DD2-97F0-98C37BD5225A",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "49BCAE56-286C-4B6E-A174-0BE2AA6170CF",
+          "port" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF"
+        },
+        "to" : {
+          "node" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+          "port" : "send"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "componentID" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+        "id" : "85BEEFA8-A647-4C67-91C5-D121AA087499",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "6BBE8311-8C53-452B-81D5-FD554E1404B2",
+        "position" : {
+          "x" : 1044,
+          "y" : 60
+        }
+      },
+      {
+        "componentID" : "73352973-FA64-522D-12FF-D91C3C81517F",
+        "id" : "49BCAE56-286C-4B6E-A174-0BE2AA6170CF",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "DD6C0940-B221-49D0-ABBA-CAF4D15D1817",
+        "position" : {
+          "x" : 36,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "F1CB8A41-8A22-4B65-AB0C-5F37CF913601",
+        "inputs" : {
+          "url" : {
+            "type" : "text",
+            "value" : "https:\/\/jsonplaceholder.typicode.com\/users"
+          }
+        },
+        "kind" : "networkRequest",
+        "name" : "People Request",
+        "position" : {
+          "x" : 300,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "8791BE11-42CB-412A-985D-068B9D661EF1",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Person",
+        "position" : {
+          "x" : 564,
+          "y" : 60
+        },
+        "valueType" : "json"
+      },
+      {
+        "id" : "B0427F2B-591D-4DB2-BE40-AA2A0F9A053B",
+        "inputs" : {
+          "path" : {
+            "type" : "text",
+            "value" : "name"
+          }
+        },
+        "kind" : "jsonValue",
+        "name" : "Name",
+        "position" : {
+          "x" : 804,
+          "y" : 36
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "181E9CBE-E72B-4795-A97C-BADC88CA3A0D",
+        "inputs" : {
+          "path" : {
+            "type" : "text",
+            "value" : "username"
+          }
+        },
+        "kind" : "jsonValue",
+        "name" : "Username",
+        "position" : {
+          "x" : 804,
+          "y" : 192
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "7569399F-3ABD-4F6D-9873-B38B1F1E19CF",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Selected Row",
+        "position" : {
+          "x" : 1296,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "46E1C4B1-1F52-4F63-BA54-760A80A1A14A",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Selected Person",
+        "position" : {
+          "x" : 1536,
+          "y" : 60
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "804E9729-B87E-4B01-BB21-090F0A9244CF",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "F5B93CA4-9551-4CB4-91E7-A32A67BC74B7",
+        "position" : {
+          "x" : 1776,
+          "y" : 60
+        },
+        "property" : "text"
+      },
+      {
+        "id" : "32313FD2-B825-48FD-9504-B8B89280E8A1",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "A3728776-9FB8-4042-A6AD-9B8993094EBD",
+        "position" : {
+          "x" : 600,
+          "y" : 456
+        },
+        "property" : "opacity"
+      },
+      {
+        "id" : "9EBAE40C-65E4-4FC7-8131-CC3D28D85F66",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "BE91CEC9-B575-4D37-B737-3F5385C3570E",
+        "position" : {
+          "x" : 600,
+          "y" : 564
+        },
+        "property" : "opacity"
+      },
+      {
+        "id" : "974BE78E-4BE4-41C8-B801-99600756DB75",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "BE91CEC9-B575-4D37-B737-3F5385C3570E",
+        "position" : {
+          "x" : 600,
+          "y" : 660
+        },
+        "property" : "enabled"
+      },
+      {
+        "id" : "38922961-4B2C-4DD2-97F0-98C37BD5225A",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "54935FC9-46D1-4C93-8B1E-E8D4750C9C20",
+        "position" : {
+          "x" : 600,
+          "y" : 756
+        },
+        "property" : "text"
+      }
+    ]
+  },
+  "version" : 2
+}

@@ -1,0 +1,711 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "A5EC4346-A769-4670-8EE4-2CFD5C7CC9BF",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "0F7781BE-6D96-45EE-8668-2CA5FC3D050F",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0F7781BE-6D96-45EE-8668-2CA5FC3D050F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "BFF80019-5C93-4759-B59F-8C1CC49A869C",
+          "port" : "shader.amount"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A5EC4346-A769-4670-8EE4-2CFD5C7CC9BF",
+          "port" : "position"
+        },
+        "to" : {
+          "node" : "BFF80019-5C93-4759-B59F-8C1CC49A869C",
+          "port" : "shader.touch"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "5E9147E9-33F8-41EB-9F9B-82D01451DC7F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7D2A874C-13EB-4739-AE31-514EF0959F9B",
+        "position" : {
+          "x" : 852,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "BFF80019-5C93-4759-B59F-8C1CC49A869C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "40288213-3EB3-4DC2-A979-46FA18D698E0",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        },
+        "script" : "\/\/ A glass lens over the views inside this one. It follows `touch` and\n\/\/ appears with `amount`.\nstruct Inputs {\n    float2 touch = float2(195, 422);\n    float amount = 0;\n    float radius = 110;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 offset = frame.position - in.touch;\n    float d = length(offset) \/ max(in.radius, 1.0);\n    if (d >= 1 || in.amount <= 0.001) {\n        return content(frame, frame.position);\n    }\n    \/\/ Inside the lens the picture is pulled toward the middle.\n    float bend = 1 - in.amount * 0.45 * (1 - d * d);\n    float2 point = in.touch + offset * bend;\n    \/\/ The colors come apart toward the rim, as in real glass.\n    float2 along = normalize(offset + 0.0001);\n    float split = in.amount * 6 * d * d;\n    float4 color = content(frame, point);\n    color.r = content(frame, point + along * split).r;\n    color.b = content(frame, point - along * split).b;\n    float rim = smoothstep(0.9, 1.0, d) * in.amount;\n    return float4(mix(color.rgb, float3(1), rim * 0.35), color.a);\n}"
+      },
+      {
+        "id" : "BB499C4D-7451-4365-9330-06F7194FB32A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C857BBF2-504A-45F5-9BBE-E00B531796E3",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "7E572948-12F0-4B7E-A761-FB885877C432",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BD6E143D-B19B-48CA-A2A5-0B407841EDA1",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "4A17BF19-AF02-495D-9150-1EC5319989AD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4711B18E-319B-4280-A9E7-54FBB1CFC36B",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "CD617741-197C-4334-823E-7871D6E1D0C2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8368D51C-D0BC-4E12-B788-48D014EF74C0",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "C30BEFB6-F1B9-4AA8-BC96-EAB19EEBE8BB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7BB2EDDC-B5C3-41B5-B5EF-094EAAD50CEE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B3D9FA15-649E-46AC-AC1F-27E1F7BB07F1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C64D9065-011B-47C5-A608-3C0FFC097CE9",
+        "position" : {
+          "x" : 48,
+          "y" : 576
+        }
+      },
+      {
+        "id" : "80EC9AFC-358B-4A35-8741-00C89ECFF09C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "48AAACE8-6A4C-46B8-9294-7EEC6A60041A",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "700963F4-0E60-4259-BAED-5DF40F2340CD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B5563580-645C-44D6-B3C1-DBED24E83481",
+        "position" : {
+          "x" : 48,
+          "y" : 768
+        }
+      },
+      {
+        "id" : "3FE2D4B7-23B1-465F-9C98-A22847ADC753",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "29E31D98-990F-4157-8E90-96B5CA83DDB0",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "4C5315D1-B88C-43C1-A5BD-77007753132C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9970075D-0212-4274-9FF1-98C44BF02F52",
+        "position" : {
+          "x" : 288,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "96FF3B18-C476-467F-B2CE-58D30D269691",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5F63E6BA-AD1D-49FE-A9F3-F8F221D23E4E",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A5EC4346-A769-4670-8EE4-2CFD5C7CC9BF",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "40288213-3EB3-4DC2-A979-46FA18D698E0",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "0F7781BE-6D96-45EE-8668-2CA5FC3D050F",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "C857BBF2-504A-45F5-9BBE-E00B531796E3",
+            "kind" : "text",
+            "name" : "Heading",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 30
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 800
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 84
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 342
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Press and drag"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "4711B18E-319B-4280-A9E7-54FBB1CFC36B",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 20,
+                      "y" : 30
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 280
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Coral"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "BD6E143D-B19B-48CA-A2A5-0B407841EDA1",
+            "kind" : "view",
+            "name" : "Coral",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4196078431372549,
+                  "green" : 0.4196078431372549,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 150
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 88,
+                  "width" : 342
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "7BB2EDDC-B5C3-41B5-B5EF-094EAAD50CEE",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 20,
+                      "y" : 30
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 280
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Amber"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "8368D51C-D0BC-4E12-B788-48D014EF74C0",
+            "kind" : "view",
+            "name" : "Amber",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.30196078431372547,
+                  "green" : 0.7215686274509804,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 254
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 88,
+                  "width" : 342
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "48AAACE8-6A4C-46B8-9294-7EEC6A60041A",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 20,
+                      "y" : 30
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 280
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Mint"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "C64D9065-011B-47C5-A608-3C0FFC097CE9",
+            "kind" : "view",
+            "name" : "Mint",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.6745098039215687,
+                  "green" : 0.8313725490196079,
+                  "red" : 0.30196078431372547
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 358
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 88,
+                  "width" : 342
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "29E31D98-990F-4157-8E90-96B5CA83DDB0",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 20,
+                      "y" : 30
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 280
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Sky"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "B5563580-645C-44D6-B3C1-DBED24E83481",
+            "kind" : "view",
+            "name" : "Sky",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.6078431372549019,
+                  "red" : 0.30196078431372547
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 462
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 88,
+                  "width" : 342
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5F63E6BA-AD1D-49FE-A9F3-F8F221D23E4E",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 22
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 20,
+                      "y" : 30
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 28,
+                      "width" : 280
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Violet"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "9970075D-0212-4274-9FF1-98C44BF02F52",
+            "kind" : "view",
+            "name" : "Violet",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.4196078431372549,
+                  "red" : 0.6078431372549019
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 566
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 88,
+                  "width" : 342
+                }
+              }
+            }
+          }
+        ],
+        "id" : "40288213-3EB3-4DC2-A979-46FA18D698E0",
+        "kind" : "view",
+        "name" : "Lens",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.97,
+              "green" : 0.97,
+              "red" : 0.97
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ A glass lens over the views inside this one. It follows `touch` and\n\/\/ appears with `amount`.\nstruct Inputs {\n    float2 touch = float2(195, 422);\n    float amount = 0;\n    float radius = 110;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 offset = frame.position - in.touch;\n    float d = length(offset) \/ max(in.radius, 1.0);\n    if (d >= 1 || in.amount <= 0.001) {\n        return content(frame, frame.position);\n    }\n    \/\/ Inside the lens the picture is pulled toward the middle.\n    float bend = 1 - in.amount * 0.45 * (1 - d * d);\n    float2 point = in.touch + offset * bend;\n    \/\/ The colors come apart toward the rim, as in real glass.\n    float2 along = normalize(offset + 0.0001);\n    float split = in.amount * 6 * d * d;\n    float4 color = content(frame, point);\n    color.r = content(frame, point + along * split).r;\n    color.b = content(frame, point - along * split).b;\n    float rim = smoothstep(0.9, 1.0, d) * in.amount;\n    return float4(mix(color.rgb, float3(1), rim * 0.35), color.a);\n}"
+        }
+      }
+    ],
+    "id" : "7D2A874C-13EB-4739-AE31-514EF0959F9B",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+
+    }
+  },
+  "version" : 4
+}

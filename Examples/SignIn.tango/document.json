@@ -1,0 +1,447 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "B1AB9546-9C09-46C6-B480-6021C52FF4CC",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "E3EC4147-2347-4653-9878-E3CC1F08A617",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E3EC4147-2347-4653-9878-E3CC1F08A617",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "671A2764-17A5-4E15-83FD-B7FBD1748F76",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B1AB9546-9C09-46C6-B480-6021C52FF4CC",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "2FD3F540-86FF-4EBD-B0A4-99B0C91682B6",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2FD3F540-86FF-4EBD-B0A4-99B0C91682B6",
+          "port" : "empty"
+        },
+        "to" : {
+          "node" : "7E1FD859-DB8E-4C65-94AD-D5B385899A26",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7E1FD859-DB8E-4C65-94AD-D5B385899A26",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "3CFCE3CA-1292-477C-81A5-14703254A752",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3CFCE3CA-1292-477C-81A5-14703254A752",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "7EE63E5E-9BC7-448D-A869-C0D4E9287870",
+          "port" : "opacity"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "5FE685E0-20F0-46F4-B010-B1E8AC01A46F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "81F80EF4-EF76-43D8-89BE-906D1340F9D5",
+        "position" : {
+          "x" : 1344,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "A2741B73-05B5-4950-B46E-43D937AA0364",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "401F6FE6-E9F0-499D-8BC9-B0B4A0847638",
+        "position" : {
+          "x" : 1632,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "4966167C-4C13-4E6A-A4FD-373D7A275713",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "76E50536-AE72-4C1A-A74C-2C90F5469E54",
+        "position" : {
+          "x" : 1632,
+          "y" : 228
+        }
+      },
+      {
+        "id" : "671A2764-17A5-4E15-83FD-B7FBD1748F76",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7D5415C6-E1F5-41F0-9E45-604B1B66439A",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "7EE63E5E-9BC7-448D-A869-C0D4E9287870",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DCA00408-4736-4696-B720-BFF43D5C211C",
+        "position" : {
+          "x" : 1056,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "8ED45238-DEBA-4F79-9E96-0091FFE22DAF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9BA46ED0-E74C-4DF9-B68F-CD2FEFF42AE2",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B1AB9546-9C09-46C6-B480-6021C52FF4CC",
+        "inputs" : {
+
+        },
+        "kind" : "textInput",
+        "layerID" : "76E50536-AE72-4C1A-A74C-2C90F5469E54",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "E3EC4147-2347-4653-9878-E3CC1F08A617",
+        "inputs" : {
+          "a" : {
+            "type" : "text",
+            "value" : "Hello, "
+          }
+        },
+        "kind" : "joinText",
+        "name" : "Greeting",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "2FD3F540-86FF-4EBD-B0A4-99B0C91682B6",
+        "inputs" : {
+
+        },
+        "kind" : "textLength",
+        "position" : {
+          "x" : 300,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "7E1FD859-DB8E-4C65-94AD-D5B385899A26",
+        "inputs" : {
+          "else" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "then" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "if",
+        "name" : "Ready",
+        "position" : {
+          "x" : 564,
+          "y" : 240
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "3CFCE3CA-1292-477C-81A5-14703254A752",
+        "inputs" : {
+          "target" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 804,
+          "y" : 240
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "401F6FE6-E9F0-499D-8BC9-B0B4A0847638",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 120
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "What should we call you?"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "76E50536-AE72-4C1A-A74C-2C90F5469E54",
+        "kind" : "textField",
+        "name" : "Name",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 14
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "placeholder" : {
+            "type" : "text",
+            "value" : "Your name"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 184
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 52,
+              "width" : 342
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "7D5415C6-E1F5-41F0-9E45-604B1B66439A",
+        "kind" : "text",
+        "name" : "Greeting",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 264
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Hello"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.4,
+              "green" : 0.4,
+              "red" : 0.4
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "9BA46ED0-E74C-4DF9-B68F-CD2FEFF42AE2",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 16
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 342
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Continue"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            }
+          }
+        ],
+        "id" : "DCA00408-4736-4696-B720-BFF43D5C211C",
+        "kind" : "view",
+        "name" : "Continue",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9686274509803922,
+              "green" : 0.4823529411764706,
+              "red" : 0.23921568627450981
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0.35
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 330
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 54,
+              "width" : 342
+            }
+          }
+        }
+      }
+    ],
+    "id" : "81F80EF4-EF76-43D8-89BE-906D1340F9D5",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 1,
+          "green" : 1,
+          "red" : 1
+        }
+      }
+    }
+  },
+  "version" : 4
+}

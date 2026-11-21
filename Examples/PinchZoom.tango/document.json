@@ -1,0 +1,465 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "0D92CA0C-2B51-4A2F-BA75-D331160849E9",
+          "port" : "translation"
+        },
+        "to" : {
+          "node" : "0B28D2FE-7FCD-45CC-82C1-BE1E50F8D236",
+          "port" : "point"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0D92CA0C-2B51-4A2F-BA75-D331160849E9",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "8EF96EA8-AA96-4B1E-A504-3FBCEF97389B",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0B28D2FE-7FCD-45CC-82C1-BE1E50F8D236",
+          "port" : "x"
+        },
+        "to" : {
+          "node" : "8EF96EA8-AA96-4B1E-A504-3FBCEF97389B",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0D92CA0C-2B51-4A2F-BA75-D331160849E9",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "C766D84D-E9DD-4232-B319-EC20575343E3",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0B28D2FE-7FCD-45CC-82C1-BE1E50F8D236",
+          "port" : "y"
+        },
+        "to" : {
+          "node" : "C766D84D-E9DD-4232-B319-EC20575343E3",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9D254F52-2310-4FDA-8BD7-0BB4FECAA357",
+          "port" : "pinching"
+        },
+        "to" : {
+          "node" : "95F94D71-F48A-4A27-A4ED-23BFCC8892F4",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9D254F52-2310-4FDA-8BD7-0BB4FECAA357",
+          "port" : "scale"
+        },
+        "to" : {
+          "node" : "95F94D71-F48A-4A27-A4ED-23BFCC8892F4",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "07423ABB-4E12-42E1-B30C-D14CF361A9A1",
+          "port" : "rotating"
+        },
+        "to" : {
+          "node" : "6FFFC2FA-A13A-4D87-A177-C272EB355094",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "07423ABB-4E12-42E1-B30C-D14CF361A9A1",
+          "port" : "rotation"
+        },
+        "to" : {
+          "node" : "6FFFC2FA-A13A-4D87-A177-C272EB355094",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8EF96EA8-AA96-4B1E-A504-3FBCEF97389B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "77CFBEDD-1914-44B2-82E3-A8863DA68C19",
+          "port" : "x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C766D84D-E9DD-4232-B319-EC20575343E3",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "77CFBEDD-1914-44B2-82E3-A8863DA68C19",
+          "port" : "y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "95F94D71-F48A-4A27-A4ED-23BFCC8892F4",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "77CFBEDD-1914-44B2-82E3-A8863DA68C19",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6FFFC2FA-A13A-4D87-A177-C272EB355094",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "77CFBEDD-1914-44B2-82E3-A8863DA68C19",
+          "port" : "rotation"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "0EA5A90C-6F3D-4337-A271-00C2D36267DF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "97082756-F168-4303-9106-A35CF86AA277",
+        "position" : {
+          "x" : 1092,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "DD04D60A-461F-4D26-8A75-03BD917AA868",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ED557018-6A82-47F6-98E2-AA8D929B3533",
+        "position" : {
+          "x" : 1380,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "77CFBEDD-1914-44B2-82E3-A8863DA68C19",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C730C1A2-0E03-4CB5-8231-AE64AA7BCC33",
+        "position" : {
+          "x" : 804,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "75586786-8B51-4772-899D-10C93556BC9C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F385DC98-5793-4B98-9F82-D11964A1DA4F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "0D92CA0C-2B51-4A2F-BA75-D331160849E9",
+        "inputs" : {
+
+        },
+        "kind" : "pan",
+        "layerID" : "C730C1A2-0E03-4CB5-8231-AE64AA7BCC33",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "0B28D2FE-7FCD-45CC-82C1-BE1E50F8D236",
+        "inputs" : {
+
+        },
+        "kind" : "splitPoint",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "8EF96EA8-AA96-4B1E-A504-3FBCEF97389B",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 40
+          }
+        },
+        "kind" : "spring",
+        "name" : "X",
+        "position" : {
+          "x" : 540,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "C766D84D-E9DD-4232-B319-EC20575343E3",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 250
+          }
+        },
+        "kind" : "spring",
+        "name" : "Y",
+        "position" : {
+          "x" : 540,
+          "y" : 300
+        }
+      },
+      {
+        "id" : "9D254F52-2310-4FDA-8BD7-0BB4FECAA357",
+        "inputs" : {
+
+        },
+        "kind" : "pinch",
+        "layerID" : "C730C1A2-0E03-4CB5-8231-AE64AA7BCC33",
+        "position" : {
+          "x" : 36,
+          "y" : 516
+        }
+      },
+      {
+        "id" : "95F94D71-F48A-4A27-A4ED-23BFCC8892F4",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "spring",
+        "name" : "Scale",
+        "position" : {
+          "x" : 540,
+          "y" : 516
+        }
+      },
+      {
+        "id" : "07423ABB-4E12-42E1-B30C-D14CF361A9A1",
+        "inputs" : {
+
+        },
+        "kind" : "rotation",
+        "layerID" : "C730C1A2-0E03-4CB5-8231-AE64AA7BCC33",
+        "position" : {
+          "x" : 36,
+          "y" : 780
+        }
+      },
+      {
+        "id" : "6FFFC2FA-A13A-4D87-A177-C272EB355094",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "spring",
+        "name" : "Turn",
+        "position" : {
+          "x" : 540,
+          "y" : 780
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "ED557018-6A82-47F6-98E2-AA8D929B3533",
+        "kind" : "text",
+        "name" : "Hint",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 600
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 60,
+              "width" : 390
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Drag, pinch or twist the picture.\nHold Option for a second finger;\nShift moves both."
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.45,
+              "green" : 0.45,
+              "red" : 0.45
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "F385DC98-5793-4B98-9F82-D11964A1DA4F",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.9,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 115,
+                  "y" : 115
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 80,
+                  "width" : 80
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "mountain.2.fill"
+              }
+            }
+          }
+        ],
+        "id" : "C730C1A2-0E03-4CB5-8231-AE64AA7BCC33",
+        "kind" : "view",
+        "name" : "Photo",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 32
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.6274509803921569,
+              "green" : 0.6549019607843137,
+              "red" : 0.20392156862745098
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 250
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 310,
+              "width" : 310
+            }
+          }
+        }
+      }
+    ],
+    "id" : "97082756-F168-4303-9106-A35CF86AA277",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.96,
+          "green" : 0.96,
+          "red" : 0.96
+        }
+      }
+    }
+  },
+  "version" : 4
+}

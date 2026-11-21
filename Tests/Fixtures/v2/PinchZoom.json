@@ -1,0 +1,338 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "31842F84-19DF-4244-88F5-B3771C0FFA60",
+        "kind" : "text",
+        "name" : "Hint",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 600
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 40,
+              "width" : 390
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Pinch or twist the picture.\nHold Option for a second finger."
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.45,
+              "green" : 0.45,
+              "red" : 0.45
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "DF6B4A99-C7ED-4902-9341-4D829F1B0594",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.9,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 115,
+                  "y" : 115
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 80,
+                  "width" : 80
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "mountain.2.fill"
+              }
+            }
+          }
+        ],
+        "id" : "F8C5DE2C-BC76-4196-9B40-7EA5E2A0EFC2",
+        "kind" : "group",
+        "name" : "Photo",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 32
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.6274509803921569,
+              "green" : 0.6549019607843137,
+              "red" : 0.20392156862745098
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 250
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 310,
+              "width" : 310
+            }
+          }
+        }
+      }
+    ],
+    "id" : "C93DC54E-1C04-4053-8092-48C03A0FEA76",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.96,
+          "green" : 0.96,
+          "red" : 0.96
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "4B3F8D91-0B9D-4220-ADE5-E65A9C657708",
+          "port" : "pinching"
+        },
+        "to" : {
+          "node" : "0F02971A-B512-407C-A12C-4636C9AF6BC1",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4B3F8D91-0B9D-4220-ADE5-E65A9C657708",
+          "port" : "scale"
+        },
+        "to" : {
+          "node" : "0F02971A-B512-407C-A12C-4636C9AF6BC1",
+          "port" : "then"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0F02971A-B512-407C-A12C-4636C9AF6BC1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "6FABD8BF-1C56-478D-8253-FCFB4811CCF0",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6FABD8BF-1C56-478D-8253-FCFB4811CCF0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D47CBD56-C3C4-497A-A01F-7250CF5915EA",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4B3F8D91-0B9D-4220-ADE5-E65A9C657708",
+          "port" : "pinching"
+        },
+        "to" : {
+          "node" : "B896BC69-15A2-4AE8-A2E0-1E07095F496A",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4B3F8D91-0B9D-4220-ADE5-E65A9C657708",
+          "port" : "rotation"
+        },
+        "to" : {
+          "node" : "B896BC69-15A2-4AE8-A2E0-1E07095F496A",
+          "port" : "then"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B896BC69-15A2-4AE8-A2E0-1E07095F496A",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "FB38AD76-E5B3-4921-8C84-89439A7619E3",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FB38AD76-E5B3-4921-8C84-89439A7619E3",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "13466527-5DDC-4A19-8E7B-2AED930AD93F",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "4B3F8D91-0B9D-4220-ADE5-E65A9C657708",
+        "inputs" : {
+
+        },
+        "kind" : "pinch",
+        "layerID" : "F8C5DE2C-BC76-4196-9B40-7EA5E2A0EFC2",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "0F02971A-B512-407C-A12C-4636C9AF6BC1",
+        "inputs" : {
+          "else" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "if",
+        "name" : "Scale While Pinching",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "6FABD8BF-1C56-478D-8253-FCFB4811CCF0",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 540,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "D47CBD56-C3C4-497A-A01F-7250CF5915EA",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "F8C5DE2C-BC76-4196-9B40-7EA5E2A0EFC2",
+        "position" : {
+          "x" : 804,
+          "y" : 84
+        },
+        "property" : "scale"
+      },
+      {
+        "id" : "B896BC69-15A2-4AE8-A2E0-1E07095F496A",
+        "inputs" : {
+          "else" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "if",
+        "name" : "Turn While Pinching",
+        "position" : {
+          "x" : 300,
+          "y" : 300
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "FB38AD76-E5B3-4921-8C84-89439A7619E3",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 540,
+          "y" : 300
+        }
+      },
+      {
+        "id" : "13466527-5DDC-4A19-8E7B-2AED930AD93F",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "F8C5DE2C-BC76-4196-9B40-7EA5E2A0EFC2",
+        "position" : {
+          "x" : 804,
+          "y" : 300
+        },
+        "property" : "rotation"
+      }
+    ]
+  },
+  "version" : 2
+}

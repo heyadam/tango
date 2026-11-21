@@ -1,0 +1,475 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "A00CECE1-E91E-49F7-8032-6731D7DF7698",
+        "kind" : "rectangle",
+        "name" : "Header",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 8
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.82,
+              "green" : 0.82,
+              "red" : 0.82
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 96
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 28,
+              "width" : 180
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "F463F396-7007-44C7-8A13-40B93E206220",
+        "kind" : "rectangle",
+        "name" : "Row",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 24
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.88,
+              "green" : 0.88,
+              "red" : 0.88
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 560
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 120,
+              "width" : 310
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "D919FD9F-FAAF-458D-82F8-83A745C792C9",
+        "kind" : "rectangle",
+        "name" : "Dim",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "4D05BC02-FB49-4C0D-A10C-CBD94AD79BAC",
+        "kind" : "rectangle",
+        "name" : "Card",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9686274509803922,
+              "green" : 0.4823529411764706,
+              "red" : 0.23921568627450981
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 320
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 12
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 24
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 200,
+              "width" : 310
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "68781580-3147-4A98-BB41-99F824DC68D7",
+        "kind" : "oval",
+        "name" : "Close",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.9,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 318,
+              "y" : 112
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 36
+            }
+          }
+        }
+      }
+    ],
+    "id" : "BFB034C7-06C7-4DB2-8F56-3957CE74D545",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.96,
+          "green" : 0.96,
+          "red" : 0.96
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "A0EBD1D9-E70D-4B3F-B675-51F1C4AC9405",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "EC1B203D-4486-4D04-95C7-A5B17ABDFF7D",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "EC1B203D-4486-4D04-95C7-A5B17ABDFF7D",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "2C748BB4-9FD3-4D37-AABD-E395C360752F",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2C748BB4-9FD3-4D37-AABD-E395C360752F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "798DE492-36B4-4E56-8870-E8AD70119D7B",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2C748BB4-9FD3-4D37-AABD-E395C360752F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "937A06A0-C26A-45D1-9435-1F2A2F9ACA54",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2C748BB4-9FD3-4D37-AABD-E395C360752F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "20795F9E-B7A5-47ED-9C3B-1D6293BBE15F",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "798DE492-36B4-4E56-8870-E8AD70119D7B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "57681565-CB8E-41F2-9C5E-08F183876329",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "937A06A0-C26A-45D1-9435-1F2A2F9ACA54",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "BD026449-66B5-407F-BB5A-6572B6C51298",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "20795F9E-B7A5-47ED-9C3B-1D6293BBE15F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "4CE1EFE4-9890-4D06-A067-A6EFDD05F22B",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2C748BB4-9FD3-4D37-AABD-E395C360752F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "678B7329-1AD6-42CA-A3D0-F253627C6530",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "A0EBD1D9-E70D-4B3F-B675-51F1C4AC9405",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "4D05BC02-FB49-4C0D-A10C-CBD94AD79BAC",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "EC1B203D-4486-4D04-95C7-A5B17ABDFF7D",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Expanded",
+        "position" : {
+          "x" : 264,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "2C748BB4-9FD3-4D37-AABD-E395C360752F",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.75
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.45
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 480,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "798DE492-36B4-4E56-8870-E8AD70119D7B",
+        "inputs" : {
+          "end" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 96
+            }
+          },
+          "start" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 320
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Card Position",
+        "position" : {
+          "x" : 744,
+          "y" : 36
+        },
+        "valueType" : "point"
+      },
+      {
+        "id" : "937A06A0-C26A-45D1-9435-1F2A2F9ACA54",
+        "inputs" : {
+          "end" : {
+            "type" : "size",
+            "value" : {
+              "height" : 560,
+              "width" : 358
+            }
+          },
+          "start" : {
+            "type" : "size",
+            "value" : {
+              "height" : 200,
+              "width" : 310
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Card Size",
+        "position" : {
+          "x" : 744,
+          "y" : 204
+        },
+        "valueType" : "size"
+      },
+      {
+        "id" : "20795F9E-B7A5-47ED-9C3B-1D6293BBE15F",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.5
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Dimming",
+        "position" : {
+          "x" : 744,
+          "y" : 360
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "57681565-CB8E-41F2-9C5E-08F183876329",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "4D05BC02-FB49-4C0D-A10C-CBD94AD79BAC",
+        "position" : {
+          "x" : 996,
+          "y" : 36
+        },
+        "property" : "position"
+      },
+      {
+        "id" : "BD026449-66B5-407F-BB5A-6572B6C51298",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "4D05BC02-FB49-4C0D-A10C-CBD94AD79BAC",
+        "position" : {
+          "x" : 996,
+          "y" : 204
+        },
+        "property" : "size"
+      },
+      {
+        "id" : "4CE1EFE4-9890-4D06-A067-A6EFDD05F22B",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "D919FD9F-FAAF-458D-82F8-83A745C792C9",
+        "position" : {
+          "x" : 996,
+          "y" : 360
+        },
+        "property" : "opacity"
+      },
+      {
+        "id" : "678B7329-1AD6-42CA-A3D0-F253627C6530",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "68781580-3147-4A98-BB41-99F824DC68D7",
+        "position" : {
+          "x" : 996,
+          "y" : 480
+        },
+        "property" : "opacity"
+      }
+    ]
+  },
+  "version" : 2
+}

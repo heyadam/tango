@@ -1,0 +1,325 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "85C3CF1D-8FE4-4E57-8DA4-BEB5B715F3CB",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "7D42C3F3-3BE5-45BA-820D-0608BE27C5F5",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7D42C3F3-3BE5-45BA-820D-0608BE27C5F5",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "50FB0D71-68B2-4A9B-91C1-E080229339B4",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "50FB0D71-68B2-4A9B-91C1-E080229339B4",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "067F6872-3CAB-425F-9CC2-C8B72DA79A8E",
+          "port" : "shader.energy"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "ADC65252-195C-45A8-B9B7-458C049AFB22",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "91F96715-3074-4D30-8F82-5EDEA354267A",
+        "position" : {
+          "x" : 1104,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "067F6872-3CAB-425F-9CC2-C8B72DA79A8E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E676EE4A-588D-4FFC-944F-D97895E0E11E",
+        "position" : {
+          "x" : 816,
+          "y" : 84
+        },
+        "script" : "\/\/ An aurora: bands of light that drift on their own, and flare with `energy`.\nstruct Inputs {\n    float speed = 0.4;\n    float energy = 0;\n    float4 sky = float4(0.04, 0.05, 0.16, 1);\n    float4 light = float4(0.2, 0.9, 0.7, 1);\n    float4 accent = float4(0.6, 0.3, 1, 1);\n};\n\nfloat hash(float2 p) {\n    return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);\n}\n\nfloat noise(float2 p) {\n    float2 cell = floor(p);\n    float2 f = fract(p);\n    f = f * f * (3 - 2 * f);\n    float top = mix(hash(cell), hash(cell + float2(1, 0)), f.x);\n    float bottom = mix(hash(cell + float2(0, 1)), hash(cell + float2(1, 1)), f.x);\n    return mix(top, bottom, f.y);\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 p = frame.uv * float2(frame.size.x \/ frame.size.y, 1);\n    float t = frame.time * in.speed;\n    float band = noise(float2(p.x * 3 + t, t * 0.5)) * 0.5 + noise(float2(p.x * 7 - t, 4)) * 0.25;\n    float spread = 2.4 - 1.2 * in.energy;\n    float curtain = smoothstep(0.0, 0.5, band + 0.25 - abs(frame.uv.y - 0.32 - band * 0.2) * spread);\n    float3 color = mix(in.sky.rgb, in.light.rgb, curtain);\n    color = mix(color, in.accent.rgb, curtain * noise(p * 4 + t) * (0.35 + 0.65 * in.energy));\n    return float4(color, 1);\n}"
+      },
+      {
+        "id" : "B50DBF6E-C91D-4C69-B4F4-A8FA1B8C5DB2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FE8FE05F-0BA3-49D8-9A57-75C44122F153",
+        "position" : {
+          "x" : 816,
+          "y" : 396
+        }
+      },
+      {
+        "id" : "78A55279-D7EE-429C-9A23-1D93F7A9A949",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1A51EB95-D09C-4442-8A95-FE7827987944",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E3F856AB-A87B-4A8F-93B1-7CBBA005485E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "85C7FDEA-275E-48A7-B332-EB2BA4B95429",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "85C3CF1D-8FE4-4E57-8DA4-BEB5B715F3CB",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "FE8FE05F-0BA3-49D8-9A57-75C44122F153",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "7D42C3F3-3BE5-45BA-820D-0608BE27C5F5",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Stirred",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "50FB0D71-68B2-4A9B-91C1-E080229339B4",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.8
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.9
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "E676EE4A-588D-4FFC-944F-D97895E0E11E",
+        "kind" : "view",
+        "name" : "Aurora",
+        "properties" : {
+          "enabled" : {
+            "type" : "bool",
+            "value" : false
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ An aurora: bands of light that drift on their own, and flare with `energy`.\nstruct Inputs {\n    float speed = 0.4;\n    float energy = 0;\n    float4 sky = float4(0.04, 0.05, 0.16, 1);\n    float4 light = float4(0.2, 0.9, 0.7, 1);\n    float4 accent = float4(0.6, 0.3, 1, 1);\n};\n\nfloat hash(float2 p) {\n    return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);\n}\n\nfloat noise(float2 p) {\n    float2 cell = floor(p);\n    float2 f = fract(p);\n    f = f * f * (3 - 2 * f);\n    float top = mix(hash(cell), hash(cell + float2(1, 0)), f.x);\n    float bottom = mix(hash(cell + float2(0, 1)), hash(cell + float2(1, 1)), f.x);\n    return mix(top, bottom, f.y);\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 p = frame.uv * float2(frame.size.x \/ frame.size.y, 1);\n    float t = frame.time * in.speed;\n    float band = noise(float2(p.x * 3 + t, t * 0.5)) * 0.5 + noise(float2(p.x * 7 - t, 4)) * 0.25;\n    float spread = 2.4 - 1.2 * in.energy;\n    float curtain = smoothstep(0.0, 0.5, band + 0.25 - abs(frame.uv.y - 0.32 - band * 0.2) * spread);\n    float3 color = mix(in.sky.rgb, in.light.rgb, curtain);\n    color = mix(color, in.accent.rgb, curtain * noise(p * 4 + t) * (0.35 + 0.65 * in.energy));\n    return float4(color, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "1A51EB95-D09C-4442-8A95-FE7827987944",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 24
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 30,
+                  "width" : 262
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Northern Lights"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "85C7FDEA-275E-48A7-B332-EB2BA4B95429",
+            "kind" : "text",
+            "name" : "Caption",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 60
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 262
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Tap to stir the sky. The background is a shader."
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.75,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            }
+          }
+        ],
+        "id" : "FE8FE05F-0BA3-49D8-9A57-75C44122F153",
+        "kind" : "view",
+        "name" : "Card",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.14,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 40,
+              "y" : 640
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 128,
+              "width" : 310
+            }
+          },
+          "strokeColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.3,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "strokeWidth" : {
+            "type" : "number",
+            "value" : 1
+          }
+        }
+      }
+    ],
+    "id" : "91F96715-3074-4D30-8F82-5EDEA354267A",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      }
+    }
+  },
+  "version" : 4
+}

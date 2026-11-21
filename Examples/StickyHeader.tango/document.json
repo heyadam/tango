@@ -1,0 +1,1641 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "42CE108B-33EE-4461-9F1B-6AA6523FB211",
+          "port" : "offset"
+        },
+        "to" : {
+          "node" : "9E059418-FB66-4023-8D7D-294EF026ADB2",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9E059418-FB66-4023-8D7D-294EF026ADB2",
+          "port" : "progress"
+        },
+        "to" : {
+          "node" : "F118FF78-A3FC-438F-A0D7-450022F8E4DC",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F118FF78-A3FC-438F-A0D7-450022F8E4DC",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "77C1D143-1713-449F-A1B0-7FC5A02B8620",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F118FF78-A3FC-438F-A0D7-450022F8E4DC",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "AC981DE2-DC03-470D-8E6A-799B6AF4D64B",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F118FF78-A3FC-438F-A0D7-450022F8E4DC",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "41B1C615-7728-4EE4-BDBF-75CA89E46B4B",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "77C1D143-1713-449F-A1B0-7FC5A02B8620",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "FEA337A9-DF7B-47C3-B2BE-58BE375F9A6F",
+          "port" : "size"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AC981DE2-DC03-470D-8E6A-799B6AF4D64B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "49D50FAE-DCEB-4875-9C9D-68ED259A3994",
+          "port" : "fontSize"
+        }
+      },
+      {
+        "from" : {
+          "node" : "41B1C615-7728-4EE4-BDBF-75CA89E46B4B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "49D50FAE-DCEB-4875-9C9D-68ED259A3994",
+          "port" : "position"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "F3A218BC-8990-42B4-9D74-271944AC152F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B59B58CE-1553-4D4F-9592-8BFA506345BB",
+        "position" : {
+          "x" : 1332,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "42CE108B-33EE-4461-9F1B-6AA6523FB211",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "092EFFE7-6382-4B60-AB20-BCA1C6278972",
+        "position" : {
+          "x" : 36,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "A0B58F4F-42B2-44E3-97FC-AFA91CDEE542",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CA88CC56-9ADC-47EA-8755-51F4B1103B5C",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B23771DD-84E6-4E9E-B864-9036AB1494BF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A35E8C5A-0574-434A-B24E-8F0BED288F35",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "B380BBF0-DEE8-46ED-A9F0-2AB31D2E9D52",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F5084F14-6DBB-4C03-B248-4638514B4229",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DB3924DA-5B1E-47EB-89B2-995EA080233F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "01922D36-67CE-4DDD-B4AA-8AD424D7BE1E",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "3E0282F6-BA56-4189-A7B5-7F806703B4FE",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "527C21AA-7D3B-4C99-9D64-66DFCA38A4CE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "1F709809-A751-4D11-AAAE-F69C7F72978D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D917A420-1323-4BE2-AC22-3D2E30DFEF55",
+        "position" : {
+          "x" : 48,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "BC7F4A4C-54A9-44EA-B405-D36227B19E86",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7125E387-AF1D-4C5D-AC13-A8E9C6F2FC01",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "873A3C38-E33E-44DE-B0FC-25F9C312252A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E715069E-525D-4208-BB43-7F0415B074F7",
+        "position" : {
+          "x" : 48,
+          "y" : 816
+        }
+      },
+      {
+        "id" : "191CC15F-99D7-4CD3-BC12-B24E52BF3273",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0AC23638-B4D6-4534-A7EF-611882E3CCF5",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "43B839EE-B565-4710-968B-7CA821F914A1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8EFD611D-3C4B-4C83-8B7B-5D771CCC6243",
+        "position" : {
+          "x" : 288,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "6E52C648-B537-4E0B-BC85-BF26721C163C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2B94FBD2-5A9F-4BC9-A52A-393A94BC3C77",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "4E579E14-4285-4961-ADE0-198D1A42AC2C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F2B381C1-2D3D-458F-8876-8CF3CC2BF95B",
+        "position" : {
+          "x" : 288,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "8CA87734-41BF-4AFF-8B98-194728579C20",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CD44BEFD-4166-4341-9239-E7418A65017C",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "88D17973-44D2-4E16-9C9F-6BB0D3565F40",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "40F7A615-D6EE-4074-BA22-B64854496F44",
+        "position" : {
+          "x" : 288,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "66191FFD-C364-4052-AFEF-7CC5BE00EF4A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "73A38B77-FAAE-4FE0-9B6A-E95BD977B92F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "21A886AE-9BBF-4289-92C8-16F4FB5BE287",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "578B28E0-30A5-4284-8632-51603A9F0AA4",
+        "position" : {
+          "x" : 288,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "2BDD6498-2D94-4203-B1FF-26D708513AEB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3B3B7D06-631B-46B7-9A12-4E69E420D0B5",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "3D70093C-672B-4869-934C-0AAB1DB52310",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "951ADF38-B32C-473D-B9FC-86039EA8FFE8",
+        "position" : {
+          "x" : 288,
+          "y" : 816
+        }
+      },
+      {
+        "id" : "67C102BE-D9B7-478F-B4F4-A3BB23F4F150",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5D021C40-1EE1-447E-9CBE-FDB0A99ABEE1",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "69A12D1B-6E74-4E12-8F37-2BEAFFFFF0A3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CD7806BF-2855-4814-B8B4-F5004326A101",
+        "position" : {
+          "x" : 528,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E9552880-E20F-4602-8E79-D3BF3A43C812",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CF765865-ACED-4B9C-8BED-2E58A19098A9",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A8B4E804-0616-491C-8AE4-F3ADA282897C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A446DD60-AB2E-47E0-A290-5E7D6EB0BB07",
+        "position" : {
+          "x" : 528,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "FA336205-ACCB-48B7-929F-71F302C23453",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5C9E80EE-8737-49F4-87C4-CB14A99FF3C1",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "8D32B5F1-FE4C-4A9B-9285-CACFF6F86862",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C3B51032-5F8C-48AC-8867-5D7DDF1841E2",
+        "position" : {
+          "x" : 528,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "1323EEFA-F7DF-4487-9C5D-E57ABE44D98C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "02053A0A-83AA-482B-851A-B86DE717C900",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "FEA337A9-DF7B-47C3-B2BE-58BE375F9A6F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1106C3BA-F83D-42A6-BA49-45628B93EDA5",
+        "position" : {
+          "x" : 1044,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "49D50FAE-DCEB-4875-9C9D-68ED259A3994",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8D278AE5-6258-4D38-B42B-0C20CDC8ADAF",
+        "position" : {
+          "x" : 1044,
+          "y" : 480
+        }
+      },
+      {
+        "id" : "9E059418-FB66-4023-8D7D-294EF026ADB2",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : -84
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "progress",
+        "name" : "Collapse",
+        "position" : {
+          "x" : 300,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "F118FF78-A3FC-438F-A0D7-450022F8E4DC",
+        "inputs" : {
+
+        },
+        "kind" : "clamp",
+        "position" : {
+          "x" : 540,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "77C1D143-1713-449F-A1B0-7FC5A02B8620",
+        "inputs" : {
+          "end" : {
+            "type" : "size",
+            "value" : {
+              "height" : 96,
+              "width" : 390
+            }
+          },
+          "start" : {
+            "type" : "size",
+            "value" : {
+              "height" : 180,
+              "width" : 390
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Header Height",
+        "position" : {
+          "x" : 780,
+          "y" : 264
+        },
+        "valueType" : "size"
+      },
+      {
+        "id" : "AC981DE2-DC03-470D-8E6A-799B6AF4D64B",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 36
+          }
+        },
+        "kind" : "transition",
+        "name" : "Title Size",
+        "position" : {
+          "x" : 780,
+          "y" : 444
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "41B1C615-7728-4EE4-BDBF-75CA89E46B4B",
+        "inputs" : {
+          "end" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 56
+            }
+          },
+          "start" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 116
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Title Position",
+        "position" : {
+          "x" : 780,
+          "y" : 600
+        },
+        "valueType" : "point"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "CA88CC56-9ADC-47EA-8755-51F4B1103B5C",
+            "kind" : "view",
+            "name" : "Header Space",
+            "properties" : {
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 170,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "F5084F14-6DBB-4C03-B248-4638514B4229",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 1"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "A35E8C5A-0574-434A-B24E-8F0BED288F35",
+            "kind" : "view",
+            "name" : "Row 1",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "527C21AA-7D3B-4C99-9D64-66DFCA38A4CE",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 2"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "01922D36-67CE-4DDD-B4AA-8AD424D7BE1E",
+            "kind" : "view",
+            "name" : "Row 2",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "7125E387-AF1D-4C5D-AC13-A8E9C6F2FC01",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 3"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "D917A420-1323-4BE2-AC22-3D2E30DFEF55",
+            "kind" : "view",
+            "name" : "Row 3",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "0AC23638-B4D6-4534-A7EF-611882E3CCF5",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 4"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "E715069E-525D-4208-BB43-7F0415B074F7",
+            "kind" : "view",
+            "name" : "Row 4",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "2B94FBD2-5A9F-4BC9-A52A-393A94BC3C77",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 5"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "8EFD611D-3C4B-4C83-8B7B-5D771CCC6243",
+            "kind" : "view",
+            "name" : "Row 5",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "CD44BEFD-4166-4341-9239-E7418A65017C",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 6"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "F2B381C1-2D3D-458F-8876-8CF3CC2BF95B",
+            "kind" : "view",
+            "name" : "Row 6",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "73A38B77-FAAE-4FE0-9B6A-E95BD977B92F",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 7"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "40F7A615-D6EE-4074-BA22-B64854496F44",
+            "kind" : "view",
+            "name" : "Row 7",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "3B3B7D06-631B-46B7-9A12-4E69E420D0B5",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 8"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "578B28E0-30A5-4284-8632-51603A9F0AA4",
+            "kind" : "view",
+            "name" : "Row 8",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5D021C40-1EE1-447E-9CBE-FDB0A99ABEE1",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 9"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "951ADF38-B32C-473D-B9FC-86039EA8FFE8",
+            "kind" : "view",
+            "name" : "Row 9",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "CF765865-ACED-4B9C-8BED-2E58A19098A9",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 10"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "CD7806BF-2855-4814-B8B4-F5004326A101",
+            "kind" : "view",
+            "name" : "Row 10",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5C9E80EE-8737-49F4-87C4-CB14A99FF3C1",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 11"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "A446DD60-AB2E-47E0-A290-5E7D6EB0BB07",
+            "kind" : "view",
+            "name" : "Row 11",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "02053A0A-83AA-482B-851A-B86DE717C900",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Trip 12"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "C3B51032-5F8C-48AC-8867-5D7DDF1841E2",
+            "kind" : "view",
+            "name" : "Row 12",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "092EFFE7-6382-4B60-AB20-BCA1C6278972",
+        "kind" : "view",
+        "name" : "List",
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingHorizontal" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "paddingVertical" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "scrolls" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 10
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "1106C3BA-F83D-42A6-BA49-45628B93EDA5",
+        "kind" : "view",
+        "name" : "Header",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.26666666666666666,
+              "green" : 0.16470588235294117,
+              "red" : 0.12156862745098039
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 180,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "8D278AE5-6258-4D38-B42B-0C20CDC8ADAF",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 36
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 116
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Journeys"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      }
+    ],
+    "id" : "B59B58CE-1553-4D4F-9592-8BFA506345BB",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.95,
+          "green" : 0.95,
+          "red" : 0.95
+        }
+      }
+    }
+  },
+  "version" : 4
+}

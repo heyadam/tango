@@ -1,0 +1,267 @@
+{
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "D0AB4D4D-60E9-43D9-8EF4-638A8659A436",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D747F502-D775-4485-ABD7-A8461C077FFF",
+          "port" : "ext.progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A453C85-C058-492D-97BD-A8BE065E2AC3",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D747F502-D775-4485-ABD7-A8461C077FFF",
+          "port" : "ext.color"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6D0D914D-6F5B-4387-A37A-63682C838BE4",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "B6F2973E-E757-4E48-BC8A-1F9116A3CB6C",
+          "port" : "text"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "6C1AB224-10DB-40FD-950E-2F5BE888102B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "538E934F-95F5-4F03-B5EF-2DE72EF9BDE9",
+        "position" : {
+          "x" : 336,
+          "y" : 48
+        }
+      },
+      {
+        "custom" : "com.tango.sampler\/ring",
+        "id" : "D747F502-D775-4485-ABD7-A8461C077FFF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "657D571B-E056-4F73-964D-B81F9169D7B4",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B6F2973E-E757-4E48-BC8A-1F9116A3CB6C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C7D94B24-982B-42E3-B5A4-8DCA89AD8FCE",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "F315749D-2138-4A0A-A371-415145A883DD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E532A758-4543-43EC-B2BF-E87D01430406",
+        "position" : {
+          "x" : 624,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "D0AB4D4D-60E9-43D9-8EF4-638A8659A436",
+        "inputs" : {
+          "value" : {
+            "type" : "number",
+            "value" : 0.72
+          }
+        },
+        "kind" : "component.input",
+        "name" : "Progress",
+        "position" : {
+          "x" : 48,
+          "y" : 480
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "1A453C85-C058-492D-97BD-A8BE065E2AC3",
+        "inputs" : {
+          "value" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 0.47843137254901963,
+              "red" : 0
+            }
+          }
+        },
+        "kind" : "component.input",
+        "name" : "Color",
+        "position" : {
+          "x" : 48,
+          "y" : 600
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "6D0D914D-6F5B-4387-A37A-63682C838BE4",
+        "inputs" : {
+          "value" : {
+            "type" : "text",
+            "value" : "Daily goal"
+          }
+        },
+        "kind" : "component.input",
+        "name" : "Title",
+        "position" : {
+          "x" : 48,
+          "y" : 720
+        },
+        "valueType" : "text"
+      }
+    ]
+  },
+  "id" : "DC9EC67F-7B04-47CA-B0AD-FA16B202CE13",
+  "name" : "Stat Ring",
+  "root" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "custom" : {
+              "inputCount" : 5,
+              "inputs" : {
+
+              },
+              "kind" : "com.tango.sampler\/ring"
+            },
+            "id" : "657D571B-E056-4F73-964D-B81F9169D7B4",
+            "kind" : "view",
+            "name" : "Ring",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 20
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 120,
+                  "width" : 120
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "C7D94B24-982B-42E3-B5A4-8DCA89AD8FCE",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 154
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Daily goal"
+              }
+            }
+          }
+        ],
+        "id" : "538E934F-95F5-4F03-B5EF-2DE72EF9BDE9",
+        "kind" : "view",
+        "name" : "Stat Ring",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 0
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.12,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 18
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 196,
+              "width" : 160
+            }
+          }
+        }
+      }
+    ],
+    "id" : "E532A758-4543-43EC-B2BF-E87D01430406",
+    "kind" : "view",
+    "name" : "Stat Ring",
+    "properties" : {
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 196,
+          "width" : 160
+        }
+      }
+    }
+  }
+}

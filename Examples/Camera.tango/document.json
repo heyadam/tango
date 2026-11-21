@@ -1,0 +1,569 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "DB7B8A14-5A6C-4891-ACE8-1B72DF0F8E47",
+        "origin" : {
+          "x" : 20,
+          "y" : 0
+        },
+        "size" : {
+          "height" : 250,
+          "width" : 1020
+        },
+        "text" : "Capture · The shutter takes a photo; the photo becomes the thumbnail"
+      },
+      {
+        "id" : "9C9B7A9E-AC24-423B-974E-0DAEA62A8E33",
+        "origin" : {
+          "x" : 300,
+          "y" : 280
+        },
+        "size" : {
+          "height" : 560,
+          "width" : 740
+        },
+        "text" : "Feedback · What the person feels, sees and hears"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "2FFEA81D-331D-4C00-B4F9-FB1A118BCB2D",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "11C2F225-6E74-402D-83D4-6AFC4DEDC73B",
+          "port" : "capture"
+        }
+      },
+      {
+        "from" : {
+          "node" : "11C2F225-6E74-402D-83D4-6AFC4DEDC73B",
+          "port" : "photo"
+        },
+        "to" : {
+          "node" : "8CA241C7-09C5-4936-9436-13DEFDF4B4D4",
+          "port" : "image"
+        }
+      },
+      {
+        "from" : {
+          "node" : "11C2F225-6E74-402D-83D4-6AFC4DEDC73B",
+          "port" : "available"
+        },
+        "to" : {
+          "node" : "753B16D9-A23C-4F59-976C-E6A6DFB1BD22",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "753B16D9-A23C-4F59-976C-E6A6DFB1BD22",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "512331CA-F021-4D3A-BCAA-6C518FF7F7E4",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2FFEA81D-331D-4C00-B4F9-FB1A118BCB2D",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "32D22BFC-B1DC-4659-AD00-343775C28B7E",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "32D22BFC-B1DC-4659-AD00-343775C28B7E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "27AF29F9-F34C-469F-BB84-F638D25237A8",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "27AF29F9-F34C-469F-BB84-F638D25237A8",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "B8897B28-4AE1-4B9E-B66E-407A36EC6A03",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2FFEA81D-331D-4C00-B4F9-FB1A118BCB2D",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "DAEBE676-A4D4-4EB3-AEEC-130BC238B7AA",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "DAEBE676-A4D4-4EB3-AEEC-130BC238B7AA",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "44B26314-9F22-4087-A1D6-5A1C895C439D",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2FFEA81D-331D-4C00-B4F9-FB1A118BCB2D",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "E48AF0DA-ED63-4693-A991-5B5B409BBC3E",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2FFEA81D-331D-4C00-B4F9-FB1A118BCB2D",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "48333C99-DAD0-457D-AC96-40469DA5B660",
+          "port" : "trigger"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "3FAEF59E-81FF-4D03-8BA0-35589CACBFCD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DC7ADCCC-097E-4569-9D7F-F596AAE134BC",
+        "position" : {
+          "x" : 1104,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "F8331E7E-9724-4CCA-B3A6-10F587C4C9A7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4D2353CC-A17D-4821-AB7F-2BD719D8C9CC",
+        "position" : {
+          "x" : 1392,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "512331CA-F021-4D3A-BCAA-6C518FF7F7E4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "56087A9A-DED4-40D9-9FEE-A5F45A72CCC1",
+        "position" : {
+          "x" : 816,
+          "y" : 156
+        }
+      },
+      {
+        "id" : "15755FD8-FE37-4BF2-83F5-F9A686DEF6FA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C4C6F257-53C2-4D51-AEFF-DB8D2203D365",
+        "position" : {
+          "x" : 816,
+          "y" : 324
+        }
+      },
+      {
+        "id" : "B8897B28-4AE1-4B9E-B66E-407A36EC6A03",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A45AD47B-ECF7-473F-BF33-9011A7A25119",
+        "position" : {
+          "x" : 804,
+          "y" : 744
+        }
+      },
+      {
+        "id" : "8CA241C7-09C5-4936-9436-13DEFDF4B4D4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BE5471F1-A783-4FEC-B395-151CD1C53CC6",
+        "position" : {
+          "x" : 600,
+          "y" : 492
+        }
+      },
+      {
+        "id" : "44B26314-9F22-4087-A1D6-5A1C895C439D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BBF255F5-A0B1-4297-84EB-793F3B0B9C2B",
+        "position" : {
+          "x" : 564,
+          "y" : 804
+        }
+      },
+      {
+        "id" : "2FFEA81D-331D-4C00-B4F9-FB1A118BCB2D",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "A45AD47B-ECF7-473F-BF33-9011A7A25119",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "11C2F225-6E74-402D-83D4-6AFC4DEDC73B",
+        "inputs" : {
+
+        },
+        "kind" : "camera",
+        "position" : {
+          "x" : 324,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "753B16D9-A23C-4F59-976C-E6A6DFB1BD22",
+        "inputs" : {
+
+        },
+        "kind" : "not",
+        "name" : "No Camera",
+        "position" : {
+          "x" : 600,
+          "y" : 156
+        }
+      },
+      {
+        "id" : "32D22BFC-B1DC-4659-AD00-343775C28B7E",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.8
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.2
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 324,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "27AF29F9-F34C-469F-BB84-F638D25237A8",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.86
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Squeeze",
+        "position" : {
+          "x" : 564,
+          "y" : 336
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "DAEBE676-A4D4-4EB3-AEEC-130BC238B7AA",
+        "inputs" : {
+          "duration" : {
+            "type" : "number",
+            "value" : 0.4
+          }
+        },
+        "kind" : "impulse",
+        "name" : "Flash",
+        "position" : {
+          "x" : 324,
+          "y" : 564
+        }
+      },
+      {
+        "id" : "E48AF0DA-ED63-4693-A991-5B5B409BBC3E",
+        "inputs" : {
+          "sound" : {
+            "type" : "text",
+            "value" : "Shutter"
+          }
+        },
+        "kind" : "playSound",
+        "position" : {
+          "x" : 324,
+          "y" : 696
+        }
+      },
+      {
+        "id" : "48333C99-DAD0-457D-AC96-40469DA5B660",
+        "inputs" : {
+
+        },
+        "kind" : "hapticFeedback",
+        "position" : {
+          "x" : 564,
+          "y" : 696
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "4D2353CC-A17D-4821-AB7F-2BD719D8C9CC",
+        "kind" : "camera",
+        "name" : "Viewfinder",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 110
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 520,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "56087A9A-DED4-40D9-9FEE-A5F45A72CCC1",
+        "kind" : "text",
+        "name" : "Notice",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 420
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 22,
+              "width" : 390
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Camera not available"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.6,
+              "green" : 0.6,
+              "red" : 0.6
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "C4C6F257-53C2-4D51-AEFF-DB8D2203D365",
+        "kind" : "ellipse",
+        "name" : "Ring",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 155,
+              "y" : 692
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 80,
+              "width" : 80
+            }
+          },
+          "strokeColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "strokeWidth" : {
+            "type" : "number",
+            "value" : 4
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A45AD47B-ECF7-473F-BF33-9011A7A25119",
+        "kind" : "ellipse",
+        "name" : "Shutter",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 163,
+              "y" : 700
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 64,
+              "width" : 64
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "BE5471F1-A783-4FEC-B395-151CD1C53CC6",
+        "kind" : "image",
+        "name" : "Last Photo",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 28,
+              "y" : 704
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 56
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "BBF255F5-A0B1-4297-84EB-793F3B0B9C2B",
+        "kind" : "view",
+        "name" : "Flash",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          }
+        }
+      }
+    ],
+    "id" : "DC7ADCCC-097E-4569-9D7F-F596AAE134BC",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      }
+    }
+  },
+  "version" : 4
+}

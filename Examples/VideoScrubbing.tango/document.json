@@ -1,0 +1,643 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "190C0AE3-CC1E-43BC-B57F-6DD94713DDB5",
+          "port" : "position"
+        },
+        "to" : {
+          "node" : "35CF9D14-F1E6-4CD9-80F5-0650802DF994",
+          "port" : "point"
+        }
+      },
+      {
+        "from" : {
+          "node" : "35CF9D14-F1E6-4CD9-80F5-0650802DF994",
+          "port" : "x"
+        },
+        "to" : {
+          "node" : "B6A24E09-847B-4F12-B53D-626D02E8C4B4",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B6A24E09-847B-4F12-B53D-626D02E8C4B4",
+          "port" : "progress"
+        },
+        "to" : {
+          "node" : "6523BCC9-1475-489C-ADF1-2B71D9547890",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6523BCC9-1475-489C-ADF1-2B71D9547890",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+          "port" : "duration"
+        },
+        "to" : {
+          "node" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "1AEE110F-080D-4495-975F-C86E1FBE54FC",
+          "port" : "time"
+        }
+      },
+      {
+        "from" : {
+          "node" : "190C0AE3-CC1E-43BC-B57F-6DD94713DDB5",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "07B25278-02DB-4104-916C-72211F818858",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "07B25278-02DB-4104-916C-72211F818858",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "1AEE110F-080D-4495-975F-C86E1FBE54FC",
+          "port" : "playing"
+        }
+      },
+      {
+        "from" : {
+          "node" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+          "port" : "progress"
+        },
+        "to" : {
+          "node" : "4CE86FDD-A69B-4A27-8952-BADC5F8BFDE5",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+          "port" : "progress"
+        },
+        "to" : {
+          "node" : "0104C37E-2FA3-4C84-8329-7BAD5B31243E",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4CE86FDD-A69B-4A27-8952-BADC5F8BFDE5",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "2A365DBB-9149-4BB3-BA6C-A7EB6FFBE4E4",
+          "port" : "width"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0104C37E-2FA3-4C84-8329-7BAD5B31243E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "AA188004-F19D-4FFC-AAA7-8FE8D5525374",
+          "port" : "x"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "3D6D7F73-0FB4-4FAC-BA06-F9FACB93FEF0",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D8A5AF89-BDF0-4899-AA0D-E327A226B368",
+        "position" : {
+          "x" : 1548,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "718B00B5-DA39-4BBA-B595-81C2FC691988",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1F7AA03B-539E-4D59-9E6B-C01D59C3FF6F",
+        "position" : {
+          "x" : 1836,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "1AEE110F-080D-4495-975F-C86E1FBE54FC",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FB925A38-4453-4D85-84B1-FD1DA5120977",
+        "position" : {
+          "x" : 1260,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "2F59E095-B1BF-4416-ADF0-9816E0C05216",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "418B98E3-EA53-4CD8-9754-6EC42B079CEE",
+        "position" : {
+          "x" : 1260,
+          "y" : 852
+        }
+      },
+      {
+        "id" : "2A365DBB-9149-4BB3-BA6C-A7EB6FFBE4E4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "92C0CDF4-CDCD-44CD-9484-9F545E73C279",
+        "position" : {
+          "x" : 1260,
+          "y" : 480
+        }
+      },
+      {
+        "id" : "AA188004-F19D-4FFC-AAA7-8FE8D5525374",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "60153A82-48FA-4B6F-9F35-739525A3EFEF",
+        "position" : {
+          "x" : 1260,
+          "y" : 1236
+        }
+      },
+      {
+        "id" : "73ACA3D1-A6A0-4DBB-8A50-E8DF7696B98A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E20BD255-52E2-44CA-8C80-64BA14140490",
+        "position" : {
+          "x" : 1260,
+          "y" : 1044
+        }
+      },
+      {
+        "id" : "25BD3DD3-5254-4DA9-9640-3058F3E3D623",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "01E1AD87-C614-4B43-ACFC-573548B399B2",
+        "position" : {
+          "x" : 1500,
+          "y" : 180
+        }
+      },
+      {
+        "id" : "190C0AE3-CC1E-43BC-B57F-6DD94713DDB5",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "E20BD255-52E2-44CA-8C80-64BA14140490",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "35CF9D14-F1E6-4CD9-80F5-0650802DF994",
+        "inputs" : {
+
+        },
+        "kind" : "splitPoint",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "B6A24E09-847B-4F12-B53D-626D02E8C4B4",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 366
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 24
+          }
+        },
+        "kind" : "progress",
+        "name" : "Along the Track",
+        "position" : {
+          "x" : 540,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "6523BCC9-1475-489C-ADF1-2B71D9547890",
+        "inputs" : {
+
+        },
+        "kind" : "clamp",
+        "position" : {
+          "x" : 780,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+        "inputs" : {
+
+        },
+        "kind" : "multiply",
+        "name" : "Seconds",
+        "position" : {
+          "x" : 1020,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "07B25278-02DB-4104-916C-72211F818858",
+        "inputs" : {
+
+        },
+        "kind" : "not",
+        "name" : "Not Touching",
+        "position" : {
+          "x" : 780,
+          "y" : 324
+        }
+      },
+      {
+        "id" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+        "inputs" : {
+
+        },
+        "kind" : "videoTime",
+        "layerID" : "FB925A38-4453-4D85-84B1-FD1DA5120977",
+        "position" : {
+          "x" : 36,
+          "y" : 480
+        }
+      },
+      {
+        "id" : "4CE86FDD-A69B-4A27-8952-BADC5F8BFDE5",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 342
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Played Width",
+        "position" : {
+          "x" : 540,
+          "y" : 480
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "0104C37E-2FA3-4C84-8329-7BAD5B31243E",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 354
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 12
+          }
+        },
+        "kind" : "transition",
+        "name" : "Knob X",
+        "position" : {
+          "x" : 540,
+          "y" : 660
+        },
+        "valueType" : "number"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "1F7AA03B-539E-4D59-9E6B-C01D59C3FF6F",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 96
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Scrub Through a Clip"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "FB925A38-4453-4D85-84B1-FD1DA5120977",
+        "kind" : "video",
+        "name" : "Clip",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 152
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 192,
+              "width" : 342
+            }
+          },
+          "video" : {
+            "type" : "text",
+            "value" : "Sunset.mov"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "418B98E3-EA53-4CD8-9754-6EC42B079CEE",
+        "kind" : "view",
+        "name" : "Track",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 3
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.86,
+              "green" : 0.86,
+              "red" : 0.86
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 401
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 6,
+              "width" : 342
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "92C0CDF4-CDCD-44CD-9484-9F545E73C279",
+        "kind" : "view",
+        "name" : "Played",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 3
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9686274509803922,
+              "green" : 0.4823529411764706,
+              "red" : 0.23921568627450981
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 401
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 6,
+              "width" : 0
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "60153A82-48FA-4B6F-9F35-739525A3EFEF",
+        "kind" : "ellipse",
+        "name" : "Knob",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 12,
+              "y" : 392
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.3,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 4
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 24,
+              "width" : 24
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "E20BD255-52E2-44CA-8C80-64BA14140490",
+        "kind" : "view",
+        "name" : "Scrubber",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 380
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 48,
+              "width" : 342
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "01E1AD87-C614-4B43-ACFC-573548B399B2",
+        "kind" : "text",
+        "name" : "Hint",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 448
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Drag along the bar to scrub. Let go and it plays on."
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.45,
+              "green" : 0.45,
+              "red" : 0.45
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      }
+    ],
+    "id" : "D8A5AF89-BDF0-4899-AA0D-E327A226B368",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 1,
+          "green" : 1,
+          "red" : 1
+        }
+      }
+    }
+  },
+  "version" : 4
+}

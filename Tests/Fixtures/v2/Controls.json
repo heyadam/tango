@@ -1,0 +1,4496 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+          "inputs" : {
+            "0C8F3A47-46A2-DC46-E7F0-407D66E11F63" : {
+              "type" : "bool",
+              "value" : false
+            },
+            "72923A47-46A4-DC46-4DF4-407D66E31F63" : {
+              "type" : "text",
+              "value" : "Settings"
+            }
+          }
+        },
+        "id" : "5EE2EB44-4050-41E8-9E1B-B3C85C4956EE",
+        "kind" : "component",
+        "name" : "Navigation Bar",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 47
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 390
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "1A341DDA-7FAC-4D18-ACBF-DB92EDD0F917",
+                "kind" : "text",
+                "name" : "Wi-Fi Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Wi-Fi"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "component" : {
+                  "id" : "AFCB6006-7ED8-3338-4214-E5432A45DC03",
+                  "inputs" : {
+                    "4B34C86E-1130-3AB1-6883-7D86B755A1E8" : {
+                      "type" : "bool",
+                      "value" : true
+                    }
+                  }
+                },
+                "id" : "0B187372-3D06-4CBF-938C-5810560A87F5",
+                "kind" : "component",
+                "name" : "Toggle",
+                "properties" : {
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 31,
+                      "width" : 51
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "38A6E865-9DCE-4B61-A5DC-016E780F8491",
+            "kind" : "group",
+            "name" : "Wi-Fi Row",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 52,
+                  "width" : 358
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "component" : {
+              "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+              "inputs" : {
+                "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB" : {
+                  "type" : "text",
+                  "value" : "Network"
+                }
+              }
+            },
+            "id" : "B1FD9F17-D8FF-4BF7-8EB8-DB2871A51298",
+            "kind" : "component",
+            "name" : "Network Row",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 358
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "component" : {
+              "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+              "inputs" : {
+                "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB" : {
+                  "type" : "text",
+                  "value" : "General"
+                }
+              }
+            },
+            "id" : "F02F253B-C17A-4E69-85A0-7B7134D3CAD3",
+            "kind" : "component",
+            "name" : "General Row",
+            "properties" : {
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 358
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "2B3531A5-2CEF-49F2-ACD7-825770B6A346",
+        "kind" : "group",
+        "name" : "Table",
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 12
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 110
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "408D500D-C505-CCF6-531B-5633D95C4900",
+          "inputs" : {
+            "0A8BB577-5373-1A24-2717-0BD21108C589" : {
+              "type" : "text",
+              "value" : "Day, Week, Month"
+            }
+          }
+        },
+        "id" : "092448BB-4048-48E1-BCF7-EC3AE4D9FF8E",
+        "kind" : "component",
+        "name" : "Segmented Control",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 290
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 32,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "9DE5AF94-D483-49C7-97CD-E56FF1B4B84B",
+        "kind" : "text",
+        "name" : "Brightness Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 352
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Brightness"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "523D3D04-414E-4BFE-AA22-0458F09BAA9A",
+        "kind" : "text",
+        "name" : "Brightness Value",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 322,
+              "y" : 352
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "50%"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "DA8847B3-0DB9-874A-8703-EA61E1A5BF48",
+          "inputs" : {
+
+          }
+        },
+        "id" : "FE99AB35-FACC-4DF2-A8F6-E920167C2407",
+        "kind" : "component",
+        "name" : "Slider",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 386
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 28,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "B0EF71E4-7F0C-4B87-A9D9-EF5ECDB3BC8B",
+        "kind" : "text",
+        "name" : "Count Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 452
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Guests"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "ABD25404-EA4F-495F-BF85-CBB25CF89CF1",
+        "kind" : "text",
+        "name" : "Count Value",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 240,
+              "y" : 452
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "0"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.5764705882352941,
+              "green" : 0.5568627450980392,
+              "red" : 0.5568627450980392
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "38B74954-CC1A-9292-3FC9-26EF196D45BD",
+          "inputs" : {
+
+          }
+        },
+        "id" : "1FBD64EB-27E2-4780-A9DB-BB217D286B63",
+        "kind" : "component",
+        "name" : "Stepper",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 280,
+              "y" : 446
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 32,
+              "width" : 94
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+          "inputs" : {
+            "C72F7281-D80C-6C64-381D-0D9BB2D768EF" : {
+              "type" : "text",
+              "value" : "Continue"
+            }
+          }
+        },
+        "id" : "2DD543D5-622B-42BB-A4A8-87B7F0E7F573",
+        "kind" : "component",
+        "name" : "Button",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 530
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 50,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "component" : {
+          "id" : "4F6BE97A-2E03-5BA6-D458-45031BDB3345",
+          "inputs" : {
+            "6B0421AD-F5E3-1BF6-66F2-360C4F2566EB" : {
+              "type" : "text",
+              "value" : "Settings, Search, Profile"
+            },
+            "B80221AD-F5E2-1BF6-19F4-360C4F2666EB" : {
+              "type" : "text",
+              "value" : "gearshape.fill, magnifyingglass, person.fill"
+            }
+          }
+        },
+        "id" : "E9E060D7-2965-49ED-A857-4F6301B9821D",
+        "kind" : "component",
+        "name" : "Tab Bar",
+        "properties" : {
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 788
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 390
+            }
+          }
+        }
+      }
+    ],
+    "id" : "F7972CF8-29BB-498B-9811-BE19715712D1",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.9686274509803922,
+          "green" : 0.9490196078431372,
+          "red" : 0.9490196078431372
+        }
+      }
+    }
+  },
+  "components" : [
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "72923A47-46A4-DC46-4DF4-407D66E31F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "598D3A47-46A1-DC46-CEEB-407D66DE1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "25943A47-46A5-DC46-9AF2-407D66E21F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "40883A47-469E-DC46-1BEA-407D66DD1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0C8F3A47-46A2-DC46-E7F0-407D66E11F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "0C8F3A47-46A2-DC46-E7F0-407D66E11F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BF903A47-46A3-DC46-34EF-407D66E01F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "BDA13A47-46AD-DC46-02E5-407D66DA1F63",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BF903A47-46A3-DC46-34EF-407D66E01F63",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "AF9F8908-6BEB-80A3-DE56-5CD5265E20B0",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A68B3A47-46A0-DC46-81ED-407D66DF1F63",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "72923A47-46A4-DC46-4DF4-407D66E31F63",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Title"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "25943A47-46A5-DC46-9AF2-407D66E21F63",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Back"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Back Title",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "0C8F3A47-46A2-DC46-E7F0-407D66E11F63",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : true
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Shows Back",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "BF903A47-46A3-DC46-34EF-407D66E01F63",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 528
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "A68B3A47-46A0-DC46-81ED-407D66DF1F63",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 36,
+              "y" : 708
+            }
+          },
+          {
+            "id" : "598D3A47-46A1-DC46-CEEB-407D66DE1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "8D6805BA-9578-D3C6-1032-5C9B15B8908C",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "40883A47-469E-DC46-1BEA-407D66DD1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 504,
+              "y" : 288
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "position" : {
+              "x" : 504,
+              "y" : 408
+            },
+            "property" : "enabled"
+          },
+          {
+            "id" : "BDA13A47-46AD-DC46-02E5-407D66DA1F63",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "5B5E05BA-9572-D3C6-423C-5C9B15BE908C",
+            "position" : {
+              "x" : 504,
+              "y" : 528
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "AF9F8908-6BEB-80A3-DE56-5CD5265E20B0",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+            "position" : {
+              "x" : 504,
+              "y" : 648
+            },
+            "property" : "textColor"
+          },
+          {
+            "id" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Back",
+            "position" : {
+              "x" : 504,
+              "y" : 768
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+      "library" : "iOS",
+      "name" : "Navigation Bar",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5B5E05BA-9572-D3C6-423C-5C9B15BE908C",
+                "kind" : "symbol",
+                "name" : "Chevron",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.47843137254901963,
+                      "red" : 0
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 20,
+                      "width" : 12
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "chevron.left"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "A85C05BA-9571-D3C6-F53D-5C9B15BF908C",
+                "kind" : "text",
+                "name" : "Back Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 400
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Back"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 0.47843137254901963,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "0E6005BA-9573-D3C6-8F3A-5C9B15BD908C",
+            "kind" : "group",
+            "name" : "Back",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 84
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "8D6805BA-9578-D3C6-1032-5C9B15B8908C",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Title"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "DA6605BA-9577-D3C6-C333-5C9B15B9908C",
+            "kind" : "group",
+            "name" : "Balance",
+            "properties" : {
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 84
+                }
+              }
+            }
+          }
+        ],
+        "id" : "C16105BA-9574-D3C6-DC38-5C9B15BC908C",
+        "kind" : "group",
+        "name" : "Navigation Bar",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9764705882352941,
+              "green" : 0.9764705882352941,
+              "red" : 0.9764705882352941
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 8
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 390
+            }
+          }
+        }
+      },
+      "summary" : "A title with a Back button that reports taps."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "B137C86E-1132-3AB1-CE86-7D86B757A1E8",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "FE35C86E-1131-3AB1-8188-7D86B758A1E8",
+              "port" : "flip"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FE35C86E-1131-3AB1-8188-7D86B758A1E8",
+              "port" : "on"
+            },
+            "to" : {
+              "node" : "173BC86E-1134-3AB1-348A-7D86B759A1E8",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "4B34C86E-1130-3AB1-6883-7D86B755A1E8",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "173BC86E-1134-3AB1-348A-7D86B759A1E8",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "173BC86E-1134-3AB1-348A-7D86B759A1E8",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "6439C86E-1133-3AB1-E78B-7D86B75AA1E8",
+              "port" : "target"
+            }
+          },
+          {
+            "from" : {
+              "node" : "6439C86E-1133-3AB1-E78B-7D86B75AA1E8",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "7D3EC86E-1136-3AB1-9A8D-7D86B75BA1E8",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "6439C86E-1133-3AB1-E78B-7D86B75AA1E8",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CA3CC86E-1135-3AB1-4D8F-7D86B75CA1E8",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "9832C86E-112F-3AB1-1B85-7D86B756A1E8",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CA3CC86E-1135-3AB1-4D8F-7D86B75CA1E8",
+              "port" : "end"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7D3EC86E-1136-3AB1-9A8D-7D86B75BA1E8",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "B326C86E-1128-3AB1-D075-7D86B74DA1E8",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "CA3CC86E-1135-3AB1-4D8F-7D86B75CA1E8",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "0025C86E-1127-3AB1-8377-7D86B74EA1E8",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "173BC86E-1134-3AB1-348A-7D86B759A1E8",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "78132E3E-9FA2-10EE-1148-4987D984ABC7",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "B137C86E-1132-3AB1-CE86-7D86B757A1E8",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "2B152E3E-9FA3-10EE-5E46-4987D983ABC7",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "4B34C86E-1130-3AB1-6883-7D86B755A1E8",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : false
+              }
+            },
+            "kind" : "component.input",
+            "name" : "On",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "9832C86E-112F-3AB1-1B85-7D86B756A1E8",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.34901960784313724,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.20392156862745098
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 504
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "B137C86E-1132-3AB1-CE86-7D86B757A1E8",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "4A352405-74DF-6C37-1F9C-5177149DF7DE",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "FE35C86E-1131-3AB1-8188-7D86B758A1E8",
+            "inputs" : {
+
+            },
+            "kind" : "switch",
+            "name" : "Flipped",
+            "position" : {
+              "x" : 276,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "173BC86E-1134-3AB1-348A-7D86B759A1E8",
+            "inputs" : {
+
+            },
+            "kind" : "notEqual",
+            "name" : "Is On",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "6439C86E-1133-3AB1-E78B-7D86B75AA1E8",
+            "inputs" : {
+              "damping" : {
+                "type" : "number",
+                "value" : 0.8
+              },
+              "response" : {
+                "type" : "number",
+                "value" : 0.3
+              }
+            },
+            "kind" : "spring",
+            "position" : {
+              "x" : 732,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "7D3EC86E-1136-3AB1-9A8D-7D86B75BA1E8",
+            "inputs" : {
+              "end" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 22,
+                  "y" : 2
+                }
+              },
+              "start" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 2,
+                  "y" : 2
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Knob Position",
+            "position" : {
+              "x" : 960,
+              "y" : 48
+            },
+            "valueType" : "point"
+          },
+          {
+            "id" : "CA3CC86E-1135-3AB1-4D8F-7D86B75CA1E8",
+            "inputs" : {
+              "start" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9215686274509803,
+                  "green" : 0.9137254901960784,
+                  "red" : 0.9137254901960784
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Track Color",
+            "position" : {
+              "x" : 960,
+              "y" : 348
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "B326C86E-1128-3AB1-D075-7D86B74DA1E8",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "E4312405-74DD-6C37-859F-5177149FF7DE",
+            "position" : {
+              "x" : 1188,
+              "y" : 48
+            },
+            "property" : "position"
+          },
+          {
+            "id" : "0025C86E-1127-3AB1-8377-7D86B74EA1E8",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "FD362405-74E0-6C37-6C9A-5177149CF7DE",
+            "position" : {
+              "x" : 1188,
+              "y" : 348
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "78132E3E-9FA2-10EE-1148-4987D984ABC7",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "On",
+            "position" : {
+              "x" : 1188,
+              "y" : 504
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "2B152E3E-9FA3-10EE-5E46-4987D983ABC7",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Changed",
+            "position" : {
+              "x" : 1188,
+              "y" : 648
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "AFCB6006-7ED8-3338-4214-E5432A45DC03",
+      "library" : "iOS",
+      "name" : "Toggle",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "FD362405-74E0-6C37-6C9A-5177149CF7DE",
+            "kind" : "rectangle",
+            "name" : "Track",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 15.5
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9215686274509803,
+                  "green" : 0.9137254901960784,
+                  "red" : 0.9137254901960784
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 31,
+                  "width" : 51
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "E4312405-74DD-6C37-859F-5177149FF7DE",
+            "kind" : "oval",
+            "name" : "Knob",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 2,
+                  "y" : 2
+                }
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 2
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 4
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 27,
+                  "width" : 27
+                }
+              }
+            }
+          }
+        ],
+        "id" : "4A352405-74DF-6C37-1F9C-5177149DF7DE",
+        "kind" : "group",
+        "name" : "Toggle",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 31,
+              "width" : 51
+            }
+          }
+        }
+      },
+      "summary" : "A switch: tap to turn it on or off. The knob slides and the track fills with the tint."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "8024FCD0-9BC5-1C88-3F90-24A4DAD1AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "9929FCD0-9BC8-1C88-F291-24A4DAD2AECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E627FCD0-9BC7-1C88-A593-24A4DAD3AECB",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E627FCD0-9BC7-1C88-A593-24A4DAD3AECB",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "3326FCD0-9BC6-1C88-8C8E-24A4DAD0AECB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Title"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "8024FCD0-9BC5-1C88-3F90-24A4DAD1AECB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : ""
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Detail",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "9929FCD0-9BC8-1C88-F291-24A4DAD2AECB",
+            "inputs" : {
+              "value" : {
+                "type" : "bool",
+                "value" : true
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Shows Chevron",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            },
+            "valueType" : "bool"
+          },
+          {
+            "id" : "E627FCD0-9BC7-1C88-A593-24A4DAD3AECB",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 36,
+              "y" : 528
+            }
+          },
+          {
+            "id" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB",
+            "inputs" : {
+              "end" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8392156862745098,
+                  "green" : 0.8196078431372549,
+                  "red" : 0.8196078431372549
+                }
+              },
+              "start" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Highlight",
+            "position" : {
+              "x" : 276,
+              "y" : 528
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "9C050B7D-92A6-3D69-F159-D76296ECE152",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "B22EFCD0-9BCB-1C88-D98C-24A4DACFAECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "4F070B7D-92A7-3D69-3E58-D76296EBE152",
+            "position" : {
+              "x" : 504,
+              "y" : 288
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "CB33FCD0-9BCE-1C88-249C-24A4DAD8AECB",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+            "position" : {
+              "x" : 504,
+              "y" : 528
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Tap",
+            "position" : {
+              "x" : 504,
+              "y" : 684
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+      "library" : "iOS",
+      "name" : "List Row",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "B50A0B7D-92A9-3D69-D854-D76296E9E152",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Title"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "9C050B7D-92A6-3D69-F159-D76296ECE152",
+            "kind" : "text",
+            "name" : "Detail",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "singleLine" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "text" : {
+                "type" : "text",
+                "value" : ""
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "4F070B7D-92A7-3D69-3E58-D76296EBE152",
+            "kind" : "symbol",
+            "name" : "Chevron",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.7803921568627451
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 15,
+                  "width" : 9
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "chevron.right"
+              }
+            }
+          }
+        ],
+        "id" : "02090B7D-92A8-3D69-8B56-D76296EAE152",
+        "kind" : "group",
+        "name" : "List Row",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 358
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      "summary" : "A table row with a title, optional detail and chevron. It highlights while pressed and reports taps."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "0A8BB577-5373-1A24-2717-0BD21108C589",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "A487B577-5371-1A24-8D1A-0BD2110AC589",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A487B577-5371-1A24-8D1A-0BD2110AC589",
+              "port" : "array"
+            },
+            "to" : {
+              "node" : "5789B577-5372-1A24-DA18-0BD21109C589",
+              "port" : "array"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5789B577-5372-1A24-DA18-0BD21109C589",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "257FB577-536C-1A24-DC07-0BD211FFC489",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "3E84B577-536F-1A24-5B10-0BD21104C589",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "F185B577-5370-1A24-A80E-0BD21103C589",
+              "port" : "set"
+            }
+          },
+          {
+            "from" : {
+              "node" : "BD8CB577-5374-1A24-7415-0BD21107C589",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F185B577-5370-1A24-A80E-0BD21103C589",
+              "port" : "start"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5789B577-5372-1A24-DA18-0BD21109C589",
+              "port" : "index"
+            },
+            "to" : {
+              "node" : "D880B577-536D-1A24-C113-0BD21106C589",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F185B577-5370-1A24-A80E-0BD21103C589",
+              "port" : "option"
+            },
+            "to" : {
+              "node" : "D880B577-536D-1A24-C113-0BD21106C589",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "D880B577-536D-1A24-C113-0BD21106C589",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "8B82B577-536E-1A24-0E12-0BD21105C589",
+              "port" : "target"
+            }
+          },
+          {
+            "from" : {
+              "node" : "8B82B577-536E-1A24-0E12-0BD21105C589",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "727DB577-536B-1A24-8F09-0BD21100C589",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "727DB577-536B-1A24-8F09-0BD21100C589",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "97D37D69-D436-800E-8C22-D5E84747E024",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F185B577-5370-1A24-A80E-0BD21103C589",
+              "port" : "option"
+            },
+            "to" : {
+              "node" : "E4D17D69-D435-800E-3F24-D5E84748E024",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F185B577-5370-1A24-A80E-0BD21103C589",
+              "port" : "changed"
+            },
+            "to" : {
+              "node" : "FDD67D69-D438-800E-F225-D5E84749E024",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "0A8BB577-5373-1A24-2717-0BD21108C589",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "First, Second, Third"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Segments",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "BD8CB577-5374-1A24-7415-0BD21107C589",
+            "inputs" : {
+              "value" : {
+                "type" : "number",
+                "value" : 0
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Selected",
+            "position" : {
+              "x" : 36,
+              "y" : 444
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "A487B577-5371-1A24-8D1A-0BD2110AC589",
+            "inputs" : {
+
+            },
+            "kind" : "splitText",
+            "position" : {
+              "x" : 276,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "5789B577-5372-1A24-DA18-0BD21109C589",
+            "inputs" : {
+
+            },
+            "kind" : "loopOverArray",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "3E84B577-536F-1A24-5B10-0BD21104C589",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "969FB22F-09EB-82D6-C188-38EFA86785EB",
+            "position" : {
+              "x" : 36,
+              "y" : 240
+            }
+          },
+          {
+            "id" : "F185B577-5370-1A24-A80E-0BD21103C589",
+            "inputs" : {
+
+            },
+            "kind" : "loopOptionSwitch",
+            "name" : "Selected Segment",
+            "position" : {
+              "x" : 504,
+              "y" : 288
+            }
+          },
+          {
+            "id" : "D880B577-536D-1A24-C113-0BD21106C589",
+            "inputs" : {
+
+            },
+            "kind" : "equal",
+            "name" : "Is Selected",
+            "position" : {
+              "x" : 732,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "8B82B577-536E-1A24-0E12-0BD21105C589",
+            "inputs" : {
+              "damping" : {
+                "type" : "number",
+                "value" : 0.9
+              },
+              "response" : {
+                "type" : "number",
+                "value" : 0.25
+              }
+            },
+            "kind" : "spring",
+            "position" : {
+              "x" : 960,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "727DB577-536B-1A24-8F09-0BD21100C589",
+            "inputs" : {
+              "end" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "start" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Segment Color",
+            "position" : {
+              "x" : 1188,
+              "y" : 204
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "257FB577-536C-1A24-DC07-0BD211FFC489",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "E39DB22F-09EA-82D6-A883-38EFA86485EB",
+            "position" : {
+              "x" : 732,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "97D37D69-D436-800E-8C22-D5E84747E024",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "969FB22F-09EB-82D6-C188-38EFA86785EB",
+            "position" : {
+              "x" : 1416,
+              "y" : 204
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "E4D17D69-D435-800E-3F24-D5E84748E024",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Selected",
+            "position" : {
+              "x" : 732,
+              "y" : 408
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "FDD67D69-D438-800E-F225-D5E84749E024",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Changed",
+            "position" : {
+              "x" : 732,
+              "y" : 564
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "408D500D-C505-CCF6-531B-5633D95C4900",
+      "library" : "iOS",
+      "name" : "Segmented Control",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "E39DB22F-09EA-82D6-A883-38EFA86485EB",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 500
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Segment"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "969FB22F-09EB-82D6-C188-38EFA86785EB",
+            "kind" : "group",
+            "name" : "Segment",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 7
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "49A1B22F-09EC-82D6-0E87-38EFA86685EB",
+        "kind" : "group",
+        "name" : "Segmented Control",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 9
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9215686274509803,
+              "green" : 0.9137254901960784,
+              "red" : 0.9137254901960784
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 2
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 32,
+              "width" : 300
+            }
+          }
+        }
+      },
+      "summary" : "A row of choices, one selected. Give it a comma-separated list; it makes a segment for each."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "29E37CC6-5439-065A-267D-7C661C7007D7",
+              "port" : "width"
+            },
+            "to" : {
+              "node" : "DCE47CC6-543A-065A-3F82-7C661C7307D7",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "76E17CC6-5438-065A-D97E-7C661C7107D7",
+              "port" : "drag"
+            },
+            "to" : {
+              "node" : "8FE67CC6-543B-065A-8C80-7C661C7207D7",
+              "port" : "point"
+            }
+          },
+          {
+            "from" : {
+              "node" : "76E17CC6-5438-065A-D97E-7C661C7107D7",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+              "port" : "down"
+            }
+          },
+          {
+            "from" : {
+              "node" : "8FE67CC6-543B-065A-8C80-7C661C7207D7",
+              "port" : "x"
+            },
+            "to" : {
+              "node" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+              "port" : "drag"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DCE47CC6-543A-065A-3F82-7C661C7307D7",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+              "port" : "range"
+            }
+          },
+          {
+            "from" : {
+              "node" : "10DE7CC6-5436-065A-737B-7C661C6F07D7",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+              "port" : "start"
+            }
+          },
+          {
+            "from" : {
+              "node" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "F5E97CC6-543D-065A-F283-7C661C7407D7",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "DCE47CC6-543A-065A-3F82-7C661C7307D7",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "F5E97CC6-543D-065A-F283-7C661C7407D7",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F5E97CC6-543D-065A-F283-7C661C7407D7",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "A8EB7CC6-543E-065A-0B89-7C661C7707D7",
+              "port" : "x"
+            }
+          },
+          {
+            "from" : {
+              "node" : "F5E97CC6-543D-065A-F283-7C661C7407D7",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "5BED7CC6-543F-065A-5887-7C661C7607D7",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "5BED7CC6-543F-065A-5887-7C661C7607D7",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "E9893046-0DF8-6F75-D032-8325420A1ADE",
+              "port" : "x"
+            }
+          },
+          {
+            "from" : {
+              "node" : "29E37CC6-5439-065A-267D-7C661C7007D7",
+              "port" : "width"
+            },
+            "to" : {
+              "node" : "36883046-0DF7-6F75-8334-8325420B1ADE",
+              "port" : "x"
+            }
+          },
+          {
+            "from" : {
+              "node" : "A8EB7CC6-543E-065A-0B89-7C661C7707D7",
+              "port" : "point"
+            },
+            "to" : {
+              "node" : "83863046-0DF6-6F75-3636-8325420C1ADE",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E9893046-0DF8-6F75-D032-8325420A1ADE",
+              "port" : "point"
+            },
+            "to" : {
+              "node" : "D0843046-0DF5-6F75-E937-8325420D1ADE",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "36883046-0DF7-6F75-8334-8325420B1ADE",
+              "port" : "point"
+            },
+            "to" : {
+              "node" : "B5903046-0DFC-6F75-9C39-8325420E1ADE",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "C3DF7CC6-5437-065A-C079-7C661C6E07D7",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "028F3046-0DFB-6F75-4F3B-8325420F1ADE",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "4F8D3046-0DFA-6F75-023D-832542101ADE",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "10DE7CC6-5436-065A-737B-7C661C6F07D7",
+            "inputs" : {
+              "value" : {
+                "type" : "number",
+                "value" : 0.5
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Value",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "C3DF7CC6-5437-065A-C079-7C661C6E07D7",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 648
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "76E17CC6-5438-065A-D97E-7C661C7107D7",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "D765CB77-82AA-2863-42D7-B0AA959029A8",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "29E37CC6-5439-065A-267D-7C661C7007D7",
+            "inputs" : {
+
+            },
+            "kind" : "layerSize",
+            "layerID" : "D765CB77-82AA-2863-42D7-B0AA959029A8",
+            "position" : {
+              "x" : 36,
+              "y" : 444
+            }
+          },
+          {
+            "id" : "DCE47CC6-543A-065A-3F82-7C661C7307D7",
+            "inputs" : {
+              "b" : {
+                "type" : "number",
+                "value" : 28
+              }
+            },
+            "kind" : "subtract",
+            "name" : "Travel",
+            "position" : {
+              "x" : 276,
+              "y" : 444
+            }
+          },
+          {
+            "id" : "8FE67CC6-543B-065A-8C80-7C661C7207D7",
+            "inputs" : {
+
+            },
+            "kind" : "splitPoint",
+            "position" : {
+              "x" : 276,
+              "y" : 264
+            }
+          },
+          {
+            "id" : "42E87CC6-543C-065A-A585-7C661C7507D7",
+            "inputs" : {
+
+            },
+            "kind" : "dragValue",
+            "position" : {
+              "x" : 504,
+              "y" : 144
+            }
+          },
+          {
+            "id" : "F5E97CC6-543D-065A-F283-7C661C7407D7",
+            "inputs" : {
+
+            },
+            "kind" : "multiply",
+            "name" : "Knob X",
+            "position" : {
+              "x" : 732,
+              "y" : 144
+            }
+          },
+          {
+            "id" : "A8EB7CC6-543E-065A-0B89-7C661C7707D7",
+            "inputs" : {
+
+            },
+            "kind" : "makePoint",
+            "position" : {
+              "x" : 960,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "5BED7CC6-543F-065A-5887-7C661C7607D7",
+            "inputs" : {
+              "b" : {
+                "type" : "number",
+                "value" : 14
+              }
+            },
+            "kind" : "add",
+            "name" : "Fill Width",
+            "position" : {
+              "x" : 960,
+              "y" : 228
+            }
+          },
+          {
+            "id" : "E9893046-0DF8-6F75-D032-8325420A1ADE",
+            "inputs" : {
+              "y" : {
+                "type" : "number",
+                "value" : 4
+              }
+            },
+            "kind" : "makePoint",
+            "position" : {
+              "x" : 1188,
+              "y" : 228
+            }
+          },
+          {
+            "id" : "36883046-0DF7-6F75-8334-8325420B1ADE",
+            "inputs" : {
+              "y" : {
+                "type" : "number",
+                "value" : 4
+              }
+            },
+            "kind" : "makePoint",
+            "position" : {
+              "x" : 504,
+              "y" : 504
+            }
+          },
+          {
+            "id" : "83863046-0DF6-6F75-3636-8325420C1ADE",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "8A67CB77-82AB-2863-8FD5-B0AA958F29A8",
+            "position" : {
+              "x" : 1416,
+              "y" : 48
+            },
+            "property" : "position"
+          },
+          {
+            "id" : "D0843046-0DF5-6F75-E937-8325420D1ADE",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "3D69CB77-82AC-2863-DCD3-B0AA958E29A8",
+            "position" : {
+              "x" : 1416,
+              "y" : 228
+            },
+            "property" : "size"
+          },
+          {
+            "id" : "B5903046-0DFC-6F75-9C39-8325420E1ADE",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "2464CB77-82A9-2863-F5D8-B0AA959129A8",
+            "position" : {
+              "x" : 1416,
+              "y" : 504
+            },
+            "property" : "size"
+          },
+          {
+            "id" : "028F3046-0DFB-6F75-4F3B-8325420F1ADE",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "3D69CB77-82AC-2863-DCD3-B0AA958E29A8",
+            "position" : {
+              "x" : 1416,
+              "y" : 648
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "4F8D3046-0DFA-6F75-023D-832542101ADE",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Value",
+            "position" : {
+              "x" : 1416,
+              "y" : 384
+            },
+            "valueType" : "number"
+          }
+        ]
+      },
+      "id" : "DA8847B3-0DB9-874A-8703-EA61E1A5BF48",
+      "library" : "iOS",
+      "name" : "Slider",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "2464CB77-82A9-2863-F5D8-B0AA959129A8",
+            "kind" : "rectangle",
+            "name" : "Track",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 2
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9215686274509803,
+                  "green" : 0.9137254901960784,
+                  "red" : 0.9137254901960784
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 12
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 4,
+                  "width" : 280
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "3D69CB77-82AC-2863-DCD3-B0AA958E29A8",
+            "kind" : "rectangle",
+            "name" : "Fill",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 2
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 12
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 4,
+                  "width" : 140
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "8A67CB77-82AB-2863-8FD5-B0AA958F29A8",
+            "kind" : "oval",
+            "name" : "Knob",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 126,
+                  "y" : 0
+                }
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 2
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 4
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 28
+                }
+              }
+            }
+          }
+        ],
+        "id" : "D765CB77-82AA-2863-42D7-B0AA959029A8",
+        "kind" : "group",
+        "name" : "Slider",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 28,
+              "width" : 280
+            }
+          }
+        }
+      },
+      "summary" : "Drag to choose a value from 0 to 1. It stretches to whatever width you give it."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "3276CF6B-691C-D40F-1B10-6326F47EBFED",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "CC72CF6B-691A-D40F-8113-6326F480BFED",
+              "port" : "decrease"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E577CF6B-691D-D40F-680E-6326F47DBFED",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "CC72CF6B-691A-D40F-8113-6326F480BFED",
+              "port" : "increase"
+            }
+          },
+          {
+            "from" : {
+              "node" : "3276CF6B-691C-D40F-1B10-6326F47EBFED",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "7F74CF6B-691B-D40F-CE11-6326F47FBFED",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7F74CF6B-691B-D40F-CE11-6326F47FBFED",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "666FCF6B-6918-D40F-E716-6326F482BFED",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "E577CF6B-691D-D40F-680E-6326F47DBFED",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "1971CF6B-6919-D40F-3415-6326F481BFED",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1971CF6B-6919-D40F-3415-6326F481BFED",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "006CCF6B-6916-D40F-4D1A-6326F484BFED",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "CC72CF6B-691A-D40F-8113-6326F480BFED",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "B36DCF6B-6917-D40F-9A18-6326F483BFED",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "3276CF6B-691C-D40F-1B10-6326F47EBFED",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "CEB40357-4FD7-F52C-2D54-583D192EAA65",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "E577CF6B-691D-D40F-680E-6326F47DBFED",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "4DBD0357-4FDC-F52C-AE4B-583D1929AA65",
+            "position" : {
+              "x" : 36,
+              "y" : 288
+            }
+          },
+          {
+            "id" : "CC72CF6B-691A-D40F-8113-6326F480BFED",
+            "inputs" : {
+
+            },
+            "kind" : "counter",
+            "position" : {
+              "x" : 276,
+              "y" : 168
+            }
+          },
+          {
+            "id" : "7F74CF6B-691B-D40F-CE11-6326F47FBFED",
+            "inputs" : {
+              "end" : {
+                "type" : "number",
+                "value" : 0.3
+              },
+              "start" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "transition",
+            "name" : "Dim",
+            "position" : {
+              "x" : 276,
+              "y" : 408
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "666FCF6B-6918-D40F-E716-6326F482BFED",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "CEB40357-4FD7-F52C-2D54-583D192EAA65",
+            "position" : {
+              "x" : 504,
+              "y" : 408
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "1971CF6B-6919-D40F-3415-6326F481BFED",
+            "inputs" : {
+              "end" : {
+                "type" : "number",
+                "value" : 0.3
+              },
+              "start" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "transition",
+            "name" : "Dim",
+            "position" : {
+              "x" : 276,
+              "y" : 600
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "006CCF6B-6916-D40F-4D1A-6326F484BFED",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "4DBD0357-4FDC-F52C-AE4B-583D1929AA65",
+            "position" : {
+              "x" : 504,
+              "y" : 600
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "B36DCF6B-6917-D40F-9A18-6326F483BFED",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Value",
+            "position" : {
+              "x" : 504,
+              "y" : 168
+            },
+            "valueType" : "number"
+          }
+        ]
+      },
+      "id" : "38B74954-CC1A-9292-3FC9-26EF196D45BD",
+      "library" : "iOS",
+      "name" : "Stepper",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "1BB30357-4FD6-F52C-144F-583D192BAA65",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 16,
+                      "width" : 16
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "minus"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "CEB40357-4FD7-F52C-2D54-583D192EAA65",
+            "kind" : "group",
+            "name" : "Minus",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "68B10357-4FD5-F52C-C750-583D192CAA65",
+            "kind" : "rectangle",
+            "name" : "Divider",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8,
+                  "green" : 0.7803921568627451,
+                  "red" : 0.7803921568627451
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 18,
+                  "width" : 1
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "9ABB0357-4FDB-F52C-614D-583D192AAA65",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 16,
+                      "width" : 16
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "plus"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "4DBD0357-4FDC-F52C-AE4B-583D1929AA65",
+            "kind" : "group",
+            "name" : "Plus",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "81B60357-4FD8-F52C-7A52-583D192DAA65",
+        "kind" : "group",
+        "name" : "Stepper",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9215686274509803,
+              "green" : 0.9137254901960784,
+              "red" : 0.9137254901960784
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 32,
+              "width" : 94
+            }
+          }
+        }
+      },
+      "summary" : "Minus and plus buttons that count down and up."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "C72F7281-D80C-6C64-381D-0D9BB2D768EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "142E7281-D80B-6C64-EB1E-0D9BB2D868EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2D337281-D80E-6C64-9E20-0D9BB2D968EF",
+              "port" : "down"
+            },
+            "to" : {
+              "node" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+              "port" : "target"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "2D337281-D80E-6C64-9E20-0D9BB2D968EF",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "C72F7281-D80C-6C64-381D-0D9BB2D768EF",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Button"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Title",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "142E7281-D80B-6C64-EB1E-0D9BB2D868EF",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "2D337281-D80E-6C64-9E20-0D9BB2D968EF",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+            "position" : {
+              "x" : 36,
+              "y" : 348
+            }
+          },
+          {
+            "id" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+            "inputs" : {
+              "damping" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "response" : {
+                "type" : "number",
+                "value" : 0.18
+              }
+            },
+            "kind" : "spring",
+            "position" : {
+              "x" : 276,
+              "y" : 348
+            }
+          },
+          {
+            "id" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+            "inputs" : {
+              "end" : {
+                "type" : "number",
+                "value" : 0.55
+              },
+              "start" : {
+                "type" : "number",
+                "value" : 1
+              }
+            },
+            "kind" : "transition",
+            "name" : "Dim",
+            "position" : {
+              "x" : 504,
+              "y" : 348
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "48277281-D807-6C64-B725-0D9BB2DC68EF",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "48587B42-D9D9-17A0-F5A7-95C23E258359",
+            "position" : {
+              "x" : 732,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "612C7281-D80A-6C64-6A27-0D9BB2DD68EF",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "position" : {
+              "x" : 732,
+              "y" : 204
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "AE2A7281-D809-6C64-1D29-0D9BB2DE68EF",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "position" : {
+              "x" : 732,
+              "y" : 348
+            },
+            "property" : "opacity"
+          },
+          {
+            "id" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Tap",
+            "position" : {
+              "x" : 732,
+              "y" : 504
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+      "library" : "iOS",
+      "name" : "Button",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "48587B42-D9D9-17A0-F5A7-95C23E258359",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Button"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "615D7B42-D9DC-17A0-DCA2-95C23E228359",
+            "kind" : "group",
+            "name" : "Background",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 100
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "AE5B7B42-D9DB-17A0-8FA4-95C23E238359",
+        "kind" : "group",
+        "name" : "Button",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 50,
+              "width" : 200
+            }
+          }
+        }
+      },
+      "summary" : "A filled button that dims while pressed and reports taps."
+    },
+    {
+      "graph" : {
+        "connections" : [
+          {
+            "from" : {
+              "node" : "6B0421AD-F5E3-1BF6-66F2-360C4F2566EB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "370B21AD-F5E7-1BF6-32F9-360C4F2966EB",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "B80221AD-F5E2-1BF6-19F4-360C4F2666EB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "840921AD-F5E6-1BF6-E5FA-360C4F2A66EB",
+              "port" : "text"
+            }
+          },
+          {
+            "from" : {
+              "node" : "370B21AD-F5E7-1BF6-32F9-360C4F2966EB",
+              "port" : "array"
+            },
+            "to" : {
+              "node" : "9D0E21AD-F5E9-1BF6-CCF5-360C4F2766EB",
+              "port" : "array"
+            }
+          },
+          {
+            "from" : {
+              "node" : "840921AD-F5E6-1BF6-E5FA-360C4F2A66EB",
+              "port" : "array"
+            },
+            "to" : {
+              "node" : "EA0C21AD-F5E8-1BF6-7FF7-360C4F2866EB",
+              "port" : "array"
+            }
+          },
+          {
+            "from" : {
+              "node" : "9D0E21AD-F5E9-1BF6-CCF5-360C4F2766EB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "3152172F-7532-6552-5EE3-60C151428735",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "EA0C21AD-F5E8-1BF6-7FF7-360C4F2866EB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "E453172F-7533-6552-77E8-60C151458735",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "9D0E21AD-F5E9-1BF6-CCF5-360C4F2766EB",
+              "port" : "index"
+            },
+            "to" : {
+              "node" : "D3F620AD-F5DB-1BF6-FEFF-360C4F2D66EB",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "D3F620AD-F5DB-1BF6-FEFF-360C4F2D66EB",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "9755172F-7534-6552-C4E6-60C151448735",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "20F520AD-F5DA-1BF6-B101-370C4F2E66EB",
+              "port" : "tap"
+            },
+            "to" : {
+              "node" : "184D172F-752F-6552-ABE1-60C151418735",
+              "port" : "set"
+            }
+          },
+          {
+            "from" : {
+              "node" : "D10721AD-F5E5-1BF6-00EF-360C4F2366EB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "184D172F-752F-6552-ABE1-60C151418735",
+              "port" : "start"
+            }
+          },
+          {
+            "from" : {
+              "node" : "9D0E21AD-F5E9-1BF6-CCF5-360C4F2766EB",
+              "port" : "index"
+            },
+            "to" : {
+              "node" : "CB4E172F-7530-6552-F8DF-60C151408735",
+              "port" : "a"
+            }
+          },
+          {
+            "from" : {
+              "node" : "184D172F-752F-6552-ABE1-60C151418735",
+              "port" : "option"
+            },
+            "to" : {
+              "node" : "CB4E172F-7530-6552-F8DF-60C151408735",
+              "port" : "b"
+            }
+          },
+          {
+            "from" : {
+              "node" : "CB4E172F-7530-6552-F8DF-60C151408735",
+              "port" : "result"
+            },
+            "to" : {
+              "node" : "7E50172F-7531-6552-11E5-60C151438735",
+              "port" : "progress"
+            }
+          },
+          {
+            "from" : {
+              "node" : "1E0621AD-F5E4-1BF6-B3F0-360C4F2466EB",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "7E50172F-7531-6552-11E5-60C151438735",
+              "port" : "end"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7E50172F-7531-6552-11E5-60C151438735",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "4A57172F-7535-6552-DDEB-60C151478735",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "7E50172F-7531-6552-11E5-60C151438735",
+              "port" : "value"
+            },
+            "to" : {
+              "node" : "FD58172F-7536-6552-2AEA-60C151468735",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "184D172F-752F-6552-ABE1-60C151418735",
+              "port" : "option"
+            },
+            "to" : {
+              "node" : "803F172F-7527-6552-13D4-60C151398735",
+              "port" : "value"
+            }
+          },
+          {
+            "from" : {
+              "node" : "184D172F-752F-6552-ABE1-60C151418735",
+              "port" : "changed"
+            },
+            "to" : {
+              "node" : "3341172F-7528-6552-60D2-60C151388735",
+              "port" : "value"
+            }
+          }
+        ],
+        "nodes" : [
+          {
+            "id" : "6B0421AD-F5E3-1BF6-66F2-360C4F2566EB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "Home, Search, Profile"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Titles",
+            "position" : {
+              "x" : 36,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "B80221AD-F5E2-1BF6-19F4-360C4F2666EB",
+            "inputs" : {
+              "value" : {
+                "type" : "text",
+                "value" : "house.fill, magnifyingglass, person.fill"
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Symbols",
+            "position" : {
+              "x" : 36,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "D10721AD-F5E5-1BF6-00EF-360C4F2366EB",
+            "inputs" : {
+              "value" : {
+                "type" : "number",
+                "value" : 0
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Selected",
+            "position" : {
+              "x" : 36,
+              "y" : 564
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "1E0621AD-F5E4-1BF6-B3F0-360C4F2466EB",
+            "inputs" : {
+              "value" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.47843137254901963,
+                  "red" : 0
+                }
+              }
+            },
+            "kind" : "component.input",
+            "name" : "Tint",
+            "position" : {
+              "x" : 36,
+              "y" : 744
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "370B21AD-F5E7-1BF6-32F9-360C4F2966EB",
+            "inputs" : {
+
+            },
+            "kind" : "splitText",
+            "position" : {
+              "x" : 276,
+              "y" : 48
+            }
+          },
+          {
+            "id" : "840921AD-F5E6-1BF6-E5FA-360C4F2A66EB",
+            "inputs" : {
+
+            },
+            "kind" : "splitText",
+            "position" : {
+              "x" : 276,
+              "y" : 204
+            }
+          },
+          {
+            "id" : "9D0E21AD-F5E9-1BF6-CCF5-360C4F2766EB",
+            "inputs" : {
+
+            },
+            "kind" : "loopOverArray",
+            "position" : {
+              "x" : 504,
+              "y" : 48
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "EA0C21AD-F5E8-1BF6-7FF7-360C4F2866EB",
+            "inputs" : {
+
+            },
+            "kind" : "loopOverArray",
+            "position" : {
+              "x" : 504,
+              "y" : 204
+            },
+            "valueType" : "text"
+          },
+          {
+            "id" : "D3F620AD-F5DB-1BF6-FEFF-360C4F2D66EB",
+            "inputs" : {
+
+            },
+            "kind" : "greaterEqual",
+            "name" : "Every Tab",
+            "position" : {
+              "x" : 732,
+              "y" : 324
+            }
+          },
+          {
+            "id" : "20F520AD-F5DA-1BF6-B101-370C4F2E66EB",
+            "inputs" : {
+
+            },
+            "kind" : "interaction",
+            "layerID" : "1DC81F67-8D87-4905-DA20-478D991F245D",
+            "position" : {
+              "x" : 36,
+              "y" : 384
+            }
+          },
+          {
+            "id" : "184D172F-752F-6552-ABE1-60C151418735",
+            "inputs" : {
+
+            },
+            "kind" : "loopOptionSwitch",
+            "name" : "Selected Tab",
+            "position" : {
+              "x" : 504,
+              "y" : 468
+            }
+          },
+          {
+            "id" : "CB4E172F-7530-6552-F8DF-60C151408735",
+            "inputs" : {
+
+            },
+            "kind" : "equal",
+            "name" : "Is Selected",
+            "position" : {
+              "x" : 732,
+              "y" : 468
+            }
+          },
+          {
+            "id" : "7E50172F-7531-6552-11E5-60C151438735",
+            "inputs" : {
+              "start" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5764705882352941,
+                  "green" : 0.5568627450980392,
+                  "red" : 0.5568627450980392
+                }
+              }
+            },
+            "kind" : "transition",
+            "name" : "Tab Color",
+            "position" : {
+              "x" : 960,
+              "y" : 468
+            },
+            "valueType" : "color"
+          },
+          {
+            "id" : "3152172F-7532-6552-5EE3-60C151428735",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "B7C41F67-8D85-4905-741D-478D991D245D",
+            "position" : {
+              "x" : 1188,
+              "y" : 48
+            },
+            "property" : "text"
+          },
+          {
+            "id" : "E453172F-7533-6552-77E8-60C151458735",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "04C31F67-8D84-4905-271F-478D991E245D",
+            "position" : {
+              "x" : 1188,
+              "y" : 168
+            },
+            "property" : "symbol"
+          },
+          {
+            "id" : "9755172F-7534-6552-C4E6-60C151448735",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "1DC81F67-8D87-4905-DA20-478D991F245D",
+            "position" : {
+              "x" : 1188,
+              "y" : 288
+            },
+            "property" : "enabled"
+          },
+          {
+            "id" : "4A57172F-7535-6552-DDEB-60C151478735",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "04C31F67-8D84-4905-271F-478D991E245D",
+            "position" : {
+              "x" : 1188,
+              "y" : 408
+            },
+            "property" : "fill"
+          },
+          {
+            "id" : "FD58172F-7536-6552-2AEA-60C151468735",
+            "inputs" : {
+
+            },
+            "kind" : "layer.property",
+            "layerID" : "B7C41F67-8D85-4905-741D-478D991D245D",
+            "position" : {
+              "x" : 1188,
+              "y" : 528
+            },
+            "property" : "textColor"
+          },
+          {
+            "id" : "803F172F-7527-6552-13D4-60C151398735",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Selected",
+            "position" : {
+              "x" : 1188,
+              "y" : 648
+            },
+            "valueType" : "number"
+          },
+          {
+            "id" : "3341172F-7528-6552-60D2-60C151388735",
+            "inputs" : {
+
+            },
+            "kind" : "component.output",
+            "name" : "Changed",
+            "position" : {
+              "x" : 1188,
+              "y" : 768
+            },
+            "valueType" : "pulse"
+          }
+        ]
+      },
+      "id" : "4F6BE97A-2E03-5BA6-D458-45031BDB3345",
+      "library" : "iOS",
+      "name" : "Tab Bar",
+      "root" : {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "04C31F67-8D84-4905-271F-478D991E245D",
+                "kind" : "symbol",
+                "name" : "Icon",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5764705882352941,
+                      "green" : 0.5568627450980392,
+                      "red" : 0.5568627450980392
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 500
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 24,
+                      "width" : 28
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "house.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "B7C41F67-8D85-4905-741D-478D991D245D",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 10
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 500
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "singleLine" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Tab"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5764705882352941,
+                      "green" : 0.5568627450980392,
+                      "red" : 0.5568627450980392
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "1DC81F67-8D87-4905-DA20-478D991F245D",
+            "kind" : "group",
+            "name" : "Tab",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Vertical"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 7
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 3
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "6AC61F67-8D86-4905-8D22-478D9920245D",
+        "kind" : "group",
+        "name" : "Tab Bar",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9764705882352941,
+              "green" : 0.9764705882352941,
+              "red" : 0.9764705882352941
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 390
+            }
+          }
+        }
+      },
+      "summary" : "Tabs with a symbol and a title each; tapping one selects it. Give it comma-separated titles and symbol names."
+    }
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "D8106861-D2F6-49F6-8D9D-33B1C5C38EBD",
+          "port" : "78132E3E-9FA2-10EE-1148-4987D984ABC7"
+        },
+        "to" : {
+          "node" : "F621E5AA-DA21-48BA-9E4C-E5E044517D0E",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F621E5AA-DA21-48BA-9E4C-E5E044517D0E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "3F46721E-7524-4B0F-9FBE-5FD3E46F6CDC",
+          "port" : "8024FCD0-9BC5-1C88-3F90-24A4DAD1AECB"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2EDE794F-F69F-4D2C-A556-875BB8B4B56B",
+          "port" : "4F8D3046-0DFA-6F75-023D-832542101ADE"
+        },
+        "to" : {
+          "node" : "12809E2C-428F-4CB3-9EE9-60340E454105",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "12809E2C-428F-4CB3-9EE9-60340E454105",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "1620B4F3-18FA-47A0-8AF1-053D1483FC1A",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8D720471-7C68-49A3-B26D-630DEA01C320",
+          "port" : "B36DCF6B-6917-D40F-9A18-6326F483BFED"
+        },
+        "to" : {
+          "node" : "7AC248C4-41A9-4EEF-8C78-04B602E5521B",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D91633DE-2908-4A1B-B70B-6DF041A444E2",
+          "port" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF"
+        },
+        "to" : {
+          "node" : "10342B9C-FE53-4512-AC6C-AF5915667DCA",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "10342B9C-FE53-4512-AC6C-AF5915667DCA",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "F3F42559-9902-420B-8DD0-74DB76FE3BE0",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F3F42559-9902-420B-8DD0-74DB76FE3BE0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D91633DE-2908-4A1B-B70B-6DF041A444E2",
+          "port" : "C72F7281-D80C-6C64-381D-0D9BB2D768EF"
+        }
+      },
+      {
+        "from" : {
+          "node" : "44A773A4-AC81-4224-9A7A-E2A6032669B8",
+          "port" : "803F172F-7527-6552-13D4-60C151398735"
+        },
+        "to" : {
+          "node" : "38FC49CC-C8DF-4CEE-B294-041560B0D042",
+          "port" : "option"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38FC49CC-C8DF-4CEE-B294-041560B0D042",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "87F40531-A9B8-4F47-B6C1-06D08CD3D11E",
+          "port" : "72923A47-46A4-DC46-4DF4-407D66E31F63"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "componentID" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+        "id" : "87F40531-A9B8-4F47-B6C1-06D08CD3D11E",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "5EE2EB44-4050-41E8-9E1B-B3C85C4956EE",
+        "position" : {
+          "x" : 756,
+          "y" : 36
+        }
+      },
+      {
+        "componentID" : "AFCB6006-7ED8-3338-4214-E5432A45DC03",
+        "id" : "D8106861-D2F6-49F6-8D9D-33B1C5C38EBD",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "0B187372-3D06-4CBF-938C-5810560A87F5",
+        "position" : {
+          "x" : 36,
+          "y" : 36
+        }
+      },
+      {
+        "componentID" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+        "id" : "3F46721E-7524-4B0F-9FBE-5FD3E46F6CDC",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "B1FD9F17-D8FF-4BF7-8EB8-DB2871A51298",
+        "position" : {
+          "x" : 516,
+          "y" : 36
+        }
+      },
+      {
+        "componentID" : "DA8847B3-0DB9-874A-8703-EA61E1A5BF48",
+        "id" : "2EDE794F-F69F-4D2C-A556-875BB8B4B56B",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "FE99AB35-FACC-4DF2-A8F6-E920167C2407",
+        "position" : {
+          "x" : 36,
+          "y" : 264
+        }
+      },
+      {
+        "componentID" : "38B74954-CC1A-9292-3FC9-26EF196D45BD",
+        "id" : "8D720471-7C68-49A3-B26D-630DEA01C320",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "1FBD64EB-27E2-4780-A9DB-BB217D286B63",
+        "position" : {
+          "x" : 36,
+          "y" : 444
+        }
+      },
+      {
+        "componentID" : "73352973-FA64-522D-12FF-D91C3C81517F",
+        "id" : "D91633DE-2908-4A1B-B70B-6DF041A444E2",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "2DD543D5-622B-42BB-A4A8-87B7F0E7F573",
+        "position" : {
+          "x" : 516,
+          "y" : 624
+        }
+      },
+      {
+        "componentID" : "4F6BE97A-2E03-5BA6-D458-45031BDB3345",
+        "id" : "44A773A4-AC81-4224-9A7A-E2A6032669B8",
+        "inputs" : {
+
+        },
+        "kind" : "component",
+        "layerID" : "E9E060D7-2965-49ED-A857-4F6301B9821D",
+        "position" : {
+          "x" : 36,
+          "y" : 804
+        }
+      },
+      {
+        "id" : "F621E5AA-DA21-48BA-9E4C-E5E044517D0E",
+        "inputs" : {
+          "else" : {
+            "type" : "text",
+            "value" : "Off"
+          },
+          "then" : {
+            "type" : "text",
+            "value" : "Home Wi-Fi"
+          }
+        },
+        "kind" : "if",
+        "name" : "Wi-Fi State",
+        "position" : {
+          "x" : 276,
+          "y" : 36
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "12809E2C-428F-4CB3-9EE9-60340E454105",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Percent",
+        "position" : {
+          "x" : 276,
+          "y" : 264
+        },
+        "script" : "\/\/ Turns a value from 0 to 1 into text such as \"50%\".\ninputs = { value: 0 };\noutputs = { text: \"\" };\n\nfunction evaluate(inputs, outputs) {\n  outputs.text = Math.round(inputs.value * 100) + \"%\";\n}"
+      },
+      {
+        "id" : "1620B4F3-18FA-47A0-8AF1-053D1483FC1A",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "523D3D04-414E-4BFE-AA22-0458F09BAA9A",
+        "position" : {
+          "x" : 564,
+          "y" : 264
+        },
+        "property" : "text"
+      },
+      {
+        "id" : "7AC248C4-41A9-4EEF-8C78-04B602E5521B",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "ABD25404-EA4F-495F-BF85-CBB25CF89CF1",
+        "position" : {
+          "x" : 276,
+          "y" : 444
+        },
+        "property" : "text"
+      },
+      {
+        "id" : "10342B9C-FE53-4512-AC6C-AF5915667DCA",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Confirmed",
+        "position" : {
+          "x" : 36,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "F3F42559-9902-420B-8DD0-74DB76FE3BE0",
+        "inputs" : {
+          "else" : {
+            "type" : "text",
+            "value" : "Continue"
+          },
+          "then" : {
+            "type" : "text",
+            "value" : "Done"
+          }
+        },
+        "kind" : "if",
+        "name" : "Button Title",
+        "position" : {
+          "x" : 276,
+          "y" : 624
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "38FC49CC-C8DF-4CEE-B294-041560B0D042",
+        "inputs" : {
+          "value0" : {
+            "type" : "text",
+            "value" : "Settings"
+          },
+          "value1" : {
+            "type" : "text",
+            "value" : "Search"
+          },
+          "value2" : {
+            "type" : "text",
+            "value" : "Profile"
+          }
+        },
+        "kind" : "optionPicker",
+        "name" : "Screen Title",
+        "position" : {
+          "x" : 396,
+          "y" : 804
+        },
+        "valueType" : "text"
+      }
+    ]
+  },
+  "version" : 2
+}

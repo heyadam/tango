@@ -1,0 +1,308 @@
+{
+  "Action Sheet" : {
+    "id" : "AE611254-05B2-6C9D-9B6B-A89E5158EE7C",
+    "inputs" : {
+      "Actions" : "0F781727-B0BA-A636-4CE6-C6951C740119",
+      "Dark" : "CE43E46C-52E6-CAF4-07EF-018192C26844",
+      "Destructive" : "C2791727-B0BB-A636-65EB-C6951C770119",
+      "Present" : "DB48E16C-5272-C7F4-4EA1-F98092C65E44",
+      "Presented" : "8E4AE16C-5273-C7F4-9B9F-F98092C55E44",
+      "Title" : "5C761727-B0B9-A636-FFE7-C6951C750119"
+    },
+    "outputs" : {
+      "Cancelled" : "B53EE46C-52E3-CAF4-F0D8-018192B56844",
+      "Chosen" : "8334E46C-52DD-CAF4-22E3-018192BB6844",
+      "Dismissed" : "9C39E46C-52E0-CAF4-09DE-018192B86844",
+      "Picked" : "023DE46C-52E2-CAF4-A3DA-018192B66844",
+      "Showing" : "4F3BE46C-52E1-CAF4-56DC-018192B76844"
+    }
+  },
+  "Activity Indicator" : {
+    "id" : "43F028D9-20B7-488F-8EB0-FAE4075F7571",
+    "inputs" : {
+      "Animating" : "57859A8A-9A93-F3FA-BCC2-B24D777C139F",
+      "Dark" : "7C948D84-99B0-6506-6DAD-C306B990E200"
+    },
+    "outputs" : {
+
+    }
+  },
+  "Alert" : {
+    "id" : "6F7E5E83-A4E4-6481-B873-2756CE3A75F7",
+    "inputs" : {
+      "Buttons" : "F15461CA-A40F-E460-4CB4-A0C60FF1B91E",
+      "Dark" : "400263E3-0355-DB04-67B0-1283CE1AA9D6",
+      "Message" : "D84F61CA-A40C-E460-65B9-A0C60FF4B91E",
+      "Present" : "EBC85AE3-0365-D104-BCE9-1A83CE0AB3D6",
+      "Presented" : "38C75AE3-0364-D104-6FEB-1A83CE0BB3D6",
+      "Title" : "8B5161CA-A40D-E460-B2B7-A0C60FF3B91E"
+    },
+    "outputs" : {
+      "Chosen" : "A0B95AE3-035C-D104-07F9-1A83CE13B3D6",
+      "Dismissed" : "53BB5AE3-035D-D104-54F7-1A83CE12B3D6",
+      "Showing" : "F30363E3-0356-DB04-B4AE-1283CE19A9D6"
+    }
+  },
+  "Button" : {
+    "id" : "73352973-FA64-522D-12FF-D91C3C81517F",
+    "inputs" : {
+      "Corner Radius" : "7C207281-D803-6C64-5311-0D9BB2D068EF",
+      "Dark" : "136204F5-E341-C615-3A73-4B777D1547DC",
+      "Style" : "DF6804F5-E345-C615-6E6C-4B777D1147DC",
+      "Tint" : "FB287281-D808-6C64-0424-0D9BB2DB68EF",
+      "Title" : "7A317281-D80D-6C64-5122-0D9BB2DA68EF",
+      "Weight" : "2C6704F5-E344-C615-216E-4B777D1247DC"
+    },
+    "outputs" : {
+      "Tap" : "2F227281-D804-6C64-A00F-0D9BB2CF68EF"
+    }
+  },
+  "Context Menu" : {
+    "id" : "E9B8B1A6-AD6C-350B-C00A-08B69015F9A2",
+    "inputs" : {
+      "Dark" : "D3F9C94D-41A5-28B8-6291-E35D8FA6911A",
+      "Destructive" : "53D7343C-3911-FC4D-24E4-2042E54910AA",
+      "Items" : "B9DA343C-3913-FC4D-8AE7-2042E54B10AA",
+      "Present" : "F60FCD4D-4129-2CB8-4BFA-EB5D8FB29B1A",
+      "Presented" : "0F15CD4D-412C-2CB8-CA02-EC5D8FB79B1A",
+      "Symbols" : "06D9343C-3912-FC4D-3DE9-2042E54C10AA"
+    },
+    "outputs" : {
+      "Chosen" : "0D26CD4D-4136-2CB8-CCF1-EB5D8FAD9B1A",
+      "Picked" : "39FDC94D-41A7-28B8-FC8D-E35D8FA4911A",
+      "Showing" : "86FBC94D-41A6-28B8-AF8F-E35D8FA5911A"
+    }
+  },
+  "Home Indicator" : {
+    "id" : "49AA5E6A-C47A-45A0-3C5D-D159DC3FE990",
+    "inputs" : {
+      "Dark" : "99EE1870-0E94-FD0D-5EB2-DB25062E1F1F"
+    },
+    "outputs" : {
+
+    }
+  },
+  "Keyboard" : {
+    "id" : "52BB418E-695E-D0A4-EFAB-15E680BAFD5C",
+    "inputs" : {
+      "Dark" : "EAAAE2FB-073C-96FD-73E1-A60A4006CB11",
+      "Present" : "AB4E3E26-9DB0-884D-583C-E88087228EE8",
+      "Presented" : "F84C3E26-9DAF-884D-0B3E-E88087238EE8"
+    },
+    "outputs" : {
+      "Showing" : "1682DFFB-07AD-92FD-D398-9E0A400DC111"
+    }
+  },
+  "Large Title Bar" : {
+    "id" : "C956074E-E15B-2E77-FAE1-C2716C1E31AF",
+    "inputs" : {
+      "Back Title" : "B37C653C-2058-8623-96BB-855ABFDE5DED",
+      "Dark" : "999272A0-C641-C4C2-12DB-3DD126253DDC",
+      "Scroll Offset" : "667E653C-2059-8623-E3B9-855ABFDD5DED",
+      "Shows Back" : "007B653C-2057-8623-49BD-855ABFDF5DED",
+      "Tint" : "E586653C-205E-8623-FCBE-855ABFE05DED",
+      "Title" : "1980653C-205A-8623-30B8-855ABFDC5DED"
+    },
+    "outputs" : {
+      "Back" : "BAB975A0-C6CF-C7C2-21CF-3AD126A739DC",
+      "Height" : "6DBB75A0-C6D0-C7C2-6ECD-3AD126A639DC"
+    }
+  },
+  "List Row" : {
+    "id" : "C79E8F1E-2B60-F25E-9E1E-D4173CCD2598",
+    "inputs" : {
+      "Accessory" : "DECB7A1C-C48A-1245-F3AA-23EA840AA23E",
+      "Dark" : "1057721C-C477-0845-7DC9-20EA84A59E3E",
+      "Detail" : "4C2BFCD0-9BC9-1C88-7389-24A4DACDAECB",
+      "On" : "93BC7A1C-C481-1245-3EBA-23EA8413A23E",
+      "Separator" : "EDBF771C-C40C-0F45-14D2-26EA8498A53E",
+      "Shows Chevron" : "6530FCD0-9BCC-1C88-268B-24A4DACEAECB",
+      "Subtitle" : "4261721C-C47D-0845-4BBF-20EA849F9E3E",
+      "Symbol" : "5B66721C-C480-0845-32BA-20EA849C9E3E",
+      "Symbol Color" : "2BCA7A1C-C489-1245-A6AC-23EA840BA23E",
+      "Tint" : "E0BA7A1C-C480-1245-F1BB-23EA8414A23E",
+      "Title" : "FF2CFCD0-9BCA-1C88-C087-24A4DACCAECB"
+    },
+    "outputs" : {
+      "Changed" : "3ABE771C-C40B-0F45-C7D3-26EA8499A53E",
+      "On" : "23A8771C-C4FE-0E45-16C1-26EA848EA53E",
+      "Tap" : "1832FCD0-9BCD-1C88-D79D-24A4DAD9AECB"
+    }
+  },
+  "Menu Button" : {
+    "id" : "70F747E3-2785-878C-472F-2EEBA039D5C5",
+    "inputs" : {
+      "Dark" : "6F6450A7-F908-F565-2805-283A4763014B",
+      "Options" : "BADABE91-F62A-FA0A-B3C3-AA88A5A74C6A",
+      "Selected" : "6DDCBE91-F62B-FA0A-00C2-AA88A5A64C6A",
+      "Tint" : "54D7BE91-F628-FA0A-19C7-AA88A5A94C6A"
+    },
+    "outputs" : {
+      "Changed" : "A16E50A7-F90E-F565-C201-283A4761014B",
+      "Open" : "EE6C50A7-F90D-F565-7503-283A4762014B",
+      "Selected" : "886950A7-F90B-F565-0F00-283A4760014B"
+    }
+  },
+  "Navigation Bar" : {
+    "id" : "F82FEDFA-D5FC-0024-B53C-D549DD548202",
+    "inputs" : {
+      "Action" : "30978908-6BE6-80A3-5D5F-5CD5266320B0",
+      "Back Title" : "F3893A47-469F-DC46-68E8-407D66DC1F63",
+      "Dark" : "15A38908-6BED-80A3-7853-5CD5265C20B0",
+      "Shows Back" : "0AA03A47-46AC-DC46-B5E6-407D66DB1F63",
+      "Tint" : "BDA13A47-46AD-DC46-02E5-407D66DA1F63",
+      "Title" : "40883A47-469E-DC46-1BEA-407D66DD1F63"
+    },
+    "outputs" : {
+      "Action" : "94AB8908-6BF2-80A3-F94A-5CD5265720B0",
+      "Back" : "FC9D8908-6BEA-80A3-9158-5CD5265F20B0"
+    }
+  },
+  "Page Control" : {
+    "id" : "A5446609-8D2F-0E7A-8421-D410E1D3B0EB",
+    "inputs" : {
+      "Dark" : "587D749E-634A-804A-AFE6-E8A9961291DD",
+      "Pages" : "3D89749E-6351-804A-96E1-E8A9960F91DD",
+      "Selected" : "8A87749E-6350-804A-49E3-E8A9961091DD"
+    },
+    "outputs" : {
+
+    }
+  },
+  "Progress Bar" : {
+    "id" : "895AF0EA-B4BC-20C2-50CD-11B05182979F",
+    "inputs" : {
+      "Dark" : "BF2485A3-7F4E-FD49-E876-BC03B09C28C1",
+      "Tint" : "A61F85A3-7F4B-FD49-CD82-BC03B0A328C1",
+      "Value" : "592185A3-7F4C-FD49-1A81-BC03B0A228C1"
+    },
+    "outputs" : {
+
+    }
+  },
+  "Search Field" : {
+    "id" : "A38FCF54-091A-3328-4258-000C1158A953",
+    "inputs" : {
+      "Dark" : "5C339030-285B-462A-110C-75B08DF0A8A4",
+      "Placeholder" : "B73A9581-84A3-A305-68AF-981F480878C0"
+    },
+    "outputs" : {
+      "Changed" : "1F2D9581-849B-A305-D0A1-981F480078C0",
+      "Editing" : "9E359581-84A0-A305-4DBB-981F480F78C0",
+      "Submitted" : "6C2B9581-849A-A305-83A3-981F480178C0",
+      "Text" : "51379581-84A1-A305-9AB9-981F480E78C0"
+    }
+  },
+  "Segmented Control" : {
+    "id" : "408D500D-C505-CCF6-531B-5633D95C4900",
+    "inputs" : {
+      "Dark" : "CBCC7D69-D432-800E-C01B-D5E84743E024",
+      "Segments" : "5789B577-5372-1A24-DA18-0BD21109C589",
+      "Selected" : "3E84B577-536F-1A24-5B10-0BD21104C589"
+    },
+    "outputs" : {
+      "Changed" : "4AD57D69-D437-800E-A527-D5E8474AE024",
+      "Selected" : "FDD67D69-D438-800E-F225-D5E84749E024"
+    }
+  },
+  "Slider" : {
+    "id" : "DA8847B3-0DB9-874A-8703-EA61E1A5BF48",
+    "inputs" : {
+      "Dark" : "9C8B3046-0DF9-6F75-B53E-832542111ADE",
+      "Maximum" : "F2C93246-0DFE-7275-EBA5-8B25421C24DE",
+      "Minimum" : "CE953046-0DFF-6F75-1B42-832542131ADE",
+      "Tint" : "8FE67CC6-543B-065A-8C80-7C661C7207D7",
+      "Value" : "DCE47CC6-543A-065A-3F82-7C661C7307D7"
+    },
+    "outputs" : {
+      "Value" : "4F8D3046-0DFA-6F75-023D-832542101ADE"
+    }
+  },
+  "Status Bar" : {
+    "id" : "58DA7F48-9DE2-E14C-490A-74D5A29E285B",
+    "inputs" : {
+      "Dark" : "85B88DE4-F33F-E10E-E60C-22B4297C93F0",
+      "Time" : "D2B68DE4-F33E-E10E-990E-22B4297D93F0"
+    },
+    "outputs" : {
+
+    }
+  },
+  "Stepper" : {
+    "id" : "38B74954-CC1A-9292-3FC9-26EF196D45BD",
+    "inputs" : {
+      "Dark" : "55A28831-22D1-E5B4-EE62-513ADD5F715F",
+      "Maximum" : "87AC8831-22D7-E5B4-F051-513ADD55715F",
+      "Minimum" : "D6998831-22CC-E5B4-6D6B-513ADD64715F",
+      "Step" : "D4AA8831-22D6-E5B4-A353-513ADD56715F",
+      "Value" : "899B8831-22CD-E5B4-BA69-513ADD63715F"
+    },
+    "outputs" : {
+      "Value" : "3C9D8831-22CE-E5B4-3B61-513ADD5E715F"
+    }
+  },
+  "Swipe Actions Row" : {
+    "id" : "0C70FBE6-C640-B4CE-6F5A-A95ED71C20DB",
+    "inputs" : {
+      "Action" : "213AF1E9-4FE8-9712-D883-E31F59DE82C7",
+      "Action Color" : "0835F1E9-4FE5-9712-F188-E31F59E182C7",
+      "Dark" : "286EDD84-CADE-4F89-F35F-A12F71ABEDE6",
+      "Title" : "6E38F1E9-4FE7-9712-8B85-E31F59DF82C7"
+    },
+    "outputs" : {
+      "Action" : "7BB8E584-CAD8-5989-A015-992F71B1E3E6",
+      "Open" : "C8B6E584-CAD7-5989-5317-992F71B2E3E6"
+    }
+  },
+  "Tab Bar" : {
+    "id" : "4F6BE97A-2E03-5BA6-D458-45031BDB3345",
+    "inputs" : {
+      "Dark" : "3341172F-7528-6552-60D2-60C151388735",
+      "Floating" : "A061202F-75A0-6F52-4370-58C151307D35",
+      "Selected" : "9D0E21AD-F5E9-1BF6-CCF5-360C4F2766EB",
+      "Symbols" : "840921AD-F5E6-1BF6-E5FA-360C4F2A66EB",
+      "Tint" : "EA0C21AD-F5E8-1BF6-7FF7-360C4F2866EB",
+      "Titles" : "370B21AD-F5E7-1BF6-32F9-360C4F2966EB"
+    },
+    "outputs" : {
+      "Changed" : "803F172F-7527-6552-13D4-60C151398735",
+      "Selected" : "FD58172F-7536-6552-2AEA-60C151468735"
+    }
+  },
+  "Text Field" : {
+    "id" : "88540129-E092-836A-2DBF-8271AD84933B",
+    "inputs" : {
+      "Dark" : "BF2CC997-B101-A705-B6E2-682CA999664F",
+      "Placeholder" : "42A93D95-7C72-E84F-F5DC-3CA7BF97C954"
+    },
+    "outputs" : {
+      "Changed" : "DAB63D95-7C7A-E84F-8DEA-3CA7BF9FC954",
+      "Editing" : "C3A03D95-7C6D-E84F-10D1-3CA7BF90C954",
+      "Submitted" : "8DB83D95-7C7B-E84F-DAE8-3CA7BF9EC954",
+      "Text" : "109F3D95-7C6C-E84F-C3D2-3CA7BF91C954"
+    }
+  },
+  "Toggle" : {
+    "id" : "AFCB6006-7ED8-3338-4214-E5432A45DC03",
+    "inputs" : {
+      "Dark" : "91182E3E-9FA5-10EE-F842-4987D981ABC7",
+      "On" : "FE35C86E-1131-3AB1-8188-7D86B758A1E8",
+      "Tint" : "173BC86E-1134-3AB1-348A-7D86B759A1E8"
+    },
+    "outputs" : {
+      "Changed" : "DE162E3E-9FA4-10EE-AB44-4987D982ABC7",
+      "On" : "2B152E3E-9FA3-10EE-5E46-4987D983ABC7"
+    }
+  },
+  "Toolbar" : {
+    "id" : "3AA9D18F-3890-7677-61A9-EEF4A42BFF54",
+    "inputs" : {
+      "Dark" : "3B9969A2-1F54-6B95-F694-E686161C5893",
+      "Symbols" : "F08969A2-1F4B-6B95-41A4-E68616255893"
+    },
+    "outputs" : {
+      "Tap" : "889769A2-1F53-6B95-A996-E686161D5893",
+      "Tapped" : "D59569A2-1F52-6B95-F4A5-E68616265893"
+    }
+  }
+}

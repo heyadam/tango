@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "id": "com.tango.sampler",
+  "name": "Sampler",
+  "version": "1.0.0",
+  "author": "tango",
+  "summary": "One of everything an extension can add: a patch, a drawn view, a shader view and a component. A place to start your own.",
+  "patches": [
+    {
+      "id": "format-number",
+      "name": "Format Number",
+      "category": "Utility",
+      "summary": "Writes a number as text, with a fixed number of decimals, separators for thousands, and text before and after.",
+      "script": "patches/format-number.js",
+      "inputs": [
+        { "id": "value", "type": "number" },
+        { "id": "decimals", "type": "number", "default": 0 },
+        { "id": "thousands", "name": "Separate Thousands", "type": "bool", "default": true },
+        { "id": "prefix", "type": "text", "default": "" },
+        { "id": "suffix", "type": "text", "default": "" }
+      ],
+      "outputs": [ { "id": "text", "type": "text" } ]
+    }
+  ],
+  "views": [
+    {
+      "id": "ring",
+      "name": "Progress Ring",
+      "summary": "A ring that fills clockwise from the top as its progress goes from 0 to 1.",
+      "draw": "views/ring.js",
+      "size": [120, 120],
+      "inputs": [
+        { "id": "progress", "type": "number", "default": 0.72 },
+        { "id": "color", "type": "color", "default": "#007AFF" },
+        { "id": "track", "type": "color", "default": "#E5E5EA" },
+        { "id": "thickness", "type": "number", "default": 12 },
+        { "id": "label", "name": "Show Percent", "type": "bool", "default": true }
+      ]
+    },
+    {
+      "id": "stripes",
+      "name": "Stripes",
+      "summary": "Diagonal stripes in two colors. Added as an ordinary shader view whose code you can change.",
+      "shader": "shaders/stripes.metal",
+      "size": [200, 120]
+    }
+  ],
+  "components": ["components/Stat-Ring.json"]
+}

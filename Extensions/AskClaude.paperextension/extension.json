@@ -1,0 +1,34 @@
+{
+  "format": 1,
+  "id": "com.tango.claude",
+  "name": "Ask Claude",
+  "version": "1.0.0",
+  "author": "tango",
+  "summary": "Sends a prompt to Claude and gives back the answer, for prototypes that need real generated text.",
+  "homepage": "https://platform.claude.com/docs",
+  "network": ["api.anthropic.com"],
+  "secrets": [
+    { "id": "apiKey", "name": "Claude API Key", "hosts": ["api.anthropic.com"], "help": "https://platform.claude.com" }
+  ],
+  "patches": [
+    {
+      "id": "ask",
+      "name": "Ask Claude",
+      "category": "Data",
+      "summary": "Sends the prompt when Ask fires. Text holds the answer once Done fires; Error says what went wrong.",
+      "script": "patches/ask.js",
+      "inputs": [
+        { "id": "ask", "type": "pulse" },
+        { "id": "prompt", "type": "text", "default": "" },
+        { "id": "system", "name": "Instructions", "type": "text", "default": "" },
+        { "id": "model", "type": "text", "default": "claude-opus-5-5" }
+      ],
+      "outputs": [
+        { "id": "text", "type": "text" },
+        { "id": "loading", "type": "bool" },
+        { "id": "done", "type": "pulse" },
+        { "id": "error", "type": "text" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,533 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "B2140A7A-C03D-4544-A727-C56D3C9C0A91",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "83FA513B-370D-4C65-863B-881C6513CBDB",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83FA513B-370D-4C65-863B-881C6513CBDB",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "89C5B8F4-013E-42A1-941E-FD3F07EACC61",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C4D7FE00-FAC5-41B9-9417-A0136077923B",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "3046BC54-E376-477B-B1B0-FD2E449ADD14",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83FA513B-370D-4C65-863B-881C6513CBDB",
+          "port" : "index"
+        },
+        "to" : {
+          "node" : "01A66808-F785-4AC2-9C0A-C0A4FC502A0C",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3046BC54-E376-477B-B1B0-FD2E449ADD14",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "01A66808-F785-4AC2-9C0A-C0A4FC502A0C",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "01A66808-F785-4AC2-9C0A-C0A4FC502A0C",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "5F983A4B-90AF-46FF-9297-120FCA2EE7C8",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5F983A4B-90AF-46FF-9297-120FCA2EE7C8",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "1CA1DEF3-343B-451E-B426-E177E61BC859",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5F983A4B-90AF-46FF-9297-120FCA2EE7C8",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "89DA4D77-D7FB-4980-B82A-F759B0ABCD21",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1CA1DEF3-343B-451E-B426-E177E61BC859",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "88A616C5-35C5-4D74-825A-F23E0239E3BF",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "89DA4D77-D7FB-4980-B82A-F759B0ABCD21",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "89C5B8F4-013E-42A1-941E-FD3F07EACC61",
+          "port" : "textColor"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83FA513B-370D-4C65-863B-881C6513CBDB",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "0C5BBFA3-C5C0-49BE-8284-FC520DDD6018",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3046BC54-E376-477B-B1B0-FD2E449ADD14",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "0C5BBFA3-C5C0-49BE-8284-FC520DDD6018",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0C5BBFA3-C5C0-49BE-8284-FC520DDD6018",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "642DE1CA-8F4C-4BDC-B50A-88595E6994F4",
+          "port" : "text"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "99C86AD4-6EE6-4C72-877F-EAD3079C93FA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "008BF7B2-F9D4-4FCA-81DE-FE155CED551D",
+        "position" : {
+          "x" : 1332,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "B8C4B6BE-3109-49BB-8676-B22168409453",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8C70E394-70D8-48E1-9C3C-3DD510FD129C",
+        "position" : {
+          "x" : 1620,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "88A616C5-35C5-4D74-825A-F23E0239E3BF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0A643CFF-BB80-4E24-804A-EC6AC6E6CD62",
+        "position" : {
+          "x" : 1296,
+          "y" : 156
+        }
+      },
+      {
+        "id" : "89C5B8F4-013E-42A1-941E-FD3F07EACC61",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "17C4752F-DAE4-4A88-B20F-A561A6F075DE",
+        "position" : {
+          "x" : 756,
+          "y" : 36
+        }
+      },
+      {
+        "id" : "642DE1CA-8F4C-4BDC-B50A-88595E6994F4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DA83FA67-5112-4739-A843-72C532386DC9",
+        "position" : {
+          "x" : 780,
+          "y" : 516
+        }
+      },
+      {
+        "id" : "B2140A7A-C03D-4544-A727-C56D3C9C0A91",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Ada, Grace, Linus, Margaret, Alan, Barbara"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Names",
+        "position" : {
+          "x" : 36,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "83FA513B-370D-4C65-863B-881C6513CBDB",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 276,
+          "y" : 60
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "C4D7FE00-FAC5-41B9-9417-A0136077923B",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "0A643CFF-BB80-4E24-804A-EC6AC6E6CD62",
+        "position" : {
+          "x" : 36,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "3046BC54-E376-477B-B1B0-FD2E449ADD14",
+        "inputs" : {
+
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Selected Row",
+        "position" : {
+          "x" : 276,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "01A66808-F785-4AC2-9C0A-C0A4FC502A0C",
+        "inputs" : {
+
+        },
+        "kind" : "equal",
+        "name" : "Is Selected",
+        "position" : {
+          "x" : 540,
+          "y" : 204
+        }
+      },
+      {
+        "id" : "5F983A4B-90AF-46FF-9297-120FCA2EE7C8",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.85
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 780,
+          "y" : 204
+        }
+      },
+      {
+        "id" : "1CA1DEF3-343B-451E-B426-E177E61BC859",
+        "inputs" : {
+          "end" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9686274509803922,
+              "green" : 0.4823529411764706,
+              "red" : 0.23921568627450981
+            }
+          },
+          "start" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Row Color",
+        "position" : {
+          "x" : 1044,
+          "y" : 156
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "89DA4D77-D7FB-4980-B82A-F759B0ABCD21",
+        "inputs" : {
+          "end" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "start" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Name Color",
+        "position" : {
+          "x" : 1044,
+          "y" : 336
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "0C5BBFA3-C5C0-49BE-8284-FC520DDD6018",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Selected Name",
+        "position" : {
+          "x" : 516,
+          "y" : 516
+        },
+        "valueType" : "text"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "17C4752F-DAE4-4A88-B20F-A561A6F075DE",
+                "kind" : "text",
+                "name" : "Name",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "0A643CFF-BB80-4E24-804A-EC6AC6E6CD62",
+            "kind" : "view",
+            "name" : "Row",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 64,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "8C70E394-70D8-48E1-9C3C-3DD510FD129C",
+        "kind" : "view",
+        "name" : "List",
+        "properties" : {
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingHorizontal" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "paddingVertical" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 120
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 390
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 10
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "DA83FA67-5112-4739-A843-72C532386DC9",
+        "kind" : "text",
+        "name" : "Header",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 56
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "People"
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      }
+    ],
+    "id" : "008BF7B2-F9D4-4FCA-81DE-FE155CED551D",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.95,
+          "green" : 0.95,
+          "red" : 0.95
+        }
+      }
+    }
+  },
+  "version" : 4
+}

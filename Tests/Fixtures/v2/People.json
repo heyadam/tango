@@ -1,0 +1,513 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "45F66718-18E0-4F9E-B0A9-F4DC2B536317",
+                "kind" : "text",
+                "name" : "Name",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 17
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "C89EFB96-1A52-448F-A51E-82FFC0BC71E9",
+            "kind" : "group",
+            "name" : "Row",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 64,
+                  "width" : 100
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "5DAB525F-3D99-4062-9763-70BF5C732AE1",
+        "kind" : "group",
+        "name" : "List",
+        "properties" : {
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "padding" : {
+            "type" : "number",
+            "value" : 16
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 120
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 390
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 10
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "50C27276-12B6-4BF6-9CE3-BBF8E45CC1AF",
+        "kind" : "text",
+        "name" : "Header",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 56
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "People"
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      }
+    ],
+    "id" : "64B7C3F3-40DE-4F87-84EA-021559CD8EA2",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.95,
+          "green" : 0.95,
+          "red" : 0.95
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "44318646-2340-4F11-BA1D-E5C93ACAC2AB",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "79824EEC-155C-48EC-B807-16EA8C8CA203",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "79824EEC-155C-48EC-B807-16EA8C8CA203",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "10431F67-3811-4320-AEB5-C7833AB2FC35",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C3BABE6C-A087-4CF2-BF8D-73198E71DB64",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "18C662FB-284F-4FCC-8CF6-4E580FB29568",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "79824EEC-155C-48EC-B807-16EA8C8CA203",
+          "port" : "index"
+        },
+        "to" : {
+          "node" : "3E59B0F7-7BFD-4F61-874B-5AECB426C923",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "18C662FB-284F-4FCC-8CF6-4E580FB29568",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "3E59B0F7-7BFD-4F61-874B-5AECB426C923",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3E59B0F7-7BFD-4F61-874B-5AECB426C923",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "FD11E42C-9C41-4766-B08B-53DC86349686",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FD11E42C-9C41-4766-B08B-53DC86349686",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "253D83D4-AA9C-486E-BA6D-E6FA281F3651",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FD11E42C-9C41-4766-B08B-53DC86349686",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "BA5B0D9F-7632-4174-A08B-C28A3B555269",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "253D83D4-AA9C-486E-BA6D-E6FA281F3651",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "A935173C-41B3-4579-A3B3-FE1E809B1999",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BA5B0D9F-7632-4174-A08B-C28A3B555269",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "12E27DF4-374C-4A0F-A490-0C5D4FFF7428",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "79824EEC-155C-48EC-B807-16EA8C8CA203",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "135E3C5A-23AF-4FBA-8B8A-D33A17F257DF",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "18C662FB-284F-4FCC-8CF6-4E580FB29568",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "135E3C5A-23AF-4FBA-8B8A-D33A17F257DF",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "135E3C5A-23AF-4FBA-8B8A-D33A17F257DF",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "3B831F37-CCC6-4A83-8CCA-025EE0F29ADD",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "44318646-2340-4F11-BA1D-E5C93ACAC2AB",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Ada, Grace, Linus, Margaret, Alan, Barbara"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Names",
+        "position" : {
+          "x" : 36,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "79824EEC-155C-48EC-B807-16EA8C8CA203",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 276,
+          "y" : 60
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "10431F67-3811-4320-AEB5-C7833AB2FC35",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "45F66718-18E0-4F9E-B0A9-F4DC2B536317",
+        "position" : {
+          "x" : 756,
+          "y" : 36
+        },
+        "property" : "text"
+      },
+      {
+        "id" : "C3BABE6C-A087-4CF2-BF8D-73198E71DB64",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "C89EFB96-1A52-448F-A51E-82FFC0BC71E9",
+        "position" : {
+          "x" : 36,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "18C662FB-284F-4FCC-8CF6-4E580FB29568",
+        "inputs" : {
+
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Selected Row",
+        "position" : {
+          "x" : 276,
+          "y" : 264
+        }
+      },
+      {
+        "id" : "3E59B0F7-7BFD-4F61-874B-5AECB426C923",
+        "inputs" : {
+
+        },
+        "kind" : "equal",
+        "name" : "Is Selected",
+        "position" : {
+          "x" : 540,
+          "y" : 204
+        }
+      },
+      {
+        "id" : "FD11E42C-9C41-4766-B08B-53DC86349686",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.85
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 780,
+          "y" : 204
+        }
+      },
+      {
+        "id" : "253D83D4-AA9C-486E-BA6D-E6FA281F3651",
+        "inputs" : {
+          "end" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9686274509803922,
+              "green" : 0.4823529411764706,
+              "red" : 0.23921568627450981
+            }
+          },
+          "start" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Row Color",
+        "position" : {
+          "x" : 1044,
+          "y" : 156
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "BA5B0D9F-7632-4174-A08B-C28A3B555269",
+        "inputs" : {
+          "end" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "start" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Name Color",
+        "position" : {
+          "x" : 1044,
+          "y" : 336
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "A935173C-41B3-4579-A3B3-FE1E809B1999",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "C89EFB96-1A52-448F-A51E-82FFC0BC71E9",
+        "position" : {
+          "x" : 1296,
+          "y" : 156
+        },
+        "property" : "fill"
+      },
+      {
+        "id" : "12E27DF4-374C-4A0F-A490-0C5D4FFF7428",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "45F66718-18E0-4F9E-B0A9-F4DC2B536317",
+        "position" : {
+          "x" : 1296,
+          "y" : 336
+        },
+        "property" : "textColor"
+      },
+      {
+        "id" : "135E3C5A-23AF-4FBA-8B8A-D33A17F257DF",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Selected Name",
+        "position" : {
+          "x" : 516,
+          "y" : 516
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "3B831F37-CCC6-4A83-8CCA-025EE0F29ADD",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "50C27276-12B6-4BF6-9CE3-BBF8E45CC1AF",
+        "position" : {
+          "x" : 780,
+          "y" : 516
+        },
+        "property" : "text"
+      }
+    ]
+  },
+  "version" : 2
+}

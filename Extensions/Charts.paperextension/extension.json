@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "id": "com.tango.charts",
+  "name": "Charts",
+  "version": "1.0.0",
+  "author": "tango",
+  "summary": "Line and bar charts drawn from a list of numbers. Cable an array into Values, or a JSON response.",
+  "views": [
+    {
+      "id": "line",
+      "name": "Line Chart",
+      "summary": "A line through a list of numbers, scaled to fit, with an optional fill under it.",
+      "draw": "views/line.js",
+      "size": [320, 160],
+      "inputs": [
+        { "id": "values", "type": "array", "default": [3, 5, 4, 8, 6, 9, 7, 11] },
+        { "id": "color", "type": "color", "default": "#007AFF" },
+        { "id": "lineWidth", "name": "Line Width", "type": "number", "default": 3 },
+        { "id": "smooth", "type": "bool", "default": true },
+        { "id": "fill", "name": "Fill Under", "type": "bool", "default": true },
+        { "id": "dots", "name": "Show Points", "type": "bool", "default": false }
+      ]
+    },
+    {
+      "id": "bars",
+      "name": "Bar Chart",
+      "summary": "A bar for each number in a list, scaled to the largest. One bar can be picked out in another color.",
+      "draw": "views/bars.js",
+      "size": [320, 160],
+      "inputs": [
+        { "id": "values", "type": "array", "default": [4, 7, 5, 9, 6, 3, 8] },
+        { "id": "color", "type": "color", "default": "#34C759" },
+        { "id": "gap", "type": "number", "default": 6 },
+        { "id": "radius", "name": "Corner Radius", "type": "number", "default": 4 },
+        { "id": "highlight", "name": "Highlighted Bar", "type": "number", "default": -1 },
+        { "id": "highlightColor", "name": "Highlight Color", "type": "color", "default": "#FF9500" }
+      ]
+    }
+  ]
+}

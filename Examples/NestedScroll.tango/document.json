@@ -1,0 +1,2378 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "C603549E-3E72-43EF-8BD4-BA00EF22A61F",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "04E69ADD-B805-47F2-AAE0-4500C8E14EC9",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "04E69ADD-B805-47F2-AAE0-4500C8E14EC9",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D18DE33D-3316-4F4F-9680-EF088647448F",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "87C9516B-86E4-40DE-B623-87D78F7D5300",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "E8EB969B-4E6B-410C-A776-21F196FD605D",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E8EB969B-4E6B-410C-A776-21F196FD605D",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "948067A3-6A5D-40C7-83D3-500751A82BF9",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "06D8A0D0-9B60-46B4-A951-1DD4DAFC75C8",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "5DE1FB82-D210-4D3A-B43C-10BD64666D45",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5DE1FB82-D210-4D3A-B43C-10BD64666D45",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "310F4AB2-E338-43BA-80AA-FDBB0641FC7E",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0001C964-40CE-48D5-A321-10B17102A622",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "FCB15687-6875-4C16-9426-C2807C73F4FF",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FCB15687-6875-4C16-9426-C2807C73F4FF",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "013764F9-D5F9-49B4-9F81-38A3B8FA4058",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "013764F9-D5F9-49B4-9F81-38A3B8FA4058",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "AF5CFF9D-5F26-4E49-A190-F3239A24E7A9",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0001C964-40CE-48D5-A321-10B17102A622",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "3169F2B2-42D2-4DE4-9033-4B037A1EA86C",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3169F2B2-42D2-4DE4-9033-4B037A1EA86C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "BB44B905-E492-48A7-B3CA-212809584D56",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BB44B905-E492-48A7-B3CA-212809584D56",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "310F4AB2-E338-43BA-80AA-FDBB0641FC7E",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "20793F87-1E20-41F6-8F95-6F46C1153A80",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "C0F990C2-76F5-48D5-9BEE-C5A1E09279E3",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C0F990C2-76F5-48D5-9BEE-C5A1E09279E3",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "360E4B87-7081-40BA-8206-8EAF8F6ADCEA",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "39B77E64-F7F0-4052-8E66-1FEA8073E756",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "9280FF33-B35D-4B97-B9F3-343B47F67012",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9280FF33-B35D-4B97-B9F3-343B47F67012",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "EDF4A4D2-4BD8-45D9-8EF9-EB3B4CC4B5DF",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "84512858-F158-4154-B77E-AA2CE826323E",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "13834344-6F8F-4E17-88FF-5C491EB4630E",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "13834344-6F8F-4E17-88FF-5C491EB4630E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "AA114C55-AF26-488E-BB2A-A1D5423F041D",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "04AE4CB7-D78B-4A4E-8658-0AA4BAD9EB38",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "A89D0958-3DCA-4A45-A484-6054A4283350",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A89D0958-3DCA-4A45-A484-6054A4283350",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "938A5909-BDC8-4459-AABD-45B087987642",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "938A5909-BDC8-4459-AABD-45B087987642",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "B2706A3F-4302-444E-ABEF-E71F1793AAB8",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "04AE4CB7-D78B-4A4E-8658-0AA4BAD9EB38",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "328BD382-49D3-4DB5-B536-1E95384B5DDC",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "328BD382-49D3-4DB5-B536-1E95384B5DDC",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E0913828-D6B9-4F4C-9FB7-7B1244311AB9",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E0913828-D6B9-4F4C-9FB7-7B1244311AB9",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "AA114C55-AF26-488E-BB2A-A1D5423F041D",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5EE4A18A-E327-4FED-B7E0-8DEF59058591",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "D27F3F32-7F34-4A29-B2F5-43FA6A86C0E0",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D27F3F32-7F34-4A29-B2F5-43FA6A86C0E0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "2AFDB538-E768-4980-8463-F303FE22AFB3",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F853DB19-2A36-4749-A87F-B0BDF73CE34E",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "99D0A11B-BACC-4E54-964E-4444119C6D0E",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "99D0A11B-BACC-4E54-964E-4444119C6D0E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "95B99EA8-52A5-4D7C-B069-0755136DCCE2",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "147EBB7C-7F4A-4A92-91C1-D564AFA64202",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "6CBEA208-9DED-4556-B7D4-FBDCFB50F50C",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6CBEA208-9DED-4556-B7D4-FBDCFB50F50C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8852B307-DF60-4940-81F1-1F2FA4A12B8A",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6A576FB7-7897-49C5-B14D-34B9E88A1B18",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "4FE0D73E-9602-478D-A430-CA537312E577",
+          "port" : "flip"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4FE0D73E-9602-478D-A430-CA537312E577",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "DF724632-996E-442A-9A57-CD3A22A80B03",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "DF724632-996E-442A-9A57-CD3A22A80B03",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "3E56359F-947C-4FC3-80AD-29CAA36AAC5A",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6A576FB7-7897-49C5-B14D-34B9E88A1B18",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "5D4325C1-6513-4029-9801-A16E5359D007",
+          "port" : "trigger"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5D4325C1-6513-4029-9801-A16E5359D007",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8DBAD40F-3301-4384-BA90-B151ABF238F5",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8DBAD40F-3301-4384-BA90-B151ABF238F5",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8852B307-DF60-4940-81F1-1F2FA4A12B8A",
+          "port" : "scale"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "7054DD84-E01B-4A11-8365-A79744919599",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "809BF3AF-4833-4685-B9BA-247FD97530CA",
+        "position" : {
+          "x" : 852,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "9FB0416D-1EAE-45A0-8A04-04C8E9ECB0C6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "73CD395A-70EA-4F83-B732-44172223252A",
+        "position" : {
+          "x" : 36,
+          "y" : 756
+        }
+      },
+      {
+        "id" : "406B8362-BB23-4BF7-AD56-77C1D1D20C71",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "18F86818-35BB-488A-9B98-6C023F9CCEFC",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "46AE6E1E-4B2F-450C-BB4D-5EA28F26355A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8315F804-EED4-4326-9130-63D2FD56070E",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A8E287E7-0462-42F3-AE72-D9D8191C0617",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1A0A03CD-713E-4E23-83B4-3D1E1422B055",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "1753F48E-D7CD-4566-AA3C-7BAC31BC0D77",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DF045FB1-5B38-4588-87FF-22DDDC290C9E",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "7810EA5E-BDF4-4A78-9263-D94A218D921A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DE9E0DC6-78DE-4148-A768-CB24D6B58BB2",
+        "position" : {
+          "x" : 324,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "3BC98C29-DB30-432A-91B2-54AD0A93ED3B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2B75F196-3068-43E2-A72B-11201C4C4881",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "7DC047EF-CF2B-4001-8E2D-17E15CD74965",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "position" : {
+          "x" : 36,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "310F4AB2-E338-43BA-80AA-FDBB0641FC7E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+        "position" : {
+          "x" : 816,
+          "y" : 600
+        }
+      },
+      {
+        "id" : "948067A3-6A5D-40C7-83D3-500751A82BF9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EA5454AA-F0F4-4F51-9022-F33717864281",
+        "position" : {
+          "x" : 1080,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "2FE223B2-8172-4C17-9CA6-2795F78C07CF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "12FDE6E6-AF5C-437E-8EB5-49A77E3F18CE",
+        "position" : {
+          "x" : 1080,
+          "y" : 564
+        }
+      },
+      {
+        "id" : "D18DE33D-3316-4F4F-9680-EF088647448F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "03ABC058-D144-4FCF-A9DD-E5D0B0375464",
+        "position" : {
+          "x" : 1080,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "AF5CFF9D-5F26-4E49-A190-F3239A24E7A9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C44123F1-20A2-4F49-B7FB-A1EE4D313108",
+        "position" : {
+          "x" : 1080,
+          "y" : 420
+        }
+      },
+      {
+        "id" : "6BE5B367-11ED-43B6-BA94-9BDFCC4A68C5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B8047E05-C98C-45E9-8FBC-2C7C048ED2DB",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "0E42E14B-07C2-4A46-9526-827328EAD135",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0FD7F6A2-4B98-4063-82BA-8D5EDA6CA169",
+        "position" : {
+          "x" : 324,
+          "y" : 420
+        }
+      },
+      {
+        "id" : "B5D6311B-FB54-493E-9F6D-3568A12576B9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4BDD46CA-639F-4AC2-9F12-42BB76BB26DD",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DC68A7D7-8F90-4FEF-8119-45383FE43EB3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "position" : {
+          "x" : 36,
+          "y" : 420
+        }
+      },
+      {
+        "id" : "AA114C55-AF26-488E-BB2A-A1D5423F041D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+        "position" : {
+          "x" : 816,
+          "y" : 600
+        }
+      },
+      {
+        "id" : "EDF4A4D2-4BD8-45D9-8EF9-EB3B4CC4B5DF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B6182BB9-A9DB-4770-9CB8-972D5969408A",
+        "position" : {
+          "x" : 1080,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "360E4B87-7081-40BA-8206-8EAF8F6ADCEA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EE493EFE-D469-4193-AF08-0634B6F51294",
+        "position" : {
+          "x" : 1080,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "B2706A3F-4302-444E-ABEF-E71F1793AAB8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6C374CA8-2D9B-49D4-B750-F81059300F74",
+        "position" : {
+          "x" : 1080,
+          "y" : 420
+        }
+      },
+      {
+        "id" : "9298FE88-C412-4033-9268-4F810A8E3C69",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "277F4C5B-693E-48DB-B3CC-AEAB19BF5F14",
+        "position" : {
+          "x" : 48,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "813C88E3-BCBC-49E4-9064-4D813762599E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "89B52074-B5B2-4F23-AC4F-E6D9AF25BCB9",
+        "position" : {
+          "x" : 324,
+          "y" : 600
+        }
+      },
+      {
+        "id" : "80C9F79C-FEDC-4DDF-8DA3-50940C6369E3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "74B47458-A277-430E-A12E-1F00530F8C30",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "76CDC4B6-C95D-4883-8EFD-7476AF632871",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "position" : {
+          "x" : 36,
+          "y" : 600
+        }
+      },
+      {
+        "id" : "8852B307-DF60-4940-81F1-1F2FA4A12B8A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+        "position" : {
+          "x" : 816,
+          "y" : 600
+        }
+      },
+      {
+        "id" : "95B99EA8-52A5-4D7C-B069-0755136DCCE2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B53AD018-4771-4652-97C7-84A45BD340F5",
+        "position" : {
+          "x" : 1080,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "2AFDB538-E768-4980-8463-F303FE22AFB3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4EC48AEF-59F3-4B29-815F-4AE233ED5674",
+        "position" : {
+          "x" : 1080,
+          "y" : 60
+        }
+      },
+      {
+        "id" : "3E56359F-947C-4FC3-80AD-29CAA36AAC5A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "62AD3782-02D7-4DDC-9A06-29B75BD7EB62",
+        "position" : {
+          "x" : 1080,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+        "id" : "C603549E-3E72-43EF-8BD4-BA00EF22A61F",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Summer in Lisbon, Weekend Hikes, Ocean Days, Night Lights"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Featured Titles",
+        "position" : {
+          "x" : 36,
+          "y" : 60
+        }
+      },
+      {
+        "home" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+        "id" : "04E69ADD-B805-47F2-AAE0-4500C8E14EC9",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 60
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+        "id" : "87C9516B-86E4-40DE-B623-87D78F7D5300",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "sun.max.fill, mountain.2.fill, water.waves, moon.stars.fill"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Featured Symbols",
+        "position" : {
+          "x" : 36,
+          "y" : 240
+        }
+      },
+      {
+        "home" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+        "id" : "E8EB969B-4E6B-410C-A776-21F196FD605D",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 240
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "id" : "06D8A0D0-9B60-46B4-A951-1DD4DAFC75C8",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "#F28C38, #3E8E5E, #2F7FD8, #5B4BC4"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Featured Colors",
+        "position" : {
+          "x" : 36,
+          "y" : 600
+        }
+      },
+      {
+        "home" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "id" : "5DE1FB82-D210-4D3A-B43C-10BD64666D45",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 600
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "0001C964-40CE-48D5-A321-10B17102A622",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+        "position" : {
+          "x" : 36,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "id" : "FCB15687-6875-4C16-9426-C2807C73F4FF",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Saved",
+        "position" : {
+          "x" : 300,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "id" : "013764F9-D5F9-49B4-9F81-38A3B8FA4058",
+        "inputs" : {
+          "else" : {
+            "type" : "text",
+            "value" : "heart"
+          },
+          "then" : {
+            "type" : "text",
+            "value" : "heart.fill"
+          }
+        },
+        "kind" : "if",
+        "name" : "Heart",
+        "position" : {
+          "x" : 564,
+          "y" : 420
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "id" : "3169F2B2-42D2-4DE4-9033-4B037A1EA86C",
+        "inputs" : {
+          "duration" : {
+            "type" : "number",
+            "value" : 0.4
+          }
+        },
+        "kind" : "impulse",
+        "name" : "Bump",
+        "position" : {
+          "x" : 300,
+          "y" : 780
+        }
+      },
+      {
+        "home" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+        "id" : "BB44B905-E492-48A7-B3CA-212809584D56",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.95
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Press",
+        "position" : {
+          "x" : 564,
+          "y" : 780
+        },
+        "valueType" : "number"
+      },
+      {
+        "home" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+        "id" : "20793F87-1E20-41F6-8F95-6F46C1153A80",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Birthdays, Pets, Gardens, Concerts, Road Trips, Snow Days"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Memories Titles",
+        "position" : {
+          "x" : 36,
+          "y" : 60
+        }
+      },
+      {
+        "home" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+        "id" : "C0F990C2-76F5-48D5-9BEE-C5A1E09279E3",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 60
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+        "id" : "39B77E64-F7F0-4052-8E66-1FEA8073E756",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "birthday.cake.fill, pawprint.fill, leaf.fill, music.note, car.fill, snowflake"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Memories Symbols",
+        "position" : {
+          "x" : 36,
+          "y" : 240
+        }
+      },
+      {
+        "home" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+        "id" : "9280FF33-B35D-4B97-B9F3-343B47F67012",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 240
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "id" : "84512858-F158-4154-B77E-AA2CE826323E",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "#E0567A, #E8A33D, #3AA6A0, #7A6FF0, #D9644A, #4F86C6"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Memories Colors",
+        "position" : {
+          "x" : 36,
+          "y" : 600
+        }
+      },
+      {
+        "home" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "id" : "13834344-6F8F-4E17-88FF-5C491EB4630E",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 600
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "04AE4CB7-D78B-4A4E-8658-0AA4BAD9EB38",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+        "position" : {
+          "x" : 36,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "id" : "A89D0958-3DCA-4A45-A484-6054A4283350",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Saved",
+        "position" : {
+          "x" : 300,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "id" : "938A5909-BDC8-4459-AABD-45B087987642",
+        "inputs" : {
+          "else" : {
+            "type" : "text",
+            "value" : "heart"
+          },
+          "then" : {
+            "type" : "text",
+            "value" : "heart.fill"
+          }
+        },
+        "kind" : "if",
+        "name" : "Heart",
+        "position" : {
+          "x" : 564,
+          "y" : 420
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "id" : "328BD382-49D3-4DB5-B536-1E95384B5DDC",
+        "inputs" : {
+          "duration" : {
+            "type" : "number",
+            "value" : 0.4
+          }
+        },
+        "kind" : "impulse",
+        "name" : "Bump",
+        "position" : {
+          "x" : 300,
+          "y" : 780
+        }
+      },
+      {
+        "home" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+        "id" : "E0913828-D6B9-4F4C-9FB7-7B1244311AB9",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.95
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Press",
+        "position" : {
+          "x" : 564,
+          "y" : 780
+        },
+        "valueType" : "number"
+      },
+      {
+        "home" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+        "id" : "5EE4A18A-E327-4FED-B7E0-8DEF59058591",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Family, Book Club, Climbing, Cooking, Running, Travel"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Shared Albums Titles",
+        "position" : {
+          "x" : 36,
+          "y" : 60
+        }
+      },
+      {
+        "home" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+        "id" : "D27F3F32-7F34-4A29-B2F5-43FA6A86C0E0",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 60
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+        "id" : "F853DB19-2A36-4749-A87F-B0BDF73CE34E",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "house.fill, book.fill, figure.climbing, fork.knife, figure.run, airplane"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Shared Albums Symbols",
+        "position" : {
+          "x" : 36,
+          "y" : 240
+        }
+      },
+      {
+        "home" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+        "id" : "99D0A11B-BACC-4E54-964E-4444119C6D0E",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 240
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "id" : "147EBB7C-7F4A-4A92-91C1-D564AFA64202",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "#8E6FD8, #C9753D, #4D8F6E, #D4574E, #3D7BF7, #2E9AA8"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Shared Albums Colors",
+        "position" : {
+          "x" : 36,
+          "y" : 600
+        }
+      },
+      {
+        "home" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "id" : "6CBEA208-9DED-4556-B7D4-FBDCFB50F50C",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 300,
+          "y" : 600
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "6A576FB7-7897-49C5-B14D-34B9E88A1B18",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+        "position" : {
+          "x" : 36,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "id" : "4FE0D73E-9602-478D-A430-CA537312E577",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Saved",
+        "position" : {
+          "x" : 300,
+          "y" : 420
+        }
+      },
+      {
+        "home" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "id" : "DF724632-996E-442A-9A57-CD3A22A80B03",
+        "inputs" : {
+          "else" : {
+            "type" : "text",
+            "value" : "heart"
+          },
+          "then" : {
+            "type" : "text",
+            "value" : "heart.fill"
+          }
+        },
+        "kind" : "if",
+        "name" : "Heart",
+        "position" : {
+          "x" : 564,
+          "y" : 420
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "id" : "5D4325C1-6513-4029-9801-A16E5359D007",
+        "inputs" : {
+          "duration" : {
+            "type" : "number",
+            "value" : 0.4
+          }
+        },
+        "kind" : "impulse",
+        "name" : "Bump",
+        "position" : {
+          "x" : 300,
+          "y" : 780
+        }
+      },
+      {
+        "home" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+        "id" : "8DBAD40F-3301-4384-BA90-B151ABF238F5",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.95
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Press",
+        "position" : {
+          "x" : 564,
+          "y" : 780
+        },
+        "valueType" : "number"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "8315F804-EED4-4326-9130-63D2FD56070E",
+                "kind" : "text",
+                "name" : "Date",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "TUESDAY, NOVEMBER 18"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.45,
+                      "green" : 0.45,
+                      "red" : 0.45
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "1A0A03CD-713E-4E23-83B4-3D1E1422B055",
+                "kind" : "text",
+                "name" : "Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 34
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "For You"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "18F86818-35BB-488A-9B98-6C023F9CCEFC",
+            "kind" : "view",
+            "name" : "Heading",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 20
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 2
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "2B75F196-3068-43E2-A72B-11201C4C4881",
+                    "kind" : "text",
+                    "name" : "Featured Label",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 22
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Featured"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0,
+                          "green" : 0,
+                          "red" : 0
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "DE9E0DC6-78DE-4148-A768-CB24D6B58BB2",
+                "kind" : "view",
+                "name" : "Featured Header",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "EA5454AA-F0F4-4F51-9022-F33717864281",
+                        "kind" : "symbol",
+                        "name" : "Symbol",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.35,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 176,
+                              "y" : 28
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 150,
+                              "width" : 150
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "sun.max.fill"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "12FDE6E6-AF5C-437E-8EB5-49A77E3F18CE",
+                        "kind" : "text",
+                        "name" : "Kicker",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 13
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 20,
+                              "y" : 188
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "MEMORY"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.75,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "03ABC058-D144-4FCF-A9DD-E5D0B0375464",
+                        "kind" : "text",
+                        "name" : "Card Title",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 26
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 20,
+                              "y" : 210
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "Summer in Lisbon"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "C44123F1-20A2-4F49-B7FB-A1EE4D313108",
+                        "kind" : "symbol",
+                        "name" : "Heart",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 306,
+                              "y" : 18
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 26,
+                              "width" : 26
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "heart"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "1A6E1582-A8EE-48C4-9F4A-2A36E44E19E0",
+                    "kind" : "view",
+                    "name" : "Featured Card",
+                    "properties" : {
+                      "clips" : {
+                        "type" : "bool",
+                        "value" : true
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 26
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.2196078431372549,
+                          "green" : 0.5490196078431373,
+                          "red" : 0.9490196078431372
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 260,
+                          "width" : 350
+                        }
+                      }
+                    }
+                  }
+                ],
+                "id" : "6CF92803-76FA-417B-8535-73F3ACE739DA",
+                "kind" : "view",
+                "name" : "Featured",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "clips" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "paddingVertical" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "pageSize" : {
+                    "type" : "number",
+                    "value" : 362
+                  },
+                  "scrolls" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 260,
+                      "width" : 390
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "DF045FB1-5B38-4588-87FF-22DDDC290C9E",
+            "kind" : "view",
+            "name" : "Featured Section",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "4BDD46CA-639F-4AC2-9F12-42BB76BB26DD",
+                    "kind" : "text",
+                    "name" : "Memories Label",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 22
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Memories"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0,
+                          "green" : 0,
+                          "red" : 0
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "0FD7F6A2-4B98-4063-82BA-8D5EDA6CA169",
+                "kind" : "view",
+                "name" : "Memories Header",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "B6182BB9-A9DB-4770-9CB8-972D5969408A",
+                        "kind" : "symbol",
+                        "name" : "Symbol",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.9,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 18,
+                              "y" : 18
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 64,
+                              "width" : 64
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "birthday.cake.fill"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "EE493EFE-D469-4193-AF08-0634B6F51294",
+                        "kind" : "text",
+                        "name" : "Card Title",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 17
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 16,
+                              "y" : 156
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "Birthdays"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "6C374CA8-2D9B-49D4-B750-F81059300F74",
+                        "kind" : "symbol",
+                        "name" : "Heart",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 114,
+                              "y" : 14
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 22,
+                              "width" : 22
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "heart"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "DD4B5ABB-D1C8-4AAA-990A-C91B7B9AAD0A",
+                    "kind" : "view",
+                    "name" : "Memories Card",
+                    "properties" : {
+                      "clips" : {
+                        "type" : "bool",
+                        "value" : true
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 20
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.47843137254901963,
+                          "green" : 0.33725490196078434,
+                          "red" : 0.8784313725490196
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 196,
+                          "width" : 150
+                        }
+                      }
+                    }
+                  }
+                ],
+                "id" : "48961391-429D-49C4-8756-C5FC61EB6DFE",
+                "kind" : "view",
+                "name" : "Memories",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "clips" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "paddingVertical" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "scrolls" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 196,
+                      "width" : 390
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "B8047E05-C98C-45E9-8FBC-2C7C048ED2DB",
+            "kind" : "view",
+            "name" : "Memories Section",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "74B47458-A277-430E-A12E-1F00530F8C30",
+                    "kind" : "text",
+                    "name" : "Shared Albums Label",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 22
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 700
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Shared Albums"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0,
+                          "green" : 0,
+                          "red" : 0
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "89B52074-B5B2-4F23-AC4F-E6D9AF25BCB9",
+                "kind" : "view",
+                "name" : "Shared Albums Header",
+                "properties" : {
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "B53AD018-4771-4652-97C7-84A45BD340F5",
+                        "kind" : "symbol",
+                        "name" : "Symbol",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.9,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 18,
+                              "y" : 18
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 64,
+                              "width" : 64
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "house.fill"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "4EC48AEF-59F3-4B29-815F-4AE233ED5674",
+                        "kind" : "text",
+                        "name" : "Card Title",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 17
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 16,
+                              "y" : 110
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "Family"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "62AD3782-02D7-4DDC-9A06-29B75BD7EB62",
+                        "kind" : "symbol",
+                        "name" : "Heart",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 134,
+                              "y" : 14
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 22,
+                              "width" : 22
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "heart"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "921B5239-27C1-4FA6-81E0-6A81293FBBE7",
+                    "kind" : "view",
+                    "name" : "Shared Albums Card",
+                    "properties" : {
+                      "clips" : {
+                        "type" : "bool",
+                        "value" : true
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 20
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.8470588235294118,
+                          "green" : 0.43529411764705883,
+                          "red" : 0.5568627450980392
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 150,
+                          "width" : 170
+                        }
+                      }
+                    }
+                  }
+                ],
+                "id" : "EEF271F4-FE99-401C-9186-494E67F7ED99",
+                "kind" : "view",
+                "name" : "Shared Albums",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "clips" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "paddingVertical" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "pageSize" : {
+                    "type" : "number",
+                    "value" : 182
+                  },
+                  "scrolls" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 150,
+                      "width" : 390
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "277F4C5B-693E-48DB-B3CC-AEAB19BF5F14",
+            "kind" : "view",
+            "name" : "Shared Albums Section",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "73CD395A-70EA-4F83-B732-44172223252A",
+        "kind" : "view",
+        "name" : "Feed",
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingBottom" : {
+            "type" : "number",
+            "value" : 48
+          },
+          "paddingTop" : {
+            "type" : "number",
+            "value" : 64
+          },
+          "scrolls" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 844,
+              "width" : 390
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 28
+          }
+        }
+      }
+    ],
+    "id" : "809BF3AF-4833-4685-B9BA-247FD97530CA",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 1,
+          "green" : 1,
+          "red" : 1
+        }
+      }
+    }
+  },
+  "version" : 4
+}

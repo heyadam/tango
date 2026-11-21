@@ -1,0 +1,421 @@
+{
+  "artboard" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "3BF96966-1EAA-41D4-8DD7-768983D48FEB",
+        "kind" : "text",
+        "name" : "Header",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 72
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Inbox"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "7541562C-79E1-400E-BA69-634CCDDA3104",
+            "kind" : "symbol",
+            "name" : "Trash",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 306,
+                  "y" : 26
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 28,
+                  "width" : 28
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "trash.fill"
+              }
+            }
+          }
+        ],
+        "id" : "FAF4A192-5CBA-4E4C-885F-455898C93698",
+        "kind" : "group",
+        "name" : "Delete",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.18823529411764706,
+              "green" : 0.23137254901960785,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 140
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 80,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "115F6841-27AB-4833-BCDC-18B516B4897A",
+            "kind" : "text",
+            "name" : "Sender",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 16
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Ada Lovelace"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "7A7A9488-5284-4A02-9126-519C7AD7474D",
+            "kind" : "text",
+            "name" : "Preview",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 42
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Swipe me left, then right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.45,
+                  "green" : 0.45,
+                  "red" : 0.45
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "85C08B6B-6364-4AF6-9F9E-C62878E094E0",
+        "kind" : "group",
+        "name" : "Row",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 140
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.08,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 80,
+              "width" : 358
+            }
+          }
+        }
+      }
+    ],
+    "id" : "C7F8AFBE-3CDF-4F12-8496-825C09430901",
+    "kind" : "artboard",
+    "name" : "Artboard",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.95,
+          "green" : 0.95,
+          "red" : 0.95
+        }
+      }
+    }
+  },
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "EC2CABAA-5034-4B1C-B92B-8BD1E092BC22",
+          "port" : "left"
+        },
+        "to" : {
+          "node" : "98B8D23E-CCD0-4250-AA2A-89DF3256143B",
+          "port" : "turnOn"
+        }
+      },
+      {
+        "from" : {
+          "node" : "EC2CABAA-5034-4B1C-B92B-8BD1E092BC22",
+          "port" : "right"
+        },
+        "to" : {
+          "node" : "98B8D23E-CCD0-4250-AA2A-89DF3256143B",
+          "port" : "turnOff"
+        }
+      },
+      {
+        "from" : {
+          "node" : "98B8D23E-CCD0-4250-AA2A-89DF3256143B",
+          "port" : "on"
+        },
+        "to" : {
+          "node" : "E468D2FE-6706-4954-B7E8-7318BCC56F69",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E468D2FE-6706-4954-B7E8-7318BCC56F69",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "2C5E3A4B-9FED-4919-961D-4C33AA0C6F9E",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2C5E3A4B-9FED-4919-961D-4C33AA0C6F9E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "DF3B10B0-930F-4915-9F23-90ECA57F9477",
+          "port" : "value"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "EC2CABAA-5034-4B1C-B92B-8BD1E092BC22",
+        "inputs" : {
+
+        },
+        "kind" : "swipe",
+        "layerID" : "85C08B6B-6364-4AF6-9F9E-C62878E094E0",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "98B8D23E-CCD0-4250-AA2A-89DF3256143B",
+        "inputs" : {
+
+        },
+        "kind" : "switch",
+        "name" : "Revealed",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "E468D2FE-6706-4954-B7E8-7318BCC56F69",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.85
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "spring",
+        "position" : {
+          "x" : 540,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "2C5E3A4B-9FED-4919-961D-4C33AA0C6F9E",
+        "inputs" : {
+          "end" : {
+            "type" : "point",
+            "value" : {
+              "x" : -72,
+              "y" : 140
+            }
+          },
+          "start" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 140
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Slide",
+        "position" : {
+          "x" : 804,
+          "y" : 84
+        },
+        "valueType" : "point"
+      },
+      {
+        "id" : "DF3B10B0-930F-4915-9F23-90ECA57F9477",
+        "inputs" : {
+
+        },
+        "kind" : "layer.property",
+        "layerID" : "85C08B6B-6364-4AF6-9F9E-C62878E094E0",
+        "position" : {
+          "x" : 1056,
+          "y" : 84
+        },
+        "property" : "position"
+      }
+    ]
+  },
+  "version" : 2
+}

@@ -1,0 +1,417 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "connections" : [
+      {
+        "from" : {
+          "node" : "6BBEFEB7-0269-49B0-8B30-E51679087AC5",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "BC7C9258-C466-45FB-BD45-FDD477B63ED1",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0BBFEB47-1585-4D12-A326-CCCAC7F6F413",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "BC7C9258-C466-45FB-BD45-FDD477B63ED1",
+          "port" : "search"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BC7C9258-C466-45FB-BD45-FDD477B63ED1",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "F3FC112F-82A4-4CA1-B407-5242C0A4CD98",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F3FC112F-82A4-4CA1-B407-5242C0A4CD98",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "ACBBCBF6-96B2-4E0D-AC6E-8834E54138A9",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F3FC112F-82A4-4CA1-B407-5242C0A4CD98",
+          "port" : "index"
+        },
+        "to" : {
+          "node" : "AD2C3CF9-D32F-40E5-A07D-99F007A7F27A",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AD2C3CF9-D32F-40E5-A07D-99F007A7F27A",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "8789BCD1-D4EF-4F9E-AE85-B92862F451E6",
+          "port" : "opacity"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "64E8383A-B7DE-44BC-A9A7-A1A52B009871",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "18C89D2F-5920-4755-BFD9-6916D34A87DC",
+        "position" : {
+          "x" : 1104,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "88C0831E-A047-4AA0-B2C9-656539E6D7C4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "285BE8F1-1ACD-489D-9D98-3E0EFB770CAA",
+        "position" : {
+          "x" : 1392,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "284389B9-4597-40DF-A34C-40EBC868EBDA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "205CC74E-98BB-453E-8E72-99FCC46CC1C1",
+        "position" : {
+          "x" : 1392,
+          "y" : 228
+        }
+      },
+      {
+        "id" : "D2F9C664-05CC-4932-BD6A-EA1C895BD7BD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "87B2EDD4-2DC4-4A0B-B271-DDC95FEE50A7",
+        "position" : {
+          "x" : 1392,
+          "y" : 396
+        }
+      },
+      {
+        "id" : "8789BCD1-D4EF-4F9E-AE85-B92862F451E6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2320FC97-1677-4A9E-9667-2AF93748454A",
+        "position" : {
+          "x" : 1080,
+          "y" : 216
+        }
+      },
+      {
+        "id" : "ACBBCBF6-96B2-4E0D-AC6E-8834E54138A9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C304B50D-1BED-4354-A45F-CEB2C657340D",
+        "position" : {
+          "x" : 816,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "6BBEFEB7-0269-49B0-8B30-E51679087AC5",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Ada Lovelace, Grace Hopper, Alan Turing, Linus Torvalds, Margaret Hamilton, Barbara Liskov"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Names",
+        "position" : {
+          "x" : 36,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "0BBFEB47-1585-4D12-A326-CCCAC7F6F413",
+        "inputs" : {
+
+        },
+        "kind" : "textInput",
+        "layerID" : "205CC74E-98BB-453E-8E72-99FCC46CC1C1",
+        "position" : {
+          "x" : 36,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "BC7C9258-C466-45FB-BD45-FDD477B63ED1",
+        "inputs" : {
+
+        },
+        "kind" : "filterArray",
+        "position" : {
+          "x" : 300,
+          "y" : 84
+        }
+      },
+      {
+        "id" : "F3FC112F-82A4-4CA1-B407-5242C0A4CD98",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 564,
+          "y" : 84
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "AD2C3CF9-D32F-40E5-A07D-99F007A7F27A",
+        "inputs" : {
+
+        },
+        "kind" : "greaterEqual",
+        "name" : "Every Row",
+        "position" : {
+          "x" : 816,
+          "y" : 216
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "285BE8F1-1ACD-489D-9D98-3E0EFB770CAA",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 70
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Contacts"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "205CC74E-98BB-453E-8E72-99FCC46CC1C1",
+        "kind" : "textField",
+        "name" : "Search",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.9098039215686274,
+              "green" : 0.8901960784313725,
+              "red" : 0.8901960784313725
+            }
+          },
+          "placeholder" : {
+            "type" : "text",
+            "value" : "Search"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 124
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 40,
+              "width" : 358
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "C304B50D-1BED-4354-A45F-CEB2C657340D",
+                "kind" : "text",
+                "name" : "Name",
+                "properties" : {
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "2320FC97-1677-4A9E-9667-2AF93748454A",
+            "kind" : "view",
+            "name" : "Row",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 56,
+                  "width" : 358
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "87B2EDD4-2DC4-4A0B-B271-DDC95FEE50A7",
+        "kind" : "view",
+        "name" : "List",
+        "properties" : {
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 180
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 358
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      }
+    ],
+    "id" : "18C89D2F-5920-4755-BFD9-6916D34A87DC",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.9686274509803922,
+          "green" : 0.9490196078431372,
+          "red" : 0.9490196078431372
+        }
+      }
+    }
+  },
+  "version" : 4
+}
