@@ -12,7 +12,7 @@ import SwiftUI
 struct WelcomeView: View {
     static let windowID = "welcome"
     /// Shown on the right while nothing has been opened yet.
-    static let featuredExamples = ["card", "flow", "kit", "morph", "sheet"]
+    static let featuredExamples = ["player", "weather", "holo", "card", "flow"]
 
     @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.openWindow) private var openWindow

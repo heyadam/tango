@@ -713,6 +713,8 @@ extension SampleDocuments {
 /// The prototypes that ship with the app, for the gallery, `papertool` and `Examples/`.
 public struct GalleryItem: Identifiable, Sendable {
     public enum Section: String, Sendable, CaseIterable {
+        /// Finished-looking prototypes where shaders, glass and motion work together.
+        case showcase = "Showcase"
         /// Whole prototypes that show a workflow.
         case examples = "Examples"
         /// One reusable solution each.
@@ -736,6 +738,12 @@ public struct GalleryItem: Identifiable, Sendable {
 
 public enum Gallery {
     public static let items: [GalleryItem] = [
+        GalleryItem(id: "player", title: "Now Playing", summary: "A music player alive while it plays: a shader mesh of light, a shimmering cover and glass controls, all following one spring.",
+                    section: .showcase, fileName: "NowPlaying") { SampleDocuments.nowPlaying().document },
+        GalleryItem(id: "weather", title: "Sky Through the Day", summary: "Drag to scrub the hour: one shader paints the sun, golden light, stars and clouds, and a script writes the forecast.",
+                    section: .showcase, fileName: "Weather") { SampleDocuments.weather().document },
+        GalleryItem(id: "holo", title: "Holographic Card", summary: "Drag the card to tilt it: its foil shader slides a rainbow and moves the glare, and it settles back with a spring.",
+                    section: .showcase, fileName: "HoloCard") { SampleDocuments.holoCard().document },
         GalleryItem(id: "card", title: "Card That Opens", summary: "One tap opens a story: one spring value moves its place, size, corners and the dimming together.",
                     section: .examples, fileName: "Card") { SampleDocuments.card().document },
         GalleryItem(id: "signin", title: "Typing a Name", summary: "What is typed drives a greeting, and wakes the button once there is a name.",

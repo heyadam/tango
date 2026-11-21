@@ -1,0 +1,2384 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "6C4CE333-4A76-42B8-A973-5359AB26CB8F",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 564,
+          "width" : 816
+        },
+        "text" : "Tilt · Held, each spring follows the drag"
+      },
+      {
+        "id" : "1B797118-7357-4DDD-AE57-2F1FA3EC45DA",
+        "origin" : {
+          "x" : 888,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 372,
+          "width" : 240
+        },
+        "text" : "Foil · One point tilts the foil and the light"
+      },
+      {
+        "id" : "5FC762A4-66B2-4520-8489-2A03395CCE03",
+        "origin" : {
+          "x" : 312,
+          "y" : 648
+        },
+        "size" : {
+          "height" : 372,
+          "width" : 816
+        },
+        "text" : "Lift · Held, the card grows and shines"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "E94F8803-7CF0-433F-8BF3-B48F4CE337BB",
+          "port" : "translation"
+        },
+        "to" : {
+          "node" : "7D12F99E-4F11-401A-9AB1-0FD2D0FC5806",
+          "port" : "point"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7D12F99E-4F11-401A-9AB1-0FD2D0FC5806",
+          "port" : "x"
+        },
+        "to" : {
+          "node" : "40975C7F-309B-4931-A229-329C5BF50C62",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7D12F99E-4F11-401A-9AB1-0FD2D0FC5806",
+          "port" : "y"
+        },
+        "to" : {
+          "node" : "E25E384A-B2D1-46FB-9BBA-D6F410D7AB21",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "40975C7F-309B-4931-A229-329C5BF50C62",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "E1BCC297-FCB3-4D88-80A9-D8E09EE09254",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E25E384A-B2D1-46FB-9BBA-D6F410D7AB21",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "9649E92A-9D59-4F7E-9FF5-251E827AB719",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E94F8803-7CF0-433F-8BF3-B48F4CE337BB",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "E1BCC297-FCB3-4D88-80A9-D8E09EE09254",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E94F8803-7CF0-433F-8BF3-B48F4CE337BB",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "9649E92A-9D59-4F7E-9FF5-251E827AB719",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E1BCC297-FCB3-4D88-80A9-D8E09EE09254",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "6A56BDA1-BD31-487F-A3AE-39136F54ECF4",
+          "port" : "x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9649E92A-9D59-4F7E-9FF5-251E827AB719",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "6A56BDA1-BD31-487F-A3AE-39136F54ECF4",
+          "port" : "y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6A56BDA1-BD31-487F-A3AE-39136F54ECF4",
+          "port" : "point"
+        },
+        "to" : {
+          "node" : "E23E252D-7A36-49B9-B022-1DD51A2923D0",
+          "port" : "shader.tilt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6A56BDA1-BD31-487F-A3AE-39136F54ECF4",
+          "port" : "point"
+        },
+        "to" : {
+          "node" : "D1A6D46B-2D58-4392-8D17-519F85D0C433",
+          "port" : "shader.tilt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E1BCC297-FCB3-4D88-80A9-D8E09EE09254",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "BDE18251-42D5-4498-B13E-0BA5413F87D7",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BDE18251-42D5-4498-B13E-0BA5413F87D7",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E23E252D-7A36-49B9-B022-1DD51A2923D0",
+          "port" : "rotation"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E94F8803-7CF0-433F-8BF3-B48F4CE337BB",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "47CA0EC5-54CF-4E4B-9160-573240FA643E",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "47CA0EC5-54CF-4E4B-9160-573240FA643E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "585A66DB-D577-4B21-B685-79EB11703A6F",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "47CA0EC5-54CF-4E4B-9160-573240FA643E",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "A49C55A9-6B06-49F1-A1A0-4303A1A47BC3",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "585A66DB-D577-4B21-B685-79EB11703A6F",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E23E252D-7A36-49B9-B022-1DD51A2923D0",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A49C55A9-6B06-49F1-A1A0-4303A1A47BC3",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "E23E252D-7A36-49B9-B022-1DD51A2923D0",
+          "port" : "shader.shine"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "0185CE7E-1E26-4F15-B6B9-3A971595D99F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E6A87916-0C99-44E4-B90F-EA2AF7602A04",
+        "position" : {
+          "x" : 1776,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "D1A6D46B-2D58-4392-8D17-519F85D0C433",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F53014E1-3372-486C-8F49-B03A649DBD20",
+        "position" : {
+          "x" : 1488,
+          "y" : 528
+        },
+        "script" : "\/\/ A dark room with a soft light where the card is, which drifts with the tilt.\nstruct Inputs {\n    float2 tilt = float2(0, 0);\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 center = float2(0.5 - in.tilt.x * 0.08, 0.3 - in.tilt.y * 0.05) * frame.size;\n    float2 d = (frame.position - center) \/ frame.size.x;\n    float glow = exp(-dot(d, d) * 3.5);\n    float3 color = float3(0.035, 0.03, 0.06) + float3(0.22, 0.16, 0.36) * glow;\n    return float4(color, 1);\n}"
+      },
+      {
+        "id" : "E43AD579-3CE1-491B-B994-1315E8D98456",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5F075CDD-F977-4AE5-A1CE-D6BEA45E5E70",
+        "position" : {
+          "x" : 1488,
+          "y" : 744
+        }
+      },
+      {
+        "id" : "F41E0C97-FAD9-47E5-B14D-A31E60829173",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1534E281-1945-4F95-B511-D8A8ECB9B711",
+        "position" : {
+          "x" : 1488,
+          "y" : 888
+        }
+      },
+      {
+        "id" : "E23E252D-7A36-49B9-B022-1DD51A2923D0",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6B395CE1-4B0C-4BDD-BFA0-5DA29B0B5046",
+        "position" : {
+          "x" : 1488,
+          "y" : 96
+        },
+        "script" : "\/\/ Holographic foil over the views inside this one. Tilt (from -1 to 1 each way)\n\/\/ slides the rainbow and moves the glare the other way; Shine is how strong it is.\nstruct Inputs {\n    float2 tilt = float2(0, 0);\n    float shine = 0.7;\n};\n\nfloat3 foil_spectrum(float x) {\n    return 0.5 + 0.5 * cos(6.2831853 * (x + float3(0.0, 0.33, 0.67)));\n}\n\nfloat foil_hash(float2 p) {\n    return fract(sin(dot(p, float2(41.3, 289.1))) * 43758.5453);\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float4 base = content(frame, frame.position);\n    float2 uv = frame.uv;\n    float2 tilt = clamp(in.tilt, float2(-1.0), float2(1.0));\n\n    \/\/ Diagonal bands of color that slide as the card turns.\n    float band = dot(uv, float2(0.75, 0.45)) * 1.5 + tilt.x * 0.7 + tilt.y * 0.45;\n    float3 rainbow = foil_spectrum(band);\n    \/\/ A fine diamond pattern pressed into the foil.\n    float2 g = frame.position \/ 7.0;\n    float pattern = 0.85 + 0.15 * sin(g.x + g.y) * sin(g.x - g.y);\n    \/\/ The glare: a soft light that moves against the tilt.\n    float2 light = float2(0.5 - tilt.x * 0.65, 0.3 - tilt.y * 0.65);\n    float glare = exp(-length((uv - light) * float2(1.4, 1.0)) * 3.0);\n    \/\/ Specks that catch the light as the bands pass over them.\n    float speck = foil_hash(floor(frame.position \/ 2.0));\n    float sparkle = step(0.988, speck) * (0.5 + 0.5 * sin(band * 40.0 + speck * 60.0));\n\n    float strength = in.shine * (0.3 + 0.7 * glare);\n    float3 color = base.rgb + rainbow * 0.5 * pattern * strength;\n    color += glare * glare * 0.35 * in.shine + sparkle * strength;\n    return float4(color * base.a, base.a);\n}"
+      },
+      {
+        "id" : "181DDC24-085A-490C-830A-A1EE9C7E618C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8D6429B4-A971-4395-8285-2CA175DA3A2E",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "08056419-E9E5-470E-B5D3-6FD0AA84FF27",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "50F6135E-BBF9-4C05-A58E-DDE00F035B6A",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "AF5A0185-BF08-42F4-A408-CB3D29731FDD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CDA39157-F05E-4B08-9519-1B1BC322D40A",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "7FB6C42F-6970-440B-BC3D-09B0092F3C7C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BBF5D203-A81E-4D69-9350-C0098A04B388",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "4B2ECA18-8A67-445F-A7D9-B42D93D2DCDF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4B3C4198-0353-44D3-A649-C100CC506ED4",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "5CFB3EFE-ADAF-4C8B-91A1-E118A8CAF363",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F92D39F0-41C0-40A4-A48C-31CDCBAE0152",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "93126B3A-E97A-4BAE-9F7E-8CB91079756E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "674DB035-39CE-47FA-AF72-AA5EEC9EF4C3",
+        "position" : {
+          "x" : 48,
+          "y" : 672
+        }
+      },
+      {
+        "id" : "513EED53-C447-432D-8B72-813940700995",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ACBD4BD5-8FA4-4264-BAC6-2BDB127E6BC2",
+        "position" : {
+          "x" : 48,
+          "y" : 816
+        }
+      },
+      {
+        "id" : "728CA771-18A9-4144-A627-1DC8ED0E7654",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FDD3D439-9868-4DAF-88B5-B9BD255BA16E",
+        "position" : {
+          "x" : 288,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A5CC4E81-653C-486A-91BA-352CA00C6A94",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8E5C0285-BB9E-4877-80FA-E9F493C9687D",
+        "position" : {
+          "x" : 1488,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "D2E5B75F-7E4F-4626-A3A5-8E0A8A1270A6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F51F1B3F-D788-4D97-A87F-4C1EB5EA26BF",
+        "position" : {
+          "x" : 1488,
+          "y" : 1032
+        }
+      },
+      {
+        "id" : "BC23C4F3-B30D-41FC-9741-63C68EC772DD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "084E9F56-9272-481D-8CE6-946103306D94",
+        "position" : {
+          "x" : 1728,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "79F66489-34B3-4B1D-9979-D6A8A4B9338A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "811DD21F-97ED-430C-A88A-9BE68511F6DA",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "280B4FB1-3717-4CDC-BD91-DD73654F144E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "962E6F58-7F45-43C2-9A85-FECFF5DE9FE5",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "AA3610F4-4FA3-4AD6-90C0-84AD066F9B77",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ABC72CCA-7F07-416D-89C2-8FD040D61A85",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "DA4824CA-4BE6-4198-B3B2-1B26C32316C0",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "217E4FC0-EA37-40AA-90B9-E65375B85626",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "C0BF4477-9084-4480-A380-2F44166A3381",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9D5FDBEA-C49E-4477-B2FE-4D79F8459F07",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "6A8AE7AD-04C4-421A-BF69-BC4F4AD85933",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1E321CED-2497-4C06-AB61-BEBE53DB2283",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "632034FC-329F-4EBD-A9BC-316701E8F9B1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2A1959F0-F444-439F-B32D-9287F2485465",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "96ECBED4-AF92-409D-AD3E-19048EAE3AC1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "546D8509-5456-4F46-A241-8A6FD87B5C66",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "10054467-2557-4DFB-9108-6B43DFB145C6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "00CC2AC0-460A-4317-A506-4ACA3688E65D",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "D97C3496-02BF-4EFE-ABF6-4729CC8F45BF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8A978E17-7DDF-4F82-A570-AD38A19EC55D",
+        "position" : {
+          "x" : 1728,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "56B8E7CB-808C-47C8-B3A0-4A43BDE79E6C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2DE75876-658F-4683-882D-C7E4A3D8F6AF",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "948D1F39-BBC0-4236-AA55-C3DCEAB93B7A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8CC24E5F-7525-416A-8697-D28A64BE38E3",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "B57839D1-3137-4F17-B752-C528142CA011",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "52AB558C-A596-4BA5-8122-0CA713779FB5",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "4B7AEA1E-0E83-4DA2-9418-9CA5EDF3DD9E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BE3D2954-BA2B-452C-9C28-11E17CBF2D86",
+        "position" : {
+          "x" : 1728,
+          "y" : 576
+        }
+      },
+      {
+        "id" : "4E6A14FA-53A4-416F-91BE-765CF1F1A301",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "550BBF40-591F-49E0-BAF8-B67B67A3E158",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "D20E1A47-B2AB-4943-AC20-85A063AE4F9E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A6751E93-5BDA-4DD1-AAB9-85A33FE96F5F",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "E94F8803-7CF0-433F-8BF3-B48F4CE337BB",
+        "inputs" : {
+
+        },
+        "kind" : "pan",
+        "layerID" : "6B395CE1-4B0C-4BDD-BFA0-5DA29B0B5046",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "7D12F99E-4F11-401A-9AB1-0FD2D0FC5806",
+        "inputs" : {
+
+        },
+        "kind" : "splitPoint",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "40975C7F-309B-4931-A229-329C5BF50C62",
+        "inputs" : {
+          "b" : {
+            "type" : "number",
+            "value" : 0.007142857142857143
+          }
+        },
+        "kind" : "multiply",
+        "name" : "Per Point",
+        "position" : {
+          "x" : 336,
+          "y" : 288
+        }
+      },
+      {
+        "id" : "E25E384A-B2D1-46FB-9BBA-D6F410D7AB21",
+        "inputs" : {
+          "b" : {
+            "type" : "number",
+            "value" : 0.007142857142857143
+          }
+        },
+        "kind" : "multiply",
+        "name" : "Per Point",
+        "position" : {
+          "x" : 336,
+          "y" : 456
+        }
+      },
+      {
+        "id" : "E1BCC297-FCB3-4D88-80A9-D8E09EE09254",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.6
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.45
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "spring",
+        "name" : "Tilt X",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "9649E92A-9D59-4F7E-9FF5-251E827AB719",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.6
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.45
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "spring",
+        "name" : "Tilt Y",
+        "position" : {
+          "x" : 624,
+          "y" : 360
+        }
+      },
+      {
+        "id" : "6A56BDA1-BD31-487F-A3AE-39136F54ECF4",
+        "inputs" : {
+
+        },
+        "kind" : "makePoint",
+        "name" : "Tilt",
+        "position" : {
+          "x" : 912,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "BDE18251-42D5-4498-B13E-0BA5413F87D7",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 6
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Turn",
+        "position" : {
+          "x" : 912,
+          "y" : 264
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "47CA0EC5-54CF-4E4B-9160-573240FA643E",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.35
+          }
+        },
+        "kind" : "spring",
+        "name" : "Held",
+        "position" : {
+          "x" : 336,
+          "y" : 696
+        }
+      },
+      {
+        "id" : "585A66DB-D577-4B21-B685-79EB11703A6F",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 1.05
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "transition",
+        "name" : "Lift",
+        "position" : {
+          "x" : 912,
+          "y" : 696
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "A49C55A9-6B06-49F1-A1A0-4303A1A47BC3",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0.55
+          }
+        },
+        "kind" : "transition",
+        "name" : "Shine",
+        "position" : {
+          "x" : 912,
+          "y" : 864
+        },
+        "valueType" : "number"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "F53014E1-3372-486C-8F49-B03A649DBD20",
+        "kind" : "view",
+        "name" : "Room",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 874,
+              "width" : 402
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ A dark room with a soft light where the card is, which drifts with the tilt.\nstruct Inputs {\n    float2 tilt = float2(0, 0);\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 center = float2(0.5 - in.tilt.x * 0.08, 0.3 - in.tilt.y * 0.05) * frame.size;\n    float2 d = (frame.position - center) \/ frame.size.x;\n    float glow = exp(-dot(d, d) * 3.5);\n    float3 color = float3(0.035, 0.03, 0.06) + float3(0.22, 0.16, 0.36) * glow;\n    return float4(color, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "5F075CDD-F977-4AE5-A1CE-D6BEA45E5E70",
+        "kind" : "text",
+        "name" : "Kicker",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 76
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "MEMBERSHIP"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.7,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "1534E281-1945-4F95-B511-D8A8ECB9B711",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 96
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Your Card"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "8D6429B4-A971-4395-8285-2CA175DA3A2E",
+            "kind" : "text",
+            "name" : "Brand",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 20
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 800
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 22
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "AURORA"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "50F6135E-BBF9-4C05-A58E-DDE00F035B6A",
+            "kind" : "text",
+            "name" : "Tier",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 238,
+                  "y" : 27
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 15.600000000000001,
+                  "width" : 100
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "OBSIDIAN"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.7,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "BBF5D203-A81E-4D69-9350-C0098A04B388",
+                "kind" : "view",
+                "name" : "Line",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.2823529411764706,
+                      "green" : 0.47843137254901963,
+                      "red" : 0.5568627450980392
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 16
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 1,
+                      "width" : 44
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "4B3C4198-0353-44D3-A649-C100CC506ED4",
+                "kind" : "view",
+                "name" : "Seam",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.2823529411764706,
+                      "green" : 0.47843137254901963,
+                      "red" : 0.5568627450980392
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 21,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 34,
+                      "width" : 1
+                    }
+                  }
+                }
+              }
+            ],
+            "id" : "CDA39157-F05E-4B08-9519-1B1BC322D40A",
+            "kind" : "view",
+            "name" : "Chip",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 7
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.47843137254901963,
+                  "green" : 0.6980392156862745,
+                  "red" : 0.788235294117647
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 78
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 34,
+                  "width" : 44
+                }
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.2823529411764706,
+                  "green" : 0.47843137254901963,
+                  "red" : 0.5568627450980392
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "F92D39F0-41C0-40A4-A48C-31CDCBAE0152",
+            "kind" : "symbol",
+            "name" : "Contactless",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.7,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 82,
+                  "y" : 84
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 22
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "wave.3.right"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "674DB035-39CE-47FA-AF72-AA5EEC9EF4C3",
+            "kind" : "text",
+            "name" : "Number",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 19
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 140
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "••••  ••••  ••••  4821"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "ACBD4BD5-8FA4-4264-BAC6-2BDB127E6BC2",
+            "kind" : "text",
+            "name" : "Holder",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 190
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "MIKA ITO"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.85,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "FDD3D439-9868-4DAF-88B5-B9BD255BA16E",
+            "kind" : "text",
+            "name" : "Since",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 11
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 198,
+                  "y" : 191
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.3,
+                  "width" : 140
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "MEMBER SINCE 2024"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.55,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
+        ],
+        "id" : "6B395CE1-4B0C-4BDD-BFA0-5DA29B0B5046",
+        "kind" : "view",
+        "name" : "Card",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.12156862745098039,
+              "green" : 0.08627450980392157,
+              "red" : 0.09019607843137255
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 152
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.6,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 16
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 24
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 228,
+              "width" : 362
+            }
+          },
+          "strokeColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.18,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "strokeWidth" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ Holographic foil over the views inside this one. Tilt (from -1 to 1 each way)\n\/\/ slides the rainbow and moves the glare the other way; Shine is how strong it is.\nstruct Inputs {\n    float2 tilt = float2(0, 0);\n    float shine = 0.7;\n};\n\nfloat3 foil_spectrum(float x) {\n    return 0.5 + 0.5 * cos(6.2831853 * (x + float3(0.0, 0.33, 0.67)));\n}\n\nfloat foil_hash(float2 p) {\n    return fract(sin(dot(p, float2(41.3, 289.1))) * 43758.5453);\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float4 base = content(frame, frame.position);\n    float2 uv = frame.uv;\n    float2 tilt = clamp(in.tilt, float2(-1.0), float2(1.0));\n\n    \/\/ Diagonal bands of color that slide as the card turns.\n    float band = dot(uv, float2(0.75, 0.45)) * 1.5 + tilt.x * 0.7 + tilt.y * 0.45;\n    float3 rainbow = foil_spectrum(band);\n    \/\/ A fine diamond pattern pressed into the foil.\n    float2 g = frame.position \/ 7.0;\n    float pattern = 0.85 + 0.15 * sin(g.x + g.y) * sin(g.x - g.y);\n    \/\/ The glare: a soft light that moves against the tilt.\n    float2 light = float2(0.5 - tilt.x * 0.65, 0.3 - tilt.y * 0.65);\n    float glare = exp(-length((uv - light) * float2(1.4, 1.0)) * 3.0);\n    \/\/ Specks that catch the light as the bands pass over them.\n    float speck = foil_hash(floor(frame.position \/ 2.0));\n    float sparkle = step(0.988, speck) * (0.5 + 0.5 * sin(band * 40.0 + speck * 60.0));\n\n    float strength = in.shine * (0.3 + 0.7 * glare);\n    float3 color = base.rgb + rainbow * 0.5 * pattern * strength;\n    color += glare * glare * 0.35 * in.shine + sparkle * strength;\n    return float4(color * base.a, base.a);\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "8E5C0285-BB9E-4877-80FA-E9F493C9687D",
+        "kind" : "text",
+        "name" : "Name",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 30
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 410
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Obsidian"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "F51F1B3F-D788-4D97-A87F-4C1EB5EA26BF",
+        "kind" : "text",
+        "name" : "Blurb",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 452
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 362
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Our rarest tier. Free shipping, early access and a lounge at every flagship store."
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.6,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "962E6F58-7F45-43C2-9A85-FECFF5DE9FE5",
+                "kind" : "text",
+                "name" : "Value",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "12,480"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "ABC72CCA-7F07-416D-89C2-8FD040D61A85",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "POINTS"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.5,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "811DD21F-97ED-430C-A88A-9BE68511F6DA",
+            "kind" : "view",
+            "name" : "Points",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.07,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 76,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "9D5FDBEA-C49E-4477-B2FE-4D79F8459F07",
+                "kind" : "text",
+                "name" : "Value",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "38"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "1E321CED-2497-4C06-AB61-BEBE53DB2283",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "VISITS"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.5,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "217E4FC0-EA37-40AA-90B9-E65375B85626",
+            "kind" : "view",
+            "name" : "Visits",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.07,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 76,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "546D8509-5456-4F46-A241-8A6FD87B5C66",
+                "kind" : "text",
+                "name" : "Value",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 20
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "4"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "00CC2AC0-460A-4317-A506-4ACA3688E65D",
+                "kind" : "text",
+                "name" : "Label",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "PERKS"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.5,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "2A1959F0-F444-439F-B32D-9287F2485465",
+            "kind" : "view",
+            "name" : "Perks",
+            "properties" : {
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.07,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 76,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "084E9F56-9272-481D-8CE6-946103306D94",
+        "kind" : "view",
+        "name" : "Stats",
+        "properties" : {
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 516
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 76,
+              "width" : 362
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 10
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "8CC24E5F-7525-416A-8697-D28A64BE38E3",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.draw.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "52AB558C-A596-4BA5-8122-0CA713779FB5",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Drag the card to tilt it"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "2DE75876-658F-4683-882D-C7E4A3D8F6AF",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "8A978E17-7DDF-4F82-A570-AD38A19EC55D",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 716
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "550BBF40-591F-49E0-BAF8-B67B67A3E158",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 20,
+                  "width" : 20
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "wallet.pass.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "A6751E93-5BDA-4DD1-AAB9-85A33FE96F5F",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Add to Wallet"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "BE3D2954-BA2B-452C-9C28-11E17CBF2D86",
+        "kind" : "view",
+        "name" : "Add to Wallet",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 768
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 362
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 10
+          }
+        }
+      }
+    ],
+    "id" : "E6A87916-0C99-44E4-B90F-EA2AF7602A04",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
+    }
+  },
+  "version" : 4
+}
