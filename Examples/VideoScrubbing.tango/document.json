@@ -3,320 +3,406 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "58025E6B-31B7-4599-80AF-DF5FF78BCA91",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 396,
+          "width" : 1392
+        },
+        "text" : "Scrub · The finger's place is a time"
+      },
+      {
+        "id" : "13CACDFA-445C-45DF-B3CA-C12A77D3AEA3",
+        "origin" : {
+          "x" : 24,
+          "y" : 504
+        },
+        "size" : {
+          "height" : 372,
+          "width" : 816
+        },
+        "text" : "Follow · The bar shows where the clip is"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "190C0AE3-CC1E-43BC-B57F-6DD94713DDB5",
+          "node" : "7DA385CD-F325-426B-A830-AB29E83736C8",
           "port" : "position"
         },
         "to" : {
-          "node" : "35CF9D14-F1E6-4CD9-80F5-0650802DF994",
+          "node" : "7E642AAE-ACCC-45E6-9751-97787513A9B8",
           "port" : "point"
         }
       },
       {
         "from" : {
-          "node" : "35CF9D14-F1E6-4CD9-80F5-0650802DF994",
+          "node" : "7E642AAE-ACCC-45E6-9751-97787513A9B8",
           "port" : "x"
         },
         "to" : {
-          "node" : "B6A24E09-847B-4F12-B53D-626D02E8C4B4",
+          "node" : "34C6F22C-1CC9-4442-9820-B0617DE049C7",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "B6A24E09-847B-4F12-B53D-626D02E8C4B4",
+          "node" : "34C6F22C-1CC9-4442-9820-B0617DE049C7",
           "port" : "progress"
         },
         "to" : {
-          "node" : "6523BCC9-1475-489C-ADF1-2B71D9547890",
+          "node" : "2E80388C-FE23-4391-82EE-FCD68C286801",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "6523BCC9-1475-489C-ADF1-2B71D9547890",
+          "node" : "2E80388C-FE23-4391-82EE-FCD68C286801",
           "port" : "result"
         },
         "to" : {
-          "node" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+          "node" : "6A0E47BC-89A4-4152-89A7-708494686760",
           "port" : "a"
         }
       },
       {
         "from" : {
-          "node" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+          "node" : "528DBBEA-16ED-452D-8DB3-0F0643AC435D",
           "port" : "duration"
         },
         "to" : {
-          "node" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+          "node" : "6A0E47BC-89A4-4152-89A7-708494686760",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+          "node" : "6A0E47BC-89A4-4152-89A7-708494686760",
           "port" : "result"
         },
         "to" : {
-          "node" : "1AEE110F-080D-4495-975F-C86E1FBE54FC",
+          "node" : "63A37D1B-9003-462F-82A0-D892CF5191F1",
           "port" : "time"
         }
       },
       {
         "from" : {
-          "node" : "190C0AE3-CC1E-43BC-B57F-6DD94713DDB5",
+          "node" : "7DA385CD-F325-426B-A830-AB29E83736C8",
           "port" : "down"
         },
         "to" : {
-          "node" : "07B25278-02DB-4104-916C-72211F818858",
+          "node" : "252A197E-185D-4FC2-A572-3EFAEE12369B",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "07B25278-02DB-4104-916C-72211F818858",
+          "node" : "252A197E-185D-4FC2-A572-3EFAEE12369B",
           "port" : "result"
         },
         "to" : {
-          "node" : "1AEE110F-080D-4495-975F-C86E1FBE54FC",
+          "node" : "63A37D1B-9003-462F-82A0-D892CF5191F1",
           "port" : "playing"
         }
       },
       {
         "from" : {
-          "node" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+          "node" : "528DBBEA-16ED-452D-8DB3-0F0643AC435D",
           "port" : "progress"
         },
         "to" : {
-          "node" : "4CE86FDD-A69B-4A27-8952-BADC5F8BFDE5",
+          "node" : "99B302B1-395A-456C-AA40-9907233A6B62",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+          "node" : "528DBBEA-16ED-452D-8DB3-0F0643AC435D",
           "port" : "progress"
         },
         "to" : {
-          "node" : "0104C37E-2FA3-4C84-8329-7BAD5B31243E",
+          "node" : "7E321B50-1222-484B-B415-D947332CC004",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "4CE86FDD-A69B-4A27-8952-BADC5F8BFDE5",
+          "node" : "99B302B1-395A-456C-AA40-9907233A6B62",
           "port" : "value"
         },
         "to" : {
-          "node" : "2A365DBB-9149-4BB3-BA6C-A7EB6FFBE4E4",
+          "node" : "B9CA20F7-FE10-4E11-BF1D-E2062224B03B",
           "port" : "width"
         }
       },
       {
         "from" : {
-          "node" : "0104C37E-2FA3-4C84-8329-7BAD5B31243E",
+          "node" : "7E321B50-1222-484B-B415-D947332CC004",
           "port" : "value"
         },
         "to" : {
-          "node" : "AA188004-F19D-4FFC-AAA7-8FE8D5525374",
+          "node" : "F3E6CB2A-0E4F-4EE6-8D9A-F051CE31DBD8",
           "port" : "x"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "3D6D7F73-0FB4-4FAC-BA06-F9FACB93FEF0",
+        "id" : "4A33ACEE-4B29-4D77-8764-378DC38C5332",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "D8A5AF89-BDF0-4899-AA0D-E327A226B368",
+        "layerID" : "C051461F-195C-4E77-BA6F-A7E798B9C3C8",
         "position" : {
-          "x" : 1548,
-          "y" : 84
+          "x" : 1776,
+          "y" : 96
         }
       },
       {
-        "id" : "718B00B5-DA39-4BBA-B595-81C2FC691988",
+        "id" : "2D689F29-54D5-4435-94D9-99EBAEAB30EA",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1F7AA03B-539E-4D59-9E6B-C01D59C3FF6F",
+        "layerID" : "4C8D99CB-51CC-4291-B4E0-AB2DAE6DAE44",
         "position" : {
-          "x" : 1836,
-          "y" : 84
+          "x" : 2064,
+          "y" : 96
         }
       },
       {
-        "id" : "1AEE110F-080D-4495-975F-C86E1FBE54FC",
+        "id" : "BB125436-590B-4268-93EE-F8942DF6920F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "FB925A38-4453-4D85-84B1-FD1DA5120977",
+        "layerID" : "9121DAB6-E6F8-4115-9F40-01597B4018F5",
         "position" : {
-          "x" : 1260,
-          "y" : 84
+          "x" : 2064,
+          "y" : 240
         }
       },
       {
-        "id" : "2F59E095-B1BF-4416-ADF0-9816E0C05216",
+        "id" : "63A37D1B-9003-462F-82A0-D892CF5191F1",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "418B98E3-EA53-4CD8-9754-6EC42B079CEE",
+        "layerID" : "B5F08538-4EF8-4DD0-90A1-9A0CC564A9C1",
         "position" : {
-          "x" : 1260,
-          "y" : 852
+          "x" : 1488,
+          "y" : 96
         }
       },
       {
-        "id" : "2A365DBB-9149-4BB3-BA6C-A7EB6FFBE4E4",
+        "id" : "69A98548-614A-48E5-A8A3-65EC7D61E159",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "92C0CDF4-CDCD-44CD-9484-9F545E73C279",
+        "layerID" : "339C0222-A471-426C-95E4-6A9FCBA46DB6",
         "position" : {
-          "x" : 1260,
-          "y" : 480
+          "x" : 1488,
+          "y" : 312
         }
       },
       {
-        "id" : "AA188004-F19D-4FFC-AAA7-8FE8D5525374",
+        "id" : "B9CA20F7-FE10-4E11-BF1D-E2062224B03B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "60153A82-48FA-4B6F-9F35-739525A3EFEF",
+        "layerID" : "2B7A8F9F-D24F-42A8-8FA1-7CCCF56572D6",
         "position" : {
-          "x" : 1260,
-          "y" : 1236
+          "x" : 1488,
+          "y" : 552
         }
       },
       {
-        "id" : "73ACA3D1-A6A0-4DBB-8A50-E8DF7696B98A",
+        "id" : "F3E6CB2A-0E4F-4EE6-8D9A-F051CE31DBD8",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E20BD255-52E2-44CA-8C80-64BA14140490",
+        "layerID" : "2C428F5F-A15F-420D-83B1-78BDA70D759D",
         "position" : {
-          "x" : 1260,
-          "y" : 1044
+          "x" : 1488,
+          "y" : 744
         }
       },
       {
-        "id" : "25BD3DD3-5254-4DA9-9640-3058F3E3D623",
+        "id" : "8736BE75-6FFB-40CB-8B45-41964B0644E0",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "01E1AD87-C614-4B43-ACFC-573548B399B2",
+        "layerID" : "C7E412A4-A1F5-4C49-B001-47FC3C52F886",
         "position" : {
-          "x" : 1500,
-          "y" : 180
+          "x" : 1728,
+          "y" : 192
         }
       },
       {
-        "id" : "190C0AE3-CC1E-43BC-B57F-6DD94713DDB5",
+        "id" : "89995B71-9DA3-44EC-9E59-EB37DBF6BD6A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FD15ACDD-F3A7-4C4F-8B6B-52348AD5A149",
+        "position" : {
+          "x" : 1728,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "B90B2A1B-1B6C-47AC-A62C-338A2A6CF15E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EDBE2C16-D446-46F7-9A2A-D19575B1499A",
+        "position" : {
+          "x" : 1728,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "ED28EF8B-6EF1-4032-A6FF-03FC0AEB627F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "60851E3A-FE16-4A8B-AED1-F39A7110C571",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "5DFE9674-7E26-452A-BF94-DCC25767BAE2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CE1D1CAA-14C2-4CBE-A6D9-E9FB025309A2",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DABE6C35-AC73-4CE0-98A4-AD4DE3927383",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4C9D6A25-2827-4287-B712-9BF78AF7638C",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "7DA385CD-F325-426B-A830-AB29E83736C8",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "E20BD255-52E2-44CA-8C80-64BA14140490",
+        "layerID" : "C7E412A4-A1F5-4C49-B001-47FC3C52F886",
         "position" : {
-          "x" : 36,
-          "y" : 84
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "35CF9D14-F1E6-4CD9-80F5-0650802DF994",
+        "id" : "7E642AAE-ACCC-45E6-9751-97787513A9B8",
         "inputs" : {
 
         },
         "kind" : "splitPoint",
         "position" : {
-          "x" : 300,
-          "y" : 84
+          "x" : 336,
+          "y" : 96
         }
       },
       {
-        "id" : "B6A24E09-847B-4F12-B53D-626D02E8C4B4",
+        "id" : "34C6F22C-1CC9-4442-9820-B0617DE049C7",
         "inputs" : {
           "end" : {
             "type" : "number",
-            "value" : 366
+            "value" : 382
           },
           "start" : {
             "type" : "number",
-            "value" : 24
+            "value" : 20
           }
         },
         "kind" : "progress",
         "name" : "Along the Track",
         "position" : {
-          "x" : 540,
-          "y" : 84
+          "x" : 624,
+          "y" : 96
         }
       },
       {
-        "id" : "6523BCC9-1475-489C-ADF1-2B71D9547890",
+        "id" : "2E80388C-FE23-4391-82EE-FCD68C286801",
         "inputs" : {
 
         },
         "kind" : "clamp",
         "position" : {
-          "x" : 780,
-          "y" : 84
+          "x" : 912,
+          "y" : 96
         }
       },
       {
-        "id" : "C17223AD-4D59-45A5-B154-0627E44D79D3",
+        "id" : "6A0E47BC-89A4-4152-89A7-708494686760",
         "inputs" : {
 
         },
         "kind" : "multiply",
         "name" : "Seconds",
         "position" : {
-          "x" : 1020,
-          "y" : 84
+          "x" : 1200,
+          "y" : 96
         }
       },
       {
-        "id" : "07B25278-02DB-4104-916C-72211F818858",
+        "id" : "252A197E-185D-4FC2-A572-3EFAEE12369B",
         "inputs" : {
 
         },
         "kind" : "not",
         "name" : "Not Touching",
         "position" : {
-          "x" : 780,
-          "y" : 324
+          "x" : 912,
+          "y" : 336
         }
       },
       {
-        "id" : "723512DC-34ED-4748-B007-EF333E32E8E9",
+        "id" : "528DBBEA-16ED-452D-8DB3-0F0643AC435D",
         "inputs" : {
 
         },
         "kind" : "videoTime",
-        "layerID" : "FB925A38-4453-4D85-84B1-FD1DA5120977",
+        "layerID" : "B5F08538-4EF8-4DD0-90A1-9A0CC564A9C1",
         "position" : {
-          "x" : 36,
-          "y" : 480
+          "x" : 48,
+          "y" : 552
         }
       },
       {
-        "id" : "4CE86FDD-A69B-4A27-8952-BADC5F8BFDE5",
+        "id" : "99B302B1-395A-456C-AA40-9907233A6B62",
         "inputs" : {
           "end" : {
             "type" : "number",
-            "value" : 342
+            "value" : 362
           },
           "start" : {
             "type" : "number",
@@ -326,28 +412,28 @@
         "kind" : "transition",
         "name" : "Played Width",
         "position" : {
-          "x" : 540,
-          "y" : 480
+          "x" : 624,
+          "y" : 552
         },
         "valueType" : "number"
       },
       {
-        "id" : "0104C37E-2FA3-4C84-8329-7BAD5B31243E",
+        "id" : "7E321B50-1222-484B-B415-D947332CC004",
         "inputs" : {
           "end" : {
             "type" : "number",
-            "value" : 354
+            "value" : 370
           },
           "start" : {
             "type" : "number",
-            "value" : 12
+            "value" : 8
           }
         },
         "kind" : "transition",
         "name" : "Knob X",
         "position" : {
-          "x" : 540,
-          "y" : 660
+          "x" : 624,
+          "y" : 720
         },
         "valueType" : "number"
       }
@@ -359,17 +445,17 @@
         "children" : [
 
         ],
-        "id" : "1F7AA03B-539E-4D59-9E6B-C01D59C3FF6F",
+        "id" : "4C8D99CB-51CC-4291-B4E0-AB2DAE6DAE44",
         "kind" : "text",
-        "name" : "Title",
+        "name" : "Kicker",
         "properties" : {
           "fontSize" : {
             "type" : "number",
-            "value" : 28
+            "value" : 13
           },
           "fontWeight" : {
             "type" : "number",
-            "value" : 700
+            "value" : 600
           },
           "heightMode" : {
             "type" : "text",
@@ -378,21 +464,21 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 96
+              "x" : 20,
+              "y" : 76
             }
           },
           "text" : {
             "type" : "text",
-            "value" : "Scrub Through a Clip"
+            "value" : "GOLDEN HOUR"
           },
           "textColor" : {
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0,
-              "green" : 0,
-              "red" : 0
+              "blue" : 0.4588235294117647,
+              "green" : 0.4235294117647059,
+              "red" : 0.43137254901960786
             }
           },
           "widthMode" : {
@@ -405,26 +491,72 @@
         "children" : [
 
         ],
-        "id" : "FB925A38-4453-4D85-84B1-FD1DA5120977",
+        "id" : "9121DAB6-E6F8-4115-9F40-01597B4018F5",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 96
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Sunset"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.11372549019607843,
+              "green" : 0.09411764705882353,
+              "red" : 0.09411764705882353
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "B5F08538-4EF8-4DD0-90A1-9A0CC564A9C1",
         "kind" : "video",
         "name" : "Clip",
         "properties" : {
           "cornerRadius" : {
             "type" : "number",
-            "value" : 16
+            "value" : 24
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 152
+              "x" : 20,
+              "y" : 150
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 192,
-              "width" : 342
+              "height" : 204,
+              "width" : 362
             }
           },
           "video" : {
@@ -437,7 +569,7 @@
         "children" : [
 
         ],
-        "id" : "418B98E3-EA53-4CD8-9754-6EC42B079CEE",
+        "id" : "339C0222-A471-426C-95E4-6A9FCBA46DB6",
         "kind" : "view",
         "name" : "Track",
         "properties" : {
@@ -449,23 +581,23 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.86,
-              "green" : 0.86,
-              "red" : 0.86
+              "blue" : 0.8549019607843137,
+              "green" : 0.8862745098039215,
+              "red" : 0.9019607843137255
             }
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 401
+              "x" : 20,
+              "y" : 393
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 6,
-              "width" : 342
+              "width" : 362
             }
           }
         }
@@ -474,7 +606,7 @@
         "children" : [
 
         ],
-        "id" : "92C0CDF4-CDCD-44CD-9484-9F545E73C279",
+        "id" : "2B7A8F9F-D24F-42A8-8FA1-7CCCF56572D6",
         "kind" : "view",
         "name" : "Played",
         "properties" : {
@@ -486,16 +618,16 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.9686274509803922,
-              "green" : 0.4823529411764706,
-              "red" : 0.23921568627450981
+              "blue" : 0.9411764705882353,
+              "green" : 0.3607843137254902,
+              "red" : 0.29411764705882354
             }
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 401
+              "x" : 20,
+              "y" : 393
             }
           },
           "size" : {
@@ -511,7 +643,7 @@
         "children" : [
 
         ],
-        "id" : "60153A82-48FA-4B6F-9F35-739525A3EFEF",
+        "id" : "2C428F5F-A15F-420D-83B1-78BDA70D759D",
         "kind" : "ellipse",
         "name" : "Knob",
         "properties" : {
@@ -527,8 +659,8 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 12,
-              "y" : 392
+              "x" : 8,
+              "y" : 384
             }
           },
           "shadowColor" : {
@@ -538,6 +670,13 @@
               "blue" : 0,
               "green" : 0,
               "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 1
             }
           },
           "shadowRadius" : {
@@ -557,22 +696,22 @@
         "children" : [
 
         ],
-        "id" : "E20BD255-52E2-44CA-8C80-64BA14140490",
+        "id" : "C7E412A4-A1F5-4C49-B001-47FC3C52F886",
         "kind" : "view",
         "name" : "Scrubber",
         "properties" : {
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 380
+              "x" : 20,
+              "y" : 372
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
               "height" : 48,
-              "width" : 342
+              "width" : 362
             }
           }
         }
@@ -581,9 +720,9 @@
         "children" : [
 
         ],
-        "id" : "01E1AD87-C614-4B43-ACFC-573548B399B2",
+        "id" : "FD15ACDD-F3A7-4C4F-8B6B-52348AD5A149",
         "kind" : "text",
-        "name" : "Hint",
+        "name" : "Caption",
         "properties" : {
           "fontSize" : {
             "type" : "number",
@@ -595,36 +734,255 @@
           },
           "heightMode" : {
             "type" : "text",
-            "value" : "Auto"
+            "value" : "Fixed"
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 24,
-              "y" : 448
+              "x" : 20,
+              "y" : 436
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 362
             }
           },
           "text" : {
             "type" : "text",
-            "value" : "Drag along the bar to scrub. Let go and it plays on."
+            "value" : "It plays and loops on its own. Under a finger it stops and follows; let go and it plays on."
           },
           "textColor" : {
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.45,
-              "green" : 0.45,
-              "red" : 0.45
+              "blue" : 0.4588235294117647,
+              "green" : 0.4235294117647059,
+              "red" : 0.43137254901960786
             }
           },
           "widthMode" : {
             "type" : "text",
-            "value" : "Auto"
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "CE1D1CAA-14C2-4CBE-A6D9-E9FB025309A2",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9411764705882353,
+                      "green" : 0.3607843137254902,
+                      "red" : 0.29411764705882354
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.draw.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "4C9D6A25-2827-4287-B712-9BF78AF7638C",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Drag along the bar"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.11372549019607843,
+                      "green" : 0.09411764705882353,
+                      "red" : 0.09411764705882353
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "60851E3A-FE16-4A8B-AED1-F39A7110C571",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.92,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.12,
+                  "blue" : 0.2,
+                  "green" : 0.08,
+                  "red" : 0.1
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8549019607843137,
+                  "green" : 0.8862745098039215,
+                  "red" : 0.9019607843137255
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "EDBE2C16-D446-46F7-9A2A-D19575B1499A",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 792
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
           }
         }
       }
     ],
-    "id" : "D8A5AF89-BDF0-4899-AA0D-E327A226B368",
+    "id" : "C051461F-195C-4E77-BA6F-A7E798B9C3C8",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -632,9 +990,16 @@
         "type" : "color",
         "value" : {
           "alpha" : 1,
-          "blue" : 1,
-          "green" : 1,
-          "red" : 1
+          "blue" : 0.9333333333333333,
+          "green" : 0.9490196078431372,
+          "red" : 0.9568627450980393
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

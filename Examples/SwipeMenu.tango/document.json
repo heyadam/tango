@@ -3,169 +3,519 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "3B27F8C6-150C-4411-8A61-A5E9F5A9E42E",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 240,
+          "width" : 528
+        },
+        "text" : "Swipe · Left opens, right closes"
+      },
+      {
+        "id" : "40D94231-C38B-433B-9A41-5E077D790969",
+        "origin" : {
+          "x" : 600,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 528
+        },
+        "text" : "Slide · The row springs aside"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "57119414-2BF4-4389-8D76-8603337517B3",
+          "node" : "A6D9219F-CE10-4755-A257-185108245D38",
           "port" : "left"
         },
         "to" : {
-          "node" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+          "node" : "BA4E16E2-EDE0-41D4-BCA0-C1E2A040C657",
           "port" : "turnOn"
         }
       },
       {
         "from" : {
-          "node" : "57119414-2BF4-4389-8D76-8603337517B3",
+          "node" : "A6D9219F-CE10-4755-A257-185108245D38",
           "port" : "right"
         },
         "to" : {
-          "node" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+          "node" : "BA4E16E2-EDE0-41D4-BCA0-C1E2A040C657",
           "port" : "turnOff"
         }
       },
       {
         "from" : {
-          "node" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+          "node" : "BA4E16E2-EDE0-41D4-BCA0-C1E2A040C657",
           "port" : "on"
         },
         "to" : {
-          "node" : "BFDA1D2D-B241-4D4F-8F41-FDF820ED8287",
+          "node" : "4E077BF8-FC9B-4FFD-88FB-060EB17CE71A",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "BFDA1D2D-B241-4D4F-8F41-FDF820ED8287",
+          "node" : "4E077BF8-FC9B-4FFD-88FB-060EB17CE71A",
           "port" : "value"
         },
         "to" : {
-          "node" : "060BC25B-53D3-4747-BA21-66C18463152C",
+          "node" : "7E0969CA-BF60-419F-8121-1F4715345D2E",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "060BC25B-53D3-4747-BA21-66C18463152C",
+          "node" : "7E0969CA-BF60-419F-8121-1F4715345D2E",
           "port" : "value"
         },
         "to" : {
-          "node" : "17D70B35-24A3-4A6F-A1D2-4DDB3AAB6651",
+          "node" : "B0E1A182-81F4-48B4-9A15-B1D3C79109D4",
           "port" : "position"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "0EAA680A-04C2-40B2-8107-26EF3CFB4D97",
+        "id" : "B829281E-365C-4A2D-B79A-F25C8EB5E922",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "96E8E6EE-4BB1-4D71-9097-B9C09D34FCA7",
+        "layerID" : "02847E08-9DA4-4BD0-9ED5-AE2FE7FBB537",
         "position" : {
-          "x" : 1344,
-          "y" : 84
+          "x" : 1488,
+          "y" : 96
         }
       },
       {
-        "id" : "FD3E3533-9B9C-4D1C-8921-B341B54A1F11",
+        "id" : "36AD1198-C854-4A61-A515-CF0811C69ED9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "0EF7CD46-1383-4003-B116-E31BB7E6537B",
+        "layerID" : "C62C18FD-451D-43BF-8F33-4794CC44BEFB",
         "position" : {
-          "x" : 1632,
-          "y" : 84
+          "x" : 1776,
+          "y" : 96
         }
       },
       {
-        "id" : "EC344086-5B85-4F6D-9D39-A4AEBBD86DF8",
+        "id" : "502895FB-C097-427C-A520-01318EF9829D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "5B809B46-F967-4AF5-8A60-67D33E8BC91A",
+        "layerID" : "4BFCF6CB-A385-448A-97BE-6DB5A9330561",
         "position" : {
-          "x" : 1632,
-          "y" : 228
+          "x" : 1776,
+          "y" : 240
         }
       },
       {
-        "id" : "2D87FA44-EDAC-4009-9A14-7B66086BADE9",
+        "id" : "15538038-6AA5-431D-A8E4-ECE40911BA38",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "841109CA-2D13-4B47-8467-B51A02D66912",
+        "layerID" : "CFED64BF-348E-42EE-AD54-A8C9D1511607",
         "position" : {
-          "x" : 48,
-          "y" : 48
+          "x" : 1776,
+          "y" : 384
         }
       },
       {
-        "id" : "17D70B35-24A3-4A6F-A1D2-4DDB3AAB6651",
+        "id" : "C97C1B3C-7BB6-4BD5-BA2E-D1C61BBEE4DD",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "74BC0B4F-AD22-4778-BA3E-9E3734F3C870",
-        "position" : {
-          "x" : 1056,
-          "y" : 84
-        }
-      },
-      {
-        "id" : "4E2F28C9-5305-429D-8E18-7671394FECB2",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "A705B8FD-8A0D-49F5-8E14-07BEDD4732D4",
+        "layerID" : "7B115A08-59C4-496B-86C4-D254F9DBA225",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "EB46C9CF-3E3C-49CB-9B9C-06A9C86ED150",
+        "id" : "3199774E-D8AB-47DB-948C-5030B60CC630",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "B677B5EB-3552-45D6-B5EE-18E79FF95890",
+        "layerID" : "7D86A5B1-9ED4-4050-ACB0-B5CECCD4962A",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E9FBB2A7-DE28-45F2-9297-582E55795E11",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5A59A6DB-5101-45BB-A667-0C00A82AF1D7",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "2AE0AFF6-826E-4D12-91B7-39FD1015B9A1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5E06FA70-BECF-4ACC-A45B-FCB7721EC1CE",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "4CB3C025-39B6-475C-A0B7-6ADAFB07BA4B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9D3F8CA4-B499-47F4-8304-8785E93DE096",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "36EE28EA-6776-43AD-AA52-40D3C896B340",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4D396BF1-4F27-4028-84F1-EA6C4859D6CA",
+        "position" : {
+          "x" : 1776,
+          "y" : 576
+        }
+      },
+      {
+        "id" : "7751F5FD-FFB1-4086-9384-DE4EB2EFB595",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "13DD9499-DA4D-4EAA-BBFD-D5D36CF0A252",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "C66E6245-BDB0-44C8-BBC8-FB0732A7FA3B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1825D303-EB99-462E-A6BE-C1F3C4162FC9",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "9F529D64-8915-4DAD-A6C8-2335905331FC",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "13373BBA-2233-4550-B041-D6E5B2A76120",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "E0DC9DDB-AC7B-4A56-8772-6FD7772BC847",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1B1E23FA-72FD-4D5D-869A-5D9400278093",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "2BBE5D0D-1121-4DBC-B98D-EB884661D914",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "55DCCCBD-1D91-4BFD-BF1D-B00EEA49BFDA",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "A4298047-3019-4CB7-936E-D64E9FEEBE4C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "51DCED53-6FAD-4623-8305-3C19CB596D0F",
+        "position" : {
+          "x" : 1776,
+          "y" : 768
+        }
+      },
+      {
+        "id" : "FE2FD745-2111-43A2-8237-B1C96E447A64",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "907BE1F4-8379-43D4-9272-46974E5F117F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A8E4CB4B-C57F-4A54-9E30-E9CAA149454B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "559DCF58-9964-4CBE-A9DB-0BD3A492444F",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2B6A11E5-C206-4221-A157-41287EB90EED",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EAB0D32D-50E8-4B10-9046-9521FE39F694",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "600F780A-9C8B-4406-AF07-A789EDA78AA9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5BD52D17-7EF7-4A4D-B4B0-E17CAED9BD39",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "9F4E1F31-20C3-4EE6-AD37-BFCC639AA146",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E6705C71-68E6-4607-BF92-53068EB8FCEC",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "9073712F-A315-44B8-B648-485576CBB351",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D71BF79B-2D41-420C-B186-B265D5CDA06A",
+        "position" : {
+          "x" : 2016,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "C00D74BA-6A14-4D31-B72E-5C4DCE7E24F8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C1A8B613-D8CB-43EF-8E27-22B370B4B474",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "C1C51454-197A-433E-831D-FEA98FE5E21D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "53643093-1519-4C37-B059-B6CEE0C1BBE1",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "57119414-2BF4-4389-8D76-8603337517B3",
+        "id" : "B0E1A182-81F4-48B4-9A15-B1D3C79109D4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B1072D8B-043E-46D2-8365-BFFC15E641CB",
+        "position" : {
+          "x" : 1200,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "AF8A5A8D-8D20-46BF-A073-B7B14A7CC767",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "286DD845-79CA-4355-846B-FC5961050CAD",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "687AC612-C998-4EE4-97BA-307F1F2DA6A9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "82375688-7CA8-4780-85D1-95B436EFE56C",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "8CD75828-B191-432A-A6A0-E30FF3C84D67",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BC806BAB-2492-4088-8A08-11F42F62979D",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "9E66CC9B-FC0B-4B54-8448-8A8D09E2E0B6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "53275518-A461-4FBB-A3E4-F8003ED8E3C6",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "88D129A7-29A6-4182-A59A-E0FD18AB415A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "378D8A3B-1708-403A-AC46-FA72016B78D5",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "0FC956B7-6581-4055-8E6B-C737FA932CF1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "22F9DF97-6082-4BF0-AA53-6AB76E82A71A",
+        "position" : {
+          "x" : 1200,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "C89DDD78-CE6B-4582-95AA-CA71DC21654A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A419F613-8592-4DFD-9A5D-75D90404924D",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E66969AA-28F2-468A-BAE3-26D4AA0CC28E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "36A7037A-B172-48FB-92CF-F4DAA3721752",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "C47D4687-EE6D-4511-9F35-35B4C12F03D8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3DBD9312-25B7-49EC-B2A2-A77C0FCDABF8",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "A6D9219F-CE10-4755-A257-185108245D38",
         "inputs" : {
 
         },
         "kind" : "swipe",
-        "layerID" : "74BC0B4F-AD22-4778-BA3E-9E3734F3C870",
+        "layerID" : "B1072D8B-043E-46D2-8365-BFFC15E641CB",
         "position" : {
-          "x" : 36,
-          "y" : 84
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "01ED4B45-AA5C-436C-9C10-582E248D7F87",
+        "id" : "BA4E16E2-EDE0-41D4-BCA0-C1E2A040C657",
         "inputs" : {
 
         },
         "kind" : "switch",
         "name" : "Revealed",
         "position" : {
-          "x" : 300,
-          "y" : 84
+          "x" : 336,
+          "y" : 96
         }
       },
       {
-        "id" : "BFDA1D2D-B241-4D4F-8F41-FDF820ED8287",
+        "id" : "4E077BF8-FC9B-4FFD-88FB-060EB17CE71A",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -178,33 +528,33 @@
         },
         "kind" : "spring",
         "position" : {
-          "x" : 540,
-          "y" : 84
+          "x" : 624,
+          "y" : 96
         }
       },
       {
-        "id" : "060BC25B-53D3-4747-BA21-66C18463152C",
+        "id" : "7E0969CA-BF60-419F-8121-1F4715345D2E",
         "inputs" : {
           "end" : {
             "type" : "point",
             "value" : {
-              "x" : -72,
-              "y" : 140
+              "x" : -76,
+              "y" : 150
             }
           },
           "start" : {
             "type" : "point",
             "value" : {
-              "x" : 16,
-              "y" : 140
+              "x" : 20,
+              "y" : 150
             }
           }
         },
         "kind" : "transition",
         "name" : "Slide",
         "position" : {
-          "x" : 804,
-          "y" : 84
+          "x" : 912,
+          "y" : 96
         },
         "valueType" : "point"
       }
@@ -216,9 +566,55 @@
         "children" : [
 
         ],
-        "id" : "0EF7CD46-1383-4003-B116-E31BB7E6537B",
+        "id" : "C62C18FD-451D-43BF-8F33-4794CC44BEFB",
         "kind" : "text",
-        "name" : "Header",
+        "name" : "Kicker",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 76
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "4 UNREAD"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.4588235294117647,
+              "green" : 0.4235294117647059,
+              "red" : 0.43137254901960786
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "4BFCF6CB-A385-448A-97BE-6DB5A9330561",
+        "kind" : "text",
+        "name" : "Title",
         "properties" : {
           "fontSize" : {
             "type" : "number",
@@ -235,8 +631,8 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 16,
-              "y" : 72
+              "x" : 20,
+              "y" : 96
             }
           },
           "text" : {
@@ -247,9 +643,9 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0,
-              "green" : 0,
-              "red" : 0
+              "blue" : 0.11372549019607843,
+              "green" : 0.09411764705882353,
+              "red" : 0.09411764705882353
             }
           },
           "widthMode" : {
@@ -262,82 +658,107 @@
         "children" : [
           {
             "children" : [
+              {
+                "children" : [
 
+                ],
+                "id" : "7D86A5B1-9ED4-4050-ACB0-B5CECCD4962A",
+                "kind" : "text",
+                "name" : "Initials",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 16.72
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "SO"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
             ],
-            "id" : "841109CA-2D13-4B47-8467-B51A02D66912",
-            "kind" : "symbol",
-            "name" : "Trash",
+            "id" : "7B115A08-59C4-496B-86C4-D254F9DBA225",
+            "kind" : "view",
+            "name" : "Avatar",
             "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
               "fill" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 1,
-                  "red" : 1
+                  "green" : 0.6627450980392157,
+                  "red" : 0.35294117647058826
                 }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 306,
-                  "y" : 26
+                  "x" : 16,
+                  "y" : 20
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
-                  "height" : 28,
-                  "width" : 28
+                  "height" : 44,
+                  "width" : 44
                 }
-              },
-              "symbol" : {
-                "type" : "text",
-                "value" : "trash.fill"
               }
             }
-          }
-        ],
-        "id" : "5B809B46-F967-4AF5-8A60-67D33E8BC91A",
-        "kind" : "view",
-        "name" : "Delete",
-        "properties" : {
-          "cornerRadius" : {
-            "type" : "number",
-            "value" : 20
           },
-          "fill" : {
-            "type" : "color",
-            "value" : {
-              "alpha" : 1,
-              "blue" : 0.18823529411764706,
-              "green" : 0.23137254901960785,
-              "red" : 1
-            }
-          },
-          "position" : {
-            "type" : "point",
-            "value" : {
-              "x" : 16,
-              "y" : 140
-            }
-          },
-          "size" : {
-            "type" : "size",
-            "value" : {
-              "height" : 80,
-              "width" : 358
-            }
-          }
-        }
-      },
-      {
-        "children" : [
           {
             "children" : [
 
             ],
-            "id" : "A705B8FD-8A0D-49F5-8E14-07BEDD4732D4",
+            "id" : "5A59A6DB-5101-45BB-A667-0C00A82AF1D7",
             "kind" : "text",
             "name" : "Sender",
             "properties" : {
@@ -356,21 +777,21 @@
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 20,
-                  "y" : 16
+                  "x" : 74,
+                  "y" : 20
                 }
               },
               "text" : {
                 "type" : "text",
-                "value" : "Ada Lovelace"
+                "value" : "Sam Okafor"
               },
               "textColor" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
-                  "blue" : 0,
-                  "green" : 0,
-                  "red" : 0
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
                 }
               },
               "widthMode" : {
@@ -383,7 +804,7 @@
             "children" : [
 
             ],
-            "id" : "B677B5EB-3552-45D6-B5EE-18E79FF95890",
+            "id" : "5E06FA70-BECF-4ACC-A45B-FCB7721EC1CE",
             "kind" : "text",
             "name" : "Preview",
             "properties" : {
@@ -402,21 +823,21 @@
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 20,
-                  "y" : 42
+                  "x" : 74,
+                  "y" : 44
                 }
               },
               "text" : {
                 "type" : "text",
-                "value" : "Swipe me left, then right"
+                "value" : "Re: Friday's plan"
               },
               "textColor" : {
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
-                  "blue" : 0.45,
-                  "green" : 0.45,
-                  "red" : 0.45
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
                 }
               },
               "widthMode" : {
@@ -424,15 +845,1063 @@
                 "value" : "Auto"
               }
             }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "9D3F8CA4-B499-47F4-8304-8785E93DE096",
+            "kind" : "text",
+            "name" : "Time",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 306,
+                  "y" : 22
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16.900000000000002,
+                  "width" : 40
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "9:12"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.6823529411764706,
+                  "green" : 0.6509803921568628,
+                  "red" : 0.6588235294117647
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
           }
         ],
-        "id" : "74BC0B4F-AD22-4778-BA3E-9E3734F3C870",
+        "id" : "CFED64BF-348E-42EE-AD54-A8C9D1511607",
+        "kind" : "view",
+        "name" : "Message 2",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0.55
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 244
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 84,
+              "width" : 362
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "1825D303-EB99-462E-A6BE-C1F3C4162FC9",
+                "kind" : "text",
+                "name" : "Initials",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 16.72
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "LP"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "13DD9499-DA4D-4EAA-BBFD-D5D36CF0A252",
+            "kind" : "view",
+            "name" : "Avatar",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.5411764705882353,
+                  "green" : 0.7058823529411765,
+                  "red" : 0.36470588235294116
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 20
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 44
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "13373BBA-2233-4550-B041-D6E5B2A76120",
+            "kind" : "text",
+            "name" : "Sender",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74,
+                  "y" : 20
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Lena Park"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "1B1E23FA-72FD-4D5D-869A-5D9400278093",
+            "kind" : "text",
+            "name" : "Preview",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74,
+                  "y" : 44
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "The deck, with your notes"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "55DCCCBD-1D91-4BFD-BF1D-B00EEA49BFDA",
+            "kind" : "text",
+            "name" : "Time",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 306,
+                  "y" : 22
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16.900000000000002,
+                  "width" : 40
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "8:55"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.6823529411764706,
+                  "green" : 0.6509803921568628,
+                  "red" : 0.6588235294117647
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
+        ],
+        "id" : "4D396BF1-4F27-4028-84F1-EA6C4859D6CA",
+        "kind" : "view",
+        "name" : "Message 3",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0.55
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 338
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 84,
+              "width" : 362
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "559DCF58-9964-4CBE-A9DB-0BD3A492444F",
+                "kind" : "text",
+                "name" : "Initials",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 16.72
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "TG"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "907BE1F4-8379-43D4-9272-46974E5F117F",
+            "kind" : "view",
+            "name" : "Avatar",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.9607843137254902,
+                  "green" : 0.4,
+                  "red" : 0.5176470588235295
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 20
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 44
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "EAB0D32D-50E8-4B10-9046-9521FE39F694",
+            "kind" : "text",
+            "name" : "Sender",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74,
+                  "y" : 20
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Theo Grant"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "5BD52D17-7EF7-4A4D-B4B0-E17CAED9BD39",
+            "kind" : "text",
+            "name" : "Preview",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74,
+                  "y" : 44
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Lunch?"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "E6705C71-68E6-4607-BF92-53068EB8FCEC",
+            "kind" : "text",
+            "name" : "Time",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 306,
+                  "y" : 22
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16.900000000000002,
+                  "width" : 40
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "8:30"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.6823529411764706,
+                  "green" : 0.6509803921568628,
+                  "red" : 0.6588235294117647
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
+        ],
+        "id" : "51DCED53-6FAD-4623-8305-3C19CB596D0F",
+        "kind" : "view",
+        "name" : "Message 4",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "opacity" : {
+            "type" : "number",
+            "value" : 0.55
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 432
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 84,
+              "width" : 362
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "C1A8B613-D8CB-43EF-8E27-22B370B4B474",
+            "kind" : "symbol",
+            "name" : "Trash",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 304,
+                  "y" : 18
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 24,
+                  "width" : 24
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "trash.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "53643093-1519-4C37-B059-B6CEE0C1BBE1",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 284,
+                  "y" : 48
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16.900000000000002,
+                  "width" : 64
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Delete"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
+        ],
+        "id" : "D71BF79B-2D41-420C-B186-B265D5CDA06A",
+        "kind" : "view",
+        "name" : "Delete",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 22
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.23921568627450981,
+              "green" : 0.30196078431372547,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 150
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 84,
+              "width" : 362
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "82375688-7CA8-4780-85D1-95B436EFE56C",
+                "kind" : "text",
+                "name" : "Initials",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 16.72
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "MI"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "286DD845-79CA-4355-846B-FC5961050CAD",
+            "kind" : "view",
+            "name" : "Avatar",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 22
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.34901960784313724,
+                  "green" : 0.4392156862745098,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 16,
+                  "y" : 20
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 44
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "BC806BAB-2492-4088-8A08-11F42F62979D",
+            "kind" : "text",
+            "name" : "Sender",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74,
+                  "y" : 20
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Mika Ito"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "53275518-A461-4FBB-A3E4-F8003ED8E3C6",
+            "kind" : "text",
+            "name" : "Preview",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 74,
+                  "y" : 44
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Photos from Kyoto"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "378D8A3B-1708-403A-AC46-FA72016B78D5",
+            "kind" : "text",
+            "name" : "Time",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 306,
+                  "y" : 22
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 16.900000000000002,
+                  "width" : 40
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "9:41"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Right"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.6823529411764706,
+                  "green" : 0.6509803921568628,
+                  "red" : 0.6588235294117647
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
+        ],
+        "id" : "B1072D8B-043E-46D2-8365-BFFC15E641CB",
         "kind" : "view",
         "name" : "Row",
         "properties" : {
           "cornerRadius" : {
             "type" : "number",
-            "value" : 20
+            "value" : 22
           },
           "fill" : {
             "type" : "color",
@@ -446,17 +1915,24 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 16,
-              "y" : 140
+              "x" : 20,
+              "y" : 150
             }
           },
           "shadowColor" : {
             "type" : "color",
             "value" : {
-              "alpha" : 0.08,
-              "blue" : 0,
-              "green" : 0,
-              "red" : 0
+              "alpha" : 0.12,
+              "blue" : 0.2,
+              "green" : 0.08,
+              "red" : 0.1
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
             }
           },
           "shadowRadius" : {
@@ -466,14 +1942,226 @@
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 80,
-              "width" : 358
+              "height" : 84,
+              "width" : 362
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "36A7037A-B172-48FB-92CF-F4DAA3721752",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9411764705882353,
+                      "green" : 0.3607843137254902,
+                      "red" : 0.29411764705882354
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.draw.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "3DBD9312-25B7-49EC-B2A2-A77C0FCDABF8",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Swipe the top message left, then right"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.11372549019607843,
+                      "green" : 0.09411764705882353,
+                      "red" : 0.09411764705882353
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "A419F613-8592-4DFD-9A5D-75D90404924D",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.92,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.12,
+                  "blue" : 0.2,
+                  "green" : 0.08,
+                  "red" : 0.1
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8549019607843137,
+                  "green" : 0.8862745098039215,
+                  "red" : 0.9019607843137255
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "22F9DF97-6082-4BF0-AA53-6AB76E82A71A",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 792
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
             }
           }
         }
       }
     ],
-    "id" : "96E8E6EE-4BB1-4D71-9097-B9C09D34FCA7",
+    "id" : "02847E08-9DA4-4BD0-9ED5-AE2FE7FBB537",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -481,9 +2169,16 @@
         "type" : "color",
         "value" : {
           "alpha" : 1,
-          "blue" : 0.95,
-          "green" : 0.95,
-          "red" : 0.95
+          "blue" : 0.9333333333333333,
+          "green" : 0.9490196078431372,
+          "red" : 0.9568627450980393
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

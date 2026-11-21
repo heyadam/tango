@@ -134,7 +134,7 @@ import PaperModel
     @Test func aPictureRightAfterATouchShowsTheTouch() throws {
         let document = SampleDocuments.signIn().document
         // No wait between the tap, the typing and the picture.
-        let pictures = ViewerSnapshot.bitmaps(of: document, steps: [.look, .tap(Point2(x: 100, y: 210)), .type("Ada"), .look])
+        let pictures = ViewerSnapshot.bitmaps(of: document, steps: [.look, .tap(Point2(x: 100, y: 372)), .type("Ada"), .look])
             .compactMap { $0.representation(using: .png, properties: [:]) }
         #expect(pictures.count == 2)
         #expect(pictures[0] != pictures[1])

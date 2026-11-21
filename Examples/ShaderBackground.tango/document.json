@@ -3,126 +3,224 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "6BA93C95-14BE-4746-B1AD-AFE007D55758",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 816
+        },
+        "text" : "Energy · A tap springs the shader's input"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "85C3CF1D-8FE4-4E57-8DA4-BEB5B715F3CB",
+          "node" : "39E137D0-CEE8-44C4-9354-B5A0C5B75728",
           "port" : "tap"
         },
         "to" : {
-          "node" : "7D42C3F3-3BE5-45BA-820D-0608BE27C5F5",
+          "node" : "33A92105-55F4-412A-B26D-10761B2905D0",
           "port" : "flip"
         }
       },
       {
         "from" : {
-          "node" : "7D42C3F3-3BE5-45BA-820D-0608BE27C5F5",
+          "node" : "33A92105-55F4-412A-B26D-10761B2905D0",
           "port" : "on"
         },
         "to" : {
-          "node" : "50FB0D71-68B2-4A9B-91C1-E080229339B4",
+          "node" : "E52D8609-66FE-408D-9713-05FD3F81AD31",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "50FB0D71-68B2-4A9B-91C1-E080229339B4",
+          "node" : "E52D8609-66FE-408D-9713-05FD3F81AD31",
           "port" : "value"
         },
         "to" : {
-          "node" : "067F6872-3CAB-425F-9CC2-C8B72DA79A8E",
+          "node" : "4ED94FB4-B974-4B4C-8C3A-DD42B68A10D8",
           "port" : "shader.energy"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "ADC65252-195C-45A8-B9B7-458C049AFB22",
+        "id" : "D26AE7E3-6B45-4ABF-BE57-8C3BD4AAF720",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "91F96715-3074-4D30-8F82-5EDEA354267A",
+        "layerID" : "49FE91D8-4311-4079-A14B-63E08FB14600",
         "position" : {
-          "x" : 1104,
-          "y" : 84
+          "x" : 1200,
+          "y" : 96
         }
       },
       {
-        "id" : "067F6872-3CAB-425F-9CC2-C8B72DA79A8E",
+        "id" : "4ED94FB4-B974-4B4C-8C3A-DD42B68A10D8",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E676EE4A-588D-4FFC-944F-D97895E0E11E",
+        "layerID" : "58E3C9DD-FC09-4809-8394-2E09D47BEE22",
         "position" : {
-          "x" : 816,
-          "y" : 84
+          "x" : 912,
+          "y" : 96
         },
         "script" : "\/\/ An aurora: bands of light that drift on their own, and flare with `energy`.\nstruct Inputs {\n    float speed = 0.4;\n    float energy = 0;\n    float4 sky = float4(0.04, 0.05, 0.16, 1);\n    float4 light = float4(0.2, 0.9, 0.7, 1);\n    float4 accent = float4(0.6, 0.3, 1, 1);\n};\n\nfloat hash(float2 p) {\n    return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);\n}\n\nfloat noise(float2 p) {\n    float2 cell = floor(p);\n    float2 f = fract(p);\n    f = f * f * (3 - 2 * f);\n    float top = mix(hash(cell), hash(cell + float2(1, 0)), f.x);\n    float bottom = mix(hash(cell + float2(0, 1)), hash(cell + float2(1, 1)), f.x);\n    return mix(top, bottom, f.y);\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 p = frame.uv * float2(frame.size.x \/ frame.size.y, 1);\n    float t = frame.time * in.speed;\n    float band = noise(float2(p.x * 3 + t, t * 0.5)) * 0.5 + noise(float2(p.x * 7 - t, 4)) * 0.25;\n    float spread = 2.4 - 1.2 * in.energy;\n    float curtain = smoothstep(0.0, 0.5, band + 0.25 - abs(frame.uv.y - 0.32 - band * 0.2) * spread);\n    float3 color = mix(in.sky.rgb, in.light.rgb, curtain);\n    color = mix(color, in.accent.rgb, curtain * noise(p * 4 + t) * (0.35 + 0.65 * in.energy));\n    return float4(color, 1);\n}"
       },
       {
-        "id" : "B50DBF6E-C91D-4C69-B4F4-A8FA1B8C5DB2",
+        "id" : "ACD617F5-5C14-4EE2-AF5F-777316474A6F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "FE8FE05F-0BA3-49D8-9A57-75C44122F153",
+        "layerID" : "13116EED-FAA0-4876-8B89-262B0AB68818",
         "position" : {
-          "x" : 816,
-          "y" : 396
+          "x" : 912,
+          "y" : 408
         }
       },
       {
-        "id" : "78A55279-D7EE-429C-9A23-1D93F7A9A949",
+        "id" : "FC9C6408-3736-49ED-8564-BC0DACB67548",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1A51EB95-D09C-4442-8A95-FE7827987944",
+        "layerID" : "AC70F9D1-4854-47E6-893B-FCE68DF420C7",
+        "position" : {
+          "x" : 912,
+          "y" : 552
+        }
+      },
+      {
+        "id" : "0DA1CB50-CB92-4CAA-9C51-A1B03EF08BAD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "06F8D403-8C39-4CE5-8E77-10242398232C",
+        "position" : {
+          "x" : 912,
+          "y" : 696
+        }
+      },
+      {
+        "id" : "89304753-FB46-4362-A227-5414A8F5192D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F1644A71-4E5A-442E-99FA-4E57F763ED1E",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "E3F856AB-A87B-4A8F-93B1-7CBBA005485E",
+        "id" : "B0A25014-1236-4F4F-A3FD-634497309F92",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "85C7FDEA-275E-48A7-B332-EB2BA4B95429",
+        "layerID" : "3DD473F5-ACF2-43EE-A2CE-FB2112EDB801",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "85C3CF1D-8FE4-4E57-8DA4-BEB5B715F3CB",
+        "id" : "0F44C5BC-47C6-4819-AA39-6F0099C83C85",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "06DB160B-8F8A-483B-9C6F-369897D4C991",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "6D9DDD98-42DD-4CFA-A88F-BA17D5C75641",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DF511DAA-9127-467C-8215-39542AAD9EDA",
+        "position" : {
+          "x" : 912,
+          "y" : 888
+        }
+      },
+      {
+        "id" : "FE65319D-3701-4C47-9874-AF6CB078E9FA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7DE4ECD3-86A3-4C9A-8617-DE342CD2BB41",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "EDFECBFB-98BE-4617-A487-72A32C8BAD8F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E4FF6F77-82CB-46D7-B703-CC1F142D0713",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "903578E6-3127-4461-9768-57FAFA4F2A0B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2ACBA398-76B1-4A0B-AB0C-FBE78E49E7AE",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "39E137D0-CEE8-44C4-9354-B5A0C5B75728",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "FE8FE05F-0BA3-49D8-9A57-75C44122F153",
+        "layerID" : "06F8D403-8C39-4CE5-8E77-10242398232C",
         "position" : {
-          "x" : 36,
-          "y" : 84
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "7D42C3F3-3BE5-45BA-820D-0608BE27C5F5",
+        "id" : "33A92105-55F4-412A-B26D-10761B2905D0",
         "inputs" : {
 
         },
         "kind" : "switch",
         "name" : "Stirred",
         "position" : {
-          "x" : 300,
-          "y" : 84
+          "x" : 336,
+          "y" : 96
         }
       },
       {
-        "id" : "50FB0D71-68B2-4A9B-91C1-E080229339B4",
+        "id" : "E52D8609-66FE-408D-9713-05FD3F81AD31",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -135,8 +233,8 @@
         },
         "kind" : "spring",
         "position" : {
-          "x" : 564,
-          "y" : 84
+          "x" : 624,
+          "y" : 96
         }
       }
     ]
@@ -147,7 +245,7 @@
         "children" : [
 
         ],
-        "id" : "E676EE4A-588D-4FFC-944F-D97895E0E11E",
+        "id" : "58E3C9DD-FC09-4809-8394-2E09D47BEE22",
         "kind" : "view",
         "name" : "Aurora",
         "properties" : {
@@ -158,8 +256,8 @@
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 844,
-              "width" : 390
+              "height" : 874,
+              "width" : 402
             }
           }
         },
@@ -172,11 +270,140 @@
       },
       {
         "children" : [
+
+        ],
+        "id" : "13116EED-FAA0-4876-8B89-262B0AB68818",
+        "kind" : "text",
+        "name" : "Kicker",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 76
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "TONIGHT IN TROMSØ"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.7,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "AC70F9D1-4854-47E6-893B-FCE68DF420C7",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 96
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Aurora"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
           {
             "children" : [
 
             ],
-            "id" : "1A51EB95-D09C-4442-8A95-FE7827987944",
+            "id" : "F1644A71-4E5A-442E-99FA-4E57F763ED1E",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 24,
+                  "y" : 26
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 26,
+                  "width" : 26
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "sparkles"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "3DD473F5-ACF2-43EE-A2CE-FB2112EDB801",
             "kind" : "text",
             "name" : "Title",
             "properties" : {
@@ -191,7 +418,7 @@
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
+                  "x" : 64,
                   "y" : 24
                 }
               },
@@ -199,12 +426,12 @@
                 "type" : "size",
                 "value" : {
                   "height" : 30,
-                  "width" : 262
+                  "width" : 270
                 }
               },
               "text" : {
                 "type" : "text",
-                "value" : "Northern Lights"
+                "value" : "Stir the sky"
               },
               "textColor" : {
                 "type" : "color",
@@ -221,7 +448,7 @@
             "children" : [
 
             ],
-            "id" : "85C7FDEA-275E-48A7-B332-EB2BA4B95429",
+            "id" : "06DB160B-8F8A-483B-9C6F-369897D4C991",
             "kind" : "text",
             "name" : "Caption",
             "properties" : {
@@ -233,19 +460,19 @@
                 "type" : "point",
                 "value" : {
                   "x" : 24,
-                  "y" : 60
+                  "y" : 66
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
                   "height" : 44,
-                  "width" : 262
+                  "width" : 314
                 }
               },
               "text" : {
                 "type" : "text",
-                "value" : "Tap to stir the sky. The background is a shader."
+                "value" : "The sky is a shader. A tap here springs its Energy input up, and another lets it settle."
               },
               "textColor" : {
                 "type" : "color",
@@ -259,10 +486,14 @@
             }
           }
         ],
-        "id" : "FE8FE05F-0BA3-49D8-9A57-75C44122F153",
+        "id" : "06F8D403-8C39-4CE5-8E77-10242398232C",
         "kind" : "view",
         "name" : "Card",
         "properties" : {
+          "backgroundBlur" : {
+            "type" : "number",
+            "value" : 20
+          },
           "cornerRadius" : {
             "type" : "number",
             "value" : 28
@@ -279,15 +510,15 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 40,
-              "y" : 640
+              "x" : 20,
+              "y" : 612
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 128,
-              "width" : 310
+              "height" : 132,
+              "width" : 362
             }
           },
           "strokeColor" : {
@@ -304,9 +535,221 @@
             "value" : 1
           }
         }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "E4FF6F77-82CB-46D7-B703-CC1F142D0713",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.tap.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "2ACBA398-76B1-4A0B-AB0C-FBE78E49E7AE",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Tap the card"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "7DE4ECD3-86A3-4C9A-8617-DE342CD2BB41",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "DF511DAA-9127-467C-8215-39542AAD9EDA",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 774
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
       }
     ],
-    "id" : "91F96715-3074-4D30-8F82-5EDEA354267A",
+    "id" : "49FE91D8-4311-4079-A14B-63E08FB14600",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -317,6 +760,13 @@
           "blue" : 0,
           "green" : 0,
           "red" : 0
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

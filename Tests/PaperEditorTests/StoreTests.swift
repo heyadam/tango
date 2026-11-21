@@ -345,7 +345,8 @@ import PaperModel
         let before = store.document
         store.selectedLayers = [example.card]
         let fragment = store.fragmentOfSelectedLayers()
-        let bound = before.graph.nodes.filter { $0.layerID == example.card }
+        let inside = Set(before.layer(example.card)!.flattened.map(\.id))
+        let bound = before.graph.nodes.filter { node in node.layerID.map { inside.contains($0) } == true }
         #expect(fragment.layers.map(\.id) == [example.card])
         #expect(fragment.nodes.count == bound.count)
 
@@ -354,17 +355,18 @@ import PaperModel
         #expect(store.insert(copied))
         let after = store.document
         #expect(after.screen.children.count == before.screen.children.count + 1)
-        let clone = try #require(store.selectedLayer)
-        #expect(clone.id != example.card)
+        let clone = try #require(after.screen.children.first { new in !before.screen.children.contains { $0.id == new.id } })
+        #expect(store.selectedLayers.contains(clone.id))
         #expect(clone.value(.size) == before.layer(example.card)!.value(.size))
         // The copy has its own patches, driven by the same sources as the original's.
-        let cloned = after.graph.nodes.filter { $0.layerID == clone.id }
+        let copies = Set(clone.flattened.map(\.id))
+        let cloned = after.graph.nodes.filter { node in node.layerID.map { copies.contains($0) } == true }
         #expect(cloned.count == bound.count)
         let incoming = { (graph: Graph, nodes: [PatchNode]) in
             graph.connections.filter { connection in nodes.contains { $0.id == connection.to.node } }.count
         }
         #expect(incoming(after.graph, cloned) == incoming(before.graph, bound))
-        #expect(after.graph.nodes.filter { $0.layerID == example.card }.count == bound.count)
+        #expect(after.graph.nodes.filter { node in node.layerID.map { inside.contains($0) } == true }.count == bound.count)
     }
 
     @Test func duplicatingPatchesKeepsTheCablesBetweenThem() {

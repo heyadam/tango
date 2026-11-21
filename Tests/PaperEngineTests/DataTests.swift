@@ -168,9 +168,9 @@ import PaperModel
         #expect(layer(example.selected).value(.text).textValue == "")
 
         // Tapping the second row selects that person.
-        runtime.send(.touchDown(Point2(x: 100, y: 136 + 44 + 20)))
+        runtime.send(.touchDown(Point2(x: 100, y: 150 + 52 + 26)))
         runtime.tick(dt: 1 / 60)
-        runtime.send(.touchUp(Point2(x: 100, y: 136 + 44 + 20)))
+        runtime.send(.touchUp(Point2(x: 100, y: 150 + 52 + 26)))
         runtime.advance(seconds: 0.3)
         #expect(layer(example.selected).value(.text).textValue == "Ervin Howell")
     }
@@ -213,7 +213,7 @@ import PaperModel
 
     @Test func commentsAreSavedWithTheGraph() throws {
         let document = SampleDocuments.liveList().document
-        #expect(document.graph.comments.count == 3)
+        #expect(document.graph.comments.count == 2)
         #expect(try Document.decode(from: document.encoded()) == document)
     }
 }

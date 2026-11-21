@@ -3,271 +3,625 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "9AE879D7-2D59-419F-864E-F0FFFAFA2C71",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 288,
+          "width" : 528
+        },
+        "text" : "Tap · Each tap flips Open on or off"
+      },
+      {
+        "id" : "B16F7A62-84A0-4602-BB64-496208E88DD7",
+        "origin" : {
+          "x" : 600,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 240
+        },
+        "text" : "Spring · Glides 0 to 1"
+      },
+      {
+        "id" : "3AD65476-F225-4C39-891B-F3B1A21D6F06",
+        "origin" : {
+          "x" : 888,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 708,
+          "width" : 240
+        },
+        "text" : "Mapping · One value, four properties"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "78D97521-DE3D-4348-8D17-5E4D7F4AE673",
+          "node" : "E0ED4BE3-6CB6-40BE-8D39-1882AB7229C2",
           "port" : "tap"
         },
         "to" : {
-          "node" : "A9E172BB-8F86-4141-9641-81B57ECBCD45",
+          "node" : "4F1B8CD7-B434-498F-A4B9-5C9A661D83C4",
           "port" : "flip"
         }
       },
       {
         "from" : {
-          "node" : "A9E172BB-8F86-4141-9641-81B57ECBCD45",
+          "node" : "4F1B8CD7-B434-498F-A4B9-5C9A661D83C4",
           "port" : "on"
         },
         "to" : {
-          "node" : "9F1BF439-F7F9-4F14-BAA8-5DB4831FDF8D",
+          "node" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "9F1BF439-F7F9-4F14-BAA8-5DB4831FDF8D",
+          "node" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
           "port" : "value"
         },
         "to" : {
-          "node" : "551A82FB-E208-4EB3-93FD-65AF655130FB",
+          "node" : "2EA9C682-927A-40E4-AD34-C628F2FCCE16",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "9F1BF439-F7F9-4F14-BAA8-5DB4831FDF8D",
+          "node" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
           "port" : "value"
         },
         "to" : {
-          "node" : "127D58DD-73CE-4F7E-A0B0-93BE5BFB5A92",
+          "node" : "242D3062-EF33-40F9-8137-BC38766CBFCE",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "9F1BF439-F7F9-4F14-BAA8-5DB4831FDF8D",
+          "node" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
           "port" : "value"
         },
         "to" : {
-          "node" : "9F2A7446-6FFC-40BE-B4B8-9B43BF572573",
+          "node" : "9CB1B68D-DD18-4F44-B0C4-5CF9711D77EA",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "551A82FB-E208-4EB3-93FD-65AF655130FB",
+          "node" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
           "port" : "value"
         },
         "to" : {
-          "node" : "5BF1769B-E597-427B-8F04-6ECC9C207C82",
+          "node" : "4A0FFF1A-2509-4D78-8C7B-74221D8D8269",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2EA9C682-927A-40E4-AD34-C628F2FCCE16",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "5EE7572B-9EF8-46CE-8D01-4B7883820DB2",
           "port" : "position"
         }
       },
       {
         "from" : {
-          "node" : "127D58DD-73CE-4F7E-A0B0-93BE5BFB5A92",
+          "node" : "242D3062-EF33-40F9-8137-BC38766CBFCE",
           "port" : "value"
         },
         "to" : {
-          "node" : "5BF1769B-E597-427B-8F04-6ECC9C207C82",
+          "node" : "5EE7572B-9EF8-46CE-8D01-4B7883820DB2",
           "port" : "size"
         }
       },
       {
         "from" : {
-          "node" : "9F2A7446-6FFC-40BE-B4B8-9B43BF572573",
+          "node" : "9CB1B68D-DD18-4F44-B0C4-5CF9711D77EA",
           "port" : "value"
         },
         "to" : {
-          "node" : "20F3DED9-BB95-48F3-A68C-E81E1B491B73",
+          "node" : "5EE7572B-9EF8-46CE-8D01-4B7883820DB2",
+          "port" : "cornerRadius"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4A0FFF1A-2509-4D78-8C7B-74221D8D8269",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "767844F6-6BD9-4BA7-99FA-E8ABBD245333",
           "port" : "opacity"
         }
       },
       {
         "from" : {
-          "node" : "9F1BF439-F7F9-4F14-BAA8-5DB4831FDF8D",
+          "node" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
           "port" : "value"
         },
         "to" : {
-          "node" : "CB50A753-A6CC-4D48-95F1-3B5FE30BCBF2",
+          "node" : "33974DAA-C9A2-4CE8-9B88-8FE3EF8D9AA6",
           "port" : "opacity"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "1F301347-95CC-4128-8017-9CB024876259",
+        "id" : "8C218CC2-59E3-4E6F-9E5F-29D92100A215",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "0617F911-21FE-4788-AFF9-342627FBBC12",
+        "layerID" : "65655F47-F0F6-407A-BBA9-2A032B9D92FD",
         "position" : {
-          "x" : 1284,
-          "y" : 36
+          "x" : 1488,
+          "y" : 96
         }
       },
       {
-        "id" : "1AFEB9A0-E345-4BF1-8C92-C7C0868246CE",
+        "id" : "E8821E0F-F946-408A-B982-02D87498821A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "CB18A1BB-F288-4913-B0AC-7C76932CC021",
+        "layerID" : "03450320-C437-449D-BD8E-3869AA614F22",
         "position" : {
-          "x" : 1572,
-          "y" : 36
+          "x" : 1776,
+          "y" : 96
         }
       },
       {
-        "id" : "2AF4AD9A-A02F-44F8-86CC-6E2B5497FA71",
+        "id" : "52B969AB-7CC8-4680-B0B6-ADE7DEE81CD5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6BF06835-080E-473A-B4E4-BAA98361BFF1",
+        "layerID" : "59E70428-CE79-453B-9B10-2C574F0592DF",
         "position" : {
-          "x" : 1572,
-          "y" : 228
+          "x" : 48,
+          "y" : 48
         }
       },
       {
-        "id" : "20F3DED9-BB95-48F3-A68C-E81E1B491B73",
+        "id" : "5052DDB6-EFAA-4DCF-B8EC-8649AD40F01A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "70AD2F1F-500E-4CB3-B3E3-49073DBF9EBB",
+        "layerID" : "CD4D5C52-C454-49EF-93DA-7CA2BD61A5AE",
         "position" : {
-          "x" : 996,
-          "y" : 360
+          "x" : 48,
+          "y" : 192
         }
       },
       {
-        "id" : "5BF1769B-E597-427B-8F04-6ECC9C207C82",
+        "id" : "50CAB721-F9C9-48B2-B5D3-D07981DFD2A9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "03A447CD-84C5-44FC-9FE7-F2ECF5077A07",
+        "layerID" : "17C7D462-DDC5-4833-9C56-21F4C2E9E141",
         "position" : {
-          "x" : 996,
-          "y" : 36
+          "x" : 1776,
+          "y" : 288
         }
       },
       {
-        "id" : "CB50A753-A6CC-4D48-95F1-3B5FE30BCBF2",
+        "id" : "80EC5093-94E2-4A27-B856-27A1753C43D5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "0BA97864-9FBE-4D25-AD79-26518C678623",
+        "layerID" : "436959B0-590F-4E12-9BFB-2B8CF314B76E",
         "position" : {
-          "x" : 996,
-          "y" : 576
+          "x" : 48,
+          "y" : 48
         }
       },
       {
-        "id" : "78D97521-DE3D-4348-8D17-5E4D7F4AE673",
+        "id" : "5F504DBE-C9B8-469E-AB3A-84CD890C2B78",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C5CB1D49-8A23-4B81-87B3-ED40AF2886BB",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "CCE46C3D-6C2D-4C2B-95EE-0494444DD76D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FDD53CF0-5418-4CEC-A16B-5A5B95207699",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "53D7DAC7-B8C0-4EA2-A488-0FE296E4AEF4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0ACF0C99-7809-4526-BE44-B3667DD86D50",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "B9F0FFF7-1089-4CCA-8096-9A7FE391B70D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5ECFC90F-3053-4AA0-9779-72800FDCD9BE",
+        "position" : {
+          "x" : 48,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "E118EF97-8C82-4FFE-BB84-DA2E1D1E8E02",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "76A4235D-0435-45F3-AF03-7B9D00B33083",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "57B6D15B-8218-402F-803A-4A68B218A4FA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B62C3136-CEE9-4D79-BDCD-B36E19B47BEC",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "82EBD7B3-9893-4C18-AA38-7D6D90533ED6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "118256DF-FF3A-4124-AD20-41169ADB1942",
+        "position" : {
+          "x" : 1776,
+          "y" : 480
+        }
+      },
+      {
+        "id" : "46E98250-F24F-4894-9828-A27EB5C53830",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "06523DB1-F5D6-4257-80BB-9D00ACBEBC62",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "6285DFEA-3C35-4586-BCEC-BF8DA3828754",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2E75B0C5-133F-4F3C-8AC2-D5AE8B9D5593",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "C7B8D8AE-64EF-41AE-A00F-E2C9AD37F41F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "08BB457A-4649-47BA-AAA3-76422784FA32",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "767844F6-6BD9-4BA7-99FA-E8ABBD245333",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9A828EFD-BA4D-4083-8036-76B7BA957FE7",
+        "position" : {
+          "x" : 1200,
+          "y" : 600
+        }
+      },
+      {
+        "id" : "5EE7572B-9EF8-46CE-8D01-4B7883820DB2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "027747BC-D407-4C07-840A-B7940D08E5BC",
+        "position" : {
+          "x" : 1200,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "1CF7D171-4ACE-42FC-A8A5-9D5605575DDA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D7898452-426A-4253-844E-05126214AE28",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "D1EBB948-77E4-4E14-A681-313B02ABE676",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6F13697C-1A13-4BBD-989D-0C77AA3523E4",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "F0A7A41E-797D-4CAA-827C-CC29557800DC",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8C9DF959-995D-49D8-BDDB-3B7E7A140E86",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "99EDBBF4-CC5B-4E8C-8D63-7ECC0A986E69",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "40E86D94-CA39-486B-8BEA-10D6523002AE",
+        "position" : {
+          "x" : 48,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "1180A21C-EBCF-4FA8-A875-22622EF021C2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AAA94356-B97A-41B5-BA91-62BDAA3D4252",
+        "position" : {
+          "x" : 48,
+          "y" : 624
+        }
+      },
+      {
+        "id" : "E305FE62-9241-4124-90B5-7535818B1B0F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "13BF7E6F-50FC-43C3-9EF8-E97AEAAA7708",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "3AC8FC09-B7AC-4991-ADE3-C96CCEF4E4BD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3D9B5BCF-90B3-4D3F-A7B3-FB6041E9B238",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "890CE72E-F5E6-4C19-8E70-C9FF0BA1A0BE",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1BE3C045-707F-4F14-92E8-8D165E2FB7F5",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "04BCD8CD-0BA4-4B3A-92C9-C9F89B949681",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7E53876B-C559-4B42-B019-8E4D90EC0218",
+        "position" : {
+          "x" : 48,
+          "y" : 672
+        }
+      },
+      {
+        "id" : "33974DAA-C9A2-4CE8-9B88-8FE3EF8D9AA6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BD23059F-69CD-4746-8C34-65FA24F84248",
+        "position" : {
+          "x" : 1200,
+          "y" : 816
+        }
+      },
+      {
+        "id" : "7E11CD3C-C23F-4DB3-9F4E-B2A5E0CF0CBD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EC084DDB-65DD-4C13-B059-093C6D67561B",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E0ED4BE3-6CB6-40BE-8D39-1882AB7229C2",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "03A447CD-84C5-44FC-9FE7-F2ECF5077A07",
+        "layerID" : "027747BC-D407-4C07-840A-B7940D08E5BC",
         "position" : {
-          "x" : 36,
-          "y" : 84
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "A9E172BB-8F86-4141-9641-81B57ECBCD45",
+        "id" : "4F1B8CD7-B434-498F-A4B9-5C9A661D83C4",
         "inputs" : {
 
         },
         "kind" : "switch",
-        "name" : "Expanded",
+        "name" : "Open",
         "position" : {
-          "x" : 264,
-          "y" : 84
+          "x" : 336,
+          "y" : 96
         }
       },
       {
-        "id" : "9F1BF439-F7F9-4F14-BAA8-5DB4831FDF8D",
+        "id" : "8F590B6A-FBFC-4ED8-8522-04EAFA195A75",
         "inputs" : {
           "damping" : {
             "type" : "number",
-            "value" : 0.75
+            "value" : 0.82
           },
           "response" : {
             "type" : "number",
-            "value" : 0.45
+            "value" : 0.5
           }
         },
         "kind" : "spring",
         "position" : {
-          "x" : 480,
-          "y" : 84
+          "x" : 624,
+          "y" : 96
         }
       },
       {
-        "id" : "551A82FB-E208-4EB3-93FD-65AF655130FB",
+        "id" : "2EA9C682-927A-40E4-AD34-C628F2FCCE16",
         "inputs" : {
           "end" : {
             "type" : "point",
             "value" : {
-              "x" : 16,
-              "y" : 96
+              "x" : 0,
+              "y" : 0
             }
           },
           "start" : {
             "type" : "point",
             "value" : {
-              "x" : 40,
-              "y" : 320
+              "x" : 20,
+              "y" : 150
             }
           }
         },
         "kind" : "transition",
         "name" : "Card Position",
         "position" : {
-          "x" : 744,
-          "y" : 36
+          "x" : 912,
+          "y" : 96
         },
         "valueType" : "point"
       },
       {
-        "id" : "127D58DD-73CE-4F7E-A0B0-93BE5BFB5A92",
+        "id" : "242D3062-EF33-40F9-8137-BC38766CBFCE",
         "inputs" : {
           "end" : {
             "type" : "size",
             "value" : {
-              "height" : 560,
-              "width" : 358
+              "height" : 874,
+              "width" : 402
             }
           },
           "start" : {
             "type" : "size",
             "value" : {
-              "height" : 200,
-              "width" : 310
+              "height" : 350,
+              "width" : 362
             }
           }
         },
         "kind" : "transition",
         "name" : "Card Size",
         "position" : {
-          "x" : 744,
-          "y" : 204
+          "x" : 912,
+          "y" : 264
         },
         "valueType" : "size"
       },
       {
-        "id" : "9F2A7446-6FFC-40BE-B4B8-9B43BF572573",
+        "id" : "9CB1B68D-DD18-4F44-B0C4-5CF9711D77EA",
         "inputs" : {
           "end" : {
             "type" : "number",
-            "value" : 0.5
+            "value" : 0
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 28
+          }
+        },
+        "kind" : "transition",
+        "name" : "Corners",
+        "position" : {
+          "x" : 912,
+          "y" : 432
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "4A0FFF1A-2509-4D78-8C7B-74221D8D8269",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 0.4
           },
           "start" : {
             "type" : "number",
@@ -277,8 +631,8 @@
         "kind" : "transition",
         "name" : "Dimming",
         "position" : {
-          "x" : 744,
-          "y" : 360
+          "x" : 912,
+          "y" : 600
         },
         "valueType" : "number"
       }
@@ -288,74 +642,624 @@
     "children" : [
       {
         "children" : [
+          {
+            "children" : [
 
+            ],
+            "id" : "59E70428-CE79-453B-9B10-2C574F0592DF",
+            "kind" : "text",
+            "name" : "Kicker",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 76
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "TUESDAY, NOVEMBER 21"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "CD4D5C52-C454-49EF-93DA-7CA2BD61A5AE",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 34
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 96
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Discover"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
         ],
-        "id" : "CB18A1BB-F288-4913-B0AC-7C76932CC021",
+        "id" : "03450320-C437-449D-BD8E-3869AA614F22",
         "kind" : "view",
         "name" : "Header",
         "properties" : {
-          "cornerRadius" : {
-            "type" : "number",
-            "value" : 8
-          },
-          "fill" : {
-            "type" : "color",
-            "value" : {
-              "alpha" : 1,
-              "blue" : 0.82,
-              "green" : 0.82,
-              "red" : 0.82
-            }
-          },
-          "position" : {
-            "type" : "point",
-            "value" : {
-              "x" : 40,
-              "y" : 96
-            }
-          },
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 28,
-              "width" : 180
+              "height" : 140,
+              "width" : 402
             }
           }
         }
       },
       {
         "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
 
+                ],
+                "id" : "C5CB1D49-8A23-4B81-87B3-ED40AF2886BB",
+                "kind" : "ellipse",
+                "name" : "Sun",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.85,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 48.96,
+                      "y" : 11.52
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 14.4,
+                      "width" : 14.4
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "FDD53CF0-5418-4CEC-A16B-5A5B95207699",
+                "kind" : "ellipse",
+                "name" : "Far Hill",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.6901960784313725,
+                      "green" : 0.8156862745098039,
+                      "red" : 0.5607843137254902
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : -18,
+                      "y" : 37.44
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 64.8,
+                      "width" : 79.2
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "0ACF0C99-7809-4526-BE44-B3667DD86D50",
+                "kind" : "ellipse",
+                "name" : "Near Hill",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.5411764705882353,
+                      "green" : 0.7058823529411765,
+                      "red" : 0.36470588235294116
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 21.599999999999998,
+                      "y" : 47.52
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 57.6,
+                      "width" : 79.2
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "5ECFC90F-3053-4AA0-9779-72800FDCD9BE",
+                "kind" : "symbol",
+                "name" : "Subject",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.95,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 12.959999999999999,
+                      "y" : 22.320000000000007
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 21.599999999999998,
+                      "width" : 21.599999999999998
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "tram.fill"
+                  }
+                }
+              }
+            ],
+            "id" : "436959B0-590F-4E12-9BFB-2B8CF314B76E",
+            "kind" : "view",
+            "name" : "Thumbnail",
+            "properties" : {
+              "clips" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 14
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 0.6627450980392157,
+                  "red" : 0.35294117647058826
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 12,
+                  "y" : 12
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 72,
+                  "width" : 72
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "76A4235D-0435-45F3-AF03-7B9D00B33083",
+            "kind" : "text",
+            "name" : "Next Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 100,
+                  "y" : 26
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Lisbon by Tram"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "B62C3136-CEE9-4D79-BDCD-B36E19B47BEC",
+            "kind" : "text",
+            "name" : "Next Detail",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 100,
+                  "y" : 50
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Up next · 8 min read"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
         ],
-        "id" : "6BF06835-080E-473A-B4E4-BAA98361BFF1",
+        "id" : "17C7D462-DDC5-4833-9C56-21F4C2E9E141",
         "kind" : "view",
         "name" : "Row",
         "properties" : {
           "cornerRadius" : {
             "type" : "number",
-            "value" : 24
+            "value" : 22
           },
           "fill" : {
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.88,
-              "green" : 0.88,
-              "red" : 0.88
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
             }
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 40,
-              "y" : 560
+              "x" : 20,
+              "y" : 520
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 120,
-              "width" : 310
+              "height" : 96,
+              "width" : 362
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "2E75B0C5-133F-4F3C-8AC2-D5AE8B9D5593",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.9411764705882353,
+                      "green" : 0.3607843137254902,
+                      "red" : 0.29411764705882354
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.tap.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "08BB457A-4649-47BA-AAA3-76422784FA32",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Tap the card to open it, and again to close it"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.11372549019607843,
+                      "green" : 0.09411764705882353,
+                      "red" : 0.09411764705882353
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "06523DB1-F5D6-4257-80BB-9D00ACBEBC62",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.92,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.12,
+                  "blue" : 0.2,
+                  "green" : 0.08,
+                  "red" : 0.1
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.8549019607843137,
+                  "green" : 0.8862745098039215,
+                  "red" : 0.9019607843137255
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "118256DF-FF3A-4124-AD20-41169ADB1942",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 792
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
             }
           }
         }
@@ -364,7 +1268,7 @@
         "children" : [
 
         ],
-        "id" : "70AD2F1F-500E-4CB3-B3E3-49073DBF9EBB",
+        "id" : "9A828EFD-BA4D-4083-8036-76B7BA957FE7",
         "kind" : "view",
         "name" : "Dim",
         "properties" : {
@@ -372,9 +1276,9 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0,
-              "green" : 0,
-              "red" : 0
+              "blue" : 0.11372549019607843,
+              "green" : 0.09411764705882353,
+              "red" : 0.09411764705882353
             }
           },
           "opacity" : {
@@ -384,20 +1288,390 @@
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 844,
-              "width" : 390
+              "height" : 874,
+              "width" : 402
             }
           }
         }
       },
       {
         "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
 
+                ],
+                "id" : "6F13697C-1A13-4BBD-989D-0C77AA3523E4",
+                "kind" : "ellipse",
+                "name" : "Sun",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.788235294117647,
+                      "green" : 0.9450980392156862,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 299.20000000000005,
+                      "y" : 38.4
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 48,
+                      "width" : 48
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "8C9DF959-995D-49D8-BDDB-3B7E7A140E86",
+                "kind" : "ellipse",
+                "name" : "Far Hill",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.2901960784313726,
+                      "green" : 0.403921568627451,
+                      "red" : 0.8784313725490196
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : -110,
+                      "y" : 124.80000000000001
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 216,
+                      "width" : 484.00000000000006
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "40E86D94-CA39-486B-8BEA-10D6523002AE",
+                "kind" : "ellipse",
+                "name" : "Near Hill",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.2,
+                      "green" : 0.23137254901960785,
+                      "red" : 0.6196078431372549
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 132,
+                      "y" : 158.4
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 192,
+                      "width" : 484.00000000000006
+                    }
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "AAA94356-B97A-41B5-BA91-62BDAA3D4252",
+                "kind" : "symbol",
+                "name" : "Subject",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.95,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 79.2,
+                      "y" : 74.4
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 72,
+                      "width" : 72
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "leaf.fill"
+                  }
+                }
+              }
+            ],
+            "id" : "D7898452-426A-4253-844E-05126214AE28",
+            "kind" : "view",
+            "name" : "Picture",
+            "properties" : {
+              "clips" : {
+                "type" : "bool",
+                "value" : true
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.47843137254901963,
+                  "green" : 0.6980392156862745,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : -20,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 240,
+                  "width" : 440
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "13BF7E6F-50FC-43C3-9EF8-E97AEAAA7708",
+            "kind" : "text",
+            "name" : "Place",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 13
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 258
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "KYOTO, JAPAN"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.34901960784313724,
+                  "green" : 0.4392156862745098,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "3D9B5BCF-90B3-4D3F-A7B3-FB6041E9B238",
+            "kind" : "text",
+            "name" : "Headline",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 26
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 278
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Autumn in Kyoto"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "1BE3C045-707F-4F14-92E8-8D165E2FB7F5",
+            "kind" : "text",
+            "name" : "Byline",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 314
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "12 min read · Mika Ito"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "7E53876B-C559-4B42-B019-8E4D90EC0218",
+            "kind" : "text",
+            "name" : "Story",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 362
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 360,
+                  "width" : 362
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "The maples turn first on the hills above the city. By the middle of November the paths of the temples are red and gold, and the mornings are cold enough to see your breath.\n\nGo early. The light comes low through the trees, and for an hour the gardens belong to the people who sweep them."
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.25098039215686274,
+                  "green" : 0.2235294117647059,
+                  "red" : 0.22745098039215686
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          }
         ],
-        "id" : "03A447CD-84C5-44FC-9FE7-F2ECF5077A07",
+        "id" : "027747BC-D407-4C07-840A-B7940D08E5BC",
         "kind" : "view",
         "name" : "Card",
         "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
           "cornerRadius" : {
             "type" : "number",
             "value" : 28
@@ -406,16 +1680,25 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.9686274509803922,
-              "green" : 0.4823529411764706,
-              "red" : 0.23921568627450981
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
             }
           },
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 40,
-              "y" : 320
+              "x" : 20,
+              "y" : 150
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.12,
+              "blue" : 0.2,
+              "green" : 0.08,
+              "red" : 0.1
             }
           },
           "shadowOffset" : {
@@ -432,20 +1715,76 @@
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 200,
-              "width" : 310
+              "height" : 350,
+              "width" : 362
             }
           }
         }
       },
       {
         "children" : [
+          {
+            "children" : [
 
+            ],
+            "id" : "EC084DDB-65DD-4C13-B059-093C6D67561B",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 14.4,
+                  "width" : 14.4
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "xmark"
+              }
+            }
+          }
         ],
-        "id" : "0BA97864-9FBE-4D25-AD79-26518C678623",
-        "kind" : "ellipse",
+        "id" : "BD23059F-69CD-4746-8C34-65FA24F84248",
+        "kind" : "view",
         "name" : "Close",
         "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 18
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
           "fill" : {
             "type" : "color",
             "value" : {
@@ -455,6 +1794,10 @@
               "red" : 1
             }
           },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
           "opacity" : {
             "type" : "number",
             "value" : 0
@@ -462,8 +1805,8 @@
           "position" : {
             "type" : "point",
             "value" : {
-              "x" : 318,
-              "y" : 112
+              "x" : 346,
+              "y" : 72
             }
           },
           "size" : {
@@ -476,7 +1819,7 @@
         }
       }
     ],
-    "id" : "0617F911-21FE-4788-AFF9-342627FBBC12",
+    "id" : "65655F47-F0F6-407A-BBA9-2A032B9D92FD",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
@@ -484,9 +1827,16 @@
         "type" : "color",
         "value" : {
           "alpha" : 1,
-          "blue" : 0.96,
-          "green" : 0.96,
-          "red" : 0.96
+          "blue" : 0.9333333333333333,
+          "green" : 0.9490196078431372,
+          "red" : 0.9568627450980393
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
         }
       }
     }

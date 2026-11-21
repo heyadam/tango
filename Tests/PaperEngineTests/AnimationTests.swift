@@ -186,7 +186,7 @@ import PaperModel
             // Every driven property reflects the same progress on the same frame.
             let expectedWidth = Card.collapsedSize.width + (Card.expandedSize.width - Card.collapsedSize.width) * progress
             #expect(abs(card().size.width - expectedWidth) < 1e-9)
-            #expect(abs(runtime.resolved.find(example.dim)!.opacity - 0.5 * progress) < 1e-9)
+            #expect(abs(runtime.resolved.find(example.dim)!.opacity - 0.4 * progress) < 1e-9)
             #expect(abs(runtime.resolved.find(example.close)!.opacity - progress) < 1e-9)
             if progress > 0.4, progress < 0.6 { sawMidway = true }
         }
@@ -243,7 +243,7 @@ import PaperModel
         _ = drag(from: Point2(x: 195, y: 700), by: -320, frames: 24)
         runtime.advance(seconds: 3)
         #expect(y() == Sheet.openY)
-        #expect(abs(runtime.resolved.find(example.dim)!.opacity - 0.4) < 1e-9)
+        #expect(abs(runtime.resolved.find(example.dim)!.opacity - 0.35) < 1e-9)
         #expect(runtime.needsAnotherFrame == false)
 
         // A small drag down springs back open.

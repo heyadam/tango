@@ -52,9 +52,9 @@ import PaperModel
         #expect(greeting() == "Hello, ")
         #expect(abs(opacity() - 0.35) < 0.01)
 
-        runtime.send(.touchDown(Point2(x: 100, y: 210)))
+        runtime.send(.touchDown(Point2(x: 100, y: 372)))
         runtime.tick(dt: frame)
-        runtime.send(.touchUp(Point2(x: 100, y: 210)))
+        runtime.send(.touchUp(Point2(x: 100, y: 372)))
         runtime.tick(dt: frame)
         runtime.send(.text("Ada"))
         runtime.advance(seconds: 1.5)
@@ -70,16 +70,16 @@ import PaperModel
         func rows() -> [String] {
             var names: [String] = []
             func walk(_ layer: ResolvedLayer) {
-                if layer.id == example.row { names.append(layer.children.first?.value(.text).textValue ?? "") }
+                if layer.id == example.row { names.append(layer.children.first { $0.kind == .text }?.value(.text).textValue ?? "") }
                 layer.children.forEach(walk)
             }
             walk(runtime.resolved)
             return names
         }
         #expect(rows() == SampleDocuments.SearchList.names)
-        runtime.send(.touchDown(Point2(x: 100, y: 144)))
+        runtime.send(.touchDown(Point2(x: 100, y: 166)))
         runtime.tick(dt: frame)
-        runtime.send(.touchUp(Point2(x: 100, y: 144)))
+        runtime.send(.touchUp(Point2(x: 100, y: 166)))
         runtime.tick(dt: frame)
         runtime.send(.text("al"))
         runtime.advance(seconds: 0.1)
@@ -141,7 +141,7 @@ import PaperModel
         #expect(abs(photo().scale - 200.0 / 108) < 0.05)
         #expect(abs(photo().rotation - 25) < 1.5)
         #expect(abs(photo().position.x - (40 + 60 - 10 * 60 / Point2(x: 60, y: 40).length)) < 3)
-        #expect(abs(photo().position.y - (250 + 40 - 10 * 40 / Point2(x: 60, y: 40).length)) < 3)
+        #expect(abs(photo().position.y - (180 + 40 - 10 * 40 / Point2(x: 60, y: 40).length)) < 3)
         // Nothing jumped on the way: the picture grew a little at a time.
         #expect(zip(seen, seen.dropFirst()).allSatisfy { $1 >= $0 && $1 - $0 < 0.06 })
 
@@ -199,7 +199,7 @@ import PaperModel
         let runtime = Runtime(document: example.document)
         runtime.tick(dt: frame)
         func scale() -> Double { runtime.resolved.find(example.button)!.scale }
-        runtime.send(.hover(Point2(x: 195, y: 410)))
+        runtime.send(.hover(Point2(x: 201, y: 518)))
         runtime.advance(seconds: 1.5)
         #expect(abs(scale() - 1.08) < 0.005)
         runtime.send(.hover(nil))

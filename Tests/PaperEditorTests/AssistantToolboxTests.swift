@@ -153,7 +153,7 @@ import PaperModel
         let result = AssistantToolbox(store: store).call("view_prototype", input: ["tap": ["x": 195, "y": 400], "seconds": 1])
         let png = try #require(result.image)
         #expect(png.starts(with: [0x89, 0x50, 0x4E, 0x47]))
-        #expect(result.text.contains("390 × 844"))
+        #expect(result.text.contains("402 × 874"))
         // Looking must not take the document's runtime away from the real Viewer.
         #expect(store.runtime == nil)
     }

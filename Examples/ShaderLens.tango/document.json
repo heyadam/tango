@@ -3,210 +3,404 @@
 
   ],
   "graph" : {
+    "comments" : [
+      {
+        "id" : "45683035-080D-4B19-98CC-4FB872FC5C9F",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 528
+        },
+        "text" : "Lens · Down shows it, Position moves it"
+      }
+    ],
     "connections" : [
       {
         "from" : {
-          "node" : "A5EC4346-A769-4670-8EE4-2CFD5C7CC9BF",
+          "node" : "66E1592F-48A8-47C5-B227-56E3487BE98A",
           "port" : "down"
         },
         "to" : {
-          "node" : "0F7781BE-6D96-45EE-8668-2CA5FC3D050F",
+          "node" : "64BAFBA0-E5C5-485C-A20C-F682EB5A2686",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "0F7781BE-6D96-45EE-8668-2CA5FC3D050F",
+          "node" : "64BAFBA0-E5C5-485C-A20C-F682EB5A2686",
           "port" : "value"
         },
         "to" : {
-          "node" : "BFF80019-5C93-4759-B59F-8C1CC49A869C",
+          "node" : "E8E5B492-2B8E-4E4F-A2CF-F75F95F74BBF",
           "port" : "shader.amount"
         }
       },
       {
         "from" : {
-          "node" : "A5EC4346-A769-4670-8EE4-2CFD5C7CC9BF",
+          "node" : "66E1592F-48A8-47C5-B227-56E3487BE98A",
           "port" : "position"
         },
         "to" : {
-          "node" : "BFF80019-5C93-4759-B59F-8C1CC49A869C",
+          "node" : "E8E5B492-2B8E-4E4F-A2CF-F75F95F74BBF",
           "port" : "shader.touch"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "5E9147E9-33F8-41EB-9F9B-82D01451DC7F",
+        "id" : "2CFE4503-331D-4307-8244-B2926F57F29A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "7D2A874C-13EB-4739-AE31-514EF0959F9B",
+        "layerID" : "E378E563-7A67-4B97-8C8C-8EDE81F99DCA",
         "position" : {
-          "x" : 852,
-          "y" : 84
+          "x" : 912,
+          "y" : 96
         }
       },
       {
-        "id" : "BFF80019-5C93-4759-B59F-8C1CC49A869C",
+        "id" : "E8E5B492-2B8E-4E4F-A2CF-F75F95F74BBF",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "40288213-3EB3-4DC2-A979-46FA18D698E0",
+        "layerID" : "C2DCB190-168E-4E9F-80F0-8C0D0C6FA0A6",
         "position" : {
-          "x" : 564,
-          "y" : 84
+          "x" : 624,
+          "y" : 96
         },
-        "script" : "\/\/ A glass lens over the views inside this one. It follows `touch` and\n\/\/ appears with `amount`.\nstruct Inputs {\n    float2 touch = float2(195, 422);\n    float amount = 0;\n    float radius = 110;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 offset = frame.position - in.touch;\n    float d = length(offset) \/ max(in.radius, 1.0);\n    if (d >= 1 || in.amount <= 0.001) {\n        return content(frame, frame.position);\n    }\n    \/\/ Inside the lens the picture is pulled toward the middle.\n    float bend = 1 - in.amount * 0.45 * (1 - d * d);\n    float2 point = in.touch + offset * bend;\n    \/\/ The colors come apart toward the rim, as in real glass.\n    float2 along = normalize(offset + 0.0001);\n    float split = in.amount * 6 * d * d;\n    float4 color = content(frame, point);\n    color.r = content(frame, point + along * split).r;\n    color.b = content(frame, point - along * split).b;\n    float rim = smoothstep(0.9, 1.0, d) * in.amount;\n    return float4(mix(color.rgb, float3(1), rim * 0.35), color.a);\n}"
+        "script" : "\/\/ A glass lens over the views inside this one. It follows `touch` and\n\/\/ appears with `amount`.\nstruct Inputs {\n    float2 touch = float2(201, 437);\n    float amount = 0;\n    float radius = 110;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 offset = frame.position - in.touch;\n    float d = length(offset) \/ max(in.radius, 1.0);\n    if (d >= 1 || in.amount <= 0.001) {\n        return content(frame, frame.position);\n    }\n    \/\/ Inside the lens the picture is pulled toward the middle.\n    float bend = 1 - in.amount * 0.45 * (1 - d * d);\n    float2 point = in.touch + offset * bend;\n    \/\/ The colors come apart toward the rim, as in real glass.\n    float2 along = normalize(offset + 0.0001);\n    float split = in.amount * 6 * d * d;\n    float4 color = content(frame, point);\n    color.r = content(frame, point + along * split).r;\n    color.b = content(frame, point - along * split).b;\n    float rim = smoothstep(0.9, 1.0, d) * in.amount;\n    return float4(mix(color.rgb, float3(1), rim * 0.35), color.a);\n}"
       },
       {
-        "id" : "BB499C4D-7451-4365-9330-06F7194FB32A",
+        "id" : "6AFB5C99-CC1E-4A6A-AE64-269911B34B97",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C857BBF2-504A-45F5-9BBE-E00B531796E3",
+        "layerID" : "C791B4CF-5F22-4ABD-B174-96B95CA28B69",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "7E572948-12F0-4B7E-A761-FB885877C432",
+        "id" : "363A7113-5B13-4B07-95C4-B4280BCE382B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "BD6E143D-B19B-48CA-A2A5-0B407841EDA1",
+        "layerID" : "065F844C-C9F8-46B3-983F-3AF760CD197E",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "4A17BF19-AF02-495D-9150-1EC5319989AD",
+        "id" : "B7C813BC-B655-439B-B117-38275E4FB40D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "4711B18E-319B-4280-A9E7-54FBB1CFC36B",
+        "layerID" : "A3EF4569-D1FF-43FC-93D7-ACF7F15C0E72",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "CE803043-D2B7-4F43-BA3A-5F2193EB360E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "71F57F05-67A7-4F63-8CF2-EA2A642FD81C",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "CD617741-197C-4334-823E-7871D6E1D0C2",
+        "id" : "580CF4C4-E274-4B50-87FD-B8E1442BD525",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8368D51C-D0BC-4E12-B788-48D014EF74C0",
+        "layerID" : "68171A29-3CD8-4828-BF36-9EC421FDCE1D",
         "position" : {
           "x" : 48,
-          "y" : 384
+          "y" : 192
         }
       },
       {
-        "id" : "C30BEFB6-F1B9-4AA8-BC96-EAB19EEBE8BB",
+        "id" : "002345A0-D310-426B-AEAE-61FCE509171F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "7BB2EDDC-B5C3-41B5-B5EF-094EAAD50CEE",
+        "layerID" : "6DC0759C-7287-4C48-A5E0-F57185315B98",
         "position" : {
           "x" : 48,
-          "y" : 48
+          "y" : 336
         }
       },
       {
-        "id" : "B3D9FA15-649E-46AC-AC1F-27E1F7BB07F1",
+        "id" : "B46A8B35-9E30-4CFC-BD87-B544EC2C5B01",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C64D9065-011B-47C5-A608-3C0FFC097CE9",
+        "layerID" : "AE797324-0B4C-4B11-BCA0-45F1CA50E8D7",
         "position" : {
           "x" : 48,
-          "y" : 576
+          "y" : 528
         }
       },
       {
-        "id" : "80EC9AFC-358B-4A35-8741-00C89ECFF09C",
+        "id" : "AA157B86-7113-4381-AB76-D13CA4104B2C",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "48AAACE8-6A4C-46B8-9294-7EEC6A60041A",
-        "position" : {
-          "x" : 48,
-          "y" : 48
-        }
-      },
-      {
-        "id" : "700963F4-0E60-4259-BAED-5DF40F2340CD",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "B5563580-645C-44D6-B3C1-DBED24E83481",
-        "position" : {
-          "x" : 48,
-          "y" : 768
-        }
-      },
-      {
-        "id" : "3FE2D4B7-23B1-465F-9C98-A22847ADC753",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "29E31D98-990F-4157-8E90-96B5CA83DDB0",
+        "layerID" : "4C339D8E-76F3-4DFD-BE1D-BC0A718AB913",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "4C5315D1-B88C-43C1-A5BD-77007753132C",
+        "id" : "FD1E92C4-5D9F-4CBA-A757-17B7A1A8151B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "9970075D-0212-4274-9FF1-98C44BF02F52",
+        "layerID" : "378CBDF0-739E-4296-81D9-CFE61BD951C1",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "F543B7F2-918A-4540-9583-04DD58A0A719",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "06DC24AE-DBF6-40EF-AEFE-009770FEBA9D",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "E0286B39-4778-4068-AD57-7BC8E2BDE33F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C94771FC-AA1E-4C53-8EC4-B730D733292B",
+        "position" : {
+          "x" : 48,
+          "y" : 720
+        }
+      },
+      {
+        "id" : "592C9587-B5BF-4CAA-AE74-BE75A8EC1D64",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "157544C8-E909-42DA-916C-5AF50BBCD4DC",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "ABFBD9DF-E988-461B-AAA7-5EFC197F1BD4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0F5051C2-1DEA-4FFF-9DB0-0A2CEB466FA7",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "2D8EA2AA-9F54-4357-AF3B-46BBA7DD0929",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E7E1C60D-806E-49E7-A3CF-4C93846F8500",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "946C01F0-6BC4-4C1E-9E91-C00213105B41",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "88DEA363-982C-42CA-A6EB-65B71AE90274",
         "position" : {
           "x" : 288,
           "y" : 48
         }
       },
       {
-        "id" : "96FF3B18-C476-467F-B2CE-58D30D269691",
+        "id" : "6B740DF4-C9AB-466A-A876-EBE003477B1A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "5F63E6BA-AD1D-49FE-A9F3-F8F221D23E4E",
+        "layerID" : "82368895-0838-47F1-A7A1-794D3D8DD136",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "A5EC4346-A769-4670-8EE4-2CFD5C7CC9BF",
+        "id" : "FBAD61F6-2850-4366-BABF-2F99AC117C25",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EDDAD6FC-B16E-4912-ABFD-14CDA624D608",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "87B1E87A-597A-4C8D-BDA3-2E1D3E921C89",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "715FF755-8BFF-4E01-8E0D-62968E40B924",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "914373E6-47AC-4069-B645-4BFC282A2E3B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CE37C312-8B15-4B49-8E93-FEF81F31A51F",
+        "position" : {
+          "x" : 288,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "7F24978F-3AD9-4DC8-A181-6FA22D6437C3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B9B1D50F-6D1E-419C-A076-164EF0043409",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "7DCB7181-4F2F-4305-8A7E-F99A13FC5856",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "017B1B58-5E99-47AB-989C-5AAF1B274DF5",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "F6C367D9-D041-481E-B75F-59853F181E06",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C6D28981-AAC9-4D8C-ADD7-B99896FC4F68",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "9A9FF8E0-58FF-4C2F-9EAD-D41F7C947D01",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ADA7B882-1A88-45F2-8B97-1DC592F00CF5",
+        "position" : {
+          "x" : 288,
+          "y" : 432
+        }
+      },
+      {
+        "id" : "0570618B-3DD2-43F9-9604-6417A665E0FB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5B1EC412-9F40-414D-91F2-D0CA95548DC3",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "03BC360B-6430-4833-AA1C-089E3A7FA99D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F4918D2A-E91A-4413-8F8B-C7AA9CDC6ACB",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2D7F6C37-1A4E-4A7D-8709-284ABC43C3C0",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AA3AF59C-EE9F-44D8-9EE0-A058BA58898A",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "66E1592F-48A8-47C5-B227-56E3487BE98A",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "40288213-3EB3-4DC2-A979-46FA18D698E0",
+        "layerID" : "C2DCB190-168E-4E9F-80F0-8C0D0C6FA0A6",
         "position" : {
-          "x" : 36,
-          "y" : 84
+          "x" : 48,
+          "y" : 96
         }
       },
       {
-        "id" : "0F7781BE-6D96-45EE-8668-2CA5FC3D050F",
+        "id" : "64BAFBA0-E5C5-485C-A20C-F682EB5A2686",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -219,8 +413,8 @@
         },
         "kind" : "spring",
         "position" : {
-          "x" : 300,
-          "y" : 84
+          "x" : 336,
+          "y" : 96
         }
       }
     ]
@@ -233,35 +427,91 @@
             "children" : [
 
             ],
-            "id" : "C857BBF2-504A-45F5-9BBE-E00B531796E3",
+            "id" : "C791B4CF-5F22-4ABD-B174-96B95CA28B69",
             "kind" : "text",
-            "name" : "Heading",
+            "name" : "Kicker",
             "properties" : {
               "fontSize" : {
                 "type" : "number",
-                "value" : 30
+                "value" : 13
               },
               "fontWeight" : {
                 "type" : "number",
-                "value" : 800
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
-                  "y" : 84
-                }
-              },
-              "size" : {
-                "type" : "size",
-                "value" : {
-                  "height" : 40,
-                  "width" : 342
+                  "x" : 20,
+                  "y" : 76
                 }
               },
               "text" : {
                 "type" : "text",
-                "value" : "Press and drag"
+                "value" : "PALETTE"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.4588235294117647,
+                  "green" : 0.4235294117647059,
+                  "red" : 0.43137254901960786
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "065F844C-C9F8-46B3-983F-3AF760CD197E",
+            "kind" : "text",
+            "name" : "Title",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 34
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 96
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Swatches"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
               }
             }
           },
@@ -271,7 +521,7 @@
                 "children" : [
 
                 ],
-                "id" : "4711B18E-319B-4280-A9E7-54FBB1CFC36B",
+                "id" : "71F57F05-67A7-4F63-8CF2-EA2A642FD81C",
                 "kind" : "text",
                 "name" : "Label",
                 "properties" : {
@@ -283,18 +533,15 @@
                     "type" : "number",
                     "value" : 700
                   },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
                   "position" : {
                     "type" : "point",
                     "value" : {
-                      "x" : 20,
-                      "y" : 30
-                    }
-                  },
-                  "size" : {
-                    "type" : "size",
-                    "value" : {
-                      "height" : 28,
-                      "width" : 280
+                      "x" : 22,
+                      "y" : 20
                     }
                   },
                   "text" : {
@@ -309,11 +556,118 @@
                       "green" : 1,
                       "red" : 1
                     }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "68171A29-3CD8-4828-BF36-9EC421FDCE1D",
+                "kind" : "text",
+                "name" : "Code",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 22,
+                      "y" : 50
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "#FF7059"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.75,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "6DC0759C-7287-4C48-A5E0-F57185315B98",
+                "kind" : "text",
+                "name" : "Fine Print",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 230,
+                      "y" : 34
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 19.5,
+                      "width" : 110
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Aa Bb Cc 123"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Right"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.85,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
                   }
                 }
               }
             ],
-            "id" : "BD6E143D-B19B-48CA-A2A5-0B407841EDA1",
+            "id" : "A3EF4569-D1FF-43FC-93D7-ACF7F15C0E72",
             "kind" : "view",
             "name" : "Coral",
             "properties" : {
@@ -325,23 +679,23 @@
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
-                  "blue" : 0.4196078431372549,
-                  "green" : 0.4196078431372549,
+                  "blue" : 0.34901960784313724,
+                  "green" : 0.4392156862745098,
                   "red" : 1
                 }
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
-                  "y" : 150
+                  "x" : 20,
+                  "y" : 156
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
                   "height" : 88,
-                  "width" : 342
+                  "width" : 362
                 }
               }
             }
@@ -352,7 +706,7 @@
                 "children" : [
 
                 ],
-                "id" : "7BB2EDDC-B5C3-41B5-B5EF-094EAAD50CEE",
+                "id" : "4C339D8E-76F3-4DFD-BE1D-BC0A718AB913",
                 "kind" : "text",
                 "name" : "Label",
                 "properties" : {
@@ -364,18 +718,15 @@
                     "type" : "number",
                     "value" : 700
                   },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
                   "position" : {
                     "type" : "point",
                     "value" : {
-                      "x" : 20,
-                      "y" : 30
-                    }
-                  },
-                  "size" : {
-                    "type" : "size",
-                    "value" : {
-                      "height" : 28,
-                      "width" : 280
+                      "x" : 22,
+                      "y" : 20
                     }
                   },
                   "text" : {
@@ -390,11 +741,118 @@
                       "green" : 1,
                       "red" : 1
                     }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "378CBDF0-739E-4296-81D9-CFE61BD951C1",
+                "kind" : "text",
+                "name" : "Code",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 22,
+                      "y" : 50
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "#FFB340"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.75,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "06DC24AE-DBF6-40EF-AEFE-009770FEBA9D",
+                "kind" : "text",
+                "name" : "Fine Print",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 230,
+                      "y" : 34
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 19.5,
+                      "width" : 110
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Aa Bb Cc 123"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Right"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.85,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
                   }
                 }
               }
             ],
-            "id" : "8368D51C-D0BC-4E12-B788-48D014EF74C0",
+            "id" : "AE797324-0B4C-4B11-BCA0-45F1CA50E8D7",
             "kind" : "view",
             "name" : "Amber",
             "properties" : {
@@ -406,23 +864,23 @@
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
-                  "blue" : 0.30196078431372547,
-                  "green" : 0.7215686274509804,
+                  "blue" : 0.25098039215686274,
+                  "green" : 0.7019607843137254,
                   "red" : 1
                 }
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
-                  "y" : 254
+                  "x" : 20,
+                  "y" : 256
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
                   "height" : 88,
-                  "width" : 342
+                  "width" : 362
                 }
               }
             }
@@ -433,7 +891,7 @@
                 "children" : [
 
                 ],
-                "id" : "48AAACE8-6A4C-46B8-9294-7EEC6A60041A",
+                "id" : "157544C8-E909-42DA-916C-5AF50BBCD4DC",
                 "kind" : "text",
                 "name" : "Label",
                 "properties" : {
@@ -445,23 +903,20 @@
                     "type" : "number",
                     "value" : 700
                   },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
                   "position" : {
                     "type" : "point",
                     "value" : {
-                      "x" : 20,
-                      "y" : 30
-                    }
-                  },
-                  "size" : {
-                    "type" : "size",
-                    "value" : {
-                      "height" : 28,
-                      "width" : 280
+                      "x" : 22,
+                      "y" : 20
                     }
                   },
                   "text" : {
                     "type" : "text",
-                    "value" : "Mint"
+                    "value" : "Sage"
                   },
                   "textColor" : {
                     "type" : "color",
@@ -471,13 +926,120 @@
                       "green" : 1,
                       "red" : 1
                     }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "0F5051C2-1DEA-4FFF-9DB0-0A2CEB466FA7",
+                "kind" : "text",
+                "name" : "Code",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 22,
+                      "y" : 50
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "#5DB48A"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.75,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "E7E1C60D-806E-49E7-A3CF-4C93846F8500",
+                "kind" : "text",
+                "name" : "Fine Print",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 230,
+                      "y" : 34
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 19.5,
+                      "width" : 110
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Aa Bb Cc 123"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Right"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.85,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
                   }
                 }
               }
             ],
-            "id" : "C64D9065-011B-47C5-A608-3C0FFC097CE9",
+            "id" : "C94771FC-AA1E-4C53-8EC4-B730D733292B",
             "kind" : "view",
-            "name" : "Mint",
+            "name" : "Sage",
             "properties" : {
               "cornerRadius" : {
                 "type" : "number",
@@ -487,23 +1049,23 @@
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
-                  "blue" : 0.6745098039215687,
-                  "green" : 0.8313725490196079,
-                  "red" : 0.30196078431372547
+                  "blue" : 0.5411764705882353,
+                  "green" : 0.7058823529411765,
+                  "red" : 0.36470588235294116
                 }
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
-                  "y" : 358
+                  "x" : 20,
+                  "y" : 356
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
                   "height" : 88,
-                  "width" : 342
+                  "width" : 362
                 }
               }
             }
@@ -514,7 +1076,7 @@
                 "children" : [
 
                 ],
-                "id" : "29E31D98-990F-4157-8E90-96B5CA83DDB0",
+                "id" : "82368895-0838-47F1-A7A1-794D3D8DD136",
                 "kind" : "text",
                 "name" : "Label",
                 "properties" : {
@@ -526,18 +1088,15 @@
                     "type" : "number",
                     "value" : 700
                   },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
                   "position" : {
                     "type" : "point",
                     "value" : {
-                      "x" : 20,
-                      "y" : 30
-                    }
-                  },
-                  "size" : {
-                    "type" : "size",
-                    "value" : {
-                      "height" : 28,
-                      "width" : 280
+                      "x" : 22,
+                      "y" : 20
                     }
                   },
                   "text" : {
@@ -552,11 +1111,118 @@
                       "green" : 1,
                       "red" : 1
                     }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "EDDAD6FC-B16E-4912-ABFD-14CDA624D608",
+                "kind" : "text",
+                "name" : "Code",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 22,
+                      "y" : 50
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "#5AA9FF"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.75,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "715FF755-8BFF-4E01-8E0D-62968E40B924",
+                "kind" : "text",
+                "name" : "Fine Print",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 230,
+                      "y" : 34
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 19.5,
+                      "width" : 110
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Aa Bb Cc 123"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Right"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.85,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
                   }
                 }
               }
             ],
-            "id" : "B5563580-645C-44D6-B3C1-DBED24E83481",
+            "id" : "88DEA363-982C-42CA-A6EB-65B71AE90274",
             "kind" : "view",
             "name" : "Sky",
             "properties" : {
@@ -569,22 +1235,22 @@
                 "value" : {
                   "alpha" : 1,
                   "blue" : 1,
-                  "green" : 0.6078431372549019,
-                  "red" : 0.30196078431372547
+                  "green" : 0.6627450980392157,
+                  "red" : 0.35294117647058826
                 }
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
-                  "y" : 462
+                  "x" : 20,
+                  "y" : 456
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
                   "height" : 88,
-                  "width" : 342
+                  "width" : 362
                 }
               }
             }
@@ -595,7 +1261,7 @@
                 "children" : [
 
                 ],
-                "id" : "5F63E6BA-AD1D-49FE-A9F3-F8F221D23E4E",
+                "id" : "B9B1D50F-6D1E-419C-A076-164EF0043409",
                 "kind" : "text",
                 "name" : "Label",
                 "properties" : {
@@ -607,23 +1273,20 @@
                     "type" : "number",
                     "value" : 700
                   },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
                   "position" : {
                     "type" : "point",
                     "value" : {
-                      "x" : 20,
-                      "y" : 30
-                    }
-                  },
-                  "size" : {
-                    "type" : "size",
-                    "value" : {
-                      "height" : 28,
-                      "width" : 280
+                      "x" : 22,
+                      "y" : 20
                     }
                   },
                   "text" : {
                     "type" : "text",
-                    "value" : "Violet"
+                    "value" : "Plum"
                   },
                   "textColor" : {
                     "type" : "color",
@@ -633,13 +1296,120 @@
                       "green" : 1,
                       "red" : 1
                     }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "017B1B58-5E99-47AB-989C-5AAF1B274DF5",
+                "kind" : "text",
+                "name" : "Code",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 13
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 22,
+                      "y" : 50
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "#8466F5"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.75,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "C6D28981-AAC9-4D8C-ADD7-B99896FC4F68",
+                "kind" : "text",
+                "name" : "Fine Print",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 230,
+                      "y" : 34
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 19.5,
+                      "width" : 110
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Aa Bb Cc 123"
+                  },
+                  "textAlignment" : {
+                    "type" : "text",
+                    "value" : "Right"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.85,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
                   }
                 }
               }
             ],
-            "id" : "9970075D-0212-4274-9FF1-98C44BF02F52",
+            "id" : "CE37C312-8B15-4B49-8E93-FEF81F31A51F",
             "kind" : "view",
-            "name" : "Violet",
+            "name" : "Plum",
             "properties" : {
               "cornerRadius" : {
                 "type" : "number",
@@ -649,29 +1419,241 @@
                 "type" : "color",
                 "value" : {
                   "alpha" : 1,
-                  "blue" : 1,
-                  "green" : 0.4196078431372549,
-                  "red" : 0.6078431372549019
+                  "blue" : 0.9607843137254902,
+                  "green" : 0.4,
+                  "red" : 0.5176470588235295
                 }
               },
               "position" : {
                 "type" : "point",
                 "value" : {
-                  "x" : 24,
-                  "y" : 566
+                  "x" : 20,
+                  "y" : 556
                 }
               },
               "size" : {
                 "type" : "size",
                 "value" : {
                   "height" : 88,
-                  "width" : 342
+                  "width" : 362
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "F4918D2A-E91A-4413-8F8B-C7AA9CDC6ACB",
+                    "kind" : "symbol",
+                    "name" : "Glyph",
+                    "properties" : {
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.9411764705882353,
+                          "green" : 0.3607843137254902,
+                          "red" : 0.29411764705882354
+                        }
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 15,
+                          "width" : 15
+                        }
+                      },
+                      "symbol" : {
+                        "type" : "text",
+                        "value" : "hand.draw.fill"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "AA3AF59C-EE9F-44D8-9EE0-A058BA58898A",
+                    "kind" : "text",
+                    "name" : "Words",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Press and drag anywhere"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.11372549019607843,
+                          "green" : 0.09411764705882353,
+                          "red" : 0.09411764705882353
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "5B1EC412-9F40-414D-91F2-D0CA95548DC3",
+                "kind" : "view",
+                "name" : "Pill",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 18
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.92,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 16
+                  },
+                  "paddingVertical" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "shadowColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.12,
+                      "blue" : 0.2,
+                      "green" : 0.08,
+                      "red" : 0.1
+                    }
+                  },
+                  "shadowOffset" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 4
+                    }
+                  },
+                  "shadowRadius" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 36,
+                      "width" : 100
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 8
+                  },
+                  "strokeColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.8549019607843137,
+                      "green" : 0.8862745098039215,
+                      "red" : 0.9019607843137255
+                    }
+                  },
+                  "strokeWidth" : {
+                    "type" : "number",
+                    "value" : 1
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "ADA7B882-1A88-45F2-8B97-1DC592F00CF5",
+            "kind" : "view",
+            "name" : "Hint",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 792
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 402
                 }
               }
             }
           }
         ],
-        "id" : "40288213-3EB3-4DC2-A979-46FA18D698E0",
+        "id" : "C2DCB190-168E-4E9F-80F0-8C0D0C6FA0A6",
         "kind" : "view",
         "name" : "Lens",
         "properties" : {
@@ -679,16 +1661,16 @@
             "type" : "color",
             "value" : {
               "alpha" : 1,
-              "blue" : 0.97,
-              "green" : 0.97,
-              "red" : 0.97
+              "blue" : 0.9333333333333333,
+              "green" : 0.9490196078431372,
+              "red" : 0.9568627450980393
             }
           },
           "size" : {
             "type" : "size",
             "value" : {
-              "height" : 844,
-              "width" : 390
+              "height" : 874,
+              "width" : 402
             }
           }
         },
@@ -696,15 +1678,21 @@
           "inputs" : {
 
           },
-          "source" : "\/\/ A glass lens over the views inside this one. It follows `touch` and\n\/\/ appears with `amount`.\nstruct Inputs {\n    float2 touch = float2(195, 422);\n    float amount = 0;\n    float radius = 110;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 offset = frame.position - in.touch;\n    float d = length(offset) \/ max(in.radius, 1.0);\n    if (d >= 1 || in.amount <= 0.001) {\n        return content(frame, frame.position);\n    }\n    \/\/ Inside the lens the picture is pulled toward the middle.\n    float bend = 1 - in.amount * 0.45 * (1 - d * d);\n    float2 point = in.touch + offset * bend;\n    \/\/ The colors come apart toward the rim, as in real glass.\n    float2 along = normalize(offset + 0.0001);\n    float split = in.amount * 6 * d * d;\n    float4 color = content(frame, point);\n    color.r = content(frame, point + along * split).r;\n    color.b = content(frame, point - along * split).b;\n    float rim = smoothstep(0.9, 1.0, d) * in.amount;\n    return float4(mix(color.rgb, float3(1), rim * 0.35), color.a);\n}"
+          "source" : "\/\/ A glass lens over the views inside this one. It follows `touch` and\n\/\/ appears with `amount`.\nstruct Inputs {\n    float2 touch = float2(201, 437);\n    float amount = 0;\n    float radius = 110;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 offset = frame.position - in.touch;\n    float d = length(offset) \/ max(in.radius, 1.0);\n    if (d >= 1 || in.amount <= 0.001) {\n        return content(frame, frame.position);\n    }\n    \/\/ Inside the lens the picture is pulled toward the middle.\n    float bend = 1 - in.amount * 0.45 * (1 - d * d);\n    float2 point = in.touch + offset * bend;\n    \/\/ The colors come apart toward the rim, as in real glass.\n    float2 along = normalize(offset + 0.0001);\n    float split = in.amount * 6 * d * d;\n    float4 color = content(frame, point);\n    color.r = content(frame, point + along * split).r;\n    color.b = content(frame, point - along * split).b;\n    float rim = smoothstep(0.9, 1.0, d) * in.amount;\n    return float4(mix(color.rgb, float3(1), rim * 0.35), color.a);\n}"
         }
       }
     ],
-    "id" : "7D2A874C-13EB-4739-AE31-514EF0959F9B",
+    "id" : "E378E563-7A67-4B97-8C8C-8EDE81F99DCA",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {
-
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
     }
   },
   "version" : 4
