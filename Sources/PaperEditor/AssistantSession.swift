@@ -7,7 +7,7 @@ import PaperModel
 /// One conversation with the assistant about one open document. Owns the transcript, runs
 /// the tools the assistant asks for on the document, and keeps the line to Claude.
 @Observable
-public final class AssistantSession {
+public final class AssistantSession: Identifiable {
     public struct Entry: Identifiable, Equatable {
         public enum Kind: Equatable {
             case user
@@ -104,7 +104,27 @@ public final class AssistantSession {
         }
     }
 
+    public let id = UUID()
+    /// When the chat began, for the list of chats.
+    public let started = Date()
     public private(set) var entries: [Entry] = []
+    /// What is typed in this chat's composer and not yet sent. Each chat keeps its own.
+    public var draft = ""
+    /// How many answers have finished, so the list of chats can mark one that finished
+    /// while another was shown.
+    public private(set) var finishedAnswers = 0
+
+    /// Nothing has been said in this chat yet.
+    public var isEmpty: Bool { entries.isEmpty && queued.isEmpty && !isWorking }
+
+    /// What the chat is called in the list: its first message, on one line.
+    public var title: String {
+        guard let first = entries.first(where: { $0.kind == .user }) ?? queued.first.map({ Entry(kind: .user, text: $0.text) }) else {
+            return "New Chat"
+        }
+        let line = first.text.split(whereSeparator: \.isNewline).first.map(String.init) ?? first.text
+        return line.count > 60 ? String(line.prefix(60)).trimmingCharacters(in: .whitespaces) + "…" : line
+    }
     /// True from sending a message until the assistant has finished answering it.
     public private(set) var isWorking = false
     /// What the assistant is busy with, shown while it works.
@@ -148,7 +168,13 @@ public final class AssistantSession {
     /// store transaction, so all that is built from them is one undo step.
     @ObservationIgnored private var liveEdits: [String: AssistantToolbox.LiveEdit] = [:]
     @ObservationIgnored private var liveStart: PaperModel.Document?
-    @ObservationIgnored private var ownsLiveTransaction = false
+    /// The refs this chat's batches gave. Each chat has its own, so a ref one chat made is
+    /// never what another chat's batch means by the same word.
+    @ObservationIgnored private var refs = AgentRefs()
+    /// Whether another chat was building when this one began, and how many holds the store
+    /// had seen then: together they say whether anyone else built while this one did.
+    @ObservationIgnored private var sharedLive = false
+    @ObservationIgnored private var liveHoldMark = 0
     /// Whether changes are applied while the model writes them, or only once the call arrives.
     @ObservationIgnored public var buildsLive = true
     @ObservationIgnored private var timing = AssistantTiming()
@@ -378,16 +404,19 @@ public final class AssistantSession {
             itemsWritten += 1
             let toolbox = AssistantToolbox(store: store)
             let live = (message["useId"] as? String).flatMap { liveEdits[$0] }
-            // Built as it is written, so the person watches the prototype take shape.
-            if let live { toolbox.apply(item, to: live) }
-            status = AssistantProgress.line(
-                tool: message["name"] as? String ?? "", item: item, count: itemsWritten,
-                resolve: { toolbox.name(for: $0, in: live) }
-            )
+            status = withOwnRefs {
+                // Built as it is written, so the person watches the prototype take shape.
+                if let live { toolbox.apply(item, to: live) }
+                return AssistantProgress.line(
+                    tool: message["name"] as? String ?? "", item: item, count: itemsWritten,
+                    resolve: { toolbox.name(for: $0, in: live) }
+                )
+            }
         case "tool_abandoned":
             // A call the model wrote that never arrived: what was built from it goes.
             guard let useId = message["useId"] as? String, let live = liveEdits.removeValue(forKey: useId) else { return }
-            if liveEdits.isEmpty, store.document != live.startingPoint {
+            // Going back to where it began would also take what another chat built meanwhile.
+            if liveEdits.isEmpty, !othersBuilding, store.document != live.startingPoint {
                 store.apply("Revert") { $0 = live.startingPoint }
             }
             closeLiveTransaction()
@@ -398,10 +427,14 @@ public final class AssistantSession {
             let result: AssistantToolResult
             if name == "edit_document", let useId = message["useId"] as? String,
                let live = liveEdits.removeValue(forKey: useId) {
-                result = finishLive(live, operations: input["operations"] as? [[String: Any]] ?? [])
+                result = withOwnRefs { finishLive(live, operations: input["operations"] as? [[String: Any]] ?? []) }
             } else {
                 let before = store.fullDocument
-                result = AssistantToolbox(store: store).call(name, input: input)
+                // Held like a batch built as it streams, so a chat building meanwhile
+                // knows this one changed the document too.
+                store.holdTransaction()
+                result = withOwnRefs { AssistantToolbox(store: store).call(name, input: input) }
+                store.releaseTransaction(AssistantToolbox(store: store).editName)
                 if store.fullDocument != before {
                     if turnBefore == nil { turnBefore = before }
                     turnSteps += 1
@@ -426,6 +459,7 @@ public final class AssistantSession {
         case "done":
             settleLive()
             isWorking = false
+            finishedAnswers += 1
             status = ""
             if let before = turnBefore, before != store.fullDocument {
                 entries.append(Entry(
@@ -454,7 +488,9 @@ public final class AssistantSession {
         if liveStart == nil {
             if turnBefore == nil { turnBefore = store.fullDocument }
             liveStart = store.fullDocument
-            ownsLiveTransaction = store.beginTransaction()
+            sharedLive = store.transactionHolders > 0
+            store.holdTransaction()
+            liveHoldMark = store.holdsBegun
         }
         liveEdits[useId] = live
     }
@@ -464,7 +500,9 @@ public final class AssistantSession {
     private func finishLive(_ live: AssistantToolbox.LiveEdit, operations: [[String: Any]]) -> AssistantToolResult {
         let toolbox = AssistantToolbox(store: store)
         let built = live.operations
-        let matches = operations.count >= built.count
+        // While another chat builds too, building again from the start would take its work
+        // with it, so what streamed stands and only what follows it is added.
+        let matches = othersBuilding || operations.count >= built.count
             && zip(built, operations).allSatisfy { NSDictionary(dictionary: $0).isEqual(to: $1) }
         let result: AssistantToolResult
         if matches {
@@ -484,18 +522,36 @@ public final class AssistantSession {
     /// one undo step.
     private func settleLive() {
         let toolbox = AssistantToolbox(store: store)
-        for live in liveEdits.values where !live.operations.isEmpty { _ = toolbox.finishEdit(live) }
+        withOwnRefs {
+            for live in liveEdits.values where !live.operations.isEmpty { _ = toolbox.finishEdit(live) }
+        }
         liveEdits = [:]
         closeLiveTransaction()
+    }
+
+    /// Whether another chat has built in the document while this one was building: then
+    /// going back to where this one began would take that chat's work too.
+    private var othersBuilding: Bool {
+        guard liveStart != nil else { return store.transactionHolders > 0 }
+        return sharedLive || store.holdsBegun != liveHoldMark || store.transactionHolders > 1
+    }
+
+    /// Runs the toolbox with this chat's refs in place of whatever the store holds, so
+    /// chats (and outside agents) never read each other's refs.
+    private func withOwnRefs<T>(_ body: () -> T) -> T {
+        let shared = store.agentRefs
+        store.agentRefs = refs
+        defer {
+            refs = store.agentRefs
+            store.agentRefs = shared
+        }
+        return body()
     }
 
     private func closeLiveTransaction() {
         guard liveEdits.isEmpty, let start = liveStart else { return }
         liveStart = nil
-        if ownsLiveTransaction {
-            ownsLiveTransaction = false
-            store.endTransaction(AssistantToolbox(store: store).editName)
-        }
+        store.releaseTransaction(AssistantToolbox(store: store).editName)
         if store.fullDocument != start { turnSteps += 1 }
     }
 

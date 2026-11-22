@@ -67,7 +67,7 @@ guard let command = arguments.first else {
       papertool viewer <document> <out.png> [--tap x,y] [--seconds t]
       papertool record <document> <out.mov> [--tap x,y] [--seconds t] [--no-touches]
       papertool record <document> out.mov --replay '<steps as JSON>'
-      papertool editor <document> out.png --assistant "<request>" [--attach picture-or-video,…] [--queue "<request>"]
+      papertool editor <document> out.png --assistant "<request>" [--chat "<earlier chat>"] [--attach picture-or-video,…] [--queue "<request>"]
       papertool assistant <document> "<request>" [--out result.tango] [--model fable|opus|sonnet|haiku] [--effort low|medium|high|xhigh|max] [--attach picture-or-video,…]
       papertool editor <document> <out.png> [--width w] [--height h] [--select-layer name] [--select-patch name]
       papertool extension validate <folder> | install <folder> | list | uninstall <id>
@@ -287,13 +287,20 @@ case "editor":
     }
     // Shows the Assistant with a conversation played by a stand-in for Claude, what is
     // selected held as references, and --attach files in the composer.
-    var session: AssistantSession?
+    var chats: AssistantChats?
     if let request = option("--assistant", in: arguments) {
-        let made = AssistantSession(store: store) { RehearsedTransport() }
-        session = made
+        let all = AssistantChats(store: store) { RehearsedTransport() }
+        chats = all
         store.sidebarMode = .assistant
         let done = DispatchSemaphore(value: 0)
         Task { @MainActor in
+            // --chat is an earlier chat, finished out of sight, beside the one shown.
+            if let other = option("--chat", in: arguments) {
+                await all.current.send(other)
+                while all.current.isWorking { try? await Task.sleep(for: .milliseconds(20)) }
+                all.newChat()
+            }
+            let made = all.current
             if !store.selectedNodes.isEmpty { store.addToAssistant() }
             await made.send(request)
             while made.isWorking { try? await Task.sleep(for: .milliseconds(20)) }
@@ -313,7 +320,7 @@ case "editor":
         contentRect: CGRect(x: 0, y: 0, width: width, height: height),
         styleMask: [.titled, .resizable], backing: .buffered, defer: false
     )
-    let host = NSHostingView(rootView: EditorView(store: store, assistant: session, extensions: installedExtensions))
+    let host = NSHostingView(rootView: EditorView(store: store, assistant: chats, extensions: installedExtensions))
     host.frame = CGRect(x: 0, y: 0, width: width, height: height)
     window.contentView = host
     window.setFrameOrigin(CGPoint(x: -10000, y: -10000))

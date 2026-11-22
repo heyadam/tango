@@ -2,10 +2,11 @@ import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// The chat with the assistant, shown in the trailing column in place of the Inspector.
+/// The chats with the assistant, in the leading sidebar: the one shown, and above it a
+/// strip of the others once there are several.
 struct AssistantView: View {
-    @Bindable var session: AssistantSession
-    @State private var draft = ""
+    @Bindable var chats: AssistantChats
+    private var session: AssistantSession { chats.current }
     @State private var isDropTarget = false
     @State private var pasteMonitor: Any?
     @FocusState private var typing: Bool
@@ -18,6 +19,9 @@ struct AssistantView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if chats.chats.count > 1 || !chats.current.isEmpty {
+                AssistantChatHeader(chats: chats)
+            }
             if session.entries.isEmpty {
                 ContentUnavailableView {
                     Label("Assistant", systemImage: "sparkles")
@@ -34,13 +38,18 @@ struct AssistantView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 transcript
+                    // Each chat keeps its own place, starting at its end.
+                    .id(session.id)
             }
 
             VStack(alignment: .leading, spacing: AssistantStyle.lineSpacing) {
                 ForEach(session.queued) { message in
                     QueuedRow(message: message, session: session)
                 }
-                AssistantComposer(session: session, draft: $draft, typing: $typing, isDropTarget: isDropTarget)
+                AssistantComposer(
+                    session: session, draft: Binding(get: { session.draft }, set: { session.draft = $0 }),
+                    typing: $typing, isDropTarget: isDropTarget, changeModel: { chats.setModel($0) }
+                )
             }
             .padding(.horizontal, AssistantStyle.margin)
             .padding(.bottom, AssistantStyle.margin)
@@ -61,6 +70,7 @@ struct AssistantView: View {
             pasteMonitor = nil
         }
         .onChange(of: session.store.assistantFocusRequest) { typing = true }
+        .onChange(of: chats.currentID) { typing = true }
     }
 
     private var transcript: some View {
@@ -117,6 +127,75 @@ struct AssistantView: View {
             }
             return event
         }
+    }
+}
+
+/// Which chat is shown, once one has begun: a glass menu naming it, whose icon says when
+/// any chat is answering (it moves) or another has an answer not yet seen (it fills), and
+/// whose menu lists every chat with the same icons; then a glass button that deletes it.
+private struct AssistantChatHeader: View {
+    let chats: AssistantChats
+
+    var body: some View {
+        let shown = chats.current
+        let others = chats.chats.filter { $0.id != shown.id }
+        let answering = chats.chats.count { $0.isWorking }
+        let unseen = others.count { chats.hasUnseenAnswer($0) }
+        HStack {
+            Menu {
+                AssistantChatList(chats: chats)
+            } label: {
+                Label {
+                    Text(shown.title).lineLimit(1)
+                } icon: {
+                    Image(systemName: answering > 0 ? "ellipsis.bubble" : unseen > 0 ? "bubble.left.fill" : "bubble.left")
+                        .symbolEffect(.variableColor.iterative, isActive: answering > 0)
+                        .foregroundStyle(unseen > 0 && answering == 0 ? AnyShapeStyle(.tint) : AnyShapeStyle(.primary))
+                }
+            }
+            .buttonStyle(.glass)
+            .fixedSize(horizontal: false, vertical: true)
+            .layoutPriority(-1)
+            .help(Self.help(answering: answering, unseen: unseen))
+            Spacer(minLength: 0)
+            Button("Delete Chat", systemImage: "trash") { chats.delete(shown.id) }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.glass)
+                .disabled(!chats.canDeleteCurrent)
+                .help(shown.isWorking ? "Stop this chat and delete it. The document keeps its changes." : "Delete this chat. The document keeps its changes.")
+        }
+        .padding(.horizontal, AssistantStyle.margin)
+        .padding(.vertical, 8)
+    }
+
+    static func help(answering: Int, unseen: Int) -> String {
+        var parts = ["Every chat about this document"]
+        if answering > 0 { parts.append(answering == 1 ? "1 is answering" : "\(answering) are answering") }
+        if unseen > 0 { parts.append(unseen == 1 ? "1 has a new answer" : "\(unseen) have new answers") }
+        return parts.joined(separator: " · ")
+    }
+}
+
+/// The chats, newest first, for a menu: picking one shows it.
+struct AssistantChatList: View {
+    let chats: AssistantChats
+
+    var body: some View {
+        Picker("Chats", selection: Binding(get: { chats.currentID }, set: { chats.select($0) })) {
+            ForEach(chats.chats) { chat in
+                Label {
+                    Text(chat.title)
+                    Text(chat.isWorking ? "Answering…" : chats.hasUnseenAnswer(chat) ? "New answer" : chat.started.formatted(.relative(presentation: .named)))
+                } icon: {
+                    Image(systemName: chat.isWorking ? "ellipsis.bubble" : chats.hasUnseenAnswer(chat) ? "bubble.left.fill" : "bubble.left")
+                }
+                .tag(chat.id)
+            }
+        }
+        .pickerStyle(.inline)
+        Divider()
+        Button("Delete Chat", systemImage: "trash", role: .destructive) { chats.delete(chats.currentID) }
+            .disabled(!chats.canDeleteCurrent)
     }
 }
 
