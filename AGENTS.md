@@ -19,6 +19,8 @@ scripts/player-shots.sh [gallery id…]   # its pictures beside the Mac's, in bu
 
 Releases (a signed, notarized DMG on GitHub, from a `v*` tag) are `scripts/release.sh` and `.github/workflows/release.yml`; `RELEASING.md` has the steps and the signing setup. Hardened runtime is on in Release only, so a new device capability needs its entitlement in `project.yml`.
 
+The app icon is `Icon/Tango.icon`, an Icon Composer file both apps build from (`ASSETCATALOG_COMPILER_APPICON_NAME: Tango`). It holds the full-bleed square artwork only: macOS and iOS cut the rounded shape, the margin, the shadow and the glass edge themselves, so never bake corners into `Assets/tango.png`. Edit it in Icon Composer (in Xcode's Applications), which also gives it dark and tinted looks.
+
 Requires Xcode 27 / Swift 6.2 / macOS 26, and `brew install xcodegen`. The assistant also needs Node.js 18 or later at run time; nothing else does.
 
 `papertool` drives the same code without showing a window:
