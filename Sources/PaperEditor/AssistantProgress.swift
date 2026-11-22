@@ -133,8 +133,12 @@ public struct AssistantTiming: Equatable {
     private var current: Phase?
     private var since: TimeInterval = 0
     private var began: TimeInterval?
+    /// Who the wait is for, by name.
+    private var waitingFor = "Claude"
 
-    public init() {}
+    public init(waitingFor: String = "Claude") {
+        self.waitingFor = waitingFor
+    }
 
     public mutating func enter(_ phase: Phase, at time: TimeInterval) {
         if began == nil { began = time }
@@ -156,7 +160,7 @@ public struct AssistantTiming: Equatable {
         let parts = totals
             .filter { $0.value >= 1 }
             .sorted { $0.value > $1.value }
-            .map { "\($0.key.label) \(Self.duration($0.value))" }
+            .map { "\($0.key == .waiting ? "waiting for \(waitingFor)" : $0.key.label) \(Self.duration($0.value))" }
         return (["Took " + Self.duration(time - began)] + parts).joined(separator: " · ")
     }
 

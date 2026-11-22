@@ -1,7 +1,7 @@
 // The tango assistant's link to Claude.
 //
 // The app starts this with Node and exchanges one JSON object per line:
-//   app  -> here : {type:"start", systemPrompt, model?, effort?, claudePath?}
+//   app  -> here : {type:"start", systemPrompt, model?, effort?, claudePath?, apiKey?}
 //                  {type:"effort", effort}   (null goes back to the model's default)
 //                  {type:"user", text, images?: [{label, data, mediaType}]}
 //                  {type:"tool_result", id, text, images?, isError?}
@@ -172,9 +172,12 @@ class ItemScanner {
 const shortName = (name) => String(name ?? "").replace(/^mcp__paper__/, "");
 
 async function run(start) {
-  // Without an API key in its environment the SDK uses this Mac's Claude login.
+  // Without an API key in its environment the SDK uses this Mac's Claude login. A key is
+  // used only when the app sends one (the person chose it in Settings), never one that
+  // happens to be in the environment.
   const env = { ...process.env };
   delete env.ANTHROPIC_API_KEY;
+  if (start.apiKey) env.ANTHROPIC_API_KEY = start.apiKey;
 
   const options = {
     systemPrompt: start.systemPrompt,

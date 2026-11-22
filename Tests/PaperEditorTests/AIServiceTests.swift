@@ -114,7 +114,7 @@ import PaperModel
         #expect(!keys.hasKey(for: .anthropic))
         try keys.set("  sk-ant-abcd1234  ", for: .anthropic)
         #expect(keys.key(for: .anthropic) == "sk-ant-abcd1234")
-        #expect(keys.hints[.anthropic] == "1234")
+        #expect(keys.hints[AIProvider.anthropic.rawValue] == "1234")
         // A new launch knows a key is saved without asking the keychain.
         let later = AIKeys(vault: vault, defaults: defaults)
         #expect(later.hasKey(for: .anthropic) && !later.hasKey(for: .openAI))
