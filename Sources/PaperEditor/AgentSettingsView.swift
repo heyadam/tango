@@ -14,6 +14,9 @@ struct AgentSettingsView: View {
                 Toggle("Show touches in recordings", isOn: $recordsTouches)
             }
             AIKeysSection(keys: .shared)
+            Section("iPhone") {
+                DeviceLinkPanel(link: .shared)
+            }
             Section {
                 Toggle("Let coding agents control tango", isOn: $service.isEnabled)
                 LabeledContent("Status") { Text(status).foregroundStyle(.secondary) }

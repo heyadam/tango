@@ -18,8 +18,8 @@ public final class PlayerView: UIView {
     /// touch belongs to the prototype.
     public var onMenu: (() -> Void)?
 
-    public init(package: DocumentPackage, sendsRequests: Bool = true) {
-        host = PrototypeHost(package: package, sendsRequests: sendsRequests)
+    public init(host: PrototypeHost) {
+        self.host = host
         super.init(frame: .zero)
         backgroundColor = .black
         isMultipleTouchEnabled = true
@@ -127,30 +127,17 @@ public final class PlayerView: UIView {
 
 /// A prototype, playing, as a SwiftUI view.
 struct PlayerSurface: UIViewRepresentable {
-    let package: DocumentPackage
-    /// Changes to start the prototype over.
-    let restart: Int
+    let host: PrototypeHost
     let onMenu: () -> Void
 
     func makeUIView(context: Context) -> PlayerView {
-        let view = PlayerView(package: package)
+        let view = PlayerView(host: host)
         view.onMenu = onMenu
-        context.coordinator.restart = restart
         return view
     }
 
     func updateUIView(_ view: PlayerView, context: Context) {
         view.onMenu = onMenu
-        if context.coordinator.restart != restart {
-            context.coordinator.restart = restart
-            view.host.restart()
-        }
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator() }
-
-    final class Coordinator {
-        var restart = 0
     }
 }
 #endif

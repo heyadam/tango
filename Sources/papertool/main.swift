@@ -1,6 +1,7 @@
 import AppKit
 import PaperEditor
 import PaperEngine
+import PaperLink
 import PaperModel
 import SwiftUI
 
@@ -64,6 +65,7 @@ guard let command = arguments.first else {
       papertool examples <directory>
       papertool sample-video <out.mov>
       papertool json <document>
+      papertool link <document> [--port n] [--edit "<text>"]
       papertool viewer <document> <out.png> [--tap x,y] [--seconds t]
       papertool record <document> <out.mov> [--tap x,y] [--seconds t] [--no-touches]
       papertool record <document> out.mov --replay '<steps as JSON>'
@@ -186,6 +188,54 @@ case "glassfit":
         }
         print(String(format: "%.2f  ", best) + values.keys.sorted().map { String(format: "%@=%.3f", $0, values[$0]!) }.joined(separator: " "))
         if !moved { for name in steps.keys { steps[name]! /= 2 } }
+    }
+
+case "link":
+    // Sends a document to a player, as the app's Play on iPhone does, on this Mac only:
+    // nothing is advertised, and the player is told where to connect.
+    guard arguments.count >= 2 else { fail("link needs a document") }
+    setvbuf(stdout, nil, _IOLBF, 0)
+    var port: UInt16 = 47900
+    var edits: String?
+    var index = 2
+    while index < arguments.count {
+        if arguments[index] == "--port", index + 1 < arguments.count { port = UInt16(arguments[index + 1]) ?? port; index += 1 }
+        if arguments[index] == "--edit", index + 1 < arguments.count { edits = arguments[index + 1]; index += 1 }
+        index += 1
+    }
+    var package = loadDocument(arguments[1])
+    let link = DeviceLink(keys: MemoryLinkKeyStore(), advertises: false, port: port)
+    link.isEnabled = true
+    spinRunLoop(0.3)
+    guard case .listening = link.state, let key = link.key else { fail("Could not listen on port \(port): \(link.state)") }
+    print("Listening. Start the player with:  -linkkey \(key.text) -linkhost 127.0.0.1:\(port)")
+    var shown: Int?
+    var edited = false
+    while true {
+        spinRunLoop(0.1)
+        // A phone that connects gets the document; `publish` does nothing until one has.
+        if let phone = link.phones.first, phone.shows == nil, shown == nil {
+            link.publish(.init(prototype: "papertool", name: arguments[1], package: package))
+        }
+        if let phone = link.phones.first, phone.shows != shown {
+            shown = phone.shows
+            print("\(phone.name) shows revision \(shown ?? 0)\(phone.notice.map { " (\($0))" } ?? "")")
+            // `--edit <text>` retypes the first text view three seconds later, to see an edit arrive.
+            if let edits, !edited {
+                edited = true
+                spinRunLoop(3)
+                func firstText(in layer: Layer) -> LayerID? {
+                    if layer.kind == .text { return layer.id }
+                    for child in layer.children { if let found = firstText(in: child) { return found } }
+                    return nil
+                }
+                if let id = firstText(in: package.document.screen) {
+                    package.document.screen.update(id) { $0.set(.text, .text(edits)) }
+                    link.publish(.init(prototype: "papertool", name: arguments[1], package: package))
+                }
+            }
+        }
+        if link.phones.isEmpty { shown = nil }
     }
 
 case "json":

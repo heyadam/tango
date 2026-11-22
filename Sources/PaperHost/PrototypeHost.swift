@@ -1,4 +1,5 @@
 import CoreGraphics
+import CryptoKit
 import Foundation
 import PaperEngine
 import PaperModel
@@ -24,10 +25,19 @@ public final class PrototypeHost {
     /// What the prototype asked the device to do this frame (a haptic, a sound).
     public var onEffect: ((DeviceEffect) -> Void)?
 
-    private var restartToken = 0
+    private var restartToken: Int
     /// The scale and corner the screen is shown at, in the layer's coordinates (y-down).
     public private(set) var scale: CGFloat = 1
     public private(set) var origin = CGPoint.zero
+
+    /// A hash of the kinds of patch and view this build knows. A Mac and a phone whose
+    /// hashes differ were built from different versions, and the phone may show a
+    /// prototype wrongly.
+    public static let kinds: String = {
+        let names = PatchRegistry.standard.library.map(\.kind).sorted() + LayerKind.allCases.map(\.rawValue)
+            + ["document \(Document.currentVersion)"]
+        return SHA256.hash(data: Data(names.joined(separator: "\n").utf8)).prefix(8).map { String(format: "%02x", $0) }.joined()
+    }()
 
     /// What AI patches are told where none can run.
     public static let noAI = "AI patches do not run on this device yet."
@@ -40,7 +50,11 @@ public final class PrototypeHost {
 
     /// `sendsRequests` off makes a host whose Network Request patches send nothing and
     /// stay loading, for pictures and tests.
-    public init(package: DocumentPackage, registry: PatchRegistry? = nil, sendsRequests: Bool = true, startScreen: LayerID? = nil) {
+    public init(
+        package: DocumentPackage, registry: PatchRegistry? = nil, sendsRequests: Bool = true,
+        startScreen: LayerID? = nil, restartToken: Int = 0
+    ) {
+        self.restartToken = restartToken
         let registry = registry ?? Self.registry(for: package)
         self.registry = registry
         assets = package.assets

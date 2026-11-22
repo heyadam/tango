@@ -7,6 +7,7 @@ public struct EditorScene: Scene {
     public init() {
         // Only the app listens for agents; papertool and tests never get here.
         AgentService.shared.startIfEnabled()
+        DeviceLink.shared.startIfEnabled()
     }
 
     public var body: some Scene {
@@ -169,6 +170,10 @@ public struct EditorView: View {
                 shown: store.showsViewer && store.editingScript == nil,
                 keys: extensions.keys
             ))
+            // A paired iPhone gets what the Viewer gets.
+            .background(DeviceLinkBridge(
+                store: store, name: documentName, fileURL: fileURL, isFront: appearsActive, link: .shared
+            ))
             }
         }
         .inspector(isPresented: $store.showsInspector) {
@@ -231,6 +236,7 @@ public struct EditorView: View {
                     store.restartPrototype()
                 }
                 .help("Restart the prototype in the Viewer")
+                DeviceLinkButton(link: .shared)
             }
             ToolbarItem(placement: .primaryAction) {
                 Toggle("Inspector", systemImage: "sidebar.trailing", isOn: $store.showsInspector)

@@ -51,6 +51,8 @@ targets:
             UTTypeTagSpecification:
               public.filename-extension:
                 - tango
+        NSLocalNetworkUsageDescription: tango sends the prototype you are making to the tango app on a paired iPhone nearby.
+        NSBonjourServices: [_tango._tcp]
     entitlements:
       path: App/Tango.entitlements
       properties:
@@ -96,6 +98,9 @@ targets:
         UIRequiresFullScreen: true
         # Prototypes run at the display's full rate.
         CADisableMinimumFrameDurationOnPhone: true
+        NSLocalNetworkUsageDescription: tango looks for your Mac nearby to play the prototypes you make on it.
+        NSBonjourServices: [_tango._tcp]
+        NSCameraUsageDescription: tango uses the camera to scan the code your Mac shows, which pairs the two.
     settings:
       base:
         MARKETING_VERSION: "0.1"

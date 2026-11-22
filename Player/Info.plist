@@ -22,6 +22,14 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_tango._tcp</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>tango uses the camera to scan the code your Mac shows, which pairs the two.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>tango looks for your Mac nearby to play the prototypes you make on it.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiresFullScreen</key>

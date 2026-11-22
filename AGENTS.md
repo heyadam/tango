@@ -30,6 +30,7 @@ swift run papertool viewer <doc> out.png [--tap x,y] [--seconds t]
 swift run papertool record <doc> out.mov [--tap x,y] [--seconds t] [--no-touches] [--replay '<interact_prototype steps as JSON>']
 swift run papertool editor <doc> out.png [--canvas] [--select-layer name] [--shader-code] [--assistant "<request>" [--chat "<earlier chat>"] [--attach file,…] [--queue "<request>"]]
 swift run papertool json <doc>
+swift run papertool link <doc> [--port n] [--edit "<text>"]   # send a document to a player on this Mac (the simulator), as Play on iPhone does
 swift run papertool glassfit build/reference/shots blur=24:3 detail=0.3:0.04 …   # fit the glass shader to iOS 26's (after Reference/run.sh glass-checker glass-stripes glass-circle)
 swift run papertool assistant <doc> "<request>" [--out result.tango] [--model fable|opus|sonnet|haiku] [--effort low|medium|high|xhigh|max] [--attach picture-or-video,…]
 swift run papertool extension new <name> [folder] | validate <folder> | install <folder> | list | uninstall <id>
@@ -47,18 +48,20 @@ One Swift package, `TangoKit`, with a strict one-way dependency chain, wrapped b
 ```
 PaperModel  <-  PaperEngine  <-  PaperRender  <-  PaperHost  <-  PaperEditor  <-  App      (macOS)
                                                              <-  PaperPlayer  <-  Player   (iOS)
+PaperModel  <-  PaperLink        (PaperEditor sends with it, PaperPlayer receives)
 ```
 
 - **PaperModel** — values and documents, no UI imports. `Value`/`PortType`, `Layer`/`LayerProperty`/`ViewType`/`ViewInput`, `Graph`/`PatchNode`/`Connection`/`GraphComment`, `ComponentDefinition`, `Document` (with `normalize` and the version 2 upgrade), `DocumentPackage` (the `.tango` package: `document.json` plus `assets/` and `extensions/`), `ExtensionManifest` and `PaperExtension` (an extension as its files).
 - **PaperEngine** — runs a document. `PatchDefinition` + `StandardPatches`, `PatchRegistry`, `Runtime`, `ResolvedLayer` + `Layout`, `ComponentExpansion`, `ComponentLibrary` (`Library/`: the iOS shelf, its tokens in `SystemStyle`, and `ViewTemplate`), `Script` (JavaScript patches), `ShaderSource` (reads a shader view's source; no Metal), `Samples` and `Patterns` (the example documents, built in code, and the `Gallery` catalog that lists them; `Media/` holds the one clip an example plays), `Extension` (`ExtensionSet`, what extensions add to the registry, `ExtensionLog`) and `Drawing` (`DrawCommand`, `ViewPainter`).
 - **PaperRender** — `LayerRenderer`: a resolved layer tree to a `CALayer` tree. `ShaderCompiler` and `ShaderSurface` (`ShaderRenderer.swift`): Metal for shader views, the only GPU code. `DrawingRasterizer`: what an extension's view drew, as a picture. `VideoStills` and `VideoPlayer` (`VideoRenderer.swift`): AVFoundation for video views.
 - **PaperHost** — what anything that hosts a running prototype does that is not a view, so it is written once: `PrototypeNetwork` (a Network Request patch's request as a `URLRequest`, the guarded session, sending), `PictureStore` (the pictures a prototype shows by name: assets decoded once, fetched and made ones kept, `ExtensionImages`), `VideoFiles`, `Viewport` (where a screen goes in the view that shows it), and `PrototypeHost`, which owns a `Runtime`, a `LayerRenderer` and all of those for a view that only forwards touches and frames (the player's; `ViewerView` is not on it yet). The Mac's Viewer and Canvas use the rest; a host service a second host needs moves here from `PaperEditor`, it is not copied. AppKit only behind `canImport`.
-- **PaperPlayer** — the iOS player (see "The device player"): `PlayerScene`, `PlayerView`. Its files are whole inside `#if os(iOS)`, so on the Mac the module is what is left.
+- **PaperLink** — the wire between the Mac and a phone: `LinkMessage`, `LinkFrame`, `LinkOutbox` and `LinkInbox`, `LinkKey`, and the sockets (`LinkTransport.swift`). It knows documents, never the engine. No default isolation.
+- **PaperPlayer** — the iOS player (see "The device player"): `PlayerStore` (portable, tested on the Mac), and `PlayerScene` and `PlayerView`, whose files are whole inside `#if os(iOS)`.
 - **PaperEditor** — the app's UI. `DocumentStore` (+ `DocumentCommands`, `Clipboard`), `EditorView`, `CanvasView`, `PatchEditorView`, `ViewerView` + `ViewerWindow` + `ViewerSnapshot`, `InspectorView`, `LayerListView`, `GalleryView`, `DeviceServices`, `Recorder`, and the assistant (`AssistantToolbox`, `AssistantPrompt`, `AssistantSession`, `AssistantTransport`, `AssistantView`, `Assistant/sidecar.mjs`), the MCP server for outside agents (`AgentServer`, `AgentListener`, `OpenDocuments`, `AgentSettingsView`), and extensions (`ExtensionStore`, `ExtensionNetwork`, `KeyVault`, `ExtensionManagerView`).
 
 `PaperRender`, `PaperHost`, `PaperPlayer`, `PaperEditor` and `papertool` use `defaultIsolation(MainActor.self)`. `PaperModel` and `PaperEngine` are isolation-free and must stay free of AppKit.
 
-The package builds for macOS and iOS. Everything in `Sources/` compiles for macOS and is tested there; `PaperModel`, `PaperEngine`, `PaperRender`, `PaperHost` and `PaperPlayer` also compile for iOS, so AppKit and UIKit appear in them only behind `canImport`. `PaperEditor` and `papertool` never build for iOS: only the `TangoPlayer` scheme is built for it (the package's own schemes would try to build the editor).
+The package builds for macOS and iOS. Everything in `Sources/` compiles for macOS and is tested there; `PaperModel`, `PaperEngine`, `PaperRender`, `PaperHost`, `PaperLink` and `PaperPlayer` also compile for iOS, so AppKit and UIKit appear in them only behind `canImport`. `PaperEditor` and `papertool` never build for iOS: only the `TangoPlayer` scheme is built for it (the package's own schemes would try to build the editor).
 
 ## Views are patches
 
@@ -135,7 +138,7 @@ Not in the product spec. A prototype can have several screens, shown side by sid
 
 ## The device player
 
-Spec 7.9 (a companion player; device mirroring). An iOS app that runs prototypes with the same engine and renderer, under real fingers. So far it plays the gallery's examples; receiving a prototype live from the Mac, and keeping it, are not built.
+Spec 7.9 (a companion player; device mirroring). An iOS app that runs prototypes with the same engine and renderer, under real fingers: the gallery's examples, and the prototype in the Mac's front window, live, as it is edited. Keeping what it received for later is not built.
 
 - **The phone runs the real thing**, not a stream of pictures: `PrototypeHost` (PaperHost) with a `Runtime` and a `LayerRenderer`, in `PlayerView`, the player's one UIKit view. It forwards every `UITouch` as `touchBegan(id:)`… (the lowest number no finger has, so one finger is finger 0), runs a `CADisplayLink` at up to 120 Hz that rests when `needsAnotherFrame` is false, and plays video while it is in a window.
 - **The screen is fitted** to the phone with `Viewport.fit`, filling it; a phone of another shape shows black beside it.
@@ -146,6 +149,23 @@ Spec 7.9 (a companion player; device mirroring). An iOS app that runs prototypes
 - **`PrototypeHostTests`** (in `PaperEditorTests`, since it needs `ViewerSnapshot`) holds `PrototypeHost.picture` to what the Mac's Viewer draws for every gallery item. That is on the Mac; nothing tests pixels on iOS.
 - **What iOS does differently**, found in the simulator: a view's layer is y-down there, so `LayerRenderer.flipsRoot` is off (`ShaderSurface.flipsRoot`, for the root a `CARenderer` draws, stays on); SF Symbols are drawn through `UIImage`; and text inside a shader view showed twice when the pixel density changed after its first drawing, so `LayerRenderer` draws a text layer again at once when it does.
 - Not checked: touch in the simulator (`simctl` sends none), a real phone, and the glass shader's frame time on one.
+
+### Play on iPhone: the live link
+
+```
+EditorView  ->  DeviceLinkBridge  ->  DeviceLink  ->  LinkServer  == TLS with the key ==  LinkConnection  ->  PlayerStore  ->  PrototypeHost
+```
+
+- **The Mac sends the whole prototype every time it changes**, and the phone runs it. `DeviceLinkBridge` (beside `ViewerWindowBridge` in `EditorView`) hands `DeviceLink.shared` what the Viewer gets, from the front window only: `store.runtimeDocument` in `store.package`, `restartToken`, `previewScreen`. While the link is off or no phone is connected its trigger is a constant, so an edit costs nothing.
+- **`LinkMessage.update`** carries everything about the prototype but its files: an id (a hash of the file's path, or one per untitled window), a revision, `restartToken` and `startScreen` (in every update, because updates are skipped and a restart sent alone could be lost with one), `keeps` (off while a component is edited, when the document is a preview), and the assets and carried extensions by SHA-256. The payload is the document, compact JSON, zlib (`LinkCoding`). The phone asks for the files it lacks (`need`, `blob`), so a video crosses once.
+- **Latest wins, one in flight** (`LinkOutbox`, a pure value): the Mac sends a phone its next update only when the phone has said `applied` or `refused` for the last, and what waits meanwhile is only the newest. `DeviceLink.build` encodes, compresses and hashes off the main actor, one at a time, and only while a phone is connected; `LinkHashes` remembers a file by its bytes' storage, as `VideoFiles` does. Whole documents, not diffs: `Runtime.update(document:)` keeps state, and skipping documents is safe.
+- **The phone** (`PlayerStore`): `LinkInbox` holds an update until every file it names is here and is what its hash says, then the same prototype id updates the running `PrototypeHost` (state kept, a finger down included) and another id makes a new one. A document from a newer app is `refused` with a reason the Mac shows beside the phone.
+- **Pairing is a key in a QR code** (`LinkKey`, 32 random bytes, `tango-link:…`). It keys TLS as a pre-shared key (`LinkTransport.parameters`: TLS 1.2, `TLS_PSK_WITH_AES_128_GCM_SHA256`, the classic `NWListener`/`NWConnection` API, which is the one that takes a PSK). Not a typed code: a short one can be guessed from a recorded handshake. **Session resumption and tickets are off**: with them a connection with the wrong key was let in on an earlier one's session, which `aPhoneWithTheKeyTalksAndOneWithoutDoesNot` caught; keep that test. Each side keeps the key in its keychain (`KeychainLinkKeyStore`); New Code makes another and drops every phone.
+- **Finding**: the Mac advertises `_tango._tcp` with peer-to-peer on; the phone browses (`LinkBrowser`) and connects to the first Mac found, again a second after a connection ends. A Mac that is not the paired one fails the handshake. Both Info.plists name the service and say why (`NSLocalNetworkUsageDescription`).
+- **Off by default** (`deviceLinkEnabled`): the toolbar's iPhone button (`DeviceLinkButton`) and Settings have the switch, the code and the phones connected (`DeviceLinkPanel`). Only `DeviceLink.shared` advertises and uses the keychain; tests and `papertool link` make their own with `advertises: false`, which listens on loopback only.
+- **`hello`** carries the protocol version (sides that differ do not talk) and `PrototypeHost.kinds`, a hash of the patch and view kinds a build knows: when they differ each side says the other is a different version.
+- **Tests**: `PaperLinkTests` (frames cut at every byte, forged and unasked files, the outbox, the key, and the one socket test of the transport), `DeviceLinkTests` (the editor's `DeviceLink` to a `PlayerStore` to its `Runtime` over loopback TLS: an edit with a finger down, a restart, a drag of sixty documents, another key). `papertool link card --edit "Hi"` with the player started `-linkkey <key> -linkhost 127.0.0.1:47900` shows it in the simulator.
+- Not checked, since they need a person: finding the Mac over Bonjour, macOS's and iOS's local-network questions, and scanning the code with a camera. Not built: `status` is defined and never sent; the phone keeps nothing once it is closed; only the front window's prototype is sent, to every paired phone alike.
 
 ## Shader views
 
@@ -394,6 +414,8 @@ script: paper.fetch  ->  EvalContext.requests  ->  Runtime.requestHandler  ->  V
 - A test that uses a `DocumentStore` with an `UndoManager` whose `groupsByEvent` is false must make every edit inside a group, or AppKit stops the test.
 
 - `papertool extension install` and `uninstall` act on the person's real Extensions folder unless given `--extensions <folder>`. In a script, run them only after the build succeeded: an older binary ignores the option.
+- An ad hoc build that advertises on the local network (Play on iPhone) may be asked about the network again after a rebuild, as with the keychain below.
+- A listener stopped and started again at once on a fixed port fails with "address in use": `DeviceLink.listen` makes its first key without restarting.
 - The login keychain ties a key to the signature of the app that saved it, and the app is signed ad hoc: after a rebuild macOS asks before handing a key to the new build. `ExtensionKeys` reads a key once per launch, when a request first needs it.
 - The app autosaves in place. Opening a file from `Examples/` and touching it rewrites that file; regenerate with `papertool` afterwards.
 - Quit the app before rebuilding (`pkill -x Tango`); a sheet left open blocks a normal quit and you end up testing the old build.
@@ -409,4 +431,4 @@ Built: the Foundational and Depth tiers (views as patches with frame outputs, po
 
 Built outside the spec: several screens on a Canvas board with flows between them (push, modal, fade, instant, morph, back, and swiping back from the edge), AI patches (Claude and OpenAI text, OpenAI images, speech and transcription, with keys in Settings), the assistant, the MCP server that lets Claude Code and Codex drive the app, sketching a screen from code and carrying changes back through that server, and extensions with their manager and key vault.
 
-Not built: system components drawn by Apple's own code, text that sizes to its content by default, more than two simulated fingers in the Viewer (the runtime takes any number), screen-edge and pencil gestures, a way to make one gesture wait for another beyond tap and double tap, screens of different sizes, Figma import, publishable libraries, sending a prototype to the device player and keeping it there, WebSockets, an on-screen keyboard and caret movement inside a text field, inserting a pattern into an open document (the gallery opens copies), map/Lottie/particle layers, and for extensions: signing, a catalog to install from, gallery examples of their own, outputs on the views they draw, opening one from the Finder.
+Not built: system components drawn by Apple's own code, text that sizes to its content by default, more than two simulated fingers in the Viewer (the runtime takes any number), screen-edge and pencil gestures, a way to make one gesture wait for another beyond tap and double tap, screens of different sizes, Figma import, publishable libraries, keeping prototypes on the device player, WebSockets, an on-screen keyboard and caret movement inside a text field, inserting a pattern into an open document (the gallery opens copies), map/Lottie/particle layers, and for extensions: signing, a catalog to install from, gallery examples of their own, outputs on the views they draw, opening one from the Finder.
