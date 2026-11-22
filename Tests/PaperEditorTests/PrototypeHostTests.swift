@@ -59,6 +59,21 @@ private func difference(_ a: CGImage, _ b: CGImage) -> Double {
         #expect(host.screenPoint(CGPoint(x: 0, y: 0)).x == -100)
     }
 
+    @Test func anEditToTheDevicesSizeFitsTheScreenAgain() throws {
+        var document = Gallery.item("card")!.make()
+        let host = PrototypeHost(package: DocumentPackage(document: document), sendsRequests: false)
+        let phone = CGRect(x: 0, y: 0, width: 402, height: 874)
+        host.layout(in: phone, fills: true, backingScale: 3)
+        #expect(host.scale == 1)
+        // On the Mac the device becomes twice as wide and tall; the phone's view does not change.
+        document.screen.set(.size, .size(Size2(width: 804, height: 1748)))
+        host.update(document: document)
+        host.step(dt: 1.0 / 60)
+        #expect(host.screenSize == CGSize(width: 804, height: 1748))
+        #expect(host.scale == 0.5)
+        #expect(host.screenPoint(CGPoint(x: 402, y: 874)) == Point2(x: 804, y: 1748))
+    }
+
     @Test func anEditKeepsStateAndARestartTokenStartsOver() throws {
         var document = Gallery.item("card")!.make()
         let host = PrototypeHost(package: DocumentPackage(document: document), sendsRequests: false)

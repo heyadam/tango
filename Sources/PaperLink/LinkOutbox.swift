@@ -36,7 +36,9 @@ public struct LinkSnapshot: Sendable {
             }
         }
         // What could not be framed is said here, not found out by a phone that waits for it.
-        guard blobs.values.allSatisfy({ $0.count <= LinkFrame.largestPayload }) else { throw LinkError.tooLarge }
+        // Neither one file too large for a frame, nor more together than a phone will hold.
+        guard blobs.values.allSatisfy({ $0.count <= LinkFrame.largestPayload }),
+              blobs.values.reduce(0, { $0 + $1.count }) <= LinkInbox.mostBytes else { throw LinkError.tooLarge }
         hashes.keep(only: Set(package.assets.keys.map { "asset/\($0)" })
             .union(package.extensions.flatMap { id, files in files.keys.map { "extension/\(id)/\($0)" } }))
         return LinkSnapshot(update: update, document: try LinkCoding.pack(package.document), blobs: blobs)
@@ -151,14 +153,22 @@ public struct LinkInbox: Sendable {
     /// The most a prototype's files may come to on a phone.
     public static let mostBytes = 2 << 30
 
-    /// A file arrived. One that is not what its hash says, or that nobody asked for, or
-    /// that would make the files more than a phone should hold, is dropped.
-    public mutating func receive(blob data: Data, hash: String) {
-        guard pending?.update.hashes.contains(hash) == true, blobs[hash] == nil,
-              blobs.values.reduce(data.count, { $0 + $1.count }) <= Self.mostBytes,
-              LinkCoding.hash(data) == hash else { return }
+    /// A file arrived. One that is not what its hash says, or that nobody asked for, is
+    /// dropped. One that would make the files more than a phone should hold throws, and
+    /// the update it belongs to is let go: it could never be whole, and the Mac has to be
+    /// told (`refused`), or it would wait for an answer and send nothing more.
+    public mutating func receive(blob data: Data, hash: String) throws {
+        guard pending?.update.hashes.contains(hash) == true, blobs[hash] == nil else { return }
+        guard blobs.values.reduce(data.count, { $0 + $1.count }) <= mostBytes else {
+            pending = nil
+            throw LinkError.tooLarge
+        }
+        guard LinkCoding.hash(data) == hash else { return }
         blobs[hash] = data
     }
+
+    /// The limit in force; lower in tests.
+    var mostBytes = LinkInbox.mostBytes
 
     /// The Mac closed a prototype: an update of it still waiting for files is let go.
     public mutating func close(prototype: String) {

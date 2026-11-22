@@ -189,8 +189,16 @@ public final class PlayerStore {
                 connection.send(.refused(prototype: update.prototype, revision: update.revision, reason: reason))
             }
         case let .blob(hash):
-            inbox.receive(blob: frame.payload, hash: hash)
-            showIfReady(to: connection)
+            let waiting = inbox.pending?.update
+            do {
+                try inbox.receive(blob: frame.payload, hash: hash)
+                showIfReady(to: connection)
+            } catch {
+                guard let waiting else { break }
+                let reason = "It is too large for this iPhone."
+                notice = "“\(waiting.name)” was not shown. \(reason)"
+                connection.send(.refused(prototype: waiting.prototype, revision: waiting.revision, reason: reason))
+            }
         case let .close(prototype):
             inbox.close(prototype: prototype)
             if live?.id == prototype { live = nil }

@@ -172,7 +172,7 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
             for blob in outbox.blobs(for: wanted) {
                 guard case let .blob(hash) = blob.message else { continue }
                 crossed += 1
-                inbox.receive(blob: blob.payload, hash: hash)
+                try inbox.receive(blob: blob.payload, hash: hash)
             }
             let taken = inbox.takeReady()
             let ready = try #require(taken)
@@ -192,12 +192,12 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
         #expect(wanted.count == 1)
         #expect(inbox.takeReady() == nil)
         // Bytes that are not what the hash says.
-        inbox.receive(blob: Data("forged".utf8), hash: wanted[0])
+        try inbox.receive(blob: Data("forged".utf8), hash: wanted[0])
         #expect(inbox.takeReady() == nil)
         // A file nobody asked for.
-        inbox.receive(blob: Data("extra".utf8), hash: LinkCoding.hash(Data("extra".utf8)))
+        try inbox.receive(blob: Data("extra".utf8), hash: LinkCoding.hash(Data("extra".utf8)))
         #expect(inbox.blobs.isEmpty)
-        inbox.receive(blob: Data("real".utf8), hash: wanted[0])
+        try inbox.receive(blob: Data("real".utf8), hash: wanted[0])
         #expect(inbox.takeReady()?.package.assets["a.png"] == Data("real".utf8))
     }
 
@@ -229,7 +229,7 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
         let waiting = try snapshot(revision: 3, assets: ["a.png": Data("x".utf8)], hashes: &hashes)
         let wanted = try inbox.receive(waiting.update, payload: waiting.document)
         inbox.close(prototype: "p")
-        inbox.receive(blob: Data("x".utf8), hash: wanted[0])
+        try inbox.receive(blob: Data("x".utf8), hash: wanted[0])
         #expect(inbox.takeReady() == nil)
     }
 
@@ -277,6 +277,24 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
         #expect(try LinkCoding.inflate(whole, limit: 1 << 20).count > whole.count)
     }
 
+    @Test func filesTooLargeTogetherAreRefusedNotLeftWaiting() throws {
+        var hashes = LinkHashes()
+        var inbox = LinkInbox()
+        inbox.mostBytes = 1000
+        let snap = try snapshot(revision: 1, assets: ["a.bin": Data(count: 600), "b.bin": Data(repeating: 1, count: 600)], hashes: &hashes)
+        let wanted = try inbox.receive(snap.update, payload: snap.document)
+        try inbox.receive(blob: try #require(snap.blobs[wanted[0]]), hash: wanted[0])
+        // The second would make it more than the phone holds: the caller hears, to tell the Mac.
+        #expect(throws: LinkError.tooLarge) { try inbox.receive(blob: snap.blobs[wanted[1]]!, hash: wanted[1]) }
+        // And the update is let go, so a smaller one that follows is taken.
+        #expect(inbox.pending == nil)
+        let kept = try #require(snap.blobs[wanted[0]])
+        let smaller = try snapshot(revision: 2, assets: ["kept.bin": kept], hashes: &hashes)
+        // The file that did arrive is not asked for again.
+        #expect(try inbox.receive(smaller.update, payload: smaller.document).isEmpty)
+        #expect(inbox.takeReady()?.update.revision == 2)
+    }
+
     @Test func aFileTooLargeToSendIsSaidWhenTheSnapshotIsMade() throws {
         var hashes = LinkHashes()
         let huge = Data(count: LinkFrame.largestPayload + 1)
@@ -306,7 +324,7 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
         let snap = try LinkSnapshot.make(of: package, prototype: "p", name: "n", revision: 1, hashes: &hashes)
         var inbox = LinkInbox()
         for hash in try inbox.receive(snap.update, payload: snap.document) {
-            inbox.receive(blob: try #require(snap.blobs[hash]), hash: hash)
+            try inbox.receive(blob: try #require(snap.blobs[hash]), hash: hash)
         }
         #expect(inbox.takeReady()?.package.extensions == package.extensions)
     }

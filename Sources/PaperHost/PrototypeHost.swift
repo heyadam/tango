@@ -26,6 +26,8 @@ public final class PrototypeHost {
     public var onEffect: ((DeviceEffect) -> Void)?
 
     private var restartToken: Int
+    /// What the screen was last fitted into, and its size then.
+    private var fitted: (bounds: CGRect, fills: Bool, backingScale: CGFloat, screen: CGSize)?
     /// The scale and corner the screen is shown at, in the layer's coordinates (y-down).
     public private(set) var scale: CGFloat = 1
     public private(set) var origin = CGPoint.zero
@@ -140,7 +142,13 @@ public final class PrototypeHost {
     public func step(dt: Double) -> Bool {
         runtime.tick(dt: dt)
         for effect in runtime.takeEffects() { onEffect?(effect) }
-        renderer.render(runtime.resolved)
+        // An edit gave the device another size: the screen is fitted again, or it would
+        // stay at the old scale, cut off or small, in a view whose bounds did not change.
+        if let fitted, fitted.screen != screenSize {
+            layout(in: fitted.bounds, fills: fitted.fills, backingScale: fitted.backingScale)
+        } else {
+            renderer.render(runtime.resolved)
+        }
         return runtime.needsAnotherFrame
     }
 
@@ -171,6 +179,7 @@ public final class PrototypeHost {
         layer.frame = bounds
         renderer.rootLayer.frame = layer.bounds
         CATransaction.commit()
+        fitted = (bounds, fills, backingScale, screenSize)
         guard let fit = Viewport.fit(screen: screenSize, in: layer.bounds, fills: fills) else { return }
         scale = fit.scale
         origin = fit.origin
