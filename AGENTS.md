@@ -84,7 +84,7 @@ This is the model everything else follows from (spec 6.5).
 
 ## How the engine works
 
-- `Runtime.tick(dt:)` is deterministic and has no clock. Tests simulate frames with `advance(seconds:)`. The runtime does no I/O: the host performs network requests (`requestHandler` / `complete`) and device work (`setDevice`, `deviceEvent`, `takeEffects`), which is what lets tests fake them.
+- `Runtime.tick(dt:)` is deterministic and has no clock. Tests simulate frames with `advance(seconds:)`; a test that only waits for motion to end uses `settle(within:)`, which stops once nothing wants a frame (not for waiting out a delay that counts time, such as two taps a second apart). Tests run on the main actor one at a time, so a slow one slows the whole run: keep long waits out of `ViewerSnapshot` runs and pixel loops out of generic iterators (debug builds are slow there). The runtime does no I/O: the host performs network requests (`requestHandler` / `complete`) and device work (`setDevice`, `deviceEvent`, `takeEffects`), which is what lets tests fake them.
 - A patch is a `PatchDefinition`: ports plus `evaluate(inout EvalContext)` over scalar values. A new patch should be about 20 lines in `StandardPatches`.
 - **Loops are lifted by the runtime.** Outputs are stored as one row per loop index (`outputs[node][row][port]`); an ordinary patch runs once per index with its own state. Only patches made with `.wholeLoop` see whole loops.
 - The Time patch asks for every frame while its Running input is on; off, it holds its time and the prototype can rest (the Activity Indicator stops it when it is not animating).

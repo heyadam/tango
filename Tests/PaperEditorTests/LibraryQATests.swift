@@ -93,7 +93,8 @@ import PaperRender
                     runtime.advance(seconds: 0.2)
                 }
                 runtime.send(.text("typed"))
-                runtime.advance(seconds: 4)
+                // Up to four seconds to come to rest; one that does has nothing left to run.
+                runtime.settle(within: 4)
                 let label = "\(definition.name) \(inputs.keys.sorted()) \(Int(size.width))×\(Int(size.height))"
                 #expect(finite(runtime.resolved), "\(label): a frame is not a number")
                 if definition.name != "Activity Indicator" {

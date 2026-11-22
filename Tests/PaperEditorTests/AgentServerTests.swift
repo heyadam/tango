@@ -210,12 +210,14 @@ import PaperModel
 
     @Test func aDragMovesWhatItTouches() throws {
         let document = SampleDocuments.scrollingList().document
+        // A wait longer than what is left of the limit is cut to it, not refused. A small
+        // limit says so as well as the default 30 seconds, which takes ten to run.
         let pictures = ViewerSnapshot.bitmaps(of: document, steps: [
             .look,
             .drag(from: Point2(x: 195, y: 600), to: Point2(x: 195, y: 300), seconds: 0.3),
             .wait(1), .look,
             .wait(100), .look,
-        ])
+        ], limit: 3)
         #expect(pictures.count == 3)
         let data = pictures.compactMap { $0.representation(using: .png, properties: [:]) }
         #expect(data[0] != data[1])

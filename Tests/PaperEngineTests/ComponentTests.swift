@@ -569,7 +569,7 @@ import PaperModel
         #expect(barHeight() < 60)
         #expect(inside(runtime, kit.bar, "Inline Title")!.opacity == 1)
         runtime.send(.touchUp(Point2(x: 200, y: 456)))
-        runtime.advance(seconds: 3)
+        runtime.settle(within: 3)
         #expect(!runtime.needsAnotherFrame)
 
         // Scrolled to the end, Sign Out is above the tab bar. A tap on it brings the alert
@@ -582,7 +582,7 @@ import PaperModel
                 runtime.tick(dt: 1 / 60)
             }
             runtime.send(.touchUp(Point2(x: 200, y: 240)))
-            runtime.advance(seconds: 3)
+            runtime.settle(within: 3)
         }
         let row = middle(runtime, "Sign Out Row")!
         #expect(row.y < 874 - 34 - 62)
