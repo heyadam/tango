@@ -5,8 +5,8 @@
   "graph" : {
     "comments" : [
       {
-        "home" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
-        "id" : "08FE4D7C-A18B-4EF6-BA36-8B460A5E8F45",
+        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "id" : "D286E819-E821-43E4-8866-7FF98F8A7469",
         "origin" : {
           "x" : 24,
           "y" : 48
@@ -18,34 +18,33 @@
         "text" : "Start · One card per suggestion"
       },
       {
-        "id" : "B041684F-FDF7-4BEF-BC7A-A0A4CBF794F9",
+        "id" : "C9CBA046-2C17-4CFC-BF76-A53776F02E1E",
         "origin" : {
           "x" : 24,
           "y" : 1200
         },
         "size" : {
-          "height" : 528,
-          "width" : 1392
+          "height" : 828,
+          "width" : 1680
         },
         "text" : "Ask · Apple's model on this device keeps the chat"
       },
       {
-        "home" : "A3CD14FB-5482-4D17-BA71-3E081AAA45D7",
-        "id" : "57B9D3FD-2B53-4757-A6F6-DF400ABF7B8E",
+        "id" : "CB42B0EC-42C7-4DFB-B0B7-C1FCFB35A6DE",
         "origin" : {
-          "x" : 312,
-          "y" : 1752
+          "x" : 24,
+          "y" : 2112
         },
         "size" : {
-          "height" : 204,
-          "width" : 528
+          "height" : 300,
+          "width" : 240
         },
-        "text" : "Send · Dim until something is typed"
+        "text" : "Composer · Talk, send or stop"
       },
       {
-        "id" : "FDC32FFA-7352-4B4E-93B7-C41230101FF4",
+        "id" : "56329EFA-DCF0-4192-8EB5-B175831346C9",
         "origin" : {
-          "x" : 1464,
+          "x" : 1752,
           "y" : 1200
         },
         "size" : {
@@ -55,22 +54,34 @@
         "text" : "Thread · What fits, newest last"
       },
       {
-        "id" : "1B53F7DE-64D4-4C7A-839A-3F4BF57219E3",
+        "id" : "99700288-ECEC-4D2F-BFE9-B0946267C411",
         "origin" : {
-          "x" : 2040,
+          "x" : 2328,
           "y" : 1200
         },
         "size" : {
-          "height" : 300,
+          "height" : 492,
           "width" : 240
         },
         "text" : "Style · Bubble or plain words"
       },
       {
-        "id" : "949C8021-D64A-4B7B-AD90-68CDFB6198A6",
+        "id" : "12AE1653-C816-4800-B2E8-B7AB13B734A4",
+        "origin" : {
+          "x" : 1752,
+          "y" : 2016
+        },
+        "size" : {
+          "height" : 1020,
+          "width" : 816
+        },
+        "text" : "Actions · Each tap knows its message"
+      },
+      {
+        "id" : "FA93E722-41AB-40E1-B441-A7153746228C",
         "origin" : {
           "x" : 1176,
-          "y" : 2064
+          "y" : 2352
         },
         "size" : {
           "height" : 372,
@@ -82,776 +93,1394 @@
     "connections" : [
       {
         "from" : {
-          "node" : "7B89231B-9583-4606-8F6F-54C78CEE8890",
+          "node" : "6429463D-EE3A-4414-A11B-1597EB15E37F",
           "port" : "array"
         },
         "to" : {
-          "node" : "649DD782-B40B-4BFF-8976-B548DA0C4371",
+          "node" : "8E828352-5B13-474B-A333-38501E109A7A",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "649DD782-B40B-4BFF-8976-B548DA0C4371",
+          "node" : "8E828352-5B13-474B-A333-38501E109A7A",
           "port" : "value"
         },
         "to" : {
-          "node" : "2735F664-3A72-40D7-BC9B-87F64F8FDEA7",
+          "node" : "311E30F2-9E32-43BD-BAD5-E4F1B460D048",
           "port" : "fill"
         }
       },
       {
         "from" : {
-          "node" : "BDF749AD-EA1F-46A4-B854-9715D0021716",
+          "node" : "BED2CF4A-8AA3-4779-83ED-492177FE5D22",
           "port" : "array"
         },
         "to" : {
-          "node" : "5F238EA7-9B62-456F-BC9C-09EC6766B56B",
+          "node" : "47BEECEF-3EB0-468A-89F4-CA4749B23108",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "2D4C40F4-7606-4290-B86B-C006BEB637D4",
+          "node" : "6B678FB1-7622-491B-82EB-6310F6072FEA",
           "port" : "array"
         },
         "to" : {
-          "node" : "66A2B729-7E83-42F6-B369-47A171F22B9E",
+          "node" : "8A0979E1-2F0B-49C0-831E-67E5F2845B08",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "59DD8E73-82A3-4C8C-AA90-1AA4CABFBE34",
+          "node" : "E39803B5-DEE6-40B3-8E7E-DB3EB069B24D",
           "port" : "array"
         },
         "to" : {
-          "node" : "229D42B2-1213-42C5-B518-6A61870ABF0E",
+          "node" : "40151BF3-5A3E-4001-8DA5-FE7D543D8B76",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "5F238EA7-9B62-456F-BC9C-09EC6766B56B",
+          "node" : "47BEECEF-3EB0-468A-89F4-CA4749B23108",
           "port" : "value"
         },
         "to" : {
-          "node" : "A57EBD81-FB57-44A8-AA02-7C70E5754600",
+          "node" : "73688C1E-78FD-473D-933D-EE82159298F7",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "66A2B729-7E83-42F6-B369-47A171F22B9E",
+          "node" : "8A0979E1-2F0B-49C0-831E-67E5F2845B08",
           "port" : "value"
         },
         "to" : {
-          "node" : "BCE00C2C-32FB-4EF8-AA0B-32404E00FCB6",
+          "node" : "E6FFA67A-4575-466C-AF1B-9A3150FCBB09",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "36FE521F-5EC4-4E29-8310-7C13F4EFC7EF",
+          "node" : "E2767010-8C21-40AC-9D77-3A3B6ACD9E0C",
           "port" : "tap"
         },
         "to" : {
-          "node" : "9A5F0FAB-99C6-45DA-ADFD-0B9499512267",
+          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
           "port" : "set"
         }
       },
       {
         "from" : {
-          "node" : "229D42B2-1213-42C5-B518-6A61870ABF0E",
+          "node" : "40151BF3-5A3E-4001-8DA5-FE7D543D8B76",
           "port" : "value"
         },
         "to" : {
-          "node" : "79247BB0-B530-4209-9306-D2927B4468F1",
+          "node" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
           "port" : "loop"
         }
       },
       {
         "from" : {
-          "node" : "9A5F0FAB-99C6-45DA-ADFD-0B9499512267",
+          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
           "port" : "option"
         },
         "to" : {
-          "node" : "79247BB0-B530-4209-9306-D2927B4468F1",
+          "node" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
           "port" : "index"
         }
       },
       {
         "from" : {
-          "node" : "9A5F0FAB-99C6-45DA-ADFD-0B9499512267",
+          "node" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+          "port" : "pulse"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+          "port" : "pulse"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+          "port" : "open"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2449F358-ED15-4F66-A248-D0084CC4B50B",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "port" : "record"
+        }
+      },
+      {
+        "from" : {
+          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "port" : "submitted"
+        },
+        "to" : {
+          "node" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "port" : "done"
+        },
+        "to" : {
+          "node" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
           "port" : "picked"
         },
         "to" : {
-          "node" : "78DA8EE6-05D9-49FC-BFFB-5140E0889FA1",
+          "node" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "port" : "done"
+        },
+        "to" : {
+          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "79247BB0-B530-4209-9306-D2927B4468F1",
-          "port" : "value"
+          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "port" : "text"
         },
         "to" : {
-          "node" : "78DA8EE6-05D9-49FC-BFFB-5140E0889FA1",
+          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
           "port" : "then"
         }
       },
       {
         "from" : {
-          "node" : "38E4335D-6B20-4C34-B057-7C13BA15A93D",
+          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
           "port" : "text"
         },
         "to" : {
-          "node" : "78DA8EE6-05D9-49FC-BFFB-5140E0889FA1",
+          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
           "port" : "else"
         }
       },
       {
         "from" : {
-          "node" : "38E4335D-6B20-4C34-B057-7C13BA15A93D",
-          "port" : "submitted"
-        },
-        "to" : {
-          "node" : "7120138E-FA6C-4EFD-97E8-3E6877C90454",
-          "port" : "a"
-        }
-      },
-      {
-        "from" : {
-          "node" : "E988F2A3-D755-4EE0-8325-5EB9F1636276",
-          "port" : "tap"
-        },
-        "to" : {
-          "node" : "7120138E-FA6C-4EFD-97E8-3E6877C90454",
-          "port" : "b"
-        }
-      },
-      {
-        "from" : {
-          "node" : "9A5F0FAB-99C6-45DA-ADFD-0B9499512267",
+          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
           "port" : "picked"
         },
         "to" : {
-          "node" : "FE690824-06E9-4B64-93F9-3696FD337A29",
-          "port" : "a"
-        }
-      },
-      {
-        "from" : {
-          "node" : "7120138E-FA6C-4EFD-97E8-3E6877C90454",
-          "port" : "pulse"
-        },
-        "to" : {
-          "node" : "FE690824-06E9-4B64-93F9-3696FD337A29",
-          "port" : "b"
-        }
-      },
-      {
-        "from" : {
-          "node" : "78DA8EE6-05D9-49FC-BFFB-5140E0889FA1",
-          "port" : "value"
-        },
-        "to" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
-          "port" : "prompt"
-        }
-      },
-      {
-        "from" : {
-          "node" : "FE690824-06E9-4B64-93F9-3696FD337A29",
-          "port" : "pulse"
-        },
-        "to" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
-          "port" : "send"
-        }
-      },
-      {
-        "from" : {
-          "node" : "B30F9F43-B1FC-4160-84A0-99D3C769819A",
-          "port" : "tap"
-        },
-        "to" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
-          "port" : "reset"
-        }
-      },
-      {
-        "from" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
-          "port" : "loading"
-        },
-        "to" : {
-          "node" : "5E419860-E9AE-401F-B99B-EEF0761CC007",
-          "port" : "value"
-        }
-      },
-      {
-        "from" : {
-          "node" : "5E419860-E9AE-401F-B99B-EEF0761CC007",
-          "port" : "turnedOn"
-        },
-        "to" : {
-          "node" : "38E4335D-6B20-4C34-B057-7C13BA15A93D",
-          "port" : "clear"
-        }
-      },
-      {
-        "from" : {
-          "node" : "38E4335D-6B20-4C34-B057-7C13BA15A93D",
-          "port" : "text"
-        },
-        "to" : {
-          "node" : "26E7C776-A62C-40C4-9A84-E83614B71B49",
-          "port" : "text"
-        }
-      },
-      {
-        "from" : {
-          "node" : "26E7C776-A62C-40C4-9A84-E83614B71B49",
-          "port" : "empty"
-        },
-        "to" : {
-          "node" : "F18ED275-7325-4736-B1F1-5C8DAE0AFCB1",
+          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "F18ED275-7325-4736-B1F1-5C8DAE0AFCB1",
+          "node" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
           "port" : "value"
         },
         "to" : {
-          "node" : "B6D1A75A-A32C-4955-B929-1E5EBC81F4DA",
-          "port" : "opacity"
+          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "port" : "then"
         }
       },
       {
         "from" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
-          "port" : "conversation"
+          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+          "port" : "value"
         },
         "to" : {
-          "node" : "A45192D3-C52E-4A73-95FA-5EA42F47B264",
-          "port" : "conversation"
+          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "port" : "else"
         }
       },
       {
         "from" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
+          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "prompt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "send"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "stop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "031ABEDE-2F19-4B6B-B272-664B782A352C",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "reset"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
           "port" : "loading"
         },
         "to" : {
-          "node" : "A45192D3-C52E-4A73-95FA-5EA42F47B264",
+          "node" : "B53B809A-E2A9-4593-A964-AB92C1692BB6",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B53B809A-E2A9-4593-A964-AB92C1692BB6",
+          "port" : "turnedOn"
+        },
+        "to" : {
+          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "port" : "clear"
+        }
+      },
+      {
+        "from" : {
+          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "typed"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
           "port" : "loading"
         }
       },
       {
         "from" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
+          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "port" : "recording"
+        },
+        "to" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "recording"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "symbol"
+        },
+        "to" : {
+          "node" : "1F417343-31A3-4790-AC27-FC4DC54D9032",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "placeholder"
+        },
+        "to" : {
+          "node" : "9A7E71C8-C227-433F-AA65-C10D5DB395BB",
+          "port" : "placeholder"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "mic"
+        },
+        "to" : {
+          "node" : "81DFF6A7-BC23-4DDE-AAAF-78AFD3F0BA3F",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "talks"
+        },
+        "to" : {
+          "node" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "port" : "sends"
+        },
+        "to" : {
+          "node" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+          "port" : "open"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "conversation"
+        },
+        "to" : {
+          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "port" : "conversation"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "port" : "loading"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
           "port" : "error"
         },
         "to" : {
-          "node" : "A45192D3-C52E-4A73-95FA-5EA42F47B264",
+          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
           "port" : "error"
         }
       },
       {
         "from" : {
-          "node" : "A45192D3-C52E-4A73-95FA-5EA42F47B264",
+          "node" : "9379C43B-85F4-4EED-9160-BB4F3D97922C",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AEC2A29A-7962-4A84-8BB1-AF720DB8FC06",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2FFB3DF5-C876-41EC-BCD8-D46CEBB6F313",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "18A12812-EE47-4B40-B580-82148043594B",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5FEC1B7F-0717-4DC3-8011-0333B3EA7B7D",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+          "port" : "speak"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
           "port" : "shown"
         },
         "to" : {
-          "node" : "3FBBAD35-17A7-446F-B5A0-2C3BEB45C825",
-          "port" : "array"
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "shown"
         }
       },
       {
         "from" : {
-          "node" : "A45192D3-C52E-4A73-95FA-5EA42F47B264",
-          "port" : "empty"
+          "node" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+          "port" : "picked"
         },
         "to" : {
-          "node" : "DC5BF2E4-160B-44E5-862A-37EE3D6084BC",
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "copy"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "copyAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "like"
+        }
+      },
+      {
+        "from" : {
+          "node" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "likeAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "18A12812-EE47-4B40-B580-82148043594B",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "dislike"
+        }
+      },
+      {
+        "from" : {
+          "node" : "18A12812-EE47-4B40-B580-82148043594B",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "dislikeAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "read"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "readAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+          "port" : "speaking"
+        },
+        "to" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "speaking"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "shown"
+        },
+        "to" : {
+          "node" : "4986DC83-481B-468D-80FB-E1F8CFA0F86A",
           "port" : "visible"
         }
       },
       {
         "from" : {
-          "node" : "3FBBAD35-17A7-446F-B5A0-2C3BEB45C825",
+          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "port" : "shown"
+        },
+        "to" : {
+          "node" : "A436E09F-52A1-45A3-9D57-40E4A606A869",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "port" : "empty"
+        },
+        "to" : {
+          "node" : "9D192997-2EC2-4654-876B-97508160A1B9",
+          "port" : "visible"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A436E09F-52A1-45A3-9D57-40E4A606A869",
           "port" : "value"
         },
         "to" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "message"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "port" : "marks"
+        },
+        "to" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "marks"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "side"
         },
         "to" : {
-          "node" : "E7803768-B4C4-4C60-94DC-F9B20DE255FD",
+          "node" : "F04C9BCD-3101-4E38-83C5-BB464D90D332",
           "port" : "distribution"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "fill"
         },
         "to" : {
-          "node" : "49E04CC1-7F01-441A-BF23-9E473AFA18A9",
+          "node" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
           "port" : "fill"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "padding"
         },
         "to" : {
-          "node" : "49E04CC1-7F01-441A-BF23-9E473AFA18A9",
+          "node" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
           "port" : "paddingHorizontal"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "padding"
         },
         "to" : {
-          "node" : "49E04CC1-7F01-441A-BF23-9E473AFA18A9",
+          "node" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
           "port" : "paddingVertical"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "text"
         },
         "to" : {
-          "node" : "EF417A85-C76C-4E8B-9F99-9B82F28C5646",
+          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "width"
         },
         "to" : {
-          "node" : "EF417A85-C76C-4E8B-9F99-9B82F28C5646",
+          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
           "port" : "width"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "height"
         },
         "to" : {
-          "node" : "EF417A85-C76C-4E8B-9F99-9B82F28C5646",
+          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
           "port" : "height"
         }
       },
       {
         "from" : {
-          "node" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
           "port" : "opacity"
         },
         "to" : {
-          "node" : "EF417A85-C76C-4E8B-9F99-9B82F28C5646",
+          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
           "port" : "opacity"
         }
       },
       {
         "from" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "actions"
+        },
+        "to" : {
+          "node" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
+          "port" : "scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "actions"
+        },
+        "to" : {
+          "node" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "actionsHeight"
+        },
+        "to" : {
+          "node" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
+          "port" : "height"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "copy"
+        },
+        "to" : {
+          "node" : "DB08A0AA-6F64-4F26-954C-696A3EE7E174",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "like"
+        },
+        "to" : {
+          "node" : "501FBDA2-ECF9-4586-AA7D-AE189F9C0AB9",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "dislike"
+        },
+        "to" : {
+          "node" : "0569E323-1D5F-45FB-B07D-3D9D8DBB3887",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "port" : "read"
+        },
+        "to" : {
+          "node" : "895EC36D-09B6-447C-8731-EAE38128A73A",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
           "port" : "loading"
         },
         "to" : {
-          "node" : "34102F03-68D8-415B-A7AC-73B702BAA20C",
+          "node" : "6FAA60D5-706A-45E7-8F32-7C4A81087004",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
+          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
           "port" : "loading"
         },
         "to" : {
-          "node" : "B5EB22DF-27D3-4295-ACFA-1123C31F85AA",
+          "node" : "986A90B4-A7C2-4CC0-9C4E-794ABAF44E6B",
           "port" : "running"
         }
       },
       {
         "from" : {
-          "node" : "34102F03-68D8-415B-A7AC-73B702BAA20C",
+          "node" : "6FAA60D5-706A-45E7-8F32-7C4A81087004",
           "port" : "value"
         },
         "to" : {
-          "node" : "0ED2F89E-2F3A-46E2-AD27-91B5CB7BE1D6",
+          "node" : "A3668C5D-DEE5-4993-B7F7-01847B5EF060",
           "port" : "shader.strength"
         }
       },
       {
         "from" : {
-          "node" : "B5EB22DF-27D3-4295-ACFA-1123C31F85AA",
+          "node" : "986A90B4-A7C2-4CC0-9C4E-794ABAF44E6B",
           "port" : "time"
         },
         "to" : {
-          "node" : "0ED2F89E-2F3A-46E2-AD27-91B5CB7BE1D6",
+          "node" : "A3668C5D-DEE5-4993-B7F7-01847B5EF060",
           "port" : "shader.phase"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "31BD9A62-5D87-45B7-BD64-77B8F604893B",
+        "id" : "827F0E12-E9CA-41BA-87E7-4F0DE6C23DB5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F49689BF-C1CA-4091-96AE-55994AA1F116",
-        "position" : {
-          "x" : 2352,
-          "y" : 528
-        }
-      },
-      {
-        "id" : "2379300D-5E40-4DA6-BEFE-F3F5EF5E825C",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "D5C4C3AB-08CB-4A88-B9DA-AA02E05F1E11",
+        "layerID" : "E168D92C-0166-4622-B70A-7FFBC4442A66",
         "position" : {
           "x" : 2640,
           "y" : 528
         }
       },
       {
-        "id" : "E7803768-B4C4-4C60-94DC-F9B20DE255FD",
+        "id" : "4585FBE3-134A-470D-80EC-08AF44E37A4B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "335AF645-708C-43DC-A77E-8B3B0EB323CB",
+        "layerID" : "D05D4F6B-9EF8-40CD-9314-828BD143F607",
         "position" : {
-          "x" : 2352,
-          "y" : 1248
+          "x" : 2928,
+          "y" : 528
         }
       },
       {
-        "id" : "49E04CC1-7F01-441A-BF23-9E473AFA18A9",
+        "id" : "4986DC83-481B-468D-80FB-E1F8CFA0F86A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "01139B11-B2FC-4E14-BFC9-CE323E3040E4",
+        "layerID" : "3022CDB3-5C65-45DF-8773-C5BA8B004353",
         "position" : {
-          "x" : 2352,
-          "y" : 1536
-        }
-      },
-      {
-        "id" : "EF417A85-C76C-4E8B-9F99-9B82F28C5646",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "9E5B80AD-AF6C-44AE-9B8C-23195B98440F",
-        "position" : {
-          "x" : 2352,
+          "x" : 2640,
           "y" : 1824
         }
       },
       {
-        "id" : "DC5BF2E4-160B-44E5-862A-37EE3D6084BC",
+        "id" : "F04C9BCD-3101-4E38-83C5-BB464D90D332",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "618ADC10-6B07-4230-98C3-9D5DB42B56DA",
+        "layerID" : "15BB78A3-230F-4F94-85AA-97F14A39DADC",
+        "position" : {
+          "x" : 2640,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "423D1B3F-7B23-4480-BB75-F21B1D7A8BFF",
+        "position" : {
+          "x" : 2928,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B729A2FA-4B5B-4B39-861D-E52DCA81E5B0",
+        "position" : {
+          "x" : 2928,
+          "y" : 1536
+        }
+      },
+      {
+        "id" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0106A010-E7BC-45B7-A333-051E9A3D1322",
+        "position" : {
+          "x" : 2640,
+          "y" : 1536
+        }
+      },
+      {
+        "id" : "1D28F182-F284-4510-BE0C-D092A28ED77D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2C64350A-A246-4787-851D-9BF171017AD2",
         "position" : {
           "x" : 1776,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "DB08A0AA-6F64-4F26-954C-696A3EE7E174",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CB2311AB-E13C-4340-919D-AF4014DB0850",
+        "position" : {
+          "x" : 2928,
+          "y" : 1824
+        }
+      },
+      {
+        "id" : "8BD1AB27-3155-4CA9-83B7-8110C82D447D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "84CDE697-7429-4F85-8117-94EB18C385CC",
+        "position" : {
+          "x" : 1776,
+          "y" : 2256
+        }
+      },
+      {
+        "id" : "501FBDA2-ECF9-4586-AA7D-AE189F9C0AB9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8926CA82-4CA4-4808-9F80-7E49F3A153EE",
+        "position" : {
+          "x" : 2928,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "083FF453-2E4D-406B-BE9C-66D185DE35A6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E8E38E6B-C2D9-4335-9959-874CC71848BE",
+        "position" : {
+          "x" : 1776,
+          "y" : 2448
+        }
+      },
+      {
+        "id" : "0569E323-1D5F-45FB-B07D-3D9D8DBB3887",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AD675086-26D3-4039-8D0E-28FE563840B6",
+        "position" : {
+          "x" : 2928,
+          "y" : 2280
+        }
+      },
+      {
+        "id" : "6DD1B7C8-B28A-4D61-AFE0-50183EECA0A5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DFC0DFAF-2471-433F-A4CC-ECD7349602E8",
+        "position" : {
+          "x" : 1776,
+          "y" : 2640
+        }
+      },
+      {
+        "id" : "895EC36D-09B6-447C-8731-EAE38128A73A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A672F548-A457-479A-B7C7-B1DFD805FB5B",
+        "position" : {
+          "x" : 2928,
+          "y" : 2496
+        }
+      },
+      {
+        "id" : "9D192997-2EC2-4654-876B-97508160A1B9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E05F69F8-CBA5-417B-81BA-5924E756428B",
+        "position" : {
+          "x" : 2064,
           "y" : 1608
         }
       },
       {
-        "id" : "37131A55-A762-4C1E-8AFC-7E2894FF1F9D",
+        "id" : "8F7D7C84-4274-4806-8266-376BE4E8AE55",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "59985B65-2983-4F39-A547-71E3B1A84DA2",
+        "layerID" : "B05E6E7F-445E-4BF8-B911-42C3B3843A38",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "2AD08EDF-A597-4EC8-B703-AC29A0FE2B6E",
+        "id" : "F942BF7D-C4BF-4B73-90BB-6807315A5061",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "D7CCD522-8E9B-4F56-BF1D-CB417EFF4446",
+        "layerID" : "31D494D2-C157-42B3-9628-D39A0CC0059F",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "43103A29-31CD-472B-A3A1-55B393145359",
+        "id" : "2741A599-446C-4DA6-B08E-832ED6A600CF",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "40573F7E-84A5-4F13-B78E-E87990076794",
+        "layerID" : "7CDAB7FE-30F7-4864-B2CC-578060055B8A",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "B3D9815B-756B-4002-8FFE-4050587BF22A",
+        "id" : "A3D7C7DB-6C41-4A3C-9C40-F9CFE499988D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "2E84F790-E0C0-45A1-B704-A87CCC64585D",
+        "layerID" : "26E94125-DF00-4653-8161-3E795849748C",
         "position" : {
           "x" : 48,
           "y" : 480
         }
       },
       {
-        "id" : "968A43AD-EE48-4FA3-BB3C-DBD4D5E1FE64",
+        "id" : "D1DF9883-FD4E-4E26-BCB9-1DEA83297D5E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "95D3D3D6-05A1-4416-9EDB-EA6B3271732C",
+        "layerID" : "F82B657D-31CD-46C8-80C7-285BDE6A706E",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "942D1800-1E73-4DF4-B684-C8590CCC3546",
+        "id" : "F46EE730-EBDC-4EF1-91DE-8592F098CFB5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6A299A8C-FA6C-4530-9D61-8386AA13C8F9",
+        "layerID" : "4C57D412-E4BB-4421-A2F5-8BEE85A0F6E4",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "79EFB7B2-2003-4602-9D5D-1D5D0C53F7A7",
+        "id" : "F89F9FC2-1C1C-4487-9B07-E968891A1B27",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "2C30E366-5F79-429B-93BF-0AA746DAA59A",
+        "layerID" : "F5D63D39-DF2D-4B55-BE77-8CAE73044561",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "8954A467-9BA4-4EFE-8F82-476D08B5BC6D",
+        "id" : "2C30FAE5-B7A4-46C8-B5A2-6B7BF26C2D57",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "9D888507-C120-41AC-AF28-833DCC47698B",
+        "layerID" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
         "position" : {
           "x" : 48,
           "y" : 672
         }
       },
       {
-        "id" : "2735F664-3A72-40D7-BC9B-87F64F8FDEA7",
+        "id" : "311E30F2-9E32-43BD-BAD5-E4F1B460D048",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
+        "layerID" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
         "position" : {
           "x" : 624,
           "y" : 744
         }
       },
       {
-        "id" : "A57EBD81-FB57-44A8-AA02-7C70E5754600",
+        "id" : "73688C1E-78FD-473D-933D-EE82159298F7",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1DD7D521-CC89-4EFE-B630-608B4A215673",
+        "layerID" : "3933A332-DDAD-4A7E-AB69-4ADB6B99FD39",
         "position" : {
           "x" : 624,
           "y" : 96
         }
       },
       {
-        "id" : "BCE00C2C-32FB-4EF8-AA0B-32404E00FCB6",
+        "id" : "E6FFA67A-4575-466C-AF1B-9A3150FCBB09",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1760DA11-1A1D-4514-B4E3-104A9B0B235C",
+        "layerID" : "62B46DB1-43C2-4611-98E1-8AE97A6C0BF0",
         "position" : {
           "x" : 624,
           "y" : 312
         }
       },
       {
-        "id" : "39CE1A69-96C3-4467-A15B-7140E2C3A9F3",
+        "id" : "E2EBC84A-840E-4EB2-96BF-66C120113410",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8174D1AA-B93F-4D10-A762-AEB41961B1E0",
+        "layerID" : "25410299-511B-4A2D-83A0-07D571470CE0",
         "position" : {
-          "x" : 1776,
+          "x" : 2064,
           "y" : 1824
         }
       },
       {
-        "id" : "8EF85770-E7C6-4435-968B-AE953B8CA7C8",
+        "id" : "B4C4AFF4-EC0A-4BB6-AE4B-13C244949C79",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6BEC36C0-7210-4578-975D-91FB54FE5AB0",
+        "layerID" : "1B424AEF-6550-45B7-9120-18106278D4B7",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "462B4C14-7E8A-4C14-BE28-2C6159523E8E",
+        "id" : "2D502E93-5FF7-45E4-8E7C-9A97788092E1",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F8CCB872-AD17-4A06-8B58-BD2C5B5AD985",
+        "layerID" : "D1153547-C845-4B8D-92D1-2167CF8BA714",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "43BE08B2-3F21-44B3-BAE1-5903A1245594",
+        "id" : "3CCFFA33-09BA-4849-8EF1-CB88F13BBAB9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F1322072-0C8B-4EC7-9297-C31DA805009F",
+        "layerID" : "1F572EA9-6D2C-46F4-9235-B950A69F94D1",
         "position" : {
-          "x" : 1776,
+          "x" : 2064,
           "y" : 2016
         }
       },
       {
-        "id" : "8D007F3E-30EE-4304-9DF9-1F50F79C9383",
+        "id" : "139992EA-9B36-432E-8AEC-C3818CBD8C65",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "9D7C7B57-A4DC-4745-A8B9-3EA188917F46",
+        "layerID" : "A1820A9A-90DF-46CC-852F-A7D89E6F8254",
         "position" : {
-          "x" : 1776,
+          "x" : 2064,
           "y" : 2160
         }
       },
       {
-        "id" : "A87BC64C-A680-429B-879D-3852B2549263",
+        "id" : "DC642677-2782-4ED2-9F35-6B39CFCE71B7",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F48DD523-64C9-4882-9E52-F11E99452C5B",
+        "layerID" : "899C8D98-9030-4604-8C91-D87657C87BC9",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "0ED2F89E-2F3A-46E2-AD27-91B5CB7BE1D6",
+        "id" : "A3668C5D-DEE5-4993-B7F7-01847B5EF060",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "84DD47E9-FFAD-4A76-89BE-24D58CC67280",
+        "layerID" : "9340463F-CCDE-4382-B6C9-7DE14F5E039D",
         "position" : {
           "x" : 1488,
-          "y" : 2112
+          "y" : 2952
         },
         "script" : "\/\/ Apple Intelligence's glow: a line of shifting color along the card's edge with a soft\n\/\/ halo past it. Strength fades it in and out; Phase turns the colors round the card.\nstruct Inputs {\n    float strength = 0;\n    float phase = 0;\n    float radius = 30;\n    float inset = 28;\n};\n\nfloat glow_box(float2 p, float2 half_size, float r) {\n    float2 q = abs(p) - half_size + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 middle = frame.size * 0.5;\n    float2 p = frame.position - middle;\n    float d = glow_box(p, middle - in.inset, in.radius);\n    \/\/ Four colors round the card, turning with Phase.\n    float turn = fract(atan2(p.y, p.x) \/ 6.2831853 + in.phase * 0.12);\n    float3 orange = float3(1.0, 0.56, 0.26), pink = float3(0.98, 0.32, 0.62);\n    float3 violet = float3(0.62, 0.38, 1.0), blue = float3(0.28, 0.62, 1.0);\n    float k = turn * 4.0;\n    float3 color = k < 1.0 ? mix(orange, pink, k) : k < 2.0 ? mix(pink, violet, k - 1.0)\n                 : k < 3.0 ? mix(violet, blue, k - 2.0) : mix(blue, orange, k - 3.0);\n    \/\/ A bright edge that breathes a little, and a halo that falls away outside.\n    float breathe = 0.85 + 0.15 * sin(in.phase * 3.0 + turn * 12.566);\n    float edge = exp(-abs(d) \/ 2.2) * breathe;\n    float halo = d > 0.0 ? exp(-d \/ 11.0) * 0.55 : exp(d \/ 5.0) * 0.25;\n    \/\/ Gone before the view's own edge, so no box shows round it.\n    float2 room = middle - abs(p);\n    float fade = smoothstep(0.0, in.inset * 0.6, min(room.x, room.y));\n    float alpha = saturate((edge + halo) * in.strength * fade);\n    return float4(mix(color, float3(1.0), edge * 0.35), alpha);\n}"
       },
       {
-        "id" : "2165ED6A-33D3-4468-BA0C-9E8E4368B4B9",
+        "id" : "EC4BBDCA-771B-4A09-A825-E085736F3139",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "A3CD14FB-5482-4D17-BA71-3E081AAA45D7",
+        "layerID" : "FE3D5F3D-050B-4397-8F45-5106966BEAC0",
         "position" : {
           "x" : 1488,
-          "y" : 2400
+          "y" : 3240
         }
       },
       {
-        "id" : "33F3C894-F483-473A-8F94-2D13CA9205B2",
+        "id" : "D6DCA859-2637-408B-BAF4-9A8D6F0A9161",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "BBE4FCC8-0D1C-4977-85BF-DD40A1317A64",
+        "layerID" : "D69D9F37-F260-4E07-8972-16556FDED670",
         "position" : {
-          "x" : 1200,
+          "x" : 912,
           "y" : 1248
         }
       },
       {
-        "id" : "B6D1A75A-A32C-4955-B929-1E5EBC81F4DA",
+        "id" : "CAB24C0A-C46A-41CF-B6DE-196FC3B602D0",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "FDAD8FE7-0DEE-4005-81AD-7EDC2B683225",
-        "position" : {
-          "x" : 912,
-          "y" : 1800
-        }
-      },
-      {
-        "id" : "E2F74845-3287-43FE-8BED-E2744FA2CD7C",
-        "inputs" : {
-
-        },
-        "kind" : "view",
-        "layerID" : "717DB38B-C37D-43D3-9E6D-ACFF2733123C",
+        "layerID" : "BEA88805-6A43-4262-B13F-28EB079C5A11",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "home" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
-        "id" : "BDF749AD-EA1F-46A4-B854-9715D0021716",
+        "id" : "9A7E71C8-C227-433F-AA65-C10D5DB395BB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2A962AEE-58AD-4179-A7B0-1B81FE233ECB",
+        "position" : {
+          "x" : 624,
+          "y" : 2448
+        }
+      },
+      {
+        "id" : "6A6A2986-30DC-4823-8045-7F89EBA5F279",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "ED89E18C-FB02-4D6B-B2EB-EE7FCA3447BE",
+        "position" : {
+          "x" : 624,
+          "y" : 2640
+        }
+      },
+      {
+        "id" : "81DFF6A7-BC23-4DDE-AAAF-78AFD3F0BA3F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "61B22223-3C13-48ED-A81D-AE00E1BD7497",
+        "position" : {
+          "x" : 624,
+          "y" : 2736
+        }
+      },
+      {
+        "id" : "49BEBB20-8967-419F-9406-8F3C1119C028",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8DB4C49A-A7BE-440C-9ECF-D0D7FA16FD44",
+        "position" : {
+          "x" : 624,
+          "y" : 2832
+        }
+      },
+      {
+        "id" : "1F417343-31A3-4790-AC27-FC4DC54D9032",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C616CAEB-CFD5-48E7-8F08-0F3F37374162",
+        "position" : {
+          "x" : 624,
+          "y" : 2160
+        }
+      },
+      {
+        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "id" : "BED2CF4A-8AA3-4779-83ED-492177FE5D22",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -870,8 +1499,8 @@
         }
       },
       {
-        "home" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
-        "id" : "2D4C40F4-7606-4290-B86B-C006BEB637D4",
+        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "id" : "6B678FB1-7622-491B-82EB-6310F6072FEA",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -890,7 +1519,7 @@
         }
       },
       {
-        "id" : "59DD8E73-82A3-4C8C-AA90-1AA4CABFBE34",
+        "id" : "E39803B5-DEE6-40B3-8E7E-DB3EB069B24D",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -909,8 +1538,8 @@
         }
       },
       {
-        "home" : "9D888507-C120-41AC-AF28-833DCC47698B",
-        "id" : "7B89231B-9583-4606-8F6F-54C78CEE8890",
+        "home" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
+        "id" : "6429463D-EE3A-4414-A11B-1597EB15E37F",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -929,8 +1558,8 @@
         }
       },
       {
-        "home" : "9D888507-C120-41AC-AF28-833DCC47698B",
-        "id" : "649DD782-B40B-4BFF-8976-B548DA0C4371",
+        "home" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
+        "id" : "8E828352-5B13-474B-A333-38501E109A7A",
         "inputs" : {
 
         },
@@ -943,8 +1572,8 @@
         "valueType" : "color"
       },
       {
-        "home" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
-        "id" : "5F238EA7-9B62-456F-BC9C-09EC6766B56B",
+        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "id" : "47BEECEF-3EB0-468A-89F4-CA4749B23108",
         "inputs" : {
 
         },
@@ -957,8 +1586,8 @@
         "valueType" : "text"
       },
       {
-        "home" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
-        "id" : "66A2B729-7E83-42F6-B369-47A171F22B9E",
+        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "id" : "8A0979E1-2F0B-49C0-831E-67E5F2845B08",
         "inputs" : {
 
         },
@@ -971,7 +1600,7 @@
         "valueType" : "text"
       },
       {
-        "id" : "229D42B2-1213-42C5-B518-6A61870ABF0E",
+        "id" : "40151BF3-5A3E-4001-8DA5-FE7D543D8B76",
         "inputs" : {
 
         },
@@ -984,19 +1613,19 @@
         "valueType" : "text"
       },
       {
-        "id" : "36FE521F-5EC4-4E29-8310-7C13F4EFC7EF",
+        "id" : "E2767010-8C21-40AC-9D77-3A3B6ACD9E0C",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
+        "layerID" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
         "position" : {
           "x" : 48,
           "y" : 960
         }
       },
       {
-        "id" : "9A5F0FAB-99C6-45DA-ADFD-0B9499512267",
+        "id" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
         "inputs" : {
 
         },
@@ -1008,7 +1637,7 @@
         }
       },
       {
-        "id" : "79247BB0-B530-4209-9306-D2927B4468F1",
+        "id" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
         "inputs" : {
 
         },
@@ -1021,31 +1650,106 @@
         "valueType" : "text"
       },
       {
-        "id" : "38E4335D-6B20-4C34-B057-7C13BA15A93D",
+        "id" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
         "inputs" : {
 
         },
         "kind" : "textInput",
-        "layerID" : "BBE4FCC8-0D1C-4977-85BF-DD40A1317A64",
+        "layerID" : "2A962AEE-58AD-4179-A7B0-1B81FE233ECB",
         "position" : {
           "x" : 48,
           "y" : 1248
         }
       },
       {
-        "id" : "E988F2A3-D755-4EE0-8325-5EB9F1636276",
+        "id" : "C705F8A1-3224-431E-ADA6-708429107C7A",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "FDAD8FE7-0DEE-4005-81AD-7EDC2B683225",
+        "layerID" : "8DB4C49A-A7BE-440C-9ECF-D0D7FA16FD44",
         "position" : {
           "x" : 48,
           "y" : 1488
         }
       },
       {
-        "id" : "7120138E-FA6C-4EFD-97E8-3E6877C90454",
+        "id" : "2449F358-ED15-4F66-A248-D0084CC4B50B",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "ED89E18C-FB02-4D6B-B2EB-EE7FCA3447BE",
+        "position" : {
+          "x" : 48,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+        "inputs" : {
+
+        },
+        "kind" : "pulseGate",
+        "name" : "Sends",
+        "position" : {
+          "x" : 336,
+          "y" : 1488
+        }
+      },
+      {
+        "id" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+        "inputs" : {
+
+        },
+        "kind" : "pulseGate",
+        "name" : "Stops",
+        "position" : {
+          "x" : 336,
+          "y" : 1632
+        }
+      },
+      {
+        "id" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+        "inputs" : {
+
+        },
+        "kind" : "and",
+        "name" : "Talking",
+        "position" : {
+          "x" : 336,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+        "inputs" : {
+
+        },
+        "kind" : "or",
+        "name" : "Held",
+        "position" : {
+          "x" : 624,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+        "inputs" : {
+          "model" : {
+            "type" : "text",
+            "value" : "apple-on-device"
+          }
+        },
+        "kind" : "aiTranscribe",
+        "name" : "Listen",
+        "position" : {
+          "x" : 912,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
         "inputs" : {
 
         },
@@ -1057,19 +1761,44 @@
         }
       },
       {
-        "id" : "FE690824-06E9-4B64-93F9-3696FD337A29",
+        "id" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
         "inputs" : {
 
         },
         "kind" : "eitherPulse",
-        "name" : "Ask",
+        "name" : "Typed or Said",
         "position" : {
           "x" : 624,
           "y" : 1248
         }
       },
       {
-        "id" : "78DA8EE6-05D9-49FC-BFFB-5140E0889FA1",
+        "id" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+        "inputs" : {
+
+        },
+        "kind" : "eitherPulse",
+        "name" : "Ask",
+        "position" : {
+          "x" : 912,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+        "inputs" : {
+
+        },
+        "kind" : "if",
+        "name" : "Said or Typed",
+        "position" : {
+          "x" : 624,
+          "y" : 1488
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
         "inputs" : {
 
         },
@@ -1077,24 +1806,24 @@
         "name" : "Prompt",
         "position" : {
           "x" : 912,
-          "y" : 1248
+          "y" : 1488
         },
         "valueType" : "text"
       },
       {
-        "id" : "B30F9F43-B1FC-4160-84A0-99D3C769819A",
+        "id" : "031ABEDE-2F19-4B6B-B272-664B782A352C",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "9D7C7B57-A4DC-4745-A8B9-3EA188917F46",
+        "layerID" : "A1820A9A-90DF-46CC-852F-A7D89E6F8254",
         "position" : {
-          "x" : 624,
-          "y" : 1488
+          "x" : 1200,
+          "y" : 1776
         }
       },
       {
-        "id" : "6DF1AB94-68CA-46DA-B4AD-91C51012562B",
+        "id" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
         "inputs" : {
           "instructions" : {
             "type" : "text",
@@ -1113,92 +1842,220 @@
         }
       },
       {
-        "id" : "5E419860-E9AE-401F-B99B-EEF0761CC007",
+        "id" : "B53B809A-E2A9-4593-A964-AB92C1692BB6",
         "inputs" : {
 
         },
         "kind" : "pulse",
         "name" : "Sent",
         "position" : {
-          "x" : 912,
-          "y" : 1488
+          "x" : 1488,
+          "y" : 1776
         }
       },
       {
-        "home" : "A3CD14FB-5482-4D17-BA71-3E081AAA45D7",
-        "id" : "26E7C776-A62C-40C4-9A84-E83614B71B49",
+        "id" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
         "inputs" : {
 
         },
-        "kind" : "textLength",
-        "name" : "Typed Length",
+        "kind" : "javascript",
+        "name" : "Composer",
         "position" : {
-          "x" : 336,
-          "y" : 1800
-        }
+          "x" : 48,
+          "y" : 2160
+        },
+        "script" : "\/\/ The round button talks while the field is empty, sends once there are words,\n\/\/ and stops an answer that is being written.\ninputs = { typed: \"\", loading: false, recording: false };\noutputs = { symbol: \"waveform\", placeholder: \"Ask anything\", talks: true, sends: false, mic: color(\"#FFFFFFCC\") };\n\nfunction evaluate(inputs, outputs) {\n  const words = String(inputs.typed).trim().length > 0;\n  outputs.symbol = inputs.loading ? \"stop.fill\" : words ? \"arrow.up\" : \"waveform\";\n  outputs.talks = !inputs.loading && !words;\n  outputs.sends = !inputs.loading && words;\n  outputs.placeholder = inputs.recording ? \"Listening…\" : \"Ask anything\";\n  outputs.mic = inputs.recording ? color(\"#FF5A4E\") : color(\"#FFFFFFCC\");\n}"
       },
       {
-        "home" : "A3CD14FB-5482-4D17-BA71-3E081AAA45D7",
-        "id" : "F18ED275-7325-4736-B1F1-5C8DAE0AFCB1",
-        "inputs" : {
-          "else" : {
-            "type" : "number",
-            "value" : 1
-          },
-          "then" : {
-            "type" : "number",
-            "value" : 0.35
-          }
-        },
-        "kind" : "if",
-        "name" : "Ready",
-        "position" : {
-          "x" : 624,
-          "y" : 1800
-        },
-        "valueType" : "number"
-      },
-      {
-        "id" : "A45192D3-C52E-4A73-95FA-5EA42F47B264",
+        "id" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
         "inputs" : {
 
         },
         "kind" : "javascript",
         "name" : "Thread",
         "position" : {
-          "x" : 1488,
+          "x" : 1776,
           "y" : 1248
         },
-        "script" : "\/\/ The messages to show, oldest first: as many of the newest as fit the screen.\n\/\/ While the model writes, its answer ends in a dot; before its first word it\n\/\/ says it is thinking. A failure shows as the model's message.\ninputs = { conversation: [], loading: false, error: \"\" };\noutputs = { shown: [], empty: true };\n\nconst room = 650;\nconst wide = 362, narrow = 268, perChar = 8.6, line = 22;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nfunction height(text, user) { return lines(text, user ? narrow : wide) * line + (user ? 20 : 0) + 20; }\nfunction evaluate(inputs, outputs) {\n  const turns = (Array.isArray(inputs.conversation) ? inputs.conversation : []).map((turn, index, all) => {\n    const user = turn.role === \"user\";\n    const writing = !user && inputs.loading && index === all.length - 1;\n    let text = String(turn.text || \"\");\n    if (writing) text = text.length ? text + \" ●\" : \"Thinking…\";\n    return { text: text, user: user, dim: writing && !turn.text };\n  });\n  if (inputs.error && !inputs.loading) turns.push({ text: inputs.error, user: false, dim: true });\n  const shown = [];\n  let used = 0;\n  for (let i = turns.length - 1; i >= 0; i--) {\n    used += height(turns[i].text, turns[i].user);\n    if (used > room && shown.length > 0) break;\n    shown.unshift(turns[i]);\n  }\n  outputs.shown = shown;\n  outputs.empty = turns.length === 0;\n}"
+        "script" : "\/\/ The messages to show, oldest first: as many of the newest as fit the screen.\n\/\/ While the model writes, its answer ends in a dot, which is all there is before\n\/\/ its first word. A failure shows as the model's message. Each message has a key\n\/\/ that a new chat does not reuse, for what was done to it (Feedback).\ninputs = { conversation: [], loading: false, error: \"\" };\noutputs = { shown: [], empty: true };\n\nconst room = 650;\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nlet chatNumber = 0, had = false;\nfunction height(m) {\n  return lines(m.text, m.user ? narrow : wide) * line + (m.user ? 20 : 0) + (m.actions ? actionsRow : 0) + 20;\n}\nfunction evaluate(inputs, outputs) {\n  const all = Array.isArray(inputs.conversation) ? inputs.conversation : [];\n  if (all.length === 0 && had) chatNumber++;\n  had = all.length > 0;\n  const turns = all.map((turn, index) => {\n    const user = turn.role === \"user\";\n    const writing = !user && inputs.loading && index === all.length - 1;\n    let text = String(turn.text || \"\");\n    if (writing) text = text.length ? text + \" ●\" : \"●\";\n    return { key: chatNumber + \"-\" + index, text: text, user: user, dim: writing && !turn.text, actions: !user && !writing };\n  });\n  if (inputs.error && !inputs.loading) turns.push({ key: chatNumber + \"-error\", text: inputs.error, user: false, dim: true, actions: false });\n  const shown = [];\n  let used = 0;\n  for (let i = turns.length - 1; i >= 0; i--) {\n    used += height(turns[i]);\n    if (used > room && shown.length > 0) break;\n    shown.unshift(turns[i]);\n  }\n  outputs.shown = shown;\n  outputs.empty = turns.length === 0;\n}"
       },
       {
-        "id" : "26E2E3B7-D0AA-4DB3-9B19-C961F02A4169",
-        "inputs" : {
-
-        },
-        "kind" : "javascript",
-        "name" : "Message Style",
-        "position" : {
-          "x" : 2064,
-          "y" : 1248
-        },
-        "script" : "\/\/ How one message looks: the person's in a bubble on the right, as wide as its\n\/\/ words; the model's as plain text across the screen on the left.\ninputs = { message: {} };\noutputs = { text: \"\", side: \"End\", fill: color(\"#303030\"), padding: 16, width: 268, height: 22, opacity: 1 };\n\nconst wide = 362, narrow = 268, perChar = 8.6, line = 22;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\n\nfunction evaluate(inputs, outputs) {\n  const m = inputs.message || {};\n  const text = String(m.text || \"\");\n  outputs.text = text;\n  outputs.side = m.user ? \"End\" : \"Start\";\n  outputs.fill = m.user ? color(\"#303030\") : color(\"#00000000\");\n  outputs.padding = m.user ? 16 : 0;\n  const longest = Math.max(...text.split(\"\\n\").map(p => p.length), 1);\n  outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;\n  outputs.height = lines(text, outputs.width) * line;\n  outputs.opacity = m.dim ? 0.5 : 1;\n}"
-      },
-      {
-        "id" : "3FBBAD35-17A7-446F-B5A0-2C3BEB45C825",
+        "id" : "A436E09F-52A1-45A3-9D57-40E4A606A869",
         "inputs" : {
 
         },
         "kind" : "loopOverArray",
         "name" : "Each Message",
         "position" : {
-          "x" : 1776,
+          "x" : 2064,
           "y" : 1248
         },
         "valueType" : "json"
       },
       {
-        "id" : "34102F03-68D8-415B-A7AC-73B702BAA20C",
+        "id" : "9379C43B-85F4-4EED-9160-BB4F3D97922C",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "2C64350A-A246-4787-851D-9BF171017AD2",
+        "position" : {
+          "x" : 1488,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Copied",
+        "position" : {
+          "x" : 1776,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "AEC2A29A-7962-4A84-8BB1-AF720DB8FC06",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "84CDE697-7429-4F85-8117-94EB18C385CC",
+        "position" : {
+          "x" : 1488,
+          "y" : 2280
+        }
+      },
+      {
+        "id" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Liked",
+        "position" : {
+          "x" : 1776,
+          "y" : 2280
+        }
+      },
+      {
+        "id" : "2FFB3DF5-C876-41EC-BCD8-D46CEBB6F313",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "E8E38E6B-C2D9-4335-9959-874CC71848BE",
+        "position" : {
+          "x" : 1488,
+          "y" : 2496
+        }
+      },
+      {
+        "id" : "18A12812-EE47-4B40-B580-82148043594B",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Disliked",
+        "position" : {
+          "x" : 1776,
+          "y" : 2496
+        }
+      },
+      {
+        "id" : "5FEC1B7F-0717-4DC3-8011-0333B3EA7B7D",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "DFC0DFAF-2471-433F-A4CC-ECD7349602E8",
+        "position" : {
+          "x" : 1488,
+          "y" : 2712
+        }
+      },
+      {
+        "id" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Read Aloud",
+        "position" : {
+          "x" : 1776,
+          "y" : 2712
+        }
+      },
+      {
+        "id" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Words Read",
+        "position" : {
+          "x" : 2064,
+          "y" : 2712
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+        "inputs" : {
+          "model" : {
+            "type" : "text",
+            "value" : "apple-on-device"
+          }
+        },
+        "kind" : "aiSpeech",
+        "name" : "Read Aloud",
+        "position" : {
+          "x" : 2352,
+          "y" : 2712
+        }
+      },
+      {
+        "id" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Feedback",
+        "position" : {
+          "x" : 2352,
+          "y" : 2064
+        },
+        "script" : "\/\/ A thumb chosen stays on its message (the other thumb goes); the last message\n\/\/ copied shows a tick; the one being read aloud shows it.\ninputs = { shown: [], copy: pulse(), copyAt: -1, like: pulse(), likeAt: -1,\n           dislike: pulse(), dislikeAt: -1, read: pulse(), readAt: -1, speaking: false };\noutputs = { marks: {} };\n\nconst votes = {};\nlet copiedKey = \"\", readKey = \"\";\nfunction evaluate(given, outputs) {\n  const keyAt = index => ((given.shown || [])[index] || {}).key || \"\";\n  if (given.like) { const k = keyAt(given.likeAt); votes[k] = votes[k] === \"up\" ? \"\" : \"up\"; }\n  if (given.dislike) { const k = keyAt(given.dislikeAt); votes[k] = votes[k] === \"down\" ? \"\" : \"down\"; }\n  if (given.copy) copiedKey = keyAt(given.copyAt);\n  if (given.read) readKey = keyAt(given.readAt);\n  const marks = {};\n  for (const m of given.shown || []) {\n    marks[m.key] = { vote: votes[m.key] || \"\", copied: m.key === copiedKey, reading: given.speaking && m.key === readKey };\n  }\n  outputs.marks = marks;\n}"
+      },
+      {
+        "id" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Message Style",
+        "position" : {
+          "x" : 2352,
+          "y" : 1248
+        },
+        "script" : "\/\/ The person's words in a bubble on the right, as wide as they are; the model's\n\/\/ as plain text across the screen on the left, with its actions under it.\ninputs = { message: {}, marks: {} };\noutputs = { shown: true, text: \"\", side: \"End\", fill: color(\"#303030\"), padding: 16, width: 290, height: 22, opacity: 1,\n            actions: 0, actionsHeight: 0, copy: \"doc.on.doc\", like: \"hand.thumbsup\", dislike: \"hand.thumbsdown\", read: \"speaker.wave.2\" };\n\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nfunction evaluate(inputs, outputs) {\n  const m = inputs.message || {};\n  const mark = (inputs.marks || {})[m.key] || {};\n  const text = String(m.text || \"\");\n  outputs.text = text;\n  outputs.side = m.user ? \"End\" : \"Start\";\n  outputs.fill = m.user ? color(\"#303030\") : color(\"#00000000\");\n  outputs.padding = m.user ? 16 : 0;\n  const longest = Math.max(...text.split(\"\\n\").map(p => p.length), 1);\n  outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;\n  outputs.height = lines(text, outputs.width) * line;\n  outputs.opacity = m.dim ? 0.5 : 1;\n  \/\/ Not hidden but shrunk to nothing: a view hidden in some copies of a\n  \/\/ repeated view and not others loses its taps.\n  outputs.actions = m.actions ? 1 : 0;\n  outputs.actionsHeight = m.actions ? 32 : 0;\n  outputs.copy = mark.copied ? \"checkmark\" : \"doc.on.doc\";\n  outputs.like = mark.vote === \"up\" ? \"hand.thumbsup.fill\" : \"hand.thumbsup\";\n  outputs.dislike = mark.vote === \"down\" ? \"hand.thumbsdown.fill\" : \"hand.thumbsdown\";\n  outputs.read = mark.reading ? \"speaker.wave.2.fill\" : \"speaker.wave.2\";\n}"
+      },
+      {
+        "id" : "6FAA60D5-706A-45E7-8F32-7C4A81087004",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -1213,11 +2070,11 @@
         "name" : "Thinking",
         "position" : {
           "x" : 1200,
-          "y" : 2112
+          "y" : 2400
         }
       },
       {
-        "id" : "B5EB22DF-27D3-4295-ACFA-1123C31F85AA",
+        "id" : "986A90B4-A7C2-4CC0-9C4E-794ABAF44E6B",
         "inputs" : {
 
         },
@@ -1225,7 +2082,7 @@
         "name" : "Phase",
         "position" : {
           "x" : 1200,
-          "y" : 2328
+          "y" : 2616
         }
       }
     ]
@@ -1240,67 +2097,111 @@
                 "children" : [
                   {
                     "children" : [
+                      {
+                        "children" : [
 
+                        ],
+                        "id" : "B729A2FA-4B5B-4B39-861D-E52DCA81E5B0",
+                        "kind" : "text",
+                        "name" : "Words",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 16
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 400
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 22,
+                              "width" : 362
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : ""
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          }
+                        }
+                      }
                     ],
-                    "id" : "9E5B80AD-AF6C-44AE-9B8C-23195B98440F",
-                    "kind" : "text",
-                    "name" : "Words",
+                    "id" : "423D1B3F-7B23-4480-BB75-F21B1D7A8BFF",
+                    "kind" : "view",
+                    "name" : "Bubble",
                     "properties" : {
-                      "fontSize" : {
+                      "cornerRadius" : {
                         "type" : "number",
-                        "value" : 16
+                        "value" : 20
                       },
-                      "fontWeight" : {
-                        "type" : "number",
-                        "value" : 400
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.18823529411764706,
+                          "green" : 0.18823529411764706,
+                          "red" : 0.18823529411764706
+                        }
                       },
                       "heightMode" : {
                         "type" : "text",
-                        "value" : "Fixed"
+                        "value" : "Auto"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "paddingHorizontal" : {
+                        "type" : "number",
+                        "value" : 16
+                      },
+                      "paddingVertical" : {
+                        "type" : "number",
+                        "value" : 10
                       },
                       "size" : {
                         "type" : "size",
                         "value" : {
-                          "height" : 22,
-                          "width" : 362
-                        }
-                      },
-                      "text" : {
-                        "type" : "text",
-                        "value" : ""
-                      },
-                      "textColor" : {
-                        "type" : "color",
-                        "value" : {
-                          "alpha" : 1,
-                          "blue" : 1,
-                          "green" : 1,
-                          "red" : 1
+                          "height" : 40,
+                          "width" : 100
                         }
                       },
                       "widthMode" : {
                         "type" : "text",
-                        "value" : "Fixed"
+                        "value" : "Auto"
                       }
                     }
                   }
                 ],
-                "id" : "01139B11-B2FC-4E14-BFC9-CE323E3040E4",
+                "id" : "15BB78A3-230F-4F94-85AA-97F14A39DADC",
                 "kind" : "view",
-                "name" : "Bubble",
+                "name" : "Line",
                 "properties" : {
-                  "cornerRadius" : {
-                    "type" : "number",
-                    "value" : 20
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
                   },
-                  "fill" : {
-                    "type" : "color",
-                    "value" : {
-                      "alpha" : 1,
-                      "blue" : 0.18823529411764706,
-                      "green" : 0.18823529411764706,
-                      "red" : 0.18823529411764706
-                    }
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "End"
                   },
                   "heightMode" : {
                     "type" : "text",
@@ -1310,20 +2211,324 @@
                     "type" : "text",
                     "value" : "Stack"
                   },
-                  "paddingHorizontal" : {
-                    "type" : "number",
-                    "value" : 16
-                  },
-                  "paddingVertical" : {
-                    "type" : "number",
-                    "value" : 10
-                  },
                   "size" : {
                     "type" : "size",
                     "value" : {
                       "height" : 40,
-                      "width" : 100
+                      "width" : 362
                     }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "CB2311AB-E13C-4340-919D-AF4014DB0850",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "doc.on.doc"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "2C64350A-A246-4787-851D-9BF171017AD2",
+                    "kind" : "view",
+                    "name" : "Copy",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "8926CA82-4CA4-4808-9F80-7E49F3A153EE",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "hand.thumbsup"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "84CDE697-7429-4F85-8117-94EB18C385CC",
+                    "kind" : "view",
+                    "name" : "Like",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "AD675086-26D3-4039-8D0E-28FE563840B6",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "hand.thumbsdown"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "E8E38E6B-C2D9-4335-9959-874CC71848BE",
+                    "kind" : "view",
+                    "name" : "Dislike",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "A672F548-A457-479A-B7C7-B1DFD805FB5B",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "speaker.wave.2"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "DFC0DFAF-2471-433F-A4CC-ECD7349602E8",
+                    "kind" : "view",
+                    "name" : "Read Aloud",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  }
+                ],
+                "id" : "0106A010-E7BC-45B7-A333-051E9A3D1322",
+                "kind" : "view",
+                "name" : "Actions",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "clips" : {
+                    "type" : "bool",
+                    "value" : true
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 32,
+                      "width" : 160
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 6
                   },
                   "widthMode" : {
                     "type" : "text",
@@ -1332,18 +2537,10 @@
                 }
               }
             ],
-            "id" : "335AF645-708C-43DC-A77E-8B3B0EB323CB",
+            "id" : "3022CDB3-5C65-45DF-8773-C5BA8B004353",
             "kind" : "view",
             "name" : "Message",
             "properties" : {
-              "axis" : {
-                "type" : "text",
-                "value" : "Horizontal"
-              },
-              "distribution" : {
-                "type" : "text",
-                "value" : "End"
-              },
               "heightMode" : {
                 "type" : "text",
                 "value" : "Auto"
@@ -1359,6 +2556,10 @@
                   "width" : 362
                 }
               },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              },
               "widthMode" : {
                 "type" : "text",
                 "value" : "Grow"
@@ -1366,7 +2567,7 @@
             }
           }
         ],
-        "id" : "D5C4C3AB-08CB-4A88-B9DA-AA02E05F1E11",
+        "id" : "D05D4F6B-9EF8-40CD-9314-828BD143F607",
         "kind" : "view",
         "name" : "Messages",
         "properties" : {
@@ -1416,7 +2617,7 @@
             "children" : [
 
             ],
-            "id" : "59985B65-2983-4F39-A547-71E3B1A84DA2",
+            "id" : "B05E6E7F-445E-4BF8-B911-42C3B3843A38",
             "kind" : "symbol",
             "name" : "Mark",
             "properties" : {
@@ -1453,7 +2654,7 @@
             "children" : [
 
             ],
-            "id" : "D7CCD522-8E9B-4F56-BF1D-CB417EFF4446",
+            "id" : "31D494D2-C157-42B3-9628-D39A0CC0059F",
             "kind" : "text",
             "name" : "Question",
             "properties" : {
@@ -1510,7 +2711,7 @@
             "children" : [
 
             ],
-            "id" : "40573F7E-84A5-4F13-B78E-E87990076794",
+            "id" : "7CDAB7FE-30F7-4864-B2CC-578060055B8A",
             "kind" : "text",
             "name" : "Promise",
             "properties" : {
@@ -1571,7 +2772,7 @@
                     "children" : [
 
                     ],
-                    "id" : "6A299A8C-FA6C-4530-9D61-8386AA13C8F9",
+                    "id" : "4C57D412-E4BB-4421-A2F5-8BEE85A0F6E4",
                     "kind" : "symbol",
                     "name" : "Glyph",
                     "properties" : {
@@ -1608,7 +2809,7 @@
                     "children" : [
 
                     ],
-                    "id" : "2C30E366-5F79-429B-93BF-0AA746DAA59A",
+                    "id" : "F5D63D39-DF2D-4B55-BE77-8CAE73044561",
                     "kind" : "text",
                     "name" : "Words",
                     "properties" : {
@@ -1633,7 +2834,7 @@
                       },
                       "text" : {
                         "type" : "text",
-                        "value" : "Tap a suggestion, or type below"
+                        "value" : "Tap a suggestion, type, or hold the mic"
                       },
                       "textColor" : {
                         "type" : "color",
@@ -1651,7 +2852,7 @@
                     }
                   }
                 ],
-                "id" : "95D3D3D6-05A1-4416-9EDB-EA6B3271732C",
+                "id" : "F82B657D-31CD-46C8-80C7-285BDE6A706E",
                 "kind" : "view",
                 "name" : "Pill",
                 "properties" : {
@@ -1739,7 +2940,7 @@
                 }
               }
             ],
-            "id" : "2E84F790-E0C0-45A1-B704-A87CCC64585D",
+            "id" : "26E94125-DF00-4653-8161-3E795849748C",
             "kind" : "view",
             "name" : "Hint",
             "properties" : {
@@ -1783,7 +2984,7 @@
                     "children" : [
 
                     ],
-                    "id" : "1DD7D521-CC89-4EFE-B630-608B4A215673",
+                    "id" : "3933A332-DDAD-4A7E-AB69-4ADB6B99FD39",
                     "kind" : "text",
                     "name" : "Suggestion Title",
                     "properties" : {
@@ -1822,7 +3023,7 @@
                     "children" : [
 
                     ],
-                    "id" : "1760DA11-1A1D-4514-B4E3-104A9B0B235C",
+                    "id" : "62B46DB1-43C2-4611-98E1-8AE97A6C0BF0",
                     "kind" : "text",
                     "name" : "Suggestion Detail",
                     "properties" : {
@@ -1854,7 +3055,7 @@
                     }
                   }
                 ],
-                "id" : "0D8C6FAD-F3F8-4998-B4F4-7B925CFE4463",
+                "id" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
                 "kind" : "view",
                 "name" : "Suggestion",
                 "properties" : {
@@ -1914,7 +3115,7 @@
                 }
               }
             ],
-            "id" : "9D888507-C120-41AC-AF28-833DCC47698B",
+            "id" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
             "kind" : "view",
             "name" : "Suggestions",
             "properties" : {
@@ -1955,7 +3156,7 @@
             }
           }
         ],
-        "id" : "618ADC10-6B07-4230-98C3-9D5DB42B56DA",
+        "id" : "E05F69F8-CBA5-417B-81BA-5924E756428B",
         "kind" : "view",
         "name" : "Welcome",
         "properties" : {
@@ -1974,7 +3175,7 @@
             "children" : [
 
             ],
-            "id" : "6BEC36C0-7210-4578-975D-91FB54FE5AB0",
+            "id" : "1B424AEF-6550-45B7-9120-18106278D4B7",
             "kind" : "text",
             "name" : "Model",
             "properties" : {
@@ -2020,7 +3221,7 @@
             "children" : [
 
             ],
-            "id" : "F8CCB872-AD17-4A06-8B58-BD2C5B5AD985",
+            "id" : "D1153547-C845-4B8D-92D1-2167CF8BA714",
             "kind" : "symbol",
             "name" : "Chevron",
             "properties" : {
@@ -2058,7 +3259,7 @@
             }
           }
         ],
-        "id" : "8174D1AA-B93F-4D10-A762-AEB41961B1E0",
+        "id" : "25410299-511B-4A2D-83A0-07D571470CE0",
         "kind" : "view",
         "name" : "Bar",
         "properties" : {
@@ -2111,7 +3312,7 @@
         "children" : [
 
         ],
-        "id" : "F1322072-0C8B-4EC7-9297-C31DA805009F",
+        "id" : "1F572EA9-6D2C-46F4-9235-B950A69F94D1",
         "kind" : "symbol",
         "name" : "Menu",
         "properties" : {
@@ -2150,7 +3351,7 @@
             "children" : [
 
             ],
-            "id" : "F48DD523-64C9-4882-9E52-F11E99452C5B",
+            "id" : "899C8D98-9030-4604-8C91-D87657C87BC9",
             "kind" : "symbol",
             "name" : "Glyph",
             "properties" : {
@@ -2184,7 +3385,7 @@
             }
           }
         ],
-        "id" : "9D7C7B57-A4DC-4745-A8B9-3EA188917F46",
+        "id" : "A1820A9A-90DF-46CC-852F-A7D89E6F8254",
         "kind" : "view",
         "name" : "New Chat",
         "properties" : {
@@ -2224,7 +3425,7 @@
         "children" : [
 
         ],
-        "id" : "84DD47E9-FFAD-4A76-89BE-24D58CC67280",
+        "id" : "9340463F-CCDE-4382-B6C9-7DE14F5E039D",
         "kind" : "view",
         "name" : "Glow",
         "properties" : {
@@ -2270,9 +3471,95 @@
         "children" : [
           {
             "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "BEA88805-6A43-4262-B13F-28EB079C5A11",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 16,
+                      "width" : 16
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "plus"
+                  }
+                }
+              }
+            ],
+            "id" : "D69D9F37-F260-4E07-8972-16556FDED670",
+            "kind" : "view",
+            "name" : "Plus",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.08,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 32,
+                  "width" : 32
+                }
+              }
+            }
+          },
+          {
+            "children" : [
 
             ],
-            "id" : "BBE4FCC8-0D1C-4977-85BF-DD40A1317A64",
+            "id" : "2A962AEE-58AD-4179-A7B0-1B81FE233ECB",
             "kind" : "textField",
             "name" : "Ask",
             "properties" : {
@@ -2301,7 +3588,7 @@
                 "type" : "size",
                 "value" : {
                   "height" : 40,
-                  "width" : 280
+                  "width" : 200
                 }
               },
               "textColor" : {
@@ -2325,7 +3612,76 @@
                 "children" : [
 
                 ],
-                "id" : "717DB38B-C37D-43D3-9E6D-ACFF2733123C",
+                "id" : "61B22223-3C13-48ED-A81D-AE00E1BD7497",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.8,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 20,
+                      "width" : 20
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "mic"
+                  }
+                }
+              }
+            ],
+            "id" : "ED89E18C-FB02-4D6B-B2EB-EE7FCA3447BE",
+            "kind" : "view",
+            "name" : "Mic",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 36
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "C616CAEB-CFD5-48E7-8F08-0F3F37374162",
                 "kind" : "symbol",
                 "name" : "Glyph",
                 "properties" : {
@@ -2358,14 +3714,14 @@
                   },
                   "symbol" : {
                     "type" : "text",
-                    "value" : "arrow.up"
+                    "value" : "waveform"
                   }
                 }
               }
             ],
-            "id" : "FDAD8FE7-0DEE-4005-81AD-7EDC2B683225",
+            "id" : "8DB4C49A-A7BE-440C-9ECF-D0D7FA16FD44",
             "kind" : "view",
-            "name" : "Send",
+            "name" : "Talk Send Stop",
             "properties" : {
               "alignment" : {
                 "type" : "text",
@@ -2406,7 +3762,7 @@
             }
           }
         ],
-        "id" : "A3CD14FB-5482-4D17-BA71-3E081AAA45D7",
+        "id" : "FE3D5F3D-050B-4397-8F45-5106966BEAC0",
         "kind" : "view",
         "name" : "Composer",
         "properties" : {
@@ -2437,7 +3793,7 @@
           },
           "paddingLeft" : {
             "type" : "number",
-            "value" : 20
+            "value" : 11
           },
           "paddingRight" : {
             "type" : "number",
@@ -2463,12 +3819,12 @@
           },
           "spacing" : {
             "type" : "number",
-            "value" : 8
+            "value" : 6
           }
         }
       }
     ],
-    "id" : "F49689BF-C1CA-4091-96AE-55994AA1F116",
+    "id" : "E168D92C-0166-4622-B70A-7FFBC4442A66",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {

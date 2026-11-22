@@ -1,108 +1,208 @@
+import CoreGraphics
 import Foundation
 import Testing
 import PaperModel
 @testable import PaperEngine
 
-/// On-Device Chat does what its hint says: a suggestion or what is typed asks Apple's
-/// model, the answer streams into the thread, the chat is kept, and New Chat starts over.
+/// On-Device Chat does what ChatGPT does, on Apple's model: a suggestion, typed words or
+/// words said into the microphone ask; the answer streams in and can be stopped; each
+/// answer can be copied, rated and read aloud; New Chat starts over.
 extension ShowcaseTests {
-    @Test func theChatAsksTheOnDeviceModelAndKeepsTheConversation() {
-        typealias Chat = SampleDocuments.OnDeviceChat
+    typealias Chat = SampleDocuments.OnDeviceChat
+
+    final class Chatting {
         let example = SampleDocuments.onDeviceChat()
-        let runtime = Runtime(document: example.document)
+        let runtime: Runtime
         var sent: [AIRequest] = []
-        runtime.aiHandler = { sent.append($0) }
-        runtime.advance(seconds: 0.2)
-        func shown() -> [Value] { runtime.outputValue(PortRef(node: example.thread, port: "shown"))?.arrayValue ?? [] }
-        func texts() -> [String] { shown().map { $0.value(atPath: "text")?.textValue ?? "" } }
-        func welcome() -> Bool { runtime.resolved.find(example.welcome) != nil }
-        func glow() -> Double { runtime.number(example.thinking, "value") }
-        #expect(welcome())
-        #expect(shown().isEmpty)
-        #expect(!runtime.needsAnotherFrame)
+        let frame = 1.0 / 60.0
 
-        // The first suggestion card asks with its words, on the device.
-        tap(runtime, Point2(x: 100, y: Chat.suggestionsY + 35))
-        runtime.tick(dt: frame)
-        #expect(sent.count == 1)
-        let first = sent[0]
-        #expect(first.task == .text && first.provider == .apple && first.model == AIRequest.onDevice)
+        init() {
+            runtime = Runtime(document: example.document)
+            runtime.aiHandler = { [unowned self] in sent.append($0) }
+            runtime.advance(seconds: 0.2)
+        }
+
+        func tap(_ point: Point2) {
+            runtime.send(.touchDown(point))
+            runtime.tick(dt: frame)
+            runtime.send(.touchUp(point))
+            runtime.tick(dt: frame)
+            runtime.tick(dt: frame)
+        }
+        func type(_ words: String) {
+            tap(Point2(x: 150, y: Chat.composerY + 27))
+            runtime.send(.text(words))
+            runtime.tick(dt: frame)
+        }
+        var shown: [Value] { runtime.outputValue(PortRef(node: example.thread, port: "shown"))?.arrayValue ?? [] }
+        var texts: [String] { shown.map { $0.value(atPath: "text")?.textValue ?? "" } }
+        var marks: Value { runtime.outputValue(PortRef(node: example.feedback, port: "marks")) ?? .object([:]) }
+        var welcome: Bool { runtime.resolved.find(example.welcome) != nil }
+        func asks(_ index: Int) -> [AIRequest] { sent.filter { $0.task == .text && $0.phase == .send } }
+        var lastAsk: AIRequest { sent.last { $0.task == .text && $0.phase == .send }! }
+        func answer(_ text: String) {
+            runtime.update(ai: lastAsk.id, .finished(text: text, picture: ""))
+            runtime.tick(dt: frame)
+            runtime.tick(dt: frame)
+        }
+        /// Where the last copy of a repeated view is: the newest message's.
+        func newest(_ id: LayerID) -> Point2 {
+            var centers: [CGPoint] = []
+            func walk(_ layer: ResolvedLayer, _ toRoot: CGAffineTransform) {
+                let here = layer.transformToParent.concatenating(toRoot)
+                if layer.id == id { centers.append(CGPoint(x: layer.size.width / 2, y: layer.size.height / 2).applying(here)) }
+                for child in layer.children { walk(child, here) }
+            }
+            for child in runtime.resolved.children { walk(child, .identity) }
+            return Point2(x: centers.last!.x, y: centers.last!.y)
+        }
+    }
+
+    @Test func aSuggestionAsksTheOnDeviceModelAndTheAnswerStreamsIn() {
+        let c = Chatting()
+        #expect(c.welcome && c.shown.isEmpty)
+        #expect(!c.runtime.needsAnotherFrame)
+
+        c.tap(Point2(x: 100, y: Chat.suggestionsY + 35))
+        let first = c.lastAsk
+        #expect(first.provider == .apple && first.model == AIRequest.onDevice)
         #expect(first.prompt == Chat.suggestions[0].prompt && first.instructions == Chat.instructions)
-        #expect(!welcome())
-        #expect(texts() == [Chat.suggestions[0].prompt, "Thinking…"])
-        runtime.advance(seconds: 0.6)
-        #expect(glow() > 0.5)
+        #expect(!c.welcome)
+        // Before its first word, the answer is a dot; the composer glows.
+        #expect(c.texts == [Chat.suggestions[0].prompt, "●"])
+        c.runtime.advance(seconds: 0.6)
+        #expect(c.runtime.number(c.example.thinking, "value") > 0.5)
 
-        // The answer streams in with a dot after it, then stands alone.
-        runtime.update(ai: first.id, .partial("Day one"))
-        runtime.tick(dt: frame)
-        #expect(texts().last == "Day one ●")
-        runtime.update(ai: first.id, .finished(text: "Day one: temples.", picture: ""))
-        runtime.tick(dt: frame)
-        #expect(texts().last == "Day one: temples.")
-        #expect(shown().map { $0.value(atPath: "user")?.boolValue ?? false } == [true, false])
-        runtime.settle(within: 3)
-        #expect(glow() < 0.01)
-        #expect(!runtime.needsAnotherFrame)
+        c.runtime.update(ai: first.id, .partial("Day one"))
+        c.runtime.tick(dt: c.frame)
+        #expect(c.texts.last == "Day one ●")
+        // No actions on an answer still being written.
+        #expect(c.shown.last?.value(atPath: "actions")?.boolValue == false)
+        c.answer("Day one: temples.")
+        #expect(c.texts.last == "Day one: temples.")
+        #expect(c.shown.last?.value(atPath: "actions")?.boolValue == true)
+        c.runtime.settle(within: 3)
+        #expect(c.runtime.number(c.example.thinking, "value") < 0.01)
+        #expect(!c.runtime.needsAnotherFrame)
 
-        // Typed words follow on from the conversation; the field empties once sent.
-        let field = runtime.resolved.find(example.field)!
-        tap(runtime, Point2(x: 150, y: Chat.composerY + 27))
-        runtime.tick(dt: frame)
-        runtime.send(.text("Shorter"))
-        runtime.tick(dt: frame)
-        runtime.send(.submit)
-        runtime.tick(dt: frame)
-        runtime.tick(dt: frame)
-        #expect(sent.count == 2 && sent[1].prompt == "Shorter")
-        #expect(sent[1].conversation == [AITurn(.user, Chat.suggestions[0].prompt), AITurn(.assistant, "Day one: temples.")])
-        #expect(runtime.resolved.find(field.id)!.value(.text).textValue.isEmpty)
+        // A failure shows as the model's message, dimmed; New Chat starts over.
+        c.type("Again")
+        c.runtime.send(.submit)
+        c.runtime.tick(dt: c.frame)
+        c.runtime.tick(dt: c.frame)
+        c.runtime.update(ai: c.lastAsk.id, .failed("Turn on Apple Intelligence in System Settings to use apple-on-device."))
+        c.runtime.tick(dt: c.frame)
+        #expect(c.texts.last?.hasPrefix("Turn on Apple Intelligence") == true)
+        c.tap(Point2(x: ExampleStyle.device.width - 36, y: ExampleStyle.top + 22))
+        #expect(c.shown.isEmpty && c.welcome)
+    }
 
-        // A failure shows in the thread, dimmed.
-        runtime.update(ai: sent[1].id, .failed("Turn on Apple Intelligence in System Settings to use apple-on-device."))
-        runtime.tick(dt: frame)
-        #expect(texts().last?.hasPrefix("Turn on Apple Intelligence") == true)
-        #expect(shown().last?.value(atPath: "dim")?.boolValue == true)
+    @Test func theRoundButtonTalksSendsAndStops() {
+        let c = Chatting()
+        let circle = Chat.circleCenter
+        // Typed words, then the button: it sends, and the field empties.
+        c.type("Shorter")
+        c.tap(circle)
+        #expect(c.lastAsk.prompt == "Shorter")
+        let field = c.runtime.resolved.find(c.example.field)!
+        #expect(field.value(.text).textValue.isEmpty)
+        // While the answer is written the same button stops it; what was written stays.
+        c.runtime.update(ai: c.lastAsk.id, .partial("Sure, here"))
+        c.runtime.tick(dt: c.frame)
+        let asking = c.lastAsk
+        c.tap(circle)
+        #expect(c.sent.contains { $0.id == asking.id && $0.phase == .cancel })
+        #expect(c.texts == ["Shorter", "Sure, here"])
+        #expect(c.shown.last?.value(atPath: "actions")?.boolValue == true)
+        // The next question follows on from what was kept.
+        c.type("Go on")
+        c.runtime.send(.submit)
+        c.runtime.tick(dt: c.frame)
+        c.runtime.tick(dt: c.frame)
+        #expect(c.lastAsk.conversation == [AITurn(.user, "Shorter"), AITurn(.assistant, "Sure, here")])
+    }
 
-        // New Chat starts over, back to the suggestions.
-        tap(runtime, Point2(x: ExampleStyle.device.width - 36, y: ExampleStyle.top + 22))
-        runtime.tick(dt: frame)
-        runtime.tick(dt: frame)
-        #expect(shown().isEmpty)
-        #expect(welcome())
+    @Test func holdingTheMicrophoneAsksOutLoud() {
+        let c = Chatting()
+        let mic = Chat.micCenter
+        c.runtime.send(.touchDown(mic))
+        c.runtime.tick(dt: c.frame)
+        c.runtime.tick(dt: c.frame)
+        let listening = c.sent.first { $0.task == .transcription && $0.phase == .startRecording }
+        #expect(listening?.model == AIRequest.onDevice)
+        c.runtime.update(ai: listening!.id, .recording(true))
+        c.runtime.tick(dt: c.frame)
+        c.runtime.send(.touchUp(mic))
+        c.runtime.tick(dt: c.frame)
+        #expect(c.sent.contains { $0.id == listening!.id && $0.phase == .stopRecording })
+        c.runtime.update(ai: listening!.id, .finished(text: "What is a quasar?", picture: ""))
+        c.runtime.tick(dt: c.frame)
+        c.runtime.tick(dt: c.frame)
+        #expect(c.lastAsk.prompt == "What is a quasar?")
+        // The round button, held while the field is empty, listens too.
+        c.answer("A bright galaxy core.")
+        c.runtime.send(.touchDown(Chat.circleCenter))
+        c.runtime.tick(dt: c.frame)
+        c.runtime.tick(dt: c.frame)
+        #expect(c.sent.filter { $0.task == .transcription && $0.phase == .startRecording }.count == 2)
+        c.runtime.send(.touchUp(Chat.circleCenter))
+        c.runtime.tick(dt: c.frame)
+    }
+
+    @Test func anAnswerCanBeRatedCopiedAndReadAloud() {
+        let c = Chatting()
+        c.tap(Point2(x: 100, y: Chat.suggestionsY + 35))
+        c.answer("Black holes are heavy.")
+        let key = c.shown.last!.value(atPath: "key")!.textValue
+        c.tap(c.newest(c.example.like))
+        #expect(c.marks.value(atPath: key + ".vote") == .text("up"))
+        // The other thumb takes its place; the same one again takes it back.
+        let dislike = Point2(x: c.newest(c.example.like).x + 38, y: c.newest(c.example.like).y)
+        c.tap(dislike)
+        #expect(c.marks.value(atPath: key + ".vote") == .text("down"))
+        c.tap(dislike)
+        #expect(c.marks.value(atPath: key + ".vote") == .text(""))
+        // Copy shows a tick.
+        let copy = Point2(x: c.newest(c.example.like).x - 38, y: c.newest(c.example.like).y)
+        c.tap(copy)
+        #expect(c.marks.value(atPath: key + ".copied") == .bool(true))
+        // Read aloud says the answer in the device's voice.
+        c.tap(c.newest(c.example.speaker))
+        let reading = c.sent.last { $0.task == .speech && $0.phase == .send }
+        #expect(reading?.prompt == "Black holes are heavy." && reading?.model == AIRequest.onDevice)
+        c.runtime.update(ai: reading!.id, .finished(text: "", picture: ""))
+        c.runtime.update(ai: reading!.id, .playing(true))
+        c.runtime.tick(dt: c.frame)
+        c.runtime.tick(dt: c.frame)
+        #expect(c.marks.value(atPath: key + ".reading") == .bool(true))
+        // A new chat does not carry the marks to its messages.
+        c.tap(Point2(x: ExampleStyle.device.width - 36, y: ExampleStyle.top + 22))
+        c.tap(Point2(x: 100, y: Chat.suggestionsY + 35))
+        c.answer("Again.")
+        let fresh = c.shown.last!.value(atPath: "key")!.textValue
+        #expect(fresh != key)
+        #expect(c.marks.value(atPath: fresh + ".copied") == .bool(false))
     }
 
     /// The newest messages that fit are shown, never one cut off at the bottom.
     @Test func aLongChatKeepsTheNewestMessages() {
-        let example = SampleDocuments.onDeviceChat()
-        let runtime = Runtime(document: example.document)
-        var sent: [AIRequest] = []
-        runtime.aiHandler = { sent.append($0) }
-        runtime.advance(seconds: 0.2)
+        let c = Chatting()
         let long = String(repeating: "A long answer that goes on. ", count: 12)
-        for round in 0..<4 {
-            tap(runtime, Point2(x: 100, y: SampleDocuments.OnDeviceChat.suggestionsY + 35))
-            if round > 0 {
-                // After the first, the cards are gone: ask by typing.
-                tap(runtime, Point2(x: 150, y: SampleDocuments.OnDeviceChat.composerY + 27))
-                runtime.tick(dt: frame)
-                runtime.send(.text("More \(round)"))
-                runtime.tick(dt: frame)
-                runtime.send(.submit)
-            }
-            runtime.tick(dt: frame)
-            runtime.tick(dt: frame)
-            runtime.update(ai: sent.last!.id, .finished(text: long + "\(round)", picture: ""))
-            runtime.tick(dt: frame)
+        c.tap(Point2(x: 100, y: Chat.suggestionsY + 35))
+        c.answer(long + "0")
+        for round in 1..<4 {
+            c.type("More \(round)")
+            c.runtime.send(.submit)
+            c.runtime.tick(dt: c.frame)
+            c.runtime.tick(dt: c.frame)
+            c.answer(long + "\(round)")
         }
-        let shown = runtime.outputValue(PortRef(node: example.thread, port: "shown"))?.arrayValue ?? []
-        #expect(sent.count == 4)
-        #expect(shown.count < 8)
-        #expect(shown.last?.value(atPath: "text")?.textValue.hasSuffix("3") == true)
-        // What is shown fits the room for messages.
-        let messages = runtime.resolved.children.first { $0.name == "Messages" }!
+        #expect(c.sent.filter { $0.task == .text && $0.phase == .send }.count == 4)
+        #expect(c.shown.count < 8)
+        #expect(c.texts.last?.hasSuffix("3") == true)
+        let messages = c.runtime.resolved.children.first { $0.name == "Messages" }!
         let bottom = messages.children.map { $0.position.y + $0.size.height }.max() ?? 0
-        #expect(bottom <= SampleDocuments.OnDeviceChat.messagesHeight + 0.5)
+        #expect(bottom <= Chat.messagesHeight + 0.5)
         #expect(messages.children.allSatisfy { $0.position.y >= -0.5 })
     }
 }

@@ -192,6 +192,7 @@ extension StandardPatches {
                 PortSpec("send", "Send", .pulse),
                 PortSpec("remember", "Remember", .bool, .bool(true)),
                 PortSpec("reset", "Reset", .pulse),
+                PortSpec("stop", "Stop", .pulse),
             ],
             outputs: [
                 PortSpec("text", "Text", .text),
@@ -440,6 +441,18 @@ extension Runtime {
                 set("text", .text(""), in: ports)
                 set("loading", .bool(false), in: ports)
                 set("error", .text(""), in: ports)
+                publishConversation()
+            }
+            // Stop: what was written so far is the answer, as if it had ended there.
+            if pulse(8), let pending = state.pending {
+                send(AIRequest(id: pending, task: .text, phase: .cancel, model: text(2)))
+                if let asked = state.asked, !state.partial.isEmpty, inputs.count > 6 ? inputs[6].boolValue : true {
+                    state.conversation += [asked, AITurn(.assistant, state.partial)]
+                }
+                state.asked = nil
+                state.pending = nil
+                set("loading", .bool(false), in: ports)
+                set("done", .pulse(true), in: ports)
                 publishConversation()
             }
             let prompt = text(0), picture = text(4)

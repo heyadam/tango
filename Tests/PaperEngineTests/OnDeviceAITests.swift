@@ -124,4 +124,27 @@ extension AITests {
         tap(quiet)
         #expect(none.value.isEmpty)
     }
+
+    @Test func stoppingKeepsWhatWasWrittenAsTheAnswer() {
+        let (runtime, ai, sent) = setUp("aiText", inputs: ["prompt": .text("Tell a story"), "model": .text(AIRequest.onDevice)])
+        tap(runtime)
+        let first = sent.value[0]
+        runtime.update(ai: first.id, .partial("Once upon"))
+        runtime.tick(dt: frame)
+        // Stop, as a pulse from a second Interaction would give it.
+        runtime.update(document: {
+            var document = runtime.document
+            document.graph.update(ai) { $0.inputs["stop"] = .pulse(true) }
+            return document
+        }())
+        runtime.tick(dt: frame)
+        #expect(sent.value.last?.phase == .cancel && sent.value.last?.id == first.id)
+        #expect(out(runtime, ai, "loading") == .bool(false))
+        #expect(out(runtime, ai, "text") == .text("Once upon"))
+        #expect(out(runtime, ai, "conversation").arrayValue.count == 2)
+        // What arrives after is ignored.
+        runtime.update(ai: first.id, .finished(text: "Once upon a time", picture: ""))
+        runtime.tick(dt: frame)
+        #expect(out(runtime, ai, "text") == .text("Once upon"))
+    }
 }

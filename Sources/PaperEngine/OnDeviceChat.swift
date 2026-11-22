@@ -1,22 +1,30 @@
 import Foundation
 import PaperModel
 
-// A showcase for Apple's on-device model: a chat in the manner of ChatGPT, answered by
-// Generate Text with apple-on-device. The answer streams in, the conversation is kept, and
-// the composer glows as Apple Intelligence does while the model thinks. No key, nothing sent.
+// A showcase for Apple's on-device model: a chat built the way ChatGPT's is, answered by
+// Generate Text with apple-on-device. Answers stream in and can be stopped; each has its
+// row of actions (copy, thumbs, read aloud with the device's voice); a held microphone
+// asks out loud, transcribed on the device; and the composer glows while the model
+// thinks. No key, and nothing leaves the device.
 
 extension SampleDocuments {
     public struct OnDeviceChat {
         public let document: Document
         public let field: LayerID
-        public let send: LayerID
+        public let circle: LayerID
+        public let mic: LayerID
         public let newChat: LayerID
         public let suggestion: LayerID
         public let welcome: LayerID
         public let glow: LayerID
+        public let like: LayerID
+        public let speaker: LayerID
         public let chat: NodeID
         public let thread: NodeID
+        public let feedback: NodeID
         public let thinking: NodeID
+        public let speech: NodeID
+        public let listen: NodeID
 
         public static let instructions = "You are a friendly assistant inside a phone app. Answer in two to four short sentences of plain text, with no Markdown."
         public static let suggestions: [(title: String, detail: String, prompt: String)] = [
@@ -30,6 +38,9 @@ extension SampleDocuments {
         /// Where the messages are: under the bar, over the composer.
         public static let messagesTop = 112.0
         public static var messagesHeight: Double { composerY - 12 - messagesTop }
+        /// The round button at the end of the composer, and the microphone before it.
+        public static let circleCenter = Point2(x: 360, y: composerY + 27)
+        public static let micCenter = Point2(x: 314, y: composerY + 27)
     }
 
     static let glowSource = """
@@ -73,7 +84,7 @@ extension SampleDocuments {
     /// How the chat's scripts size a message's words: generously, so a line too many is
     /// spare room and never a line cut off.
     static let chatMeasure = """
-    const wide = \(Int(ExampleStyle.column)), narrow = 268, perChar = 8.6, line = 22;
+    const wide = \(Int(ExampleStyle.column)), narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;
         function lines(text, width) {
           const perLine = Math.max(1, Math.floor(width / perChar));
           let count = 0;
@@ -90,9 +101,10 @@ extension SampleDocuments {
         }
     """
 
-    /// A chat answered by Apple's on-device model, laid out as ChatGPT is: suggestions to
-    /// start from, the person's words in bubbles on the right, the answer as plain text on
-    /// the left, streaming in, and a composer at the bottom that glows while it thinks.
+    /// A chat answered by Apple's on-device model, built the way ChatGPT's is: suggestions
+    /// to start from, the person's words in bubbles on the right, the answer as plain text
+    /// on the left with a row of actions under it, and a composer with a microphone and a
+    /// round button that talks, sends or stops.
     public static func onDeviceChat() -> OnDeviceChat {
         typealias S = ExampleStyle
         typealias C = OnDeviceChat
@@ -118,7 +130,7 @@ extension SampleDocuments {
         let menu = S.symbol("Menu", "line.3.horizontal", at: Point2(x: S.margin, y: S.top + 11), side: 22, color: white)
 
         // One message, repeated for every one shown: a bubble on the right for the person,
-        // plain words on the left for the model. A script per message says which.
+        // plain words on the left for the model with its actions under them.
         let words = Layer(name: "Words", kind: .text, properties: [
             .text: .text(""), .fontSize: .number(16), .fontWeight: .number(400), .textColor: .color(white),
             .size: .size(Size2(width: S.column, height: 22)), .widthMode: .text("Fixed"), .heightMode: .text("Fixed"),
@@ -128,10 +140,28 @@ extension SampleDocuments {
             .fill: .color(raised), .cornerRadius: .number(20),
             .layout: .text("Stack"), .paddingHorizontal: .number(16), .paddingVertical: .number(10),
         ], children: [words])
-        let message = Layer(name: "Message", kind: .view, properties: [
+        let line = Layer(name: "Line", kind: .view, properties: [
             .size: .size(Size2(width: S.column, height: 40)), .widthMode: .text("Grow"), .heightMode: .text("Auto"),
             .layout: .text("Stack"), .axis: .text("Horizontal"), .distribution: .text("End"),
         ], children: [bubble])
+        func action(_ name: String, _ symbol: String) -> Layer {
+            Layer(name: name, kind: .view, properties: [
+                .size: .size(Size2(width: 32, height: 32)),
+                .layout: .text("Stack"), .axis: .text("Horizontal"), .alignment: .text("Center"), .distribution: .text("Center"),
+            ], children: [S.symbol("Glyph", symbol, side: 17, color: faint(0.55))])
+        }
+        let copy = action("Copy", "doc.on.doc")
+        let like = action("Like", "hand.thumbsup")
+        let dislike = action("Dislike", "hand.thumbsdown")
+        let speaker = action("Read Aloud", "speaker.wave.2")
+        let actions = Layer(name: "Actions", kind: .view, properties: [
+            .size: .size(Size2(width: 160, height: 32)), .widthMode: .text("Auto"),
+            .layout: .text("Stack"), .axis: .text("Horizontal"), .spacing: .number(6), .clips: .bool(true),
+        ], children: [copy, like, dislike, speaker])
+        let message = Layer(name: "Message", kind: .view, properties: [
+            .size: .size(Size2(width: S.column, height: 40)), .widthMode: .text("Grow"), .heightMode: .text("Auto"),
+            .layout: .text("Stack"), .spacing: .number(4),
+        ], children: [line, actions])
         let messages = Layer(name: "Messages", kind: .view, properties: [
             .position: .point(Point2(x: 0, y: C.messagesTop)), .size: .size(Size2(width: S.device.width, height: C.messagesHeight)),
             .clips: .bool(true),
@@ -168,26 +198,37 @@ extension SampleDocuments {
                    color: white, width: S.column, align: "Center"),
             S.text("Promise", "Answered on this device. Nothing is sent.", at: Point2(x: S.margin, y: 402),
                    size: 15, color: faint(0.5), width: S.column, align: "Center"),
-            S.hint("Tap a suggestion, or type below", y: 548, dark: true),
+            S.hint("Tap a suggestion, type, or hold the mic", y: 548, dark: true),
             suggestions,
         ])
 
-        // The composer, with the glow behind it.
+        // The composer: a plus, the field, a microphone to hold, and a round button that
+        // talks while empty, sends once there are words, and stops an answer being written.
+        let plus = Layer(name: "Plus", kind: .view, properties: [
+            .size: .size(Size2(width: 32, height: 32)), .cornerRadius: .number(16), .fill: .color(faint(0.08)),
+            .layout: .text("Stack"), .axis: .text("Horizontal"), .alignment: .text("Center"), .distribution: .text("Center"),
+        ], children: [S.symbol("Glyph", "plus", side: 16, color: white, weight: 600)])
         let field = Layer(name: "Ask", kind: .textField, properties: [
-            .size: .size(Size2(width: 280, height: 40)), .widthMode: .text("Grow"),
+            .size: .size(Size2(width: 200, height: 40)), .widthMode: .text("Grow"),
             .placeholder: .text("Ask anything"), .fontSize: .number(17), .textColor: .color(white),
             .fill: .color(.clear), .padding: .number(0),
         ])
-        let send = Layer(name: "Send", kind: .view, properties: [
+        let micGlyph = S.symbol("Glyph", "mic", side: 20, color: faint(0.8))
+        let mic = Layer(name: "Mic", kind: .view, properties: [
+            .size: .size(Size2(width: 36, height: 40)),
+            .layout: .text("Stack"), .axis: .text("Horizontal"), .alignment: .text("Center"), .distribution: .text("Center"),
+        ], children: [micGlyph])
+        let circleGlyph = S.symbol("Glyph", "waveform", side: 18, color: ground, weight: 700)
+        let circle = Layer(name: "Talk Send Stop", kind: .view, properties: [
             .size: .size(Size2(width: 40, height: 40)), .cornerRadius: .number(20), .fill: .color(white),
             .layout: .text("Stack"), .axis: .text("Horizontal"), .alignment: .text("Center"), .distribution: .text("Center"),
-        ], children: [S.symbol("Glyph", "arrow.up", side: 18, color: ground, weight: 700)])
+        ], children: [circleGlyph])
         let composer = Layer(name: "Composer", kind: .view, properties: [
             .position: .point(Point2(x: 14, y: C.composerY)), .size: .size(Size2(width: S.device.width - 28, height: 54)),
             .fill: .color(raised), .cornerRadius: .number(27),
-            .layout: .text("Stack"), .axis: .text("Horizontal"), .alignment: .text("Center"), .spacing: .number(8),
-            .paddingLeft: .number(20), .paddingRight: .number(7), .paddingVertical: .number(0),
-        ], children: [field, send])
+            .layout: .text("Stack"), .axis: .text("Horizontal"), .alignment: .text("Center"), .spacing: .number(6),
+            .paddingLeft: .number(11), .paddingRight: .number(7), .paddingVertical: .number(0),
+        ], children: [plus, field, mic, circle])
         let reach = 22.0
         var glow = Layer.new(.shader, name: "Glow")
         glow.shader = ShaderUse(source: glowSource, inputs: ["inset": .number(reach), "radius": .number(27)])
@@ -223,11 +264,11 @@ extension SampleDocuments {
         let tapped = b.interaction(on: suggestion.id, at: Point2(x: 48, y: 960))
         let picked = b.add("loopOptionSwitch", at: Point2(x: 336, y: 960), name: "Picked")
         let cardView = b.view(suggestion.id, at: Point2(x: 624, y: 744))
-        b.connect(fills, "array", to: eachFill, "array")
-        b.connect(eachFill, "value", to: cardView, LayerProperty.fill.rawValue)
         let pickedPrompt = b.add("loopSelect", at: Point2(x: 624, y: 528), name: "Picked Prompt", type: .text)
         let titleView = b.view(title.id, at: Point2(x: 624, y: 96))
         let detailView = b.view(detail.id, at: Point2(x: 624, y: 312))
+        b.connect(fills, "array", to: eachFill, "array")
+        b.connect(eachFill, "value", to: cardView, LayerProperty.fill.rawValue)
         b.connect(titles, "array", to: eachTitle, "array")
         b.connect(details, "array", to: eachDetail, "array")
         b.connect(prompts, "array", to: eachPrompt, "array")
@@ -237,68 +278,120 @@ extension SampleDocuments {
         b.connect(eachPrompt, "value", to: pickedPrompt, "loop")
         b.connect(picked, "option", to: pickedPrompt, "index")
 
-        // What is asked: the card's words when a card was tapped, else what was typed.
-        // Return or the arrow sends; the field empties once the model has it.
+        // What is asked: a card's words, what was said into the microphone, or what was
+        // typed. Return or the round button sends; it stops while an answer is written.
         let typing = b.attach("textInput", to: field.id, at: Point2(x: 48, y: 1248))
-        let arrow = b.interaction(on: send.id, at: Point2(x: 48, y: 1488))
+        let press = b.interaction(on: circle.id, at: Point2(x: 48, y: 1488))
+        let hold = b.interaction(on: mic.id, at: Point2(x: 48, y: 1776))
+        let sendGate = b.add("pulseGate", at: Point2(x: 336, y: 1488), name: "Sends")
+        let stopGate = b.add("pulseGate", at: Point2(x: 336, y: 1632), name: "Stops")
+        let talkHeld = b.add("and", at: Point2(x: 336, y: 1776), name: "Talking")
+        let holding = b.add("or", at: Point2(x: 624, y: 1776), name: "Held")
+        let listen = b.add("aiTranscribe", at: Point2(x: 912, y: 1776), name: "Listen", inputs: ["model": .text(AIRequest.onDevice)])
         let typed = b.add("eitherPulse", at: Point2(x: 336, y: 1248), name: "Typed")
-        let asked = b.add("eitherPulse", at: Point2(x: 624, y: 1248), name: "Ask")
-        let prompt = b.add("if", at: Point2(x: 912, y: 1248), name: "Prompt", type: .text)
-        let fresh = b.interaction(on: newChat.id, at: Point2(x: 624, y: 1488))
+        let spoken = b.add("eitherPulse", at: Point2(x: 624, y: 1248), name: "Typed or Said")
+        let asked = b.add("eitherPulse", at: Point2(x: 912, y: 1248), name: "Ask")
+        let saidOrTyped = b.add("if", at: Point2(x: 624, y: 1488), name: "Said or Typed", type: .text)
+        let prompt = b.add("if", at: Point2(x: 912, y: 1488), name: "Prompt", type: .text)
+        let fresh = b.interaction(on: newChat.id, at: Point2(x: 1200, y: 1776))
         let chat = b.add("aiText", at: Point2(x: 1200, y: 1248), name: "Chat", inputs: [
             "model": .text(AIRequest.onDevice), "instructions": .text(C.instructions),
         ])
+        let sent = b.add("pulse", at: Point2(x: 1488, y: 1776), name: "Sent")
+        b.connect(press, "tap", to: sendGate, "pulse")
+        b.connect(press, "tap", to: stopGate, "pulse")
+        b.connect(chat, "loading", to: stopGate, "open")
+        b.connect(press, "down", to: talkHeld, "a")
+        b.connect(hold, "down", to: holding, "a")
+        b.connect(talkHeld, "result", to: holding, "b")
+        b.connect(holding, "result", to: listen, "record")
+        b.connect(typing, "submitted", to: typed, "a")
+        b.connect(sendGate, "pulse", to: typed, "b")
+        b.connect(typed, "pulse", to: spoken, "a")
+        b.connect(listen, "done", to: spoken, "b")
+        b.connect(picked, "picked", to: asked, "a")
+        b.connect(spoken, "pulse", to: asked, "b")
+        b.connect(listen, "done", to: saidOrTyped, "condition")
+        b.connect(listen, "text", to: saidOrTyped, "then")
+        b.connect(typing, "text", to: saidOrTyped, "else")
         b.connect(picked, "picked", to: prompt, "condition")
         b.connect(pickedPrompt, "value", to: prompt, "then")
-        b.connect(typing, "text", to: prompt, "else")
-        b.connect(typing, "submitted", to: typed, "a")
-        b.connect(arrow, "tap", to: typed, "b")
-        b.connect(picked, "picked", to: asked, "a")
-        b.connect(typed, "pulse", to: asked, "b")
+        b.connect(saidOrTyped, "value", to: prompt, "else")
         b.connect(prompt, "value", to: chat, "prompt")
         b.connect(asked, "pulse", to: chat, "send")
+        b.connect(stopGate, "pulse", to: chat, "stop")
         b.connect(fresh, "tap", to: chat, "reset")
-        let sent = b.add("pulse", at: Point2(x: 912, y: 1488), name: "Sent")
+        // The field empties once the model has the words (from its own Submitted would be
+        // a loop through the field, and Return would send nothing).
         b.connect(chat, "loading", to: sent, "value")
         b.connect(sent, "turnedOn", to: typing, "clear")
 
-        // The arrow is dim until there is something to send.
-        let length = b.add("textLength", at: Point2(x: 336, y: 1800), name: "Typed Length")
-        let ready = b.add("if", at: Point2(x: 624, y: 1800), name: "Ready", type: .number, inputs: [
-            "then": .number(0.35), "else": .number(1),
-        ])
-        let sendView = b.view(send.id, at: Point2(x: 912, y: 1800))
-        b.connect(typing, "text", to: length, "text")
-        b.connect(length, "empty", to: ready, "condition")
-        b.connect(ready, "value", to: sendView, LayerProperty.opacity.rawValue)
+        // What the composer shows: the round button's symbol, and the field's words while
+        // listening.
+        let composerLook = b.document.graph.add(PatchNode(
+            kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 48, y: 2160)), name: "Composer",
+            script: """
+            // The round button talks while the field is empty, sends once there are words,
+            // and stops an answer that is being written.
+            inputs = { typed: "", loading: false, recording: false };
+            outputs = { symbol: "waveform", placeholder: "Ask anything", talks: true, sends: false, mic: color("#FFFFFFCC") };
 
-        // The conversation as it is shown: the newest messages that fit, the answer being
-        // written with a dot after it, and the welcome only before the first.
+            function evaluate(inputs, outputs) {
+              const words = String(inputs.typed).trim().length > 0;
+              outputs.symbol = inputs.loading ? "stop.fill" : words ? "arrow.up" : "waveform";
+              outputs.talks = !inputs.loading && !words;
+              outputs.sends = !inputs.loading && words;
+              outputs.placeholder = inputs.recording ? "Listening…" : "Ask anything";
+              outputs.mic = inputs.recording ? color("#FF5A4E") : color("#FFFFFFCC");
+            }
+            """
+        ))
+        let circleGlyphView = b.view(circleGlyph.id, at: Point2(x: 624, y: 2160))
+        let fieldView = b.view(field.id, at: Point2(x: 624, y: 2448))
+        let micView = b.view(micGlyph.id, at: Point2(x: 624, y: 2736))
+        b.connect(typing, "text", to: composerLook, "typed")
+        b.connect(chat, "loading", to: composerLook, "loading")
+        b.connect(listen, "recording", to: composerLook, "recording")
+        b.connect(composerLook, "symbol", to: circleGlyphView, LayerProperty.symbol.rawValue)
+        b.connect(composerLook, "placeholder", to: fieldView, LayerProperty.placeholder.rawValue)
+        b.connect(composerLook, "mic", to: micView, LayerProperty.fill.rawValue)
+        b.connect(composerLook, "talks", to: talkHeld, "b")
+        b.connect(composerLook, "sends", to: sendGate, "open")
+
+        // The conversation as it is shown: the newest messages that fit, each with a key
+        // that stays its own, the answer being written with a dot after it.
         let thread = b.document.graph.add(PatchNode(
-            kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 1488, y: 1248)), name: "Thread",
+            kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 1776, y: 1248)), name: "Thread",
             script: """
             // The messages to show, oldest first: as many of the newest as fit the screen.
-            // While the model writes, its answer ends in a dot; before its first word it
-            // says it is thinking. A failure shows as the model's message.
+            // While the model writes, its answer ends in a dot, which is all there is before
+            // its first word. A failure shows as the model's message. Each message has a key
+            // that a new chat does not reuse, for what was done to it (Feedback).
             inputs = { conversation: [], loading: false, error: "" };
             outputs = { shown: [], empty: true };
 
             const room = \(Int(C.messagesHeight));
             \(chatMeasure)
-            function height(text, user) { return lines(text, user ? narrow : wide) * line + (user ? 20 : 0) + 20; }
+            let chatNumber = 0, had = false;
+            function height(m) {
+              return lines(m.text, m.user ? narrow : wide) * line + (m.user ? 20 : 0) + (m.actions ? actionsRow : 0) + 20;
+            }
             function evaluate(inputs, outputs) {
-              const turns = (Array.isArray(inputs.conversation) ? inputs.conversation : []).map((turn, index, all) => {
+              const all = Array.isArray(inputs.conversation) ? inputs.conversation : [];
+              if (all.length === 0 && had) chatNumber++;
+              had = all.length > 0;
+              const turns = all.map((turn, index) => {
                 const user = turn.role === "user";
                 const writing = !user && inputs.loading && index === all.length - 1;
                 let text = String(turn.text || "");
-                if (writing) text = text.length ? text + " ●" : "Thinking…";
-                return { text: text, user: user, dim: writing && !turn.text };
+                if (writing) text = text.length ? text + " ●" : "●";
+                return { key: chatNumber + "-" + index, text: text, user: user, dim: writing && !turn.text, actions: !user && !writing };
               });
-              if (inputs.error && !inputs.loading) turns.push({ text: inputs.error, user: false, dim: true });
+              if (inputs.error && !inputs.loading) turns.push({ key: chatNumber + "-error", text: inputs.error, user: false, dim: true, actions: false });
               const shown = [];
               let used = 0;
               for (let i = turns.length - 1; i >= 0; i--) {
-                used += height(turns[i].text, turns[i].user);
+                used += height(turns[i]);
                 if (used > room && shown.length > 0) break;
                 shown.unshift(turns[i]);
               }
@@ -307,18 +400,77 @@ extension SampleDocuments {
             }
             """
         ))
-        let style = b.document.graph.add(PatchNode(
-            kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 2064, y: 1248)), name: "Message Style",
+        b.connect(chat, "conversation", to: thread, "conversation")
+        b.connect(chat, "loading", to: thread, "loading")
+        b.connect(chat, "error", to: thread, "error")
+
+        // The actions under an answer: each tap is told which message it was by the loop.
+        let eachMessage = b.add("loopOverArray", at: Point2(x: 2064, y: 1248), name: "Each Message", type: .json)
+        func choice(_ layer: Layer, _ name: String, y: Double) -> NodeID {
+            let touch = b.interaction(on: layer.id, at: Point2(x: 1488, y: y))
+            let which = b.add("loopOptionSwitch", at: Point2(x: 1776, y: y), name: name, inputs: ["start": .number(-1)])
+            b.connect(touch, "tap", to: which, "set")
+            return which
+        }
+        let copied = choice(copy, "Copied", y: 2064)
+        let liked = choice(like, "Liked", y: 2280)
+        let disliked = choice(dislike, "Disliked", y: 2496)
+        let heard = choice(speaker, "Read Aloud", y: 2712)
+        // Read aloud: the device's own voice says the message tapped.
+        let spokenText = b.add("loopSelect", at: Point2(x: 2064, y: 2712), name: "Words Read", type: .text)
+        let speech = b.add("aiSpeech", at: Point2(x: 2352, y: 2712), name: "Read Aloud", inputs: ["model": .text(AIRequest.onDevice)])
+        b.connect(heard, "option", to: spokenText, "index")
+        b.connect(spokenText, "value", to: speech, "text")
+        b.connect(heard, "picked", to: speech, "speak")
+
+        // What was done to each message, by its key, so it stays with the message as
+        // others come and go.
+        let feedback = b.document.graph.add(PatchNode(
+            kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 2352, y: 2064)), name: "Feedback",
             script: """
-            // How one message looks: the person's in a bubble on the right, as wide as its
-            // words; the model's as plain text across the screen on the left.
-            inputs = { message: {} };
-            outputs = { text: "", side: "End", fill: color("#303030"), padding: 16, width: 268, height: 22, opacity: 1 };
+            // A thumb chosen stays on its message (the other thumb goes); the last message
+            // copied shows a tick; the one being read aloud shows it.
+            inputs = { shown: [], copy: pulse(), copyAt: -1, like: pulse(), likeAt: -1,
+                       dislike: pulse(), dislikeAt: -1, read: pulse(), readAt: -1, speaking: false };
+            outputs = { marks: {} };
+
+            const votes = {};
+            let copiedKey = "", readKey = "";
+            function evaluate(given, outputs) {
+              const keyAt = index => ((given.shown || [])[index] || {}).key || "";
+              if (given.like) { const k = keyAt(given.likeAt); votes[k] = votes[k] === "up" ? "" : "up"; }
+              if (given.dislike) { const k = keyAt(given.dislikeAt); votes[k] = votes[k] === "down" ? "" : "down"; }
+              if (given.copy) copiedKey = keyAt(given.copyAt);
+              if (given.read) readKey = keyAt(given.readAt);
+              const marks = {};
+              for (const m of given.shown || []) {
+                marks[m.key] = { vote: votes[m.key] || "", copied: m.key === copiedKey, reading: given.speaking && m.key === readKey };
+              }
+              outputs.marks = marks;
+            }
+            """
+        ))
+        b.connect(thread, "shown", to: feedback, "shown")
+        for (which, prefix) in [(copied, "copy"), (liked, "like"), (disliked, "dislike"), (heard, "read")] {
+            b.connect(which, "picked", to: feedback, prefix)
+            b.connect(which, "option", to: feedback, prefix + "At")
+        }
+        b.connect(speech, "speaking", to: feedback, "speaking")
+
+        // How one message looks.
+        let style = b.document.graph.add(PatchNode(
+            kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 2352, y: 1248)), name: "Message Style",
+            script: """
+            // The person's words in a bubble on the right, as wide as they are; the model's
+            // as plain text across the screen on the left, with its actions under it.
+            inputs = { message: {}, marks: {} };
+            outputs = { shown: true, text: "", side: "End", fill: color("#303030"), padding: 16, width: 290, height: 22, opacity: 1,
+                        actions: 0, actionsHeight: 0, copy: "doc.on.doc", like: "hand.thumbsup", dislike: "hand.thumbsdown", read: "speaker.wave.2" };
 
             \(chatMeasure)
-
             function evaluate(inputs, outputs) {
               const m = inputs.message || {};
+              const mark = (inputs.marks || {})[m.key] || {};
               const text = String(m.text || "");
               outputs.text = text;
               outputs.side = m.user ? "End" : "Start";
@@ -328,21 +480,32 @@ extension SampleDocuments {
               outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;
               outputs.height = lines(text, outputs.width) * line;
               outputs.opacity = m.dim ? 0.5 : 1;
+              // Not hidden but shrunk to nothing: a view hidden in some copies of a
+              // repeated view and not others loses its taps.
+              outputs.actions = m.actions ? 1 : 0;
+              outputs.actionsHeight = m.actions ? 32 : 0;
+              outputs.copy = mark.copied ? "checkmark" : "doc.on.doc";
+              outputs.like = mark.vote === "up" ? "hand.thumbsup.fill" : "hand.thumbsup";
+              outputs.dislike = mark.vote === "down" ? "hand.thumbsdown.fill" : "hand.thumbsdown";
+              outputs.read = mark.reading ? "speaker.wave.2.fill" : "speaker.wave.2";
             }
             """
         ))
-        let eachMessage = b.add("loopOverArray", at: Point2(x: 1776, y: 1248), name: "Each Message", type: .json)
-        let welcomeView = b.view(welcome.id, at: Point2(x: 1776, y: 1608))
-        let messageView = b.view(message.id, at: Point2(x: 2352, y: 1248))
-        let bubbleView = b.view(bubble.id, at: Point2(x: 2352, y: 1536))
-        let wordsView = b.view(words.id, at: Point2(x: 2352, y: 1824))
-        b.connect(chat, "conversation", to: thread, "conversation")
-        b.connect(chat, "loading", to: thread, "loading")
-        b.connect(chat, "error", to: thread, "error")
+        let welcomeView = b.view(welcome.id, at: Point2(x: 2064, y: 1608))
+        // The loop must reach the message itself, so that its line and its actions
+        // repeat together, as one message.
+        let messageView = b.view(message.id, at: Point2(x: 2640, y: 1824))
+        b.connect(style, "shown", to: messageView, LayerProperty.visible.rawValue)
+        let lineView = b.view(line.id, at: Point2(x: 2640, y: 1248))
+        let bubbleView = b.view(bubble.id, at: Point2(x: 2928, y: 1248))
+        let wordsView = b.view(words.id, at: Point2(x: 2928, y: 1536))
+        let actionsView = b.view(actions.id, at: Point2(x: 2640, y: 1536))
         b.connect(thread, "shown", to: eachMessage, "array")
         b.connect(thread, "empty", to: welcomeView, LayerProperty.visible.rawValue)
         b.connect(eachMessage, "value", to: style, "message")
-        b.connect(style, "side", to: messageView, LayerProperty.distribution.rawValue)
+        b.connect(style, "text", to: spokenText, "loop")
+        b.connect(feedback, "marks", to: style, "marks")
+        b.connect(style, "side", to: lineView, LayerProperty.distribution.rawValue)
         b.connect(style, "fill", to: bubbleView, LayerProperty.fill.rawValue)
         b.connect(style, "padding", to: bubbleView, LayerProperty.paddingHorizontal.rawValue)
         b.connect(style, "padding", to: bubbleView, LayerProperty.paddingVertical.rawValue)
@@ -350,26 +513,35 @@ extension SampleDocuments {
         b.connect(style, "width", to: wordsView, "width")
         b.connect(style, "height", to: wordsView, "height")
         b.connect(style, "opacity", to: wordsView, LayerProperty.opacity.rawValue)
+        b.connect(style, "actions", to: actionsView, LayerProperty.scale.rawValue)
+        b.connect(style, "actions", to: actionsView, LayerProperty.opacity.rawValue)
+        b.connect(style, "actionsHeight", to: actionsView, "height")
+        for (layer, output, y) in [(copy, "copy", 1824.0), (like, "like", 2064), (dislike, "dislike", 2280), (speaker, "read", 2496)] {
+            let glyph = b.view(layer.children[0].id, at: Point2(x: 2928, y: y))
+            b.connect(style, output, to: glyph, LayerProperty.symbol.rawValue)
+        }
 
         // While the model thinks the composer glows; it rests once the answer is in.
-        let thinking = b.add("spring", at: Point2(x: 1200, y: 2112), name: "Thinking", inputs: ["response": .number(0.5), "damping": .number(1)])
-        let phase = b.add("time", at: Point2(x: 1200, y: 2328), name: "Phase")
-        let glowView = b.view(glow.id, at: Point2(x: 1488, y: 2112))
+        let thinking = b.add("spring", at: Point2(x: 1200, y: 2400), name: "Thinking", inputs: ["response": .number(0.5), "damping": .number(1)])
+        let phase = b.add("time", at: Point2(x: 1200, y: 2616), name: "Phase")
+        let glowView = b.view(glow.id, at: Point2(x: 1488, y: 2952))
         b.connect(chat, "loading", to: thinking, "target")
         b.connect(chat, "loading", to: phase, "running")
         b.connect(thinking, "value", to: glowView, ShaderUse.portID("strength"))
         b.connect(phase, "time", to: glowView, ShaderUse.portID("phase"))
 
         b.note("Start · One card per suggestion", around: [fills, eachFill, titles, details, prompts, eachTitle, eachDetail, eachPrompt, tapped, picked, pickedPrompt])
-        b.note("Ask · Apple's model on this device keeps the chat", around: [typing, arrow, typed, asked, prompt, fresh, chat, sent])
-        b.note("Send · Dim until something is typed", around: [length, ready])
+        b.note("Ask · Apple's model on this device keeps the chat", around: [typing, press, hold, sendGate, stopGate, talkHeld, holding, listen, typed, spoken, asked, saidOrTyped, prompt, fresh, chat, sent])
+        b.note("Composer · Talk, send or stop", around: [composerLook])
         b.note("Thread · What fits, newest last", around: [thread, eachMessage])
         b.note("Style · Bubble or plain words", around: [style])
+        b.note("Actions · Each tap knows its message", around: [copied, liked, disliked, heard, spokenText, speech, feedback])
         b.note("Glow · While it thinks", around: [thinking, phase])
 
         return OnDeviceChat(
-            document: b.document, field: field.id, send: send.id, newChat: newChat.id, suggestion: suggestion.id,
-            welcome: welcome.id, glow: glow.id, chat: chat, thread: thread, thinking: thinking
+            document: b.document, field: field.id, circle: circle.id, mic: mic.id, newChat: newChat.id,
+            suggestion: suggestion.id, welcome: welcome.id, glow: glow.id, like: like.id, speaker: speaker.id,
+            chat: chat, thread: thread, feedback: feedback, thinking: thinking, speech: speech, listen: listen
         )
     }
 }

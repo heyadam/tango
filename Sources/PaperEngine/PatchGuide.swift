@@ -819,6 +819,7 @@ public struct PatchGuide: Sendable {
                 "send": "A pulse sends the prompt.",
                 "remember": "Whether each prompt follows on from the conversation so far.",
                 "reset": "A pulse forgets the conversation and clears Text.",
+                "stop": "A pulse stops the answer where it is: what was written so far stays, as the answer.",
             ],
             outputs: [
                 "text": "The answer, growing as it streams in.",
