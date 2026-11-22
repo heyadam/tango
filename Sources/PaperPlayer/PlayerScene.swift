@@ -28,6 +28,10 @@ struct PlayerRoot: View {
     /// pictures taken with `simctl`.
     @State private var example: GalleryItem? = UserDefaults.standard.string(forKey: "example").flatMap(Gallery.item)
     @State private var pairs = false
+    @State private var library = PlayerLibrary()
+    /// A kept prototype, playing.
+    @State private var kept: KeptPlaying?
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         NavigationStack {
@@ -37,7 +41,23 @@ struct PlayerRoot: View {
                 } header: {
                     Text("Your Mac")
                 } footer: {
-                    if let notice = store.notice { Text(notice) }
+                    if let notice = store.notice ?? library.problem { Text(notice) }
+                }
+                if !library.entries.isEmpty {
+                    Section("On This iPhone") {
+                        ForEach(library.entries) { entry in
+                            Button {
+                                if let package = library.package(for: entry) {
+                                    kept = KeptPlaying(entry: entry, host: PrototypeHost(package: package))
+                                }
+                            } label: {
+                                LibraryRow(entry: entry, picture: library.pictureURL(entry.id))
+                            }
+                        }
+                        .onDelete { offsets in
+                            for entry in offsets.map({ library.entries[$0] }) { library.delete(entry) }
+                        }
+                    }
                 }
                 ForEach(GalleryItem.Section.allCases, id: \.self) { section in
                     Section(section.rawValue) {
@@ -46,7 +66,7 @@ struct PlayerRoot: View {
                                 example = item
                             } label: {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(item.title).foregroundStyle(.primary)
+                                    Text(item.title).foregroundStyle(Color.primary)
                                     Text(item.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
                                 }
                             }
@@ -65,14 +85,32 @@ struct PlayerRoot: View {
         .fullScreenCover(item: $example) { item in
             ExampleScreen(item: item) { example = nil }
         }
+        .fullScreenCover(item: $kept) { playing in
+            PlayingScreen(title: playing.entry.name, host: playing.host, restart: nil) { kept = nil }
+        }
         // What the Mac sends comes up over everything, and follows it.
-        .fullScreenCover(item: Binding(get: { example == nil ? store.live : nil }, set: { if $0 == nil { store.closeLive() } })) { live in
+        .fullScreenCover(item: Binding(
+            get: { example == nil && kept == nil ? store.live : nil }, set: { if $0 == nil { store.closeLive() } }
+        )) { live in
             PlayingScreen(title: live.name, host: live.host, restart: nil) { store.closeLive() }
         }
         .onChange(of: store.live?.id) { _, id in
-            if id != nil { example = nil }
+            if id != nil {
+                example = nil
+                kept = nil
+            }
+        }
+        // A .tango file from Files or AirDrop is kept, and played.
+        .onOpenURL { url in
+            guard let entry = library.add(fileAt: url), let package = library.package(for: entry) else { return }
+            example = nil
+            kept = KeptPlaying(entry: entry, host: PrototypeHost(package: package))
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { library.flush() }
         }
         .task {
+            store.received = { [library] update, package in library.received(update, package) }
             // `-linkkey <text of the code>` pairs without a camera, for the simulator.
             if let text = UserDefaults.standard.string(forKey: "linkkey"), let key = LinkKey(text: text) {
                 store.pair(with: key)
@@ -83,6 +121,36 @@ struct PlayerRoot: View {
                 store.connect(to: .hostPort(host: NWEndpoint.Host(String(place[0])), port: port), name: "papertool")
             } else {
                 store.startSearching()
+            }
+        }
+    }
+}
+
+/// A prototype from the library, playing.
+struct KeptPlaying: Identifiable {
+    let entry: PlayerLibrary.Entry
+    let host: PrototypeHost
+    var id: String { entry.id }
+}
+
+struct LibraryRow: View {
+    let entry: PlayerLibrary.Entry
+    let picture: URL
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Group {
+                if let image = UIImage(contentsOfFile: picture.path) {
+                    Image(uiImage: image).resizable().scaledToFill()
+                } else {
+                    Color(.secondarySystemFill)
+                }
+            }
+            .frame(width: 44, height: 96)
+            .clipShape(.rect(cornerRadius: 8))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.name).foregroundStyle(Color.primary)
+                Text(entry.saved, format: .relative(presentation: .named)).font(.footnote).foregroundStyle(.secondary)
             }
         }
     }

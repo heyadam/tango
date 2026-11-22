@@ -101,6 +101,19 @@ targets:
         NSLocalNetworkUsageDescription: tango looks for your Mac nearby to play the prototypes you make on it.
         NSBonjourServices: [_tango._tcp]
         NSCameraUsageDescription: tango uses the camera to scan the code your Mac shows, which pairs the two.
+        # A .tango package, which the Mac app exports, opened from Files or AirDrop.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: tango Prototype
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes: [com.tango.document]
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.tango.document
+            UTTypeDescription: tango Prototype
+            UTTypeConformsTo: [com.apple.package]
+            UTTypeTagSpecification:
+              public.filename-extension: [tango]
+        LSSupportsOpeningDocumentsInPlace: false
     settings:
       base:
         MARKETING_VERSION: "0.1"
