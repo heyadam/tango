@@ -1,5 +1,6 @@
 import AppKit
 import PaperEngine
+import PaperHost
 import PaperModel
 import PaperRender
 import QuartzCore
@@ -19,6 +20,8 @@ nonisolated enum TwoFingerGesture {
 public final class ViewerView: NSView {
     private let store: DocumentStore
     private let renderer = LayerRenderer()
+    /// The pictures the prototype shows: the document's, and those it fetched or made.
+    private let pictures = PictureStore()
     public let runtime: Runtime
     private var link: CADisplayLink?
     private var lastTimestamp: CFTimeInterval?
@@ -51,15 +54,11 @@ public final class ViewerView: NSView {
         layer?.addSublayer(firstFinger)
         services = DeviceServices(runtime: runtime)
         renderer.cameraLayerProvider = { [weak self] in self?.services?.previewLayer }
-        renderer.imageProvider = { [weak store, weak self] name in
-            // Photos taken by the Camera patch live with the Viewer, not in the document.
-            if name.hasPrefix("capture:") { return self?.services?.photo(named: name) }
-            // So do pictures a Network Request fetched.
-            if name.hasPrefix("fetched:") || name.hasPrefix("ai:") { return self?.keptPicture(named: name) }
-            // A picture a view of an extension draws is one of the extension's own files.
-            if let image = ExtensionImages.image(name, in: store?.runtimeRegistry) { return image }
-            guard let data = store?.assets[name] else { return nil }
-            return NSImage(data: data)?.cgImage(forProposedRect: nil, context: nil, hints: nil)
+        // Photos taken by the Camera patch live with the Viewer, not in the document; so
+        // do pictures a Network Request fetched. `PictureStore` tells them apart by name.
+        pictures.captured = { [weak self] name in self?.services?.photo(named: name) }
+        renderer.imageProvider = { [weak store, pictures] name in
+            pictures.picture(named: name, assets: store?.assets ?? [:], registry: store?.runtimeRegistry)
         }
         // A video plays from the document's assets or the web. How long it is reaches the
         // runtime from whoever loaded it: the player here, or at once from the file when
@@ -98,7 +97,7 @@ public final class ViewerView: NSView {
             self?.wake()
         }
         ai.picture = { [weak self] name in self?.renderer.imageProvider?(name) }
-        ai.keep = { [weak self] name, picture in self?.keepPicture(picture, named: name) }
+        ai.keep = { [pictures] name, picture in pictures.keep(picture, named: name) }
         ai.ask = { [weak self] provider, answer in self?.askToUseKey(provider, answer) ?? answer(false) }
         runtime.aiHandler = { [weak self] request in
             guard sendsRequests, let self else { return }
@@ -119,29 +118,8 @@ public final class ViewerView: NSView {
                 self?.sendForExtension(request, origin)
                 return
             }
-            guard let url = URL(string: request.url), url.scheme != nil else {
-                self?.finish(request.id, NetworkResponse(status: 0, error: "That is not a web address."))
-                return
-            }
-            let outgoing = Self.urlRequest(for: request, url: url)
             let id = request.id
-            let report: @MainActor @Sendable (NetworkResponse) -> Void = { [weak self] answer in
-                self?.finish(id, answer)
-            }
-            Self.session.dataTask(with: outgoing) { data, response, error in
-                let http = response as? HTTPURLResponse
-                var headers: [String: String] = [:]
-                for (name, value) in http?.allHeaderFields ?? [:] {
-                    if let name = name as? String, let value = value as? String { headers[name.lowercased()] = value }
-                }
-                let answer = NetworkResponse(
-                    status: http?.statusCode ?? 0,
-                    body: data ?? Data(),
-                    error: error?.localizedDescription,
-                    headers: headers
-                )
-                Task { @MainActor in report(answer) }
-            }.resume()
+            PrototypeNetwork.send(request) { [weak self] answer in self?.finish(id, answer) }
         }
         services?.onChange = { [weak self] in self?.wake() }
         runtime.tick(dt: 0)
@@ -219,14 +197,11 @@ public final class ViewerView: NSView {
     public override func layout() {
         super.layout()
         let screen = runtime.resolved.size
-        let available = fillsWindow ? bounds : bounds.insetBy(dx: 16, dy: 16)
-        guard screen.width > 0, screen.height > 0, available.width > 0, available.height > 0 else { return }
-        let fitted = min(available.width / screen.width, available.height / screen.height)
-        scale = fillsWindow ? fitted : min(1, fitted)
-        origin = CGPoint(
-            x: (bounds.width - screen.width * scale) / 2,
-            y: (bounds.height - screen.height * scale) / 2
-        )
+        guard let fit = Viewport.fit(
+            screen: CGSize(width: screen.width, height: screen.height), in: bounds, fills: fillsWindow
+        ) else { return }
+        scale = fit.scale
+        origin = fit.origin
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         renderer.rootLayer.frame = bounds
@@ -296,17 +271,8 @@ public final class ViewerView: NSView {
     }
 
     private func finish(_ id: UUID, _ response: NetworkResponse, keepsPicture: Bool = true) {
-        var response = response
-        if keepsPicture, response.error == nil, response.headers["content-type"]?.lowercased().hasPrefix("image/") == true {
-            if let picture = NSImage(data: response.body)?.cgImage(forProposedRect: nil, context: nil, hints: nil) {
-                keepPicture(picture, named: NetworkRequest.pictureName(for: id))
-            } else {
-                // Not a picture after all (a broken file, an error mislabelled): the patch
-                // gets it as text, rather than an Image naming nothing.
-                response.headers["content-type"] = "application/octet-stream"
-            }
-        }
-        runtime.complete(id, with: response)
+        // An answer that is a picture is kept for the patch's Image output to name.
+        runtime.complete(id, with: pictures.settle(response, for: id, keepsPicture: keepsPicture))
         wake()
     }
 
@@ -320,77 +286,6 @@ public final class ViewerView: NSView {
         alert.addButton(withTitle: "Don’t Allow")
         guard let window else { return answer(alert.runModal() == .alertFirstButtonReturn) }
         alert.beginSheetModal(for: window) { response in answer(response == .alertFirstButtonReturn) }
-    }
-
-    /// Pictures that Network Request patches fetched, by the name their Image output gives.
-    private var fetchedPictures: [String: CGImage] = [:]
-    private var fetchedOrder: [String] = []
-    /// How many fetched pictures are kept; the one shown longest ago goes first.
-    static let mostFetchedPictures = 64
-
-    /// A kept picture, which now counts as just shown.
-    private func keptPicture(named name: String) -> CGImage? {
-        guard let picture = fetchedPictures[name] else { return nil }
-        if fetchedOrder.last != name {
-            fetchedOrder.removeAll { $0 == name }
-            fetchedOrder.append(name)
-        }
-        return picture
-    }
-
-    private func keepPicture(_ picture: CGImage, named name: String) {
-        fetchedPictures[name] = picture
-        fetchedOrder.removeAll { $0 == name }
-        fetchedOrder.append(name)
-        while fetchedOrder.count > Self.mostFetchedPictures {
-            fetchedPictures[fetchedOrder.removeFirst()] = nil
-        }
-    }
-
-    /// What a Network Request patch's request becomes. Headers that belong to the connection
-    /// are dropped, a body goes with every method but GET, and a request to this Mac carries
-    /// `Origin: null`, which the app's agent port refuses: a document must not drive the app.
-    nonisolated static func urlRequest(for request: NetworkRequest, url: URL) -> URLRequest {
-        var outgoing = URLRequest(url: url, timeoutInterval: 20)
-        outgoing.httpMethod = request.method
-        var hasContentType = false
-        for (name, value) in request.headers {
-            let lowered = name.lowercased()
-            guard !ExtensionNetwork.forbiddenHeaders.contains(lowered), !lowered.hasPrefix("proxy-"), !lowered.hasPrefix("sec-") else { continue }
-            // A line break would start a header of its own.
-            guard !(name + value).unicodeScalars.contains(where: { $0.properties.generalCategory == .control }) else { continue }
-            if lowered == "content-type" { hasContentType = true }
-            outgoing.setValue(value, forHTTPHeaderField: name)
-        }
-        if request.method != "GET", !request.body.isEmpty {
-            outgoing.httpBody = Data(request.body.utf8)
-            if !hasContentType { outgoing.setValue("application/json", forHTTPHeaderField: "Content-Type") }
-        }
-        return guarded(outgoing)
-    }
-
-    /// A request to this Mac carries `Origin: null`, which the app's agent port refuses. Applied
-    /// to the first request and again to every redirect, since an answer from anywhere can send
-    /// a POST on to 127.0.0.1 with its body.
-    nonisolated static func guarded(_ request: URLRequest) -> URLRequest {
-        var request = request
-        if ExtensionManifest.isLoopback(request.url?.host ?? "") {
-            request.setValue("null", forHTTPHeaderField: "Origin")
-        }
-        return request
-    }
-
-    /// Where Network Request patches' requests go: like the shared session, but every redirect
-    /// is checked again (`guarded`).
-    nonisolated static let session = URLSession(configuration: .default, delegate: RedirectGuard(), delegateQueue: nil)
-
-    private final class RedirectGuard: NSObject, URLSessionTaskDelegate, Sendable {
-        func urlSession(
-            _ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
-            newRequest request: URLRequest, completionHandler: @escaping @Sendable (URLRequest?) -> Void
-        ) {
-            completionHandler(ViewerView.guarded(request))
-        }
     }
 
     // MARK: Frame clock

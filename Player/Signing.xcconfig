@@ -1,0 +1,8 @@
+// Signing for the iOS player. The simulator needs none of this.
+// To run on your own phone, make Player/Signing.local.xcconfig (it is not committed) with:
+//
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   PRODUCT_BUNDLE_IDENTIFIER = com.yourname.tango.player
+//
+PRODUCT_BUNDLE_IDENTIFIER = com.tango.player
+#include? "Signing.local.xcconfig"

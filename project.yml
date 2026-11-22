@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.tango
   deploymentTarget:
     macOS: "26.0"
+    iOS: "26.0"
   createIntermediateGroups: true
 packages:
   TangoKit:
@@ -50,6 +51,8 @@ targets:
             UTTypeTagSpecification:
               public.filename-extension:
                 - tango
+        NSLocalNetworkUsageDescription: tango sends the prototype you are making to the tango app on a paired iPhone nearby.
+        NSBonjourServices: [_tango._tcp]
     entitlements:
       path: App/Tango.entitlements
       properties:
@@ -70,3 +73,52 @@ targets:
       configs:
         Release:
           ENABLE_HARDENED_RUNTIME: YES   # notarization requires it (scripts/release.sh)
+  # The iOS player: an @main around PaperPlayer, as App/ is around PaperEditor.
+  TangoPlayer:
+    type: application
+    platform: iOS
+    sources:
+      - path: Player
+        excludes: ["*.xcconfig"]
+    dependencies:
+      - package: TangoKit
+        product: PaperPlayer
+    configFiles:
+      Debug: Player/Signing.xcconfig
+      Release: Player/Signing.xcconfig
+    info:
+      path: Player/Info.plist
+      properties:
+        CFBundleName: tango
+        CFBundleDisplayName: tango
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
+        # Prototypes run at the display's full rate.
+        CADisableMinimumFrameDurationOnPhone: true
+        NSLocalNetworkUsageDescription: tango looks for your Mac nearby to play the prototypes you make on it.
+        NSBonjourServices: [_tango._tcp]
+        NSCameraUsageDescription: tango uses the camera to scan the code your Mac shows, which pairs the two.
+        # A .tango package, which the Mac app exports, opened from Files or AirDrop.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: tango Prototype
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes: [com.tango.document]
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.tango.document
+            UTTypeDescription: tango Prototype
+            UTTypeConformsTo: [com.apple.package]
+            UTTypeTagSpecification:
+              public.filename-extension: [tango]
+        LSSupportsOpeningDocumentsInPlace: false
+    settings:
+      base:
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        PRODUCT_NAME: TangoPlayer
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic

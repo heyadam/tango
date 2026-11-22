@@ -217,12 +217,16 @@ final class ShaderSurface {
     private var working: ShaderCompiler.Program?
 
     static let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+    /// Whether the root drawn off screen is flipped, so the views inside a shader view
+    /// reach the shader the right way up. Its own constant: what draws it is a
+    /// `CARenderer`, not a view.
+    static let flipsRoot = true
     /// The most pixels a shader view is drawn with along one side.
     static let limit = 4096.0
 
     init(compiler: ShaderCompiler) {
         self.compiler = compiler
-        root.isGeometryFlipped = true
+        root.isGeometryFlipped = Self.flipsRoot
         root.anchorPoint = .zero
         content.anchorPoint = .zero
         root.addSublayer(content)

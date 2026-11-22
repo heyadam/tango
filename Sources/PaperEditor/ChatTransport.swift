@@ -1,4 +1,5 @@
 import Foundation
+import PaperHost
 import PaperModel
 
 /// The line to a model that is not Claude: OpenAI, Gemini, or a server on this Mac. One
@@ -242,9 +243,9 @@ public final class ChatTransport: AssistantTransport {
     // MARK: The network
 
     /// Sends a request and gives its answer line by line. A request to this Mac says so in a
-    /// way the app's own agent port refuses, on every redirect too (`ViewerView.session`).
+    /// way the app's own agent port refuses, on every redirect too (`PrototypeNetwork.session`).
     static func stream(_ request: URLRequest) async throws -> (Int, AsyncThrowingStream<String, Error>) {
-        let (bytes, response) = try await ViewerView.session.bytes(for: request)
+        let (bytes, response) = try await PrototypeNetwork.session.bytes(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         let stream = AsyncThrowingStream<String, Error> { continuation in
             let task = Task {
@@ -262,7 +263,7 @@ public final class ChatTransport: AssistantTransport {
 
     /// The models a server has, as its `models` endpoint lists them.
     static func models(base: URL, key: String?) async throws -> [String] {
-        let (data, response) = try await ViewerView.session.data(for: ChatRequest.models(base: base, key: key))
+        let (data, response) = try await PrototypeNetwork.session.data(for: ChatRequest.models(base: base, key: key))
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard status == 200 else {
             throw AssistantSetupError(message: AIService.problem(status: status, body: data, name: "The server"))
@@ -339,13 +340,13 @@ enum ChatRequest {
         request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
         if let key = config.key, !key.isEmpty { request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization") }
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
-        return ViewerView.guarded(request)
+        return PrototypeNetwork.guarded(request)
     }
 
     static func models(base: URL, key: String?) -> URLRequest {
         var request = URLRequest(url: base.appendingPathComponent("models"), timeoutInterval: 15)
         if let key, !key.isEmpty { request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization") }
-        return ViewerView.guarded(request)
+        return PrototypeNetwork.guarded(request)
     }
 
     static func modelIDs(in data: Data) -> [String] {

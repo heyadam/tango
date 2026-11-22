@@ -98,8 +98,16 @@ public final class LayerRenderer {
     /// Called when the video a `video` value names cannot be played.
     public var onVideoFailure: ((String) -> Void)?
 
+    /// Whether the root is flipped to make its coordinates y-down. A view's layer is y-up
+    /// on the Mac and already y-down on iOS.
+    #if canImport(AppKit)
+    static let flipsRoot = true
+    #else
+    static let flipsRoot = false
+    #endif
+
     public init() {
-        rootLayer.isGeometryFlipped = true
+        rootLayer.isGeometryFlipped = Self.flipsRoot
         rootLayer.masksToBounds = true
         contentLayer.anchorPoint = .zero
         rootLayer.addSublayer(contentLayer)
@@ -430,7 +438,17 @@ public final class LayerRenderer {
             CGAffineTransform(rotationAngle: finite(node.rotation) * .pi / 180).scaledBy(x: scale, y: scale)
         )
         layer.opacity = Float(min(max(finite(node.opacity, or: 1), 0), 1))
-        layer.contentsScale = contentsScale
+        if layer.contentsScale != contentsScale {
+            layer.contentsScale = contentsScale
+            // Text keeps the picture it made at the old density, and inside a shader view,
+            // which is drawn off screen, nothing makes it draw another: on iOS it then
+            // shows twice, at two sizes. So it is drawn again here, at once.
+            if layer is CATextLayer {
+                layer.contents = nil
+                layer.setNeedsDisplay()
+                layer.displayIfNeeded()
+            }
+        }
 
         let cornerRadius = max(min(node.value(.cornerRadius).numberValue, min(width, height) / 2), 0)
 
@@ -723,7 +741,20 @@ public final class LayerRenderer {
         NSGraphicsContext.restoreGraphicsState()
         let rendered = context.makeImage()
         #else
-        let rendered: CGImage? = nil
+        let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: height * 0.8, weight: fontWeight(weight)))
+            .applying(UIImage.SymbolConfiguration(paletteColors: [UIColor(cgColor: color.cgColor)]))
+        guard let image = UIImage(systemName: name, withConfiguration: configuration),
+              image.size.width > 0, image.size.height > 0
+        else { return nil }
+        let scale = Double(pixels) / max(image.size.height, 1)
+        let width = max(Int((image.size.width * scale).rounded(.up)), 1)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = false
+        let size = CGSize(width: width, height: pixels)
+        let rendered = UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: size))
+        }.cgImage
         #endif
         if symbolCache.count > 400 { symbolCache.removeAll() }
         symbolCache[key] = rendered

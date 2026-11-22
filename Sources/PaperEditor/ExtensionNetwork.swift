@@ -1,5 +1,6 @@
 import Foundation
 import PaperEngine
+import PaperHost
 import PaperModel
 
 /// Makes the web requests extension scripts ask for, and decides what each may reach and
@@ -33,10 +34,7 @@ public nonisolated enum ExtensionNetwork {
     public static let methods: Set<String> = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"]
     /// Headers a script may not set: they belong to the connection, or would let it pose
     /// as a browser or carry cookies.
-    static let forbiddenHeaders: Set<String> = [
-        "host", "content-length", "connection", "cookie", "cookie2", "origin", "transfer-encoding",
-        "upgrade", "te", "trailer", "keep-alive", "expect", "proxy-authorization", "proxy-connection", "user-agent",
-    ]
+    static let forbiddenHeaders = PrototypeNetwork.forbiddenHeaders
     public static let longestWait = 120.0
     public static let usualWait = 30.0
     public static let largestBody = 5_000_000

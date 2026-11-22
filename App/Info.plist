@@ -39,10 +39,16 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.graphics-design</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_tango._tcp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>A prototype you are running shows the camera or takes a photo.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>tango sends the prototype you are making to the tango app on a paired iPhone nearby.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>A prototype you are running uses your location.</string>
 	<key>NSMicrophoneUsageDescription</key>

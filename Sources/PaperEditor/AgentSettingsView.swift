@@ -64,6 +64,9 @@ struct GeneralSettingsPane: View {
             } footer: {
                 Text("When the assistant tries what it built, the Viewer plays its taps and drags back for you.")
             }
+            Section("iPhone") {
+                DeviceLinkPanel(link: .shared)
+            }
         }
     }
 }

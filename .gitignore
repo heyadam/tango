@@ -12,3 +12,6 @@ node_modules/
 *.p8
 *.cer
 *.certSigningRequest
+
+# Your own team and bundle id for the iOS player (see Player/Signing.xcconfig)
+Signing.local.xcconfig
