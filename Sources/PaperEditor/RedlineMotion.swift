@@ -11,7 +11,7 @@ import PaperModel
 ///
 /// Both sides are measured against themselves, so a color that differs a little everywhere
 /// (the recording is not color-managed) does not count. Pure functions on pixels but for the
-/// two that make the clips, so they are tested without a simulator.
+/// two that make the clips.
 extension Redline {
     /// Pictures of the region a case follows, `frameLength` apart, the first at rest.
     public struct Clip {
