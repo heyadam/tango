@@ -3,7 +3,7 @@ import Observation
 
 /// Every chat with the assistant about one open document, as Cursor or Claude Code keep
 /// them: one is shown, the others go on answering in the background, each with its own
-/// line to Claude. They all work on the same document through the same store.
+/// line to its model. They all work on the same document through the same store.
 @Observable
 public final class AssistantChats {
     /// Newest first, as they are listed.
@@ -18,7 +18,7 @@ public final class AssistantChats {
     /// `make` builds a chat with a model and a thinking level; tests give it a fake transport.
     public init(
         store: DocumentStore, model: AssistantSession.Model = .standard,
-        makeTransport: @escaping () -> AssistantTransport = { ProcessTransport() }
+        makeTransport: (() -> AssistantTransport)? = nil
     ) {
         let make: (AssistantSession.Model, AssistantSession.Effort) -> AssistantSession = { model, effort in
             let session = AssistantSession(store: store, model: model, makeTransport: makeTransport)

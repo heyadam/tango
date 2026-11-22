@@ -48,6 +48,30 @@ func writePNG(_ bitmap: NSBitmapImageRep, to path: String) {
     }
 }
 
+/// The line `papertool assistant` talks over for a model that is not Claude: the key from
+/// the environment, a local server's address from --base-url. Nil leaves Claude's own.
+func papertoolTransport(for model: AssistantSession.Model, arguments: [String]) -> (() -> AssistantTransport)? {
+    guard model.provider != .claude else { return nil }
+    let environment = ProcessInfo.processInfo.environment
+    let key: String? = switch model.provider {
+    case .openAI: environment["OPENAI_API_KEY"]
+    case .gemini: environment["GEMINI_API_KEY"]
+    default: environment["LOCAL_API_KEY"]
+    }
+    if model.provider != .local, key == nil {
+        fail("Set \(model.provider == .openAI ? "OPENAI_API_KEY" : "GEMINI_API_KEY") to use \(model.provider.name)")
+    }
+    var base: URL?
+    if let address = option("--base-url", in: arguments) {
+        guard let url = URL(string: address), url.host != nil else { fail("--base-url is not an address: \(address)") }
+        base = url
+    }
+    guard AssistantProvider.chatTransport(for: model, base: base, key: key) != nil else {
+        fail("A local model needs --base-url, such as http://localhost:8000/v1")
+    }
+    return { AssistantProvider.chatTransport(for: model, base: base, key: key, seesPictures: !arguments.contains("--no-pictures"))! }
+}
+
 func option(_ name: String, in arguments: [String]) -> String? {
     guard let index = arguments.firstIndex(of: name), index + 1 < arguments.count else { return nil }
     return arguments[index + 1]
@@ -334,12 +358,18 @@ case "editor":
 
 case "assistant":
     // One request to the assistant without the app: prints the conversation and, with
-    // --out, saves what it built. Uses the Claude login on this Mac.
+    // --out, saves what it built. Claude uses the login on this Mac; --model openai:<id>,
+    // gemini:<id> or local:<id> asks someone else, with the key in OPENAI_API_KEY or
+    // GEMINI_API_KEY and, for a local server, its address in --base-url.
     guard arguments.count >= 3 else { fail("assistant needs a document and a request") }
     _ = NSApplication.shared
     let store = makeStore(loadDocument(arguments[1]))
-    let session = AssistantSession(store: store)
-    if let model = option("--model", in: arguments).flatMap(AssistantSession.Model.init(named:)) { session.model = model }
+    var chosen = AssistantSession.Model.standard
+    if let name = option("--model", in: arguments) {
+        guard let model = AssistantSession.Model(named: name) else { fail("No model is called \(name)") }
+        chosen = model
+    }
+    let session = AssistantSession(store: store, model: chosen, makeTransport: papertoolTransport(for: chosen, arguments: arguments))
     if let effort = option("--effort", in: arguments).flatMap(AssistantSession.Effort.init(rawValue:)) { session.effort = effort }
     var printed = 0
     var lastStatus = ""

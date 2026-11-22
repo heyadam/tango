@@ -77,7 +77,7 @@ public struct EditorView: View {
         self.fileURL = fileURL
         self.extensions = extensions
         // Opus while the assistant is being tested; `.standard` leaves the choice to the account.
-        _assistant = State(initialValue: assistant ?? AssistantChats(store: store, model: .opus))
+        _assistant = State(initialValue: assistant ?? AssistantChats(store: store, model: AssistantSettings.model()))
     }
 
     private func useInstalledExtensions() {

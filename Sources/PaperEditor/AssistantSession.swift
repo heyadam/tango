@@ -5,7 +5,7 @@ import PaperEngine
 import PaperModel
 
 /// One conversation with the assistant about one open document. Owns the transcript, runs
-/// the tools the assistant asks for on the document, and keeps the line to Claude.
+/// the tools the assistant asks for on the document, and keeps the line to whoever answers.
 @Observable
 public final class AssistantSession: Identifiable {
     public struct Entry: Identifiable, Equatable {
@@ -52,41 +52,6 @@ public final class AssistantSession: Identifiable {
         public var chips: [AssistantReference.Chip]
     }
 
-    /// The Claude models on offer. The raw value is the model id sent to Claude; update
-    /// this list when a new generation ships.
-    public enum Model: String, CaseIterable, Identifiable {
-        /// Whatever the signed-in account uses when no model is named.
-        case standard = ""
-        case fable = "claude-fable-5-2"
-        case opus = "claude-opus-5-5"
-        case sonnet = "claude-sonnet-5-5"
-        case haiku = "claude-haiku-5-5"
-
-        public var id: String { rawValue }
-        public var title: String {
-            self == .standard ? "Default" : Self.name(of: rawValue)
-        }
-
-        /// The short word for a model on the command line: `fable`, `opus`, `sonnet`, `haiku`.
-        public init?(named name: String) {
-            guard let match = Self.allCases.first(where: { $0 != .standard && $0.rawValue.contains("-\(name.lowercased())-") }) else {
-                return nil
-            }
-            self = match
-        }
-
-        /// A model id as people say it: `claude-opus-5-5` is "Opus 5.5".
-        public static func name(of id: String) -> String {
-            var parts = id.lowercased().split(whereSeparator: { $0 == "-" || $0 == "[" }).map(String.init)
-            if parts.first == "claude" { parts.removeFirst() }
-            let words = parts.prefix { Int($0) == nil }.map(\.capitalized)
-            // Version numbers are short; a long run of digits is a release date.
-            let version = parts.dropFirst(words.count).prefix { Int($0) != nil && $0.count <= 2 }
-            guard !words.isEmpty else { return id }
-            return (words + (version.isEmpty ? [] : [version.joined(separator: ".")])).joined(separator: " ")
-        }
-    }
-
     /// How hard the model thinks before it answers. The raw value is what the Agent SDK
     /// calls the level.
     public enum Effort: String, CaseIterable, Identifiable {
@@ -129,7 +94,7 @@ public final class AssistantSession: Identifiable {
     public private(set) var isWorking = false
     /// What the assistant is busy with, shown while it works.
     public private(set) var status = ""
-    /// The model that is actually answering, once Claude has said so. This is how the
+    /// The model that is actually answering, once it has said so. This is how the
     /// Default choice gets a name.
     public private(set) var answeringModel: String?
     /// Messages sent while an answer was in progress, in the order they go out.
@@ -154,7 +119,8 @@ public final class AssistantSession: Identifiable {
     }
 
     @ObservationIgnored let store: DocumentStore
-    @ObservationIgnored private let makeTransport: () -> AssistantTransport
+    /// Tests give a transport of their own; otherwise the model's provider says which.
+    @ObservationIgnored private let makeTransport: (() -> AssistantTransport)?
     @ObservationIgnored private var transport: AssistantTransport?
     @ObservationIgnored private var starting: Task<Bool, Never>?
     /// Counts conversations, so work begun for an earlier one can tell it is stale.
@@ -185,7 +151,7 @@ public final class AssistantSession: Identifiable {
 
     public init(
         store: DocumentStore, model: Model = .standard,
-        makeTransport: @escaping () -> AssistantTransport = { ProcessTransport() }
+        makeTransport: (() -> AssistantTransport)? = nil
     ) {
         self.model = model
         self.store = store
@@ -218,7 +184,7 @@ public final class AssistantSession: Identifiable {
         entries.append(Entry(kind: .user, text: next.text, chips: next.chips))
         isWorking = true
         status = "Thinking…"
-        timing = AssistantTiming()
+        timing = AssistantTiming(waitingFor: model.provider.waitName)
         timing.enter(.waiting, at: now())
         turnBefore = nil
         turnSteps = 0
@@ -333,12 +299,12 @@ public final class AssistantSession: Identifiable {
         }
     }
 
-    // MARK: The line to Claude
+    // MARK: The line to the model
 
     private func connect() async -> Bool {
         if transport != nil, starting == nil { return true }
         if let starting { return await starting.value }
-        let transport = makeTransport()
+        let transport = makeTransport?() ?? AssistantProvider.transport(for: model)
         self.transport = transport
         transport.onMessage = { [weak self] message in self?.receive(message) }
         transport.onClose = { [weak self, weak transport] problem in
@@ -471,7 +437,7 @@ public final class AssistantSession: Identifiable {
                [.changes, .assistant].contains(entries[last].kind) {
                 entries[last].timing = took
             }
-            timing = AssistantTiming()
+            timing = AssistantTiming(waitingFor: model.provider.waitName)
             turnBefore = nil
             turnSteps = 0
             if !holdsQueue, !queued.isEmpty { Task { await sendNext() } }
@@ -567,7 +533,18 @@ public final class AssistantSession: Identifiable {
     private func report(_ problem: String) {
         let lowered = problem.lowercased()
         let signedOut = ["auth login", "/login", "authenticate", "invalid api key", "not logged in"].contains { lowered.contains($0) }
-        if signedOut {
+        if signedOut, model.provider == .claude, AssistantSettings.claudeUsesKey() {
+            entries.append(Entry(kind: .problem, text: "Claude refused the API key. Check it in Settings (Command-comma)."))
+            // The line was opened with that key: the next message opens one with whatever
+            // key is saved by then.
+            settleLive()
+            transport?.onMessage = nil
+            transport?.onClose = nil
+            transport?.stop()
+            transport = nil
+            isWorking = false
+            status = ""
+        } else if signedOut, model.provider == .claude {
             entries.append(Entry(kind: .signIn, text: "Claude is not signed in on this Mac. Sign in with your Claude account, then send your message again."))
         } else {
             entries.append(Entry(kind: .problem, text: problem))

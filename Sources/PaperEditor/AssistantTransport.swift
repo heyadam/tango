@@ -1,6 +1,7 @@
 import Foundation
 
-/// The line to the process that talks to Claude. Messages are JSON objects; see
+/// The line to whatever talks to the model: the Node program for Claude (`ProcessTransport`)
+/// or the app itself for everyone else (`ChatTransport`). Messages are JSON objects; see
 /// `Assistant/sidecar.mjs` for the ones that exist.
 public protocol AssistantTransport: AnyObject {
     /// Called on the main actor for each message that arrives.
@@ -28,8 +29,15 @@ public final class ProcessTransport: AssistantTransport {
     private var input: FileHandle?
     private let errors = LineBuffer()
     private var stoppedOnPurpose = false
+    /// A Claude API key to answer on, in place of this Mac's Claude login.
+    private let apiKey: String?
+    private let needsKey: Bool
 
-    public init() {}
+    /// With `needsKey` the line only opens with a key: the person chose to answer on one.
+    public init(apiKey: String? = nil, needsKey: Bool = false) {
+        self.apiKey = apiKey
+        self.needsKey = needsKey
+    }
 
     /// Where the assistant's program is installed.
     public static var directory: URL {
@@ -49,6 +57,9 @@ public final class ProcessTransport: AssistantTransport {
     }
 
     public func start(progress: @escaping (String) -> Void) async throws {
+        if needsKey, apiKey == nil {
+            throw AssistantSetupError(message: "Add a Claude API key in Settings (Command-comma), or choose to use this Mac's Claude login there. Then send your message again.")
+        }
         let node = try await Self.findNode()
         let directory = Self.directory
         try await Self.install(into: directory, node: node, progress: progress)
@@ -106,9 +117,15 @@ public final class ProcessTransport: AssistantTransport {
         input = stdin.fileHandleForWriting
     }
 
+    /// What goes down the line for a message: `start` takes the key along, when there is one.
+    static func outgoing(_ message: [String: Any], apiKey: String?) -> [String: Any] {
+        guard let apiKey, message["type"] as? String == "start" else { return message }
+        return message.merging(["apiKey": apiKey]) { $1 }
+    }
+
     public func send(_ message: [String: Any]) {
         guard let input, process?.isRunning == true,
-              var data = try? JSONSerialization.data(withJSONObject: message)
+              var data = try? JSONSerialization.data(withJSONObject: Self.outgoing(message, apiKey: apiKey))
         else { return }
         data.append(0x0A)
         try? input.write(contentsOf: data)
