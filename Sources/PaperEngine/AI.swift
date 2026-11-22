@@ -1,30 +1,43 @@
 import Foundation
 import PaperModel
 
-// AI patches: text from Claude or OpenAI, pictures and speech from OpenAI, and speech
-// turned into text. Like Network Request, the runtime only says what it wants: the host
-// makes the call with the person's API key and reports back with `Runtime.update(ai:_:)`.
+// AI patches: text from Claude, OpenAI or Apple's on-device model, pictures from OpenAI,
+// speech both ways, structured answers and translation. Like Network Request, the runtime
+// only says what it wants: the host makes the call (with the person's API key, or on the
+// device for Apple's models) and reports back with `Runtime.update(ai:_:)`.
 
 /// Who answers a request, which follows from the model's name.
 public enum AIProvider: String, Sendable, CaseIterable {
     case anthropic
     case openAI
+    /// Apple's models, on the device that runs the prototype: no key and nothing sent.
+    case apple
 
     public static func of(model: String) -> AIProvider {
-        model.lowercased().hasPrefix("claude") ? .anthropic : .openAI
+        let model = model.lowercased()
+        if model.hasPrefix("claude") { return .anthropic }
+        if model.hasPrefix("apple") { return .apple }
+        return .openAI
     }
 
     public var name: String {
         switch self {
         case .anthropic: "Claude"
         case .openAI: "OpenAI"
+        case .apple: "Apple Intelligence"
         }
     }
+
+    /// Whether requests need the person's API key.
+    public var needsKey: Bool { self != .apple }
+
+    /// The providers whose keys Settings holds.
+    public static let keyed = allCases.filter(\.needsKey)
 }
 
 /// What an AI patch wants done.
 public struct AIRequest: Sendable, Hashable {
-    public enum Task: String, Sendable { case text, image, speech, transcription }
+    public enum Task: String, Sendable { case text, image, speech, transcription, object, translation }
     public enum Phase: String, Sendable {
         /// Make the request now.
         case send
@@ -53,11 +66,17 @@ public struct AIRequest: Sendable, Hashable {
     public var voice: String
     /// For images: `1024x1024`, `1024x1536`, `1536x1024`, or empty for the model's choice.
     public var size: String
+    /// For objects: what to make, one field a line (`AIField.parse`).
+    public var fields: String
+    /// For translation: the language to translate into and the one it is in (empty to
+    /// detect), as BCP 47 codes (`AIRequest.languageCode`).
+    public var target: String
+    public var source: String
 
     public init(
         id: UUID = UUID(), task: Task, phase: Phase = .send, model: String, prompt: String = "",
         instructions: String = "", effort: String = "", picture: String = "", conversation: [AITurn] = [],
-        voice: String = "", size: String = ""
+        voice: String = "", size: String = "", fields: String = "", target: String = "", source: String = ""
     ) {
         self.id = id
         self.task = task
@@ -70,6 +89,9 @@ public struct AIRequest: Sendable, Hashable {
         self.conversation = conversation
         self.voice = voice
         self.size = size
+        self.fields = fields
+        self.target = target
+        self.source = source
     }
 
     public var provider: AIProvider { AIProvider.of(model: model) }
@@ -99,23 +121,47 @@ public struct AITurn: Sendable, Hashable {
 
 /// What the host reports about a request.
 public enum AIUpdate: Sendable, Hashable {
-    /// Text so far, while it streams in: the whole of it, not just what is new.
+    /// Text so far, while it streams in: the whole of it, not just what is new. For an
+    /// object, the JSON of what has been made so far.
     case partial(String)
     /// The microphone started or stopped recording for a transcription.
     case recording(Bool)
     /// Speech started or finished playing.
     case playing(Bool)
-    /// The answer: text for text and transcription, a picture name for images. Speech
+    /// The answer: text for text, transcription and translation, JSON for objects, a
+    /// picture name for images. Speech
     /// finishes with empty text once it has been fetched; `.playing(false)` follows.
     case finished(text: String, picture: String)
     case failed(String)
 }
 
 extension AIRequest {
-    public static let textModels = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5", "gpt-6.2-astra", "gpt-6.2-sol", "gpt-6-luna"]
+    /// Apple's model on the device: Foundation Models for text and objects, the system's
+    /// voices for speech, SpeechAnalyzer for transcription.
+    public static let onDevice = "apple-on-device"
+    public static let textModels = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5", "gpt-6.2-astra", "gpt-6.2-sol", "gpt-6-luna", onDevice]
+    public static let objectModels = [onDevice]
     public static let imageModels = ["gpt-image-2.6-flare", "gpt-image-2.6-sunburst"]
-    public static let speechModels = ["gpt-4o-mini-tts"]
-    public static let transcriptionModels = ["gpt-transcribe"]
+    public static let speechModels = ["gpt-4o-mini-tts", onDevice]
+    public static let transcriptionModels = ["gpt-transcribe", onDevice]
+    /// The languages Translate offers by name, with their codes. A code typed in also works.
+    public static let languages: [(name: String, code: String)] = [
+        ("English", "en"), ("Spanish", "es"), ("French", "fr"), ("German", "de"), ("Italian", "it"),
+        ("Portuguese", "pt-BR"), ("Dutch", "nl"), ("Polish", "pl"), ("Russian", "ru"), ("Ukrainian", "uk"),
+        ("Turkish", "tr"), ("Arabic", "ar"), ("Hindi", "hi"), ("Japanese", "ja"), ("Korean", "ko"),
+        ("Chinese", "zh-Hans"), ("Chinese (Traditional)", "zh-Hant"), ("Vietnamese", "vi"), ("Thai", "th"),
+        ("Indonesian", "id"),
+    ]
+    /// What Translate's From says to detect the language.
+    public static let detect = "Detect"
+
+    /// The code for a language named on a Translate input: one of `languages` by name
+    /// (in any case), else what was typed, trimmed. Empty or Detect is empty.
+    public static func languageCode(_ named: String) -> String {
+        let named = named.trimmingCharacters(in: .whitespacesAndNewlines)
+        if named.isEmpty || named.caseInsensitiveCompare(detect) == .orderedSame { return "" }
+        return languages.first { $0.name.caseInsensitiveCompare(named) == .orderedSame }?.code ?? named
+    }
     public static let voices = ["marin", "cedar", "alloy", "ash", "ballad", "coral", "echo", "fable", "nova", "onyx", "sage", "shimmer", "verse"]
     public static let efforts = ["low", "medium", "high"]
     /// Image sizes as the Size input names them, and what the API calls them.
@@ -128,6 +174,7 @@ extension StandardPatches {
     /// Patch kinds the runtime runs as AI requests, by task.
     static let aiTasks: [String: AIRequest.Task] = [
         "aiText": .text, "aiImage": .image, "aiSpeech": .speech, "aiTranscribe": .transcription,
+        "aiObject": .object, "aiTranslate": .translation,
     ]
 
     static let ai: [PatchDefinition] = [
@@ -145,6 +192,7 @@ extension StandardPatches {
                 PortSpec("send", "Send", .pulse),
                 PortSpec("remember", "Remember", .bool, .bool(true)),
                 PortSpec("reset", "Reset", .pulse),
+                PortSpec("stop", "Stop", .pulse),
             ],
             outputs: [
                 PortSpec("text", "Text", .text),
@@ -214,7 +262,138 @@ extension StandardPatches {
                 PortSpec("error", "Error", .text),
             ]
         ).device(.microphone, outputs: []),
+        PatchDefinition(
+            kind: "aiObject",
+            name: "Generate Object",
+            category: .ai,
+            summary: "Asks Apple's on-device model for an object with the fields you list, filled in as it streams. Free, private, no key.",
+            inputs: [
+                PortSpec("prompt", "Prompt", .text),
+                PortSpec("instructions", "Instructions", .text),
+                PortSpec("fields", "Fields", .text, .text("title: text\nsummary: text")),
+                PortSpec("model", "Model", .text, .text(AIRequest.objectModels[0]), options: AIRequest.objectModels),
+                PortSpec("image", "Image", .text),
+                PortSpec("send", "Send", .pulse),
+            ],
+            outputs: [
+                PortSpec("object", "Object", .json),
+                PortSpec("loading", "Loading", .bool),
+                PortSpec("done", "Done", .pulse),
+                PortSpec("failed", "Failed", .pulse),
+                PortSpec("error", "Error", .text),
+            ]
+        ),
+        PatchDefinition(
+            kind: "aiTranslate",
+            name: "Translate",
+            category: .ai,
+            summary: "Translates Text on the device with Apple's translation models. Free, private, no key.",
+            inputs: [
+                PortSpec("text", "Text", .text),
+                PortSpec("to", "To", .text, .text("Spanish"), options: AIRequest.languages.map(\.name)),
+                PortSpec("from", "From", .text, .text(AIRequest.detect), options: [AIRequest.detect] + AIRequest.languages.map(\.name)),
+                PortSpec("send", "Send", .pulse),
+            ],
+            outputs: [
+                PortSpec("text", "Text", .text),
+                PortSpec("loading", "Loading", .bool),
+                PortSpec("done", "Done", .pulse),
+                PortSpec("failed", "Failed", .pulse),
+                PortSpec("error", "Error", .text),
+            ]
+        ),
     ]
+}
+
+// MARK: - Fields
+
+/// One field of what Generate Object makes, as a line of its Fields input says it:
+/// `name: kind - what it is`. The kind and the words after it are optional.
+///
+/// Kinds: `text` (the default), `number`, `whole` (or `integer`, `int`), `yes/no` (or
+/// `bool`, `boolean`), `list` (of text) or `list of <kind>`, and choices written with bars,
+/// `happy | sad | calm`. A list can say how many: `list of 3 text`, `3 numbers`, and can be
+/// of choices: `list of happy | sad`.
+public struct AIField: Sendable, Hashable {
+    public indirect enum Kind: Sendable, Hashable {
+        case text, number, whole, bool
+        case choice([String])
+        case list(Kind, count: Int?)
+    }
+
+    public var name: String
+    public var kind: Kind
+    public var about: String
+
+    public init(_ name: String, _ kind: Kind = .text, about: String = "") {
+        self.name = name
+        self.kind = kind
+        self.about = about
+    }
+
+    /// The fields of a Fields input, in order. Blank lines, lines that name nothing and
+    /// names given twice (after the first) are left out.
+    public static func parse(_ text: String) -> [AIField] {
+        var fields: [AIField] = []
+        var seen = Set<String>()
+        for raw in text.split(whereSeparator: \.isNewline) {
+            var line = raw.trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("-") || line.hasPrefix("•") { line = String(line.dropFirst()).trimmingCharacters(in: .whitespaces) }
+            guard !line.isEmpty else { continue }
+            var about = ""
+            for mark in [" — ", " – ", " - ", " // ", " # "] {
+                if let range = line.range(of: mark) {
+                    about = line[range.upperBound...].trimmingCharacters(in: .whitespaces)
+                    line = line[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                    break
+                }
+            }
+            var name = line, kindText = ""
+            if let colon = line.firstIndex(of: ":") {
+                name = line[..<colon].trimmingCharacters(in: .whitespaces)
+                kindText = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
+            }
+            name = name.trimmingCharacters(in: CharacterSet(charactersIn: "\"'`"))
+            guard !name.isEmpty, seen.insert(name).inserted else { continue }
+            fields.append(AIField(name, kind(kindText), about: about))
+        }
+        return fields
+    }
+
+    static func kind(_ text: String) -> Kind {
+        // A list, and how many, come first: "list of", "3", or both. What is left is the
+        // kind of each item, choices included.
+        var words = text.split(separator: " ").map(String.init)
+        var listed = false
+        var count: Int?
+        if let first = words.first, ["list", "array", "lists"].contains(first.lowercased()) {
+            listed = true
+            words.removeFirst()
+            if words.first?.lowercased() == "of" { words.removeFirst() }
+        }
+        if let first = words.first, let number = Int(first) {
+            count = min(max(number, 1), 100)
+            listed = true
+            words.removeFirst()
+        }
+        let rest = words.joined(separator: " ")
+        let element: Kind
+        if rest.contains("|") {
+            let choices = rest.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            element = choices.isEmpty ? .text : .choice(choices)
+        } else {
+            var single = rest.lowercased()
+            // "3 numbers", "list of words": a plural names the kind.
+            if listed, single.hasSuffix("s"), single.count > 1 { single.removeLast() }
+            element = switch single {
+            case "number", "double", "float", "decimal": .number
+            case "whole", "integer", "int", "count", "whole number": .whole
+            case "bool", "boolean", "yes/no", "yes or no", "flag": .bool
+            default: .text
+            }
+        }
+        return listed ? .list(element, count: count) : element
+    }
 }
 
 // MARK: - Running
@@ -262,6 +441,21 @@ extension Runtime {
                 set("text", .text(""), in: ports)
                 set("loading", .bool(false), in: ports)
                 set("error", .text(""), in: ports)
+                publishConversation()
+            }
+            // Stop: what was written so far is the answer, as if it had ended there. Stopped
+            // before its first word, the question stays without one (an empty answer is
+            // left out, as the APIs refuse an empty turn).
+            if pulse(8), let pending = state.pending {
+                send(AIRequest(id: pending, task: .text, phase: .cancel, model: text(2)))
+                if let asked = state.asked, inputs.count > 6 ? inputs[6].boolValue : true {
+                    state.conversation.append(asked)
+                    if !state.partial.isEmpty { state.conversation.append(AITurn(.assistant, state.partial)) }
+                }
+                state.asked = nil
+                state.pending = nil
+                set("loading", .bool(false), in: ports)
+                set("done", .pulse(true), in: ports)
                 publishConversation()
             }
             let prompt = text(0), picture = text(4)
@@ -431,6 +625,72 @@ extension Runtime {
                     default:
                         break
                     }
+                }
+            }
+
+        case .object:
+            let ports = ["object", "loading", "done", "failed", "error"]
+            let prompt = text(0), picture = text(4)
+            if pulse(5), !prompt.isEmpty || !picture.isEmpty {
+                if let pending = state.pending { send(AIRequest(id: pending, task: .object, phase: .cancel, model: text(3))) }
+                let request = AIRequest(task: .object, model: text(3), prompt: prompt, instructions: text(1), picture: picture, fields: text(2))
+                state.pending = request.id
+                set("loading", .bool(true), in: ports)
+                set("error", .text(""), in: ports)
+                send(request)
+            }
+            if let pending = state.pending {
+                for update in updates(pending) {
+                    switch update {
+                    case let .partial(json):
+                        if let object = Value.parseJSON(Data(json.utf8)) { set("object", object, in: ports) }
+                    case let .finished(json, _):
+                        state.pending = nil
+                        if let object = Value.parseJSON(Data(json.utf8)) { set("object", object, in: ports) }
+                        set("loading", .bool(false), in: ports)
+                        set("done", .pulse(true), in: ports)
+                    case let .failed(problem):
+                        state.pending = nil
+                        set("loading", .bool(false), in: ports)
+                        set("failed", .pulse(true), in: ports)
+                        set("error", .text(problem), in: ports)
+                    default:
+                        break
+                    }
+                    if state.pending == nil { break }
+                }
+            }
+
+        case .translation:
+            let ports = ["text", "loading", "done", "failed", "error"]
+            if pulse(3), !text(0).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if let pending = state.pending { send(AIRequest(id: pending, task: .translation, phase: .cancel, model: AIRequest.onDevice)) }
+                let request = AIRequest(
+                    task: .translation, model: AIRequest.onDevice, prompt: text(0),
+                    target: AIRequest.languageCode(text(1)), source: AIRequest.languageCode(text(2))
+                )
+                state.pending = request.id
+                set("loading", .bool(true), in: ports)
+                set("error", .text(""), in: ports)
+                send(request)
+            }
+            if let pending = state.pending {
+                for update in updates(pending) {
+                    switch update {
+                    case let .finished(translated, _):
+                        state.pending = nil
+                        set("text", .text(translated), in: ports)
+                        set("loading", .bool(false), in: ports)
+                        set("done", .pulse(true), in: ports)
+                    case let .failed(problem):
+                        state.pending = nil
+                        set("loading", .bool(false), in: ports)
+                        set("failed", .pulse(true), in: ports)
+                        set("error", .text(problem), in: ports)
+                    default:
+                        break
+                    }
+                    if state.pending == nil { break }
                 }
             }
         }

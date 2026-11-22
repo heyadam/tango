@@ -12,6 +12,28 @@ import PaperModel
         (try? JSONSerialization.jsonObject(with: request.httpBody ?? Data())) as? [String: Any] ?? [:]
     }
 
+    /// Apple's models need no key and ask nobody; the patches that only Apple runs say so
+    /// when given another model.
+    @Test func appleModelsGoToTheDeviceWithNoKeyAndNoQuestion() {
+        let service = AIService(keys: AIKeys())
+        var asked = false
+        service.ask = { _, answer in asked = true; answer(true) }
+        var updates: [(UUID, AIUpdate)] = []
+        service.deliver = { updates.append(($0, $1)) }
+        // Not a picture model: it fails at once, and never for want of a key.
+        let image = AIRequest(task: .image, model: AIRequest.onDevice, prompt: "A cat")
+        service.handle(image)
+        #expect(!asked)
+        #expect(updates.count == 1)
+        if case let .failed(why) = updates.first?.1 { #expect(!why.contains("API key")) } else { Issue.record("\(updates)") }
+
+        let object = AIRequest(task: .object, model: "claude-haiku-5-5", prompt: "A cat", fields: "name: text")
+        service.handle(object)
+        #expect(!asked)
+        if case let .failed(why) = updates.last?.1 { #expect(why.contains(AIRequest.onDevice)) } else { Issue.record("\(updates)") }
+        #expect(!AIKeys.accounts.contains(AIProvider.apple.rawValue))
+    }
+
     @Test func aClaudeRequestStreamsWithTheKeyInItsHeader() {
         let ask = AIRequest(
             task: .text, model: "claude-opus-5-5", prompt: "And in French?", instructions: "Be brief.", effort: "low",

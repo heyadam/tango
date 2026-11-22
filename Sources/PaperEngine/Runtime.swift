@@ -420,6 +420,12 @@ public final class Runtime {
     private var fieldText: [ResolvedLayer.Hit: String] = [:]
     private var fieldChanged: Set<ResolvedLayer.Hit> = []
     private var fieldSubmitted: Set<ResolvedLayer.Hit> = []
+    /// Fields a Clear emptied this frame: their Text still gave the old words, and the next
+    /// frame gives the empty Text with a Changed pulse.
+    private var fieldsCleared: Set<ResolvedLayer.Hit> = []
+    /// Those of the frame before, handed over at the start of each tick, so a field that
+    /// is gone by then is forgotten rather than waited for.
+    private var fieldsClearedBefore: Set<ResolvedLayer.Hit> = []
     /// The text field (or nothing) under the finger that just came down. A tap there moves focus.
     private var focusCandidate: (id: Int, hit: ResolvedLayer.Hit?, start: Point2)?
 
@@ -487,6 +493,8 @@ public final class Runtime {
         fieldText = [:]
         fieldChanged = []
         fieldSubmitted = []
+        fieldsCleared = []
+        fieldsClearedBefore = []
         focusCandidate = nil
         hovered = nil
         pendingEvents = []
@@ -1074,6 +1082,9 @@ public final class Runtime {
             }
         }
 
+        fieldsClearedBefore = fieldsCleared
+        fieldsCleared = []
+
         var overrides: [LayerID: [LayerProperty: [Value]]] = [:]
         // What cables bring to view patches this frame, by layer and port id.
         var driven: [LayerID: [String: [Value]]] = [:]
@@ -1084,6 +1095,11 @@ public final class Runtime {
         for index in nodes.indices {
             let node = nodes[index]
 
+            // Gathered before this patch's pulses are cleared, so a patch cabled to itself
+            // (a field's Submitted into its own Clear) reads its pulse from the last frame,
+            // as any back edge does. Cleared after, it never saw it.
+            let inputs = gatherInputs(for: node)
+
             // A pulse lasts one frame: it is cleared here, at the emitting patch's own turn,
             // so patches later in the order saw it this frame and back-edge readers see it
             // exactly once on the next.
@@ -1092,8 +1108,6 @@ public final class Runtime {
                     outputs[index][row][output] = .pulse(false)
                 }
             }
-
-            let inputs = gatherInputs(for: node)
 
             switch node.role {
             case let .view(layer, instance, scrolls):
@@ -1407,6 +1421,8 @@ public final class Runtime {
         // A request answered at once, as when there is nobody to make it, is handed over
         // on the next frame.
         if responses.keys.contains(where: { scriptRequests[$0] != nil }) { stillActive = true }
+        // A field a Clear emptied gives its empty Text on the next frame.
+        if !fieldsCleared.isEmpty { stillActive = true }
         needsFrame = stillActive
         return stillActive
     }
@@ -1696,12 +1712,19 @@ public final class Runtime {
             let hit = ResolvedLayer.Hit(layer: layer, instance: row)
             if pulsed(0, row) { focus = hit }
             if pulsed(1, row), focus == hit { focus = nil }
-            var changed = fieldChanged.contains(hit)
-            if pulsed(2, row), !text(of: hit).isEmpty {
+            // Emptied by a Clear last frame: the empty Text arrives now, with its Changed.
+            var changed = fieldChanged.contains(hit) || fieldsClearedBefore.contains(hit)
+            let shown = text(of: hit)
+            if pulsed(2, row), !shown.isEmpty {
+                // The field empties now, but Text gives what was there for this one frame
+                // more: a Clear that comes from the field's own Return (through a cycle, which
+                // may be ordered either way) must not empty the words the same Return sends.
+                // Changed comes on the next frame, with the empty Text.
                 fieldText[hit] = ""
-                changed = true
+                fieldsCleared.insert(hit)
+                changed = fieldChanged.contains(hit)
             }
-            rows[row][0] = .text(text(of: hit))
+            rows[row][0] = .text(shown)
             rows[row][1] = .bool(focus == hit)
             rows[row][2] = .pulse(changed)
             rows[row][3] = .pulse(fieldSubmitted.contains(hit))

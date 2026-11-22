@@ -3,6 +3,7 @@ import AppKit
 import Foundation
 import Observation
 import PaperEngine
+import PaperHost
 import PaperModel
 
 // The calls AI patches ask for, made with the person's own API keys.
@@ -20,7 +21,7 @@ final class AIKeys {
 
     /// Every account a key can be saved for: the AI patches' providers, which the assistant
     /// shares, and the ones only the assistant uses.
-    static let accounts = AIProvider.allCases.map(\.rawValue) + [gemini, local]
+    static let accounts = AIProvider.keyed.map(\.rawValue) + [gemini, local]
     static let gemini = "gemini"
     /// The key of a local server, for the few that want one.
     static let local = "local"
@@ -79,6 +80,7 @@ final class AIKeys {
         switch provider {
         case .anthropic: URL(string: "https://platform.claude.com/settings/keys")!
         case .openAI: URL(string: "https://platform.openai.com/api-keys")!
+        case .apple: URL(string: "https://www.apple.com/apple-intelligence/")!
         }
     }
 
@@ -86,13 +88,19 @@ final class AIKeys {
     static let asksFirstKey = "aiAsksBeforeUsingKeys"
 }
 
-/// Makes the calls of one running prototype. The Viewer owns one.
+/// Makes the calls of one running prototype. The Viewer owns one. Requests for Apple's
+/// models go to `apple`, on this Mac, with no key and no question.
 final class AIService {
     let keys: AIKeys
+    let apple = AppleIntelligence()
     /// Hands an update to the runtime, then draws a frame.
-    var deliver: (UUID, AIUpdate) -> Void = { _, _ in }
+    var deliver: (UUID, AIUpdate) -> Void = { _, _ in } {
+        didSet { apple.deliver = deliver }
+    }
     /// A picture the prototype can show, by name: what Image inputs name.
-    var picture: (String) -> CGImage? = { _ in nil }
+    var picture: (String) -> CGImage? = { _ in nil } {
+        didSet { apple.picture = picture }
+    }
     /// Keeps a picture that was made, under the name the patch's Image output gives.
     var keep: (String, CGImage) -> Void = { _, _ in }
     /// Asks the person whether this prototype may use their key. Nil allows it.
@@ -128,6 +136,10 @@ final class AIService {
             startRecording(request)
         case .stopRecording:
             stopRecording(request)
+        case .send where request.provider == .apple:
+            apple.handle(request)
+        case .send where request.task == .object || request.task == .translation:
+            deliver(request.id, .failed("This patch runs on Apple's on-device model only: choose \(AIRequest.onDevice)."))
         case .send:
             permitted(request.provider, request.id) { [weak self] in self?.start(request) }
         }
@@ -146,6 +158,7 @@ final class AIService {
     /// What was heard is not sent.
     func quiet() {
         hidden = true
+        apple.quiet()
         for (id, player) in players {
             player.stop()
             players[id] = nil
@@ -161,14 +174,18 @@ final class AIService {
     }
 
     /// Set while the Viewer is out of sight: speech that arrives then is not played.
-    var hidden = false
+    var hidden = false {
+        didSet { apple.hidden = hidden }
+    }
 
     /// Stops everything: the prototype restarted or its Viewer closed.
     func stopAll() {
         for id in Set(tasks.keys).union(players.keys).union(recorders.keys).union(waiting) { cancel(id) }
+        apple.stopAll()
     }
 
     private func cancel(_ id: UUID) {
+        apple.cancel(id)
         waiting.remove(id)
         recordings.remove(id)
         tasks.removeValue(forKey: id)?.cancel()
@@ -305,7 +322,7 @@ final class AIService {
                 self?.tasks[id] = nil
             }
 
-        case .transcription:
+        case .transcription, .object, .translation:
             break
         }
     }
@@ -354,7 +371,12 @@ final class AIService {
     private func startRecording(_ request: AIRequest) {
         let id = request.id
         recordings.insert(id)
-        permitted(.openAI, id) { [weak self] in
+        // On-device transcription needs no key, only the microphone.
+        let provider = request.provider == .apple ? nil : AIProvider.openAI
+        let listen = { (next: @escaping () -> Void) in
+            if let provider { self.permitted(provider, id, next) } else { next() }
+        }
+        listen { [weak self] in
             guard let self else { return }
             self.waiting.insert(id)
             AVCaptureDevice.requestAccess(for: .audio) { granted in
@@ -396,7 +418,16 @@ final class AIService {
         recorder.stop()
         deliver(id, .recording(false))
         let file = recorder.url
-        guard duration > 0.2, let audio = try? Data(contentsOf: file) else {
+        guard duration > 0.2 else {
+            recorder.deleteRecording()
+            deliver(id, .finished(text: "", picture: ""))
+            return
+        }
+        if request.provider == .apple {
+            apple.transcribe(file, for: id) { recorder.deleteRecording() }
+            return
+        }
+        guard let audio = try? Data(contentsOf: file) else {
             recorder.deleteRecording()
             deliver(id, .finished(text: "", picture: ""))
             return
@@ -486,6 +517,10 @@ final class AIService {
             var outgoing = json(URL(string: "https://api.openai.com/v1/responses")!, body)
             outgoing.setValue("Bearer " + key, forHTTPHeaderField: "Authorization")
             return outgoing
+
+        case .apple:
+            // Never sent: Apple's models answer on the device (`AppleIntelligence`).
+            return URLRequest(url: URL(string: "about:blank")!)
         }
     }
 
@@ -656,6 +691,8 @@ struct AIStream {
             default:
                 return nil
             }
+        case .apple:
+            return nil
         }
     }
 }

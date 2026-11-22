@@ -1,0 +1,3794 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "D5931AF9-09D6-47A3-8BFC-E45B9E0C103F",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 1152,
+          "width" : 816
+        },
+        "text" : "Start · One card per suggestion"
+      },
+      {
+        "id" : "CB87B0B4-0EBC-41B3-936D-2CE0C39F30B8",
+        "origin" : {
+          "x" : 24,
+          "y" : 1200
+        },
+        "size" : {
+          "height" : 828,
+          "width" : 1392
+        },
+        "text" : "Ask · Apple's model on this device keeps the chat"
+      },
+      {
+        "id" : "A14D0A8D-BDB0-4F0A-9254-6D7CB0130180",
+        "origin" : {
+          "x" : 24,
+          "y" : 2112
+        },
+        "size" : {
+          "height" : 300,
+          "width" : 240
+        },
+        "text" : "Composer · Talk, send or stop"
+      },
+      {
+        "id" : "10E36524-3A5E-4AC9-9A08-A2D11C8D4929",
+        "origin" : {
+          "x" : 1752,
+          "y" : 1200
+        },
+        "size" : {
+          "height" : 228,
+          "width" : 528
+        },
+        "text" : "Thread · What fits, newest last"
+      },
+      {
+        "id" : "7783F375-4CA9-4925-926A-F59A61FEBBC1",
+        "origin" : {
+          "x" : 2328,
+          "y" : 1200
+        },
+        "size" : {
+          "height" : 444,
+          "width" : 240
+        },
+        "text" : "Style · Bubble or plain words"
+      },
+      {
+        "id" : "E4758308-49B1-4E40-AC15-161F922F67DB",
+        "origin" : {
+          "x" : 1752,
+          "y" : 2016
+        },
+        "size" : {
+          "height" : 1020,
+          "width" : 816
+        },
+        "text" : "Actions · Each tap knows its message"
+      },
+      {
+        "id" : "F514FE53-35A3-4EC9-B3F2-11F6CE3B7EE4",
+        "origin" : {
+          "x" : 1176,
+          "y" : 2352
+        },
+        "size" : {
+          "height" : 372,
+          "width" : 240
+        },
+        "text" : "Glow · While it thinks"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "C2FE7DD7-2A1C-499E-BBFC-B1048CA1E7C0",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "41D2462C-698A-4FB9-A112-ADE4F898EFA4",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "41D2462C-698A-4FB9-A112-ADE4F898EFA4",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "358DDA12-352F-43C6-85AF-96344FFEB7B9",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "98140A57-9BFE-4A65-95E9-84BE892EA50D",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "B52FB72C-BC52-4183-AC61-C68FA5DE3479",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "56480C3C-1537-4AE7-ACF6-B39B39AFCD84",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "A7A0D65A-51CB-40CF-9B77-80F447DE01A1",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2C9D9613-45F4-420A-A556-CA3DF7225AD9",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "2E1AEA6D-FD0F-439E-9173-9FB1FD338281",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B52FB72C-BC52-4183-AC61-C68FA5DE3479",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "CD6B8FBD-8FC9-4908-8903-DCEFA43F4D03",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A7A0D65A-51CB-40CF-9B77-80F447DE01A1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "EE771549-56D2-4717-8EB7-586122BB9E57",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B0A8283E-3D40-4791-B1FA-9C6A942A7DC4",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2E1AEA6D-FD0F-439E-9173-9FB1FD338281",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
+          "port" : "pulse"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
+          "port" : "pulse"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
+          "port" : "open"
+        }
+      },
+      {
+        "from" : {
+          "node" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "148E8A8D-B022-4F18-BEC7-F38329082AE0",
+          "port" : "down"
+        },
+        "to" : {
+          "node" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
+          "port" : "record"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
+          "port" : "submitted"
+        },
+        "to" : {
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
+          "port" : "done"
+        },
+        "to" : {
+          "node" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
+          "port" : "done"
+        },
+        "to" : {
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
+          "port" : "then"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
+          "port" : "else"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
+          "port" : "condition"
+        }
+      },
+      {
+        "from" : {
+          "node" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
+          "port" : "then"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
+          "port" : "else"
+        }
+      },
+      {
+        "from" : {
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "prompt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "send"
+        }
+      },
+      {
+        "from" : {
+          "node" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "stop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "819EB845-B689-4A43-B5A7-16C46C4F1860",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "reset"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
+          "port" : "clear"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "typed"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "loading"
+        }
+      },
+      {
+        "from" : {
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
+          "port" : "recording"
+        },
+        "to" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "recording"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "symbol"
+        },
+        "to" : {
+          "node" : "C37B49D3-B6F3-4797-A812-89413F573F84",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "placeholder"
+        },
+        "to" : {
+          "node" : "7D2100D0-6EE1-4FA2-AA2C-66EBF64C623E",
+          "port" : "placeholder"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "mic"
+        },
+        "to" : {
+          "node" : "5AA081BA-49DE-4B37-B18E-895F57184828",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "talks"
+        },
+        "to" : {
+          "node" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+          "port" : "sends"
+        },
+        "to" : {
+          "node" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
+          "port" : "open"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "conversation"
+        },
+        "to" : {
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+          "port" : "conversation"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+          "port" : "loading"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "error"
+        },
+        "to" : {
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+          "port" : "error"
+        }
+      },
+      {
+        "from" : {
+          "node" : "44F40316-6EE8-4195-8545-D14B54DF31E6",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "28148E89-EF42-4617-AC24-F38901D236C9",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "79756E5A-2F75-4B60-B8D5-A5FBC751F959",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "25092F11-9088-4849-A764-82C899A909A2",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9B283DE1-A39B-4259-AAB0-B51CE4539510",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "6AD56C29-E30D-420D-9474-CE447420039A",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F6385BE6-39D8-4395-B98E-811CDB8BC9D1",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
+          "port" : "speak"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+          "port" : "shown"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "shown"
+        }
+      },
+      {
+        "from" : {
+          "node" : "28148E89-EF42-4617-AC24-F38901D236C9",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "copy"
+        }
+      },
+      {
+        "from" : {
+          "node" : "28148E89-EF42-4617-AC24-F38901D236C9",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "copyAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "25092F11-9088-4849-A764-82C899A909A2",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "like"
+        }
+      },
+      {
+        "from" : {
+          "node" : "25092F11-9088-4849-A764-82C899A909A2",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "likeAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6AD56C29-E30D-420D-9474-CE447420039A",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "dislike"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6AD56C29-E30D-420D-9474-CE447420039A",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "dislikeAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "read"
+        }
+      },
+      {
+        "from" : {
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "readAt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
+          "port" : "speaking"
+        },
+        "to" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "speaking"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "shown"
+        },
+        "to" : {
+          "node" : "FD63606E-495D-4708-9BCC-5317CF249245",
+          "port" : "visible"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+          "port" : "shown"
+        },
+        "to" : {
+          "node" : "23E939D6-8021-4353-BEED-732696788CC1",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+          "port" : "empty"
+        },
+        "to" : {
+          "node" : "A31AA26B-0B3D-4B6A-AEC2-CBD6F178D30F",
+          "port" : "visible"
+        }
+      },
+      {
+        "from" : {
+          "node" : "23E939D6-8021-4353-BEED-732696788CC1",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "message"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+          "port" : "marks"
+        },
+        "to" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "marks"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "side"
+        },
+        "to" : {
+          "node" : "41573706-D3A9-483D-8B10-01D24BF850D5",
+          "port" : "distribution"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "fill"
+        },
+        "to" : {
+          "node" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "padding"
+        },
+        "to" : {
+          "node" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
+          "port" : "paddingHorizontal"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "padding"
+        },
+        "to" : {
+          "node" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
+          "port" : "paddingVertical"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "width"
+        },
+        "to" : {
+          "node" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
+          "port" : "width"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "opacity"
+        },
+        "to" : {
+          "node" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "actions"
+        },
+        "to" : {
+          "node" : "A74FCECD-B06A-480B-A9FE-135B595AE8C4",
+          "port" : "visible"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "copy"
+        },
+        "to" : {
+          "node" : "D9C45DFB-B7AB-4781-950F-C61D7D8397C4",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "like"
+        },
+        "to" : {
+          "node" : "9135C447-C196-4CC6-9018-4556394F28E3",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "dislike"
+        },
+        "to" : {
+          "node" : "B93A4F4C-2399-40F5-A805-0BC154613B2D",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+          "port" : "read"
+        },
+        "to" : {
+          "node" : "6A6DE19A-02A8-45C8-AFC8-0A20EC1E6098",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "F89A03A1-B3E1-4A56-9BBF-855327E0FE93",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "97DDA55D-0028-47AD-841A-B8AB550D6AED",
+          "port" : "running"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F89A03A1-B3E1-4A56-9BBF-855327E0FE93",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8C9C6181-5A17-48C5-BE73-CA4F02B11E80",
+          "port" : "shader.strength"
+        }
+      },
+      {
+        "from" : {
+          "node" : "97DDA55D-0028-47AD-841A-B8AB550D6AED",
+          "port" : "time"
+        },
+        "to" : {
+          "node" : "8C9C6181-5A17-48C5-BE73-CA4F02B11E80",
+          "port" : "shader.phase"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "F73CF33C-648C-412B-BF4F-20AA93ACA161",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B518C72F-9E5D-4AAF-B3D0-260D5F7BFCD1",
+        "position" : {
+          "x" : 2640,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "7B7ADC10-36B6-4C57-8D9B-59BB47389AAE",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DF6B3C8F-2603-4C55-BC0A-51FB6009011D",
+        "position" : {
+          "x" : 2928,
+          "y" : 528
+        }
+      },
+      {
+        "id" : "FD63606E-495D-4708-9BCC-5317CF249245",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5563C96F-A5FD-4ECA-B2DA-CAEEDBC17BEE",
+        "position" : {
+          "x" : 2640,
+          "y" : 1824
+        }
+      },
+      {
+        "id" : "41573706-D3A9-483D-8B10-01D24BF850D5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0E57BC10-1BB3-41B2-8BA4-1227EF586320",
+        "position" : {
+          "x" : 2640,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8021BD08-88F8-4013-8A8F-925E7C00B769",
+        "position" : {
+          "x" : 2928,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DABFC0E4-1E4B-44CF-B548-4B72BA95E9B5",
+        "position" : {
+          "x" : 2928,
+          "y" : 1536
+        }
+      },
+      {
+        "id" : "A74FCECD-B06A-480B-A9FE-135B595AE8C4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E0734E32-CF87-4D5E-9336-FE5755E3FBD6",
+        "position" : {
+          "x" : 2640,
+          "y" : 1536
+        }
+      },
+      {
+        "id" : "4F89692C-AC41-4BB6-A615-099F67343189",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C496D54B-581F-4B8B-A594-FCEDE0FC2028",
+        "position" : {
+          "x" : 1776,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "D9C45DFB-B7AB-4781-950F-C61D7D8397C4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9DBB6E45-18EE-492F-9F29-38AF41032070",
+        "position" : {
+          "x" : 2928,
+          "y" : 1824
+        }
+      },
+      {
+        "id" : "AF48B0F3-5B93-4D2A-A791-3DC40559158F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "967874FD-82B3-4B5C-AECD-2A7B19925549",
+        "position" : {
+          "x" : 1776,
+          "y" : 2256
+        }
+      },
+      {
+        "id" : "9135C447-C196-4CC6-9018-4556394F28E3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C48602D2-BEE6-474C-AD43-583B08397F2C",
+        "position" : {
+          "x" : 2928,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "40F485B1-0BC3-4978-B784-8732C0823458",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F2D60270-604E-4672-9E15-51FE59D4CB6F",
+        "position" : {
+          "x" : 1776,
+          "y" : 2448
+        }
+      },
+      {
+        "id" : "B93A4F4C-2399-40F5-A805-0BC154613B2D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1D90A598-7F1D-487D-827A-0703F1D13E5F",
+        "position" : {
+          "x" : 2928,
+          "y" : 2280
+        }
+      },
+      {
+        "id" : "0E494045-88AD-44C5-8565-555F541EF42D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "869A1078-C74A-4147-8760-097E21D8F19F",
+        "position" : {
+          "x" : 1776,
+          "y" : 2640
+        }
+      },
+      {
+        "id" : "6A6DE19A-02A8-45C8-AFC8-0A20EC1E6098",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "208E3713-8703-47A3-8EEC-609E41258D13",
+        "position" : {
+          "x" : 2928,
+          "y" : 2496
+        }
+      },
+      {
+        "id" : "A31AA26B-0B3D-4B6A-AEC2-CBD6F178D30F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D4B2190A-7A0C-4AC3-898B-0F3BEC2A60EA",
+        "position" : {
+          "x" : 2064,
+          "y" : 1608
+        }
+      },
+      {
+        "id" : "E55B8666-7AE6-478E-97B6-5EBF5325DB34",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1E909186-CF10-46A9-9F5B-B83DFE313DBA",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2F3FE1C6-3F3A-4E71-8F6A-9DED320F90D1",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "14B225FA-F36A-4D7C-AB04-EFE95C4B1BAD",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "74549976-8288-4A85-BBCC-4BC62105FF85",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "20032919-11CC-45E7-B3CC-79B8BE398633",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "E1F6AB60-2D7D-4400-B7E7-5D7136C1447A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6795E207-5A81-434F-A24F-6A110B6FD731",
+        "position" : {
+          "x" : 48,
+          "y" : 480
+        }
+      },
+      {
+        "id" : "BDF279BE-635A-4E0D-8147-3915A79F7BB4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8AAA500D-EDC0-414F-B37E-3C39607A3654",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "655F84B5-CADA-4C5A-A8CE-BEBD061738D7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CE24A3F3-757E-4491-93E9-0A188748C642",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "683BF0C2-DDA1-49B0-AEC9-06EF6F0046BD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8A212CF0-53B4-49FB-A4CD-EDFAEB6B3760",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "CE9EA6DF-3B43-4422-8176-C93068039598",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
+        "position" : {
+          "x" : 48,
+          "y" : 672
+        }
+      },
+      {
+        "id" : "358DDA12-352F-43C6-85AF-96344FFEB7B9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "position" : {
+          "x" : 624,
+          "y" : 744
+        }
+      },
+      {
+        "id" : "CD6B8FBD-8FC9-4908-8903-DCEFA43F4D03",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D91D5D29-33C3-491E-A816-748E59B4B7C5",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "EE771549-56D2-4717-8EB7-586122BB9E57",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "789B1E06-FF31-467F-8BBF-83CC71A0AFEE",
+        "position" : {
+          "x" : 624,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "7DCF1858-AD6D-49FD-83A0-6DD87DFDFE72",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AA614F5B-6287-4112-BCB4-E690975C44CC",
+        "position" : {
+          "x" : 2064,
+          "y" : 1824
+        }
+      },
+      {
+        "id" : "00E878B3-9E27-42A0-885C-9098CDB5F474",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CB0D1641-9151-4E9D-9BE5-6476EFE3C5A4",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2B644193-9468-49BF-94AF-8076CCF26ED9",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4CF4D76C-EE50-4F93-A12D-D8E150576B95",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "C4CB292E-1506-466D-B8F3-75FC57BAE223",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7C1C8760-8428-4FDD-B5C9-0CE5D583F949",
+        "position" : {
+          "x" : 2064,
+          "y" : 2016
+        }
+      },
+      {
+        "id" : "E0F2450F-8E69-47AE-9876-09D725CDB9FA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B1C8F39A-D67E-4C4D-AEB7-E07E137CAE2E",
+        "position" : {
+          "x" : 2064,
+          "y" : 2160
+        }
+      },
+      {
+        "id" : "68C2C078-ED2B-4483-B84E-7173FEA0FAB7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AEC16D9D-D92C-498D-9986-04E531778DCA",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "8C9C6181-5A17-48C5-BE73-CA4F02B11E80",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "6D3AECFA-B040-452E-AA1F-C9BFF2198E2B",
+        "position" : {
+          "x" : 1488,
+          "y" : 2952
+        },
+        "script" : "\/\/ Apple Intelligence's glow: a line of shifting color along the card's edge with a soft\n\/\/ halo past it. Strength fades it in and out; Phase turns the colors round the card.\nstruct Inputs {\n    float strength = 0;\n    float phase = 0;\n    float radius = 30;\n    float inset = 28;\n};\n\nfloat glow_box(float2 p, float2 half_size, float r) {\n    float2 q = abs(p) - half_size + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 middle = frame.size * 0.5;\n    float2 p = frame.position - middle;\n    float d = glow_box(p, middle - in.inset, in.radius);\n    \/\/ Four colors round the card, turning with Phase.\n    float turn = fract(atan2(p.y, p.x) \/ 6.2831853 + in.phase * 0.12);\n    float3 orange = float3(1.0, 0.56, 0.26), pink = float3(0.98, 0.32, 0.62);\n    float3 violet = float3(0.62, 0.38, 1.0), blue = float3(0.28, 0.62, 1.0);\n    float k = turn * 4.0;\n    float3 color = k < 1.0 ? mix(orange, pink, k) : k < 2.0 ? mix(pink, violet, k - 1.0)\n                 : k < 3.0 ? mix(violet, blue, k - 2.0) : mix(blue, orange, k - 3.0);\n    \/\/ A bright edge that breathes a little, and a halo that falls away outside.\n    float breathe = 0.85 + 0.15 * sin(in.phase * 3.0 + turn * 12.566);\n    float edge = exp(-abs(d) \/ 2.2) * breathe;\n    float halo = d > 0.0 ? exp(-d \/ 11.0) * 0.55 : exp(d \/ 5.0) * 0.25;\n    \/\/ Gone before the view's own edge, so no box shows round it.\n    float2 room = middle - abs(p);\n    float fade = smoothstep(0.0, in.inset * 0.6, min(room.x, room.y));\n    float alpha = saturate((edge + halo) * in.strength * fade);\n    return float4(mix(color, float3(1.0), edge * 0.35), alpha);\n}"
+      },
+      {
+        "id" : "E48ADC2F-77E1-40E0-A45E-609F14D300AE",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D1354FB8-6132-42CC-B061-1FA6C39A8007",
+        "position" : {
+          "x" : 1488,
+          "y" : 3240
+        }
+      },
+      {
+        "id" : "7836CA0D-8028-4FB0-88CF-BB8C6559C8AE",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "051EC261-B17E-4851-8614-CD027F3EB281",
+        "position" : {
+          "x" : 912,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "D9DE7DCD-8A56-413D-8E4C-51851CA0C2C6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "854E9904-7BD1-4D9A-8555-DD45C525E398",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "7D2100D0-6EE1-4FA2-AA2C-66EBF64C623E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "9CA981E2-680C-4B88-9432-19C82DCA8BB9",
+        "position" : {
+          "x" : 624,
+          "y" : 2448
+        }
+      },
+      {
+        "id" : "4849CFBB-2B16-4039-8E2B-42F22B3E900C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E8628B45-B7D4-4B42-91DF-358C46D76D3B",
+        "position" : {
+          "x" : 624,
+          "y" : 2640
+        }
+      },
+      {
+        "id" : "5AA081BA-49DE-4B37-B18E-895F57184828",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B12B0E80-F567-4D69-AAD9-32E8929502BE",
+        "position" : {
+          "x" : 624,
+          "y" : 2736
+        }
+      },
+      {
+        "id" : "FB6A7112-595A-4960-BAF9-33902336D4BB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3B2C324D-F946-49DB-A29D-A860907301D7",
+        "position" : {
+          "x" : 624,
+          "y" : 2832
+        }
+      },
+      {
+        "id" : "C37B49D3-B6F3-4797-A812-89413F573F84",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2BDD90AB-8EDB-42A6-9BE5-683487E524C4",
+        "position" : {
+          "x" : 624,
+          "y" : 2160
+        }
+      },
+      {
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "98140A57-9BFE-4A65-95E9-84BE892EA50D",
+        "inputs" : {
+          "separator" : {
+            "type" : "text",
+            "value" : "|"
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Plan a trip|Explain|Write a haiku|Help me name"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Titles",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "56480C3C-1537-4AE7-ACF6-B39B39AFCD84",
+        "inputs" : {
+          "separator" : {
+            "type" : "text",
+            "value" : "|"
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "to Kyoto in spring|black holes simply|about Mondays|my grey kitten"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Details",
+        "position" : {
+          "x" : 48,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "2C9D9613-45F4-420A-A556-CA3DF7225AD9",
+        "inputs" : {
+          "separator" : {
+            "type" : "text",
+            "value" : "|"
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Plan a three-day trip to Kyoto in spring.|Explain black holes like I'm five.|Write a haiku about Monday mornings.|Help me name my grey kitten."
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Prompts",
+        "position" : {
+          "x" : 48,
+          "y" : 528
+        }
+      },
+      {
+        "home" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
+        "id" : "C2FE7DD7-2A1C-499E-BBFC-B1048CA1E7C0",
+        "inputs" : {
+          "separator" : {
+            "type" : "text",
+            "value" : "|"
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "#272727|#272727|#272727|#272727"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Fills",
+        "position" : {
+          "x" : 48,
+          "y" : 744
+        }
+      },
+      {
+        "home" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
+        "id" : "41D2462C-698A-4FB9-A112-ADE4F898EFA4",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Fill",
+        "position" : {
+          "x" : 336,
+          "y" : 744
+        },
+        "valueType" : "color"
+      },
+      {
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "B52FB72C-BC52-4183-AC61-C68FA5DE3479",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Title",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        },
+        "valueType" : "text"
+      },
+      {
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "A7A0D65A-51CB-40CF-9B77-80F447DE01A1",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Detail",
+        "position" : {
+          "x" : 336,
+          "y" : 312
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "2E1AEA6D-FD0F-439E-9173-9FB1FD338281",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Prompt",
+        "position" : {
+          "x" : 336,
+          "y" : 528
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "B0A8283E-3D40-4791-B1FA-9C6A942A7DC4",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "position" : {
+          "x" : 48,
+          "y" : 960
+        }
+      },
+      {
+        "id" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
+        "inputs" : {
+
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Picked",
+        "position" : {
+          "x" : 336,
+          "y" : 960
+        }
+      },
+      {
+        "id" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Picked Prompt",
+        "position" : {
+          "x" : 624,
+          "y" : 528
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
+        "inputs" : {
+
+        },
+        "kind" : "textInput",
+        "layerID" : "9CA981E2-680C-4B88-9432-19C82DCA8BB9",
+        "position" : {
+          "x" : 48,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "3B2C324D-F946-49DB-A29D-A860907301D7",
+        "position" : {
+          "x" : 48,
+          "y" : 1488
+        }
+      },
+      {
+        "id" : "148E8A8D-B022-4F18-BEC7-F38329082AE0",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "E8628B45-B7D4-4B42-91DF-358C46D76D3B",
+        "position" : {
+          "x" : 48,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
+        "inputs" : {
+
+        },
+        "kind" : "pulseGate",
+        "name" : "Sends",
+        "position" : {
+          "x" : 336,
+          "y" : 1488
+        }
+      },
+      {
+        "id" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
+        "inputs" : {
+
+        },
+        "kind" : "pulseGate",
+        "name" : "Stops",
+        "position" : {
+          "x" : 336,
+          "y" : 1632
+        }
+      },
+      {
+        "id" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
+        "inputs" : {
+
+        },
+        "kind" : "and",
+        "name" : "Talking",
+        "position" : {
+          "x" : 336,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
+        "inputs" : {
+
+        },
+        "kind" : "or",
+        "name" : "Held",
+        "position" : {
+          "x" : 624,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "83B44869-350D-4060-8FA4-18F47AA43376",
+        "inputs" : {
+          "model" : {
+            "type" : "text",
+            "value" : "apple-on-device"
+          }
+        },
+        "kind" : "aiTranscribe",
+        "name" : "Listen",
+        "position" : {
+          "x" : 912,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
+        "inputs" : {
+
+        },
+        "kind" : "eitherPulse",
+        "name" : "Typed",
+        "position" : {
+          "x" : 336,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
+        "inputs" : {
+
+        },
+        "kind" : "eitherPulse",
+        "name" : "Typed or Said",
+        "position" : {
+          "x" : 624,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
+        "inputs" : {
+
+        },
+        "kind" : "eitherPulse",
+        "name" : "Ask",
+        "position" : {
+          "x" : 912,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
+        "inputs" : {
+
+        },
+        "kind" : "if",
+        "name" : "Said or Typed",
+        "position" : {
+          "x" : 624,
+          "y" : 1488
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
+        "inputs" : {
+
+        },
+        "kind" : "if",
+        "name" : "Prompt",
+        "position" : {
+          "x" : 912,
+          "y" : 1488
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "819EB845-B689-4A43-B5A7-16C46C4F1860",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "B1C8F39A-D67E-4C4D-AEB7-E07E137CAE2E",
+        "position" : {
+          "x" : 1200,
+          "y" : 1776
+        }
+      },
+      {
+        "id" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
+        "inputs" : {
+          "instructions" : {
+            "type" : "text",
+            "value" : "You are a friendly assistant inside a phone app. Answer in two to four short sentences of plain text, with no Markdown."
+          },
+          "model" : {
+            "type" : "text",
+            "value" : "apple-on-device"
+          }
+        },
+        "kind" : "aiText",
+        "name" : "Chat",
+        "position" : {
+          "x" : 1200,
+          "y" : 1248
+        }
+      },
+      {
+        "id" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Composer",
+        "position" : {
+          "x" : 48,
+          "y" : 2160
+        },
+        "script" : "\/\/ The round button talks while the field is empty, sends once there are words,\n\/\/ and stops an answer that is being written.\ninputs = { typed: \"\", loading: false, recording: false };\noutputs = { symbol: \"waveform\", placeholder: \"Ask anything\", talks: true, sends: false, mic: color(\"#FFFFFFCC\") };\n\nfunction evaluate(inputs, outputs) {\n  const words = String(inputs.typed).trim().length > 0;\n  outputs.symbol = inputs.loading ? \"stop.fill\" : words ? \"arrow.up\" : \"waveform\";\n  outputs.talks = !inputs.loading && !words;\n  outputs.sends = !inputs.loading && words;\n  outputs.placeholder = inputs.recording ? \"Listening…\" : \"Ask anything\";\n  outputs.mic = inputs.recording ? color(\"#FF5A4E\") : color(\"#FFFFFFCC\");\n}"
+      },
+      {
+        "id" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Thread",
+        "position" : {
+          "x" : 1776,
+          "y" : 1248
+        },
+        "script" : "\/\/ The messages to show, oldest first: as many of the newest as fit the screen.\n\/\/ While the model writes, its answer ends in a dot, which is all there is before\n\/\/ its first word. A failure shows as the model's message. Each message has a key\n\/\/ that a new chat does not reuse, for what was done to it (Feedback).\ninputs = { conversation: [], loading: false, error: \"\" };\noutputs = { shown: [], empty: true };\n\nconst room = 650;\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nlet chatNumber = 0, had = false;\nfunction height(m) {\n  return lines(m.text, m.user ? narrow : wide) * line + (m.user ? 20 : 0) + (m.actions ? actionsRow : 0) + 20;\n}\nfunction evaluate(inputs, outputs) {\n  const all = Array.isArray(inputs.conversation) ? inputs.conversation : [];\n  if (all.length === 0 && had) chatNumber++;\n  had = all.length > 0;\n  const turns = all.map((turn, index) => {\n    const user = turn.role === \"user\";\n    const writing = !user && inputs.loading && index === all.length - 1;\n    let text = String(turn.text || \"\");\n    if (writing) text = text.length ? text + \" ●\" : \"●\";\n    return { key: chatNumber + \"-\" + index, text: text, user: user, dim: writing && !turn.text, actions: !user && !writing };\n  });\n  if (inputs.error && !inputs.loading) turns.push({ key: chatNumber + \"-error\", text: inputs.error, user: false, dim: true, actions: false });\n  const shown = [];\n  let used = 0;\n  for (let i = turns.length - 1; i >= 0; i--) {\n    used += height(turns[i]);\n    if (used > room && shown.length > 0) break;\n    shown.unshift(turns[i]);\n  }\n  outputs.shown = shown;\n  outputs.empty = turns.length === 0;\n}"
+      },
+      {
+        "id" : "23E939D6-8021-4353-BEED-732696788CC1",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "name" : "Each Message",
+        "position" : {
+          "x" : 2064,
+          "y" : 1248
+        },
+        "valueType" : "json"
+      },
+      {
+        "id" : "44F40316-6EE8-4195-8545-D14B54DF31E6",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "C496D54B-581F-4B8B-A594-FCEDE0FC2028",
+        "position" : {
+          "x" : 1488,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "28148E89-EF42-4617-AC24-F38901D236C9",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Copied",
+        "position" : {
+          "x" : 1776,
+          "y" : 2064
+        }
+      },
+      {
+        "id" : "79756E5A-2F75-4B60-B8D5-A5FBC751F959",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "967874FD-82B3-4B5C-AECD-2A7B19925549",
+        "position" : {
+          "x" : 1488,
+          "y" : 2280
+        }
+      },
+      {
+        "id" : "25092F11-9088-4849-A764-82C899A909A2",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Liked",
+        "position" : {
+          "x" : 1776,
+          "y" : 2280
+        }
+      },
+      {
+        "id" : "9B283DE1-A39B-4259-AAB0-B51CE4539510",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "F2D60270-604E-4672-9E15-51FE59D4CB6F",
+        "position" : {
+          "x" : 1488,
+          "y" : 2496
+        }
+      },
+      {
+        "id" : "6AD56C29-E30D-420D-9474-CE447420039A",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Disliked",
+        "position" : {
+          "x" : 1776,
+          "y" : 2496
+        }
+      },
+      {
+        "id" : "F6385BE6-39D8-4395-B98E-811CDB8BC9D1",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "869A1078-C74A-4147-8760-097E21D8F19F",
+        "position" : {
+          "x" : 1488,
+          "y" : 2712
+        }
+      },
+      {
+        "id" : "7899A25F-DECB-4235-9C22-EED62F242105",
+        "inputs" : {
+          "start" : {
+            "type" : "number",
+            "value" : -1
+          }
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Read Aloud",
+        "position" : {
+          "x" : 1776,
+          "y" : 2712
+        }
+      },
+      {
+        "id" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "Words Read",
+        "position" : {
+          "x" : 2064,
+          "y" : 2712
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
+        "inputs" : {
+          "model" : {
+            "type" : "text",
+            "value" : "apple-on-device"
+          }
+        },
+        "kind" : "aiSpeech",
+        "name" : "Read Aloud",
+        "position" : {
+          "x" : 2352,
+          "y" : 2712
+        }
+      },
+      {
+        "id" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Feedback",
+        "position" : {
+          "x" : 2352,
+          "y" : 2064
+        },
+        "script" : "\/\/ A thumb chosen stays on its message (the other thumb goes); the last message\n\/\/ copied shows a tick; the one being read aloud shows it.\ninputs = { shown: [], copy: pulse(), copyAt: -1, like: pulse(), likeAt: -1,\n           dislike: pulse(), dislikeAt: -1, read: pulse(), readAt: -1, speaking: false };\noutputs = { marks: {} };\n\nconst votes = {};\nlet copiedKey = \"\", readKey = \"\";\nfunction evaluate(given, outputs) {\n  const keyAt = index => ((given.shown || [])[index] || {}).key || \"\";\n  if (given.like) { const k = keyAt(given.likeAt); votes[k] = votes[k] === \"up\" ? \"\" : \"up\"; }\n  if (given.dislike) { const k = keyAt(given.dislikeAt); votes[k] = votes[k] === \"down\" ? \"\" : \"down\"; }\n  if (given.copy) copiedKey = keyAt(given.copyAt);\n  if (given.read) readKey = keyAt(given.readAt);\n  const marks = {};\n  for (const m of given.shown || []) {\n    marks[m.key] = { vote: votes[m.key] || \"\", copied: m.key === copiedKey, reading: given.speaking && m.key === readKey };\n  }\n  outputs.marks = marks;\n}"
+      },
+      {
+        "id" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Message Style",
+        "position" : {
+          "x" : 2352,
+          "y" : 1248
+        },
+        "script" : "\/\/ The person's words in a bubble on the right, as wide as they are; the model's\n\/\/ as plain text across the screen on the left, with its actions under it.\ninputs = { message: {}, marks: {} };\noutputs = { shown: true, text: \"\", side: \"End\", fill: color(\"#303030\"), padding: 16, width: 290, opacity: 1,\n            actions: false, copy: \"doc.on.doc\", like: \"hand.thumbsup\", dislike: \"hand.thumbsdown\", read: \"speaker.wave.2\" };\n\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nfunction evaluate(inputs, outputs) {\n  const m = inputs.message || {};\n  const mark = (inputs.marks || {})[m.key] || {};\n  const text = String(m.text || \"\");\n  outputs.text = text;\n  outputs.side = m.user ? \"End\" : \"Start\";\n  outputs.fill = m.user ? color(\"#303030\") : color(\"#00000000\");\n  outputs.padding = m.user ? 16 : 0;\n  const longest = Math.max(...text.split(\"\\n\").map(p => p.length), 1);\n  outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;\n  outputs.opacity = m.dim ? 0.5 : 1;\n  outputs.actions = !!m.actions;\n  outputs.copy = mark.copied ? \"checkmark\" : \"doc.on.doc\";\n  outputs.like = mark.vote === \"up\" ? \"hand.thumbsup.fill\" : \"hand.thumbsup\";\n  outputs.dislike = mark.vote === \"down\" ? \"hand.thumbsdown.fill\" : \"hand.thumbsdown\";\n  outputs.read = mark.reading ? \"speaker.wave.2.fill\" : \"speaker.wave.2\";\n}"
+      },
+      {
+        "id" : "F89A03A1-B3E1-4A56-9BBF-855327E0FE93",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.5
+          }
+        },
+        "kind" : "spring",
+        "name" : "Thinking",
+        "position" : {
+          "x" : 1200,
+          "y" : 2400
+        }
+      },
+      {
+        "id" : "97DDA55D-0028-47AD-841A-B8AB550D6AED",
+        "inputs" : {
+
+        },
+        "kind" : "time",
+        "name" : "Phase",
+        "position" : {
+          "x" : 1200,
+          "y" : 2616
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "DABFC0E4-1E4B-44CF-B548-4B72BA95E9B5",
+                        "kind" : "text",
+                        "name" : "Words",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 16
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 400
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 22,
+                              "width" : 362
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : ""
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "8021BD08-88F8-4013-8A8F-925E7C00B769",
+                    "kind" : "view",
+                    "name" : "Bubble",
+                    "properties" : {
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 20
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.18823529411764706,
+                          "green" : 0.18823529411764706,
+                          "red" : 0.18823529411764706
+                        }
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "paddingHorizontal" : {
+                        "type" : "number",
+                        "value" : 16
+                      },
+                      "paddingVertical" : {
+                        "type" : "number",
+                        "value" : 10
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 40,
+                          "width" : 100
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "0E57BC10-1BB3-41B2-8BA4-1227EF586320",
+                "kind" : "view",
+                "name" : "Line",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "End"
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 40,
+                      "width" : 362
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "9DBB6E45-18EE-492F-9F29-38AF41032070",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "doc.on.doc"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "C496D54B-581F-4B8B-A594-FCEDE0FC2028",
+                    "kind" : "view",
+                    "name" : "Copy",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "C48602D2-BEE6-474C-AD43-583B08397F2C",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "hand.thumbsup"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "967874FD-82B3-4B5C-AECD-2A7B19925549",
+                    "kind" : "view",
+                    "name" : "Like",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "1D90A598-7F1D-487D-827A-0703F1D13E5F",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "hand.thumbsdown"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "F2D60270-604E-4672-9E15-51FE59D4CB6F",
+                    "kind" : "view",
+                    "name" : "Dislike",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "208E3713-8703-47A3-8EEC-609E41258D13",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.55,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 17,
+                              "width" : 17
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "speaker.wave.2"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "869A1078-C74A-4147-8760-097E21D8F19F",
+                    "kind" : "view",
+                    "name" : "Read Aloud",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 32,
+                          "width" : 32
+                        }
+                      }
+                    }
+                  }
+                ],
+                "id" : "E0734E32-CF87-4D5E-9336-FE5755E3FBD6",
+                "kind" : "view",
+                "name" : "Actions",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 32,
+                      "width" : 160
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 6
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "5563C96F-A5FD-4ECA-B2DA-CAEEDBC17BEE",
+            "kind" : "view",
+            "name" : "Message",
+            "properties" : {
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 362
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 4
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          }
+        ],
+        "id" : "DF6B3C8F-2603-4C55-BC0A-51FB6009011D",
+        "kind" : "view",
+        "name" : "Messages",
+        "properties" : {
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "End"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingHorizontal" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "paddingVertical" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 112
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 650,
+              "width" : 402
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 20
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "1E909186-CF10-46A9-9F5B-B83DFE313DBA",
+            "kind" : "symbol",
+            "name" : "Mark",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 179,
+                  "y" : 300
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 44,
+                  "width" : 44
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "apple.intelligence"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "14B225FA-F36A-4D7C-AB04-EFE95C4B1BAD",
+            "kind" : "text",
+            "name" : "Question",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 28
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 360
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36.4,
+                  "width" : 362
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "What can I help with?"
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "20032919-11CC-45E7-B3CC-79B8BE398633",
+            "kind" : "text",
+            "name" : "Promise",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 400
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 402
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 19.5,
+                  "width" : 362
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Answered on this device. Nothing is sent."
+              },
+              "textAlignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.5,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Fixed"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "CE24A3F3-757E-4491-93E9-0A188748C642",
+                    "kind" : "symbol",
+                    "name" : "Glyph",
+                    "properties" : {
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 15,
+                          "width" : 15
+                        }
+                      },
+                      "symbol" : {
+                        "type" : "text",
+                        "value" : "hand.tap.fill"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "8A212CF0-53B4-49FB-A4CD-EDFAEB6B3760",
+                    "kind" : "text",
+                    "name" : "Words",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Tap a suggestion, type, or hold the mic"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  }
+                ],
+                "id" : "8AAA500D-EDC0-414F-B37E-3C39607A3654",
+                "kind" : "view",
+                "name" : "Pill",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 18
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.16,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 16
+                  },
+                  "paddingVertical" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "shadowColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0,
+                      "blue" : 0,
+                      "green" : 0,
+                      "red" : 0
+                    }
+                  },
+                  "shadowOffset" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 4
+                    }
+                  },
+                  "shadowRadius" : {
+                    "type" : "number",
+                    "value" : 12
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 36,
+                      "width" : 100
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 8
+                  },
+                  "strokeColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.22,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "strokeWidth" : {
+                    "type" : "number",
+                    "value" : 1
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "6795E207-5A81-434F-A24F-6A110B6FD731",
+            "kind" : "view",
+            "name" : "Hint",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 548
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 402
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "D91D5D29-33C3-491E-A816-748E59B4B7C5",
+                    "kind" : "text",
+                    "name" : "Suggestion Title",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 15
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 600
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Plan a trip"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Grow"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "789B1E06-FF31-467F-8BBF-83CC71A0AFEE",
+                    "kind" : "text",
+                    "name" : "Suggestion Detail",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "to Kyoto in spring"
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.5,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Grow"
+                      }
+                    }
+                  }
+                ],
+                "id" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+                "kind" : "view",
+                "name" : "Suggestion",
+                "properties" : {
+                  "cornerRadius" : {
+                    "type" : "number",
+                    "value" : 18
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.15294117647058825,
+                      "green" : 0.15294117647058825,
+                      "red" : 0.15294117647058825
+                    }
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "paddingHorizontal" : {
+                    "type" : "number",
+                    "value" : 16
+                  },
+                  "paddingVertical" : {
+                    "type" : "number",
+                    "value" : 0
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 70,
+                      "width" : 176
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 3
+                  },
+                  "strokeColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.12,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "strokeWidth" : {
+                    "type" : "number",
+                    "value" : 1
+                  }
+                }
+              }
+            ],
+            "id" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
+            "kind" : "view",
+            "name" : "Suggestions",
+            "properties" : {
+              "columns" : {
+                "type" : "number",
+                "value" : 2
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Grid"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 20,
+                  "y" : 604
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 150,
+                  "width" : 362
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 10
+              }
+            }
+          }
+        ],
+        "id" : "D4B2190A-7A0C-4AC3-898B-0F3BEC2A60EA",
+        "kind" : "view",
+        "name" : "Welcome",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 874,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "CB0D1641-9151-4E9D-9BE5-6476EFE3C5A4",
+            "kind" : "text",
+            "name" : "Model",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Apple Intelligence"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "4CF4D76C-EE50-4F93-A12D-D8E150576B95",
+            "kind" : "symbol",
+            "name" : "Chevron",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.45,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 700
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 12,
+                  "width" : 12
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "chevron.right"
+              }
+            }
+          }
+        ],
+        "id" : "AA614F5B-6287-4112-BCB4-E690975C44CC",
+        "kind" : "view",
+        "name" : "Bar",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.12941176470588237,
+              "green" : 0.12941176470588237,
+              "red" : 0.12941176470588237
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 62
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44,
+              "width" : 402
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 6
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "7C1C8760-8428-4FDD-B5C9-0CE5D583F949",
+        "kind" : "symbol",
+        "name" : "Menu",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 73
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 22,
+              "width" : 22
+            }
+          },
+          "symbol" : {
+            "type" : "text",
+            "value" : "line.3.horizontal"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "AEC16D9D-D92C-498D-9986-04E531778DCA",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 22,
+                  "width" : 22
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "square.and.pencil"
+              }
+            }
+          }
+        ],
+        "id" : "B1C8F39A-D67E-4C4D-AEB7-E07E137CAE2E",
+        "kind" : "view",
+        "name" : "New Chat",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 346,
+              "y" : 64
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 40,
+              "width" : 40
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "6D3AECFA-B040-452E-AA1F-C9BFF2198E2B",
+        "kind" : "view",
+        "name" : "Glow",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : -8,
+              "y" : 752
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 98,
+              "width" : 418
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "inset" : {
+              "type" : "number",
+              "value" : 22
+            },
+            "radius" : {
+              "type" : "number",
+              "value" : 27
+            }
+          },
+          "source" : "\/\/ Apple Intelligence's glow: a line of shifting color along the card's edge with a soft\n\/\/ halo past it. Strength fades it in and out; Phase turns the colors round the card.\nstruct Inputs {\n    float strength = 0;\n    float phase = 0;\n    float radius = 30;\n    float inset = 28;\n};\n\nfloat glow_box(float2 p, float2 half_size, float r) {\n    float2 q = abs(p) - half_size + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 middle = frame.size * 0.5;\n    float2 p = frame.position - middle;\n    float d = glow_box(p, middle - in.inset, in.radius);\n    \/\/ Four colors round the card, turning with Phase.\n    float turn = fract(atan2(p.y, p.x) \/ 6.2831853 + in.phase * 0.12);\n    float3 orange = float3(1.0, 0.56, 0.26), pink = float3(0.98, 0.32, 0.62);\n    float3 violet = float3(0.62, 0.38, 1.0), blue = float3(0.28, 0.62, 1.0);\n    float k = turn * 4.0;\n    float3 color = k < 1.0 ? mix(orange, pink, k) : k < 2.0 ? mix(pink, violet, k - 1.0)\n                 : k < 3.0 ? mix(violet, blue, k - 2.0) : mix(blue, orange, k - 3.0);\n    \/\/ A bright edge that breathes a little, and a halo that falls away outside.\n    float breathe = 0.85 + 0.15 * sin(in.phase * 3.0 + turn * 12.566);\n    float edge = exp(-abs(d) \/ 2.2) * breathe;\n    float halo = d > 0.0 ? exp(-d \/ 11.0) * 0.55 : exp(d \/ 5.0) * 0.25;\n    \/\/ Gone before the view's own edge, so no box shows round it.\n    float2 room = middle - abs(p);\n    float fade = smoothstep(0.0, in.inset * 0.6, min(room.x, room.y));\n    float alpha = saturate((edge + halo) * in.strength * fade);\n    return float4(mix(color, float3(1.0), edge * 0.35), alpha);\n}"
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "854E9904-7BD1-4D9A-8555-DD45C525E398",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 16,
+                      "width" : 16
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "plus"
+                  }
+                }
+              }
+            ],
+            "id" : "051EC261-B17E-4851-8614-CD027F3EB281",
+            "kind" : "view",
+            "name" : "Plus",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.08,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 32,
+                  "width" : 32
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "9CA981E2-680C-4B88-9432-19C82DCA8BB9",
+            "kind" : "textField",
+            "name" : "Ask",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "padding" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "placeholder" : {
+                "type" : "text",
+                "value" : "Ask anything"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 200
+                }
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Grow"
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "B12B0E80-F567-4D69-AAD9-32E8929502BE",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.8,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 20,
+                      "width" : 20
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "mic"
+                  }
+                }
+              }
+            ],
+            "id" : "E8628B45-B7D4-4B42-91DF-358C46D76D3B",
+            "kind" : "view",
+            "name" : "Mic",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 36
+                }
+              }
+            }
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "2BDD90AB-8EDB-42A6-9BE5-683487E524C4",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 0.12941176470588237,
+                      "green" : 0.12941176470588237,
+                      "red" : 0.12941176470588237
+                    }
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 18,
+                      "width" : 18
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "waveform"
+                  }
+                }
+              }
+            ],
+            "id" : "3B2C324D-F946-49DB-A29D-A860907301D7",
+            "kind" : "view",
+            "name" : "Talk Send Stop",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 20
+              },
+              "distribution" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 40,
+                  "width" : 40
+                }
+              }
+            }
+          }
+        ],
+        "id" : "D1354FB8-6132-42CC-B061-1FA6C39A8007",
+        "kind" : "view",
+        "name" : "Composer",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 27
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.18823529411764706,
+              "green" : 0.18823529411764706,
+              "red" : 0.18823529411764706
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "paddingLeft" : {
+            "type" : "number",
+            "value" : 11
+          },
+          "paddingRight" : {
+            "type" : "number",
+            "value" : 7
+          },
+          "paddingVertical" : {
+            "type" : "number",
+            "value" : 0
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 14,
+              "y" : 774
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 54,
+              "width" : 374
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 6
+          }
+        }
+      }
+    ],
+    "id" : "B518C72F-9E5D-4AAF-B3D0-260D5F7BFCD1",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.12941176470588237,
+          "green" : 0.12941176470588237,
+          "red" : 0.12941176470588237
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
+    }
+  },
+  "version" : 4
+}

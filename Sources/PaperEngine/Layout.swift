@@ -282,6 +282,19 @@ public enum TextMeasurer {
         let framesetter = CTFramesetterCreateWithAttributedString(attributed)
         let limit = CGSize(width: maxWidth.map { max($0, 1) } ?? .greatestFiniteMagnitude, height: .greatestFiniteMagnitude)
         let fitted = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(location: 0, length: 0), nil, limit, nil)
-        return Size2(width: ceil(fitted.width), height: ceil(fitted.height))
+        // Text of several lines is as tall as every line with its leading, the last one
+        // included: the size Core Text suggests leaves that leading off, and a text layer
+        // given only that drops its last line and runs its words off the edge of the one
+        // before (`TextMeasurerTests`).
+        // One line already fits the size suggested, and stays as it was measured; only
+        // taller text is broken into lines to count them, which costs a second layout.
+        let lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font)
+        guard fitted.height > lineHeight * 1.5 else { return Size2(width: ceil(fitted.width), height: ceil(fitted.height)) }
+        let frame = CTFramesetterCreateFrame(
+            framesetter, CFRange(location: 0, length: 0),
+            CGPath(rect: CGRect(x: 0, y: 0, width: min(limit.width, 1_000_000), height: 1_000_000), transform: nil), nil
+        )
+        let lines = max((CTFrameGetLines(frame) as? [CTLine])?.count ?? 1, 1)
+        return Size2(width: ceil(fitted.width), height: max(ceil(fitted.height), ceil(Double(lines) * lineHeight)))
     }
 }
