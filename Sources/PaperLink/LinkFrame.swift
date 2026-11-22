@@ -40,32 +40,36 @@ public struct LinkFrame: Equatable, Sendable {
         case frame(LinkFrame, length: Int)
     }
 
+    /// Nothing is copied until the whole frame is here, so a large file arriving in many
+    /// pieces costs a look at two lengths each time, not a copy of what has arrived.
     public static func parse(_ buffer: Data) -> Parsed {
-        let bytes = Data(buffer)
+        let count = buffer.count
         // Not yet a whole start: it is a frame so far only if it begins as one does.
-        guard bytes.count >= 8 else {
-            return bytes.prefix(4) == magic.prefix(min(bytes.count, 4)) ? .incomplete : .invalid
-        }
-        guard bytes.prefix(4) == magic else { return .invalid }
-        let headerLength = number(bytes, at: 4)
+        guard buffer.prefix(4).elementsEqual(magic.prefix(min(count, 4))) else { return .invalid }
+        guard count >= 8 else { return .incomplete }
+        let headerLength = number(buffer, at: 4)
         guard headerLength > 0, headerLength <= largestHeader else { return .invalid }
         let payloadAt = 8 + headerLength + 4
-        guard bytes.count >= payloadAt else { return .incomplete }
-        let payloadLength = number(bytes, at: 8 + headerLength)
+        guard count >= payloadAt else { return .incomplete }
+        let payloadLength = number(buffer, at: 8 + headerLength)
         guard payloadLength <= largestPayload else { return .invalid }
-        guard bytes.count >= payloadAt + payloadLength else { return .incomplete }
-        guard let message = try? JSONDecoder().decode(LinkMessage.self, from: bytes.subdata(in: 8..<(8 + headerLength))) else {
-            return .invalid
-        }
-        return .frame(LinkFrame(message, payload: bytes.subdata(in: payloadAt..<(payloadAt + payloadLength))), length: payloadAt + payloadLength)
+        guard count >= payloadAt + payloadLength else { return .incomplete }
+        let start = buffer.startIndex
+        guard let message = try? JSONDecoder().decode(
+            LinkMessage.self, from: buffer.subdata(in: (start + 8)..<(start + 8 + headerLength))
+        ) else { return .invalid }
+        let payload = buffer.subdata(in: (start + payloadAt)..<(start + payloadAt + payloadLength))
+        return .frame(LinkFrame(message, payload: payload), length: payloadAt + payloadLength)
     }
 
     private static func length(_ value: Int) -> Data {
         withUnsafeBytes(of: UInt32(value).bigEndian) { Data($0) }
     }
 
+    /// A length, `offset` bytes into `data`, wherever `data` starts in its storage.
     private static func number(_ data: Data, at offset: Int) -> Int {
-        data.subdata(in: offset..<(offset + 4)).reduce(0) { $0 << 8 | Int($1) }
+        let start = data.startIndex + offset
+        return data[start..<(start + 4)].reduce(0) { $0 << 8 | Int($1) }
     }
 }
 

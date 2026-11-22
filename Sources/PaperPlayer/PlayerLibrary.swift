@@ -26,7 +26,8 @@ public final class PlayerLibrary {
     private let folder: URL
     /// Runs something later; replaced in tests so nothing waits.
     private let later: (Double, @escaping @MainActor () -> Void) -> Void
-    private var waiting: [String: (name: String, package: DocumentPackage)] = [:]
+    private var waiting: [String: (name: String, package: DocumentPackage, turn: Int)] = [:]
+    private var turn = 0
 
     /// How long after the last change a prototype is written: a drag on the Mac sends
     /// many, and only where it ends is worth keeping.
@@ -64,15 +65,17 @@ public final class PlayerLibrary {
     public func received(_ update: LinkMessage.Update, _ package: DocumentPackage) {
         guard update.keeps else { return }
         let id = update.prototype
-        let isFirst = waiting[id] == nil
-        waiting[id] = (update.name, package)
-        guard isFirst else { return }
-        later(Self.pause) { [weak self] in self?.settle(id) }
+        turn += 1
+        let turn = turn
+        waiting[id] = (update.name, package, turn)
+        later(Self.pause) { [weak self] in self?.settle(id, turn: turn) }
     }
 
-    /// Writes the newest that arrived for `id` while it waited.
-    private func settle(_ id: String) {
-        guard let pending = waiting[id] else { return }
+    /// Writes what waits for `id`, unless something newer arrived since `turn`: then that
+    /// one's own wait decides. Writing a prototype (its videos, its picture) is work, and
+    /// through a drag on the Mac none of it would be kept.
+    private func settle(_ id: String, turn: Int? = nil) {
+        guard let pending = waiting[id], turn == nil || pending.turn == turn else { return }
         waiting[id] = nil
         save(pending.package, id: id, name: pending.name)
     }
@@ -101,12 +104,13 @@ public final class PlayerLibrary {
         }
     }
 
-    /// A `.tango` file opened from Files or AirDrop: a copy is kept under an id of its own.
+    /// A `.tango` file opened from Files or AirDrop: a copy is kept, under an id made from
+    /// what is in it, so the same file opened again is the same entry.
     public func add(fileAt url: URL) -> Entry? {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
         guard let package = read(url) else { return nil }
-        let id = "file-" + UUID().uuidString
+        let id = "file-" + String(LinkCoding.hash((try? package.document.encoded()) ?? Data(UUID().uuidString.utf8)).prefix(24))
         guard save(package, id: id, name: url.deletingPathExtension().lastPathComponent) else { return nil }
         return entries.first
     }

@@ -46,7 +46,7 @@ public final class PictureStore {
     // MARK: Assets
 
     private var decoded: [String: (data: Data, picture: CGImage?)] = [:]
-    /// How many decoded assets are remembered before those the document no longer has go.
+    /// How many decoded assets are remembered at most.
     static let mostDecoded = 256
 
     /// How many times an asset's bytes were made into a picture; for tests.
@@ -60,10 +60,9 @@ public final class PictureStore {
            Self.sameStorage(known.data, data) || known.data == data {
             return known.picture
         }
-        if decoded.count >= Self.mostDecoded {
-            decoded = decoded.filter { assets[$0.key] != nil }
-            if decoded.count >= Self.mostDecoded { decoded.removeAll() }
-        }
+        // Pictures of assets the document no longer has are let go.
+        if decoded.count > assets.count { decoded = decoded.filter { assets[$0.key] != nil } }
+        if decoded.count >= Self.mostDecoded { decoded.removeAll() }
         decodes += 1
         let picture = Self.decode(data)
         decoded[name] = (data, picture)

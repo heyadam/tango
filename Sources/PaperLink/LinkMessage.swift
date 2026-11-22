@@ -1,3 +1,4 @@
+import Compression
 import Foundation
 import PaperModel
 
@@ -84,6 +85,24 @@ public enum LinkMessage: Codable, Equatable, Sendable {
             self.extensions = extensions
         }
 
+        /// The most files one prototype names.
+        public static let mostFiles = 4000
+
+        /// Whether every name in it is one a file can safely be written under: an asset is
+        /// a plain file name, an extension's file a path of plain names. These names come
+        /// from the other side and end up on disk, so `..` and `/` must not get there.
+        public var hasSafeNames: Bool {
+            func plain(_ name: String) -> Bool {
+                !name.isEmpty && name != "." && name != ".." && name.utf8.count <= 255
+                    && !name.contains("/") && !name.contains("\\") && !name.unicodeScalars.contains { $0.value < 32 }
+            }
+            return assets.count + extensions.values.reduce(0) { $0 + $1.count } <= Self.mostFiles
+                && assets.keys.allSatisfy(plain)
+                && extensions.allSatisfy { id, files in
+                    plain(id) && files.keys.allSatisfy { $0.split(separator: "/", omittingEmptySubsequences: false).allSatisfy { plain(String($0)) } }
+                }
+        }
+
         /// Every file this update names, by hash.
         public var hashes: Set<String> {
             Set(assets.values).union(extensions.values.flatMap(\.values))
@@ -121,15 +140,46 @@ public enum LinkCoding {
     /// file would be (`Document.decode`). What it unpacks to is limited, so a small payload
     /// cannot ask for all the memory there is.
     public static func unpack(_ payload: Data) throws -> Document {
-        let json = try (payload as NSData).decompressed(using: .zlib) as Data
-        guard json.count <= largestDocument else { throw LinkError.tooLarge }
-        return try Document.decode(from: json)
+        try Document.decode(from: inflate(payload, limit: largestDocument))
     }
 
     public static let largestDocument = 64 << 20
+
+    /// Decompresses what `pack` compressed, stopping with an error once more than `limit`
+    /// bytes have come out: a few kilobytes of zeros compressed must not become gigabytes.
+    static func inflate(_ data: Data, limit: Int) throws -> Data {
+        let stream = UnsafeMutablePointer<compression_stream>.allocate(capacity: 1)
+        defer { stream.deallocate() }
+        guard compression_stream_init(stream, COMPRESSION_STREAM_DECODE, COMPRESSION_ZLIB) == COMPRESSION_STATUS_OK else {
+            throw LinkError.invalid
+        }
+        defer { compression_stream_destroy(stream) }
+        let chunk = 64 << 10
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunk)
+        defer { buffer.deallocate() }
+        var output = Data()
+        return try data.withUnsafeBytes { (source: UnsafeRawBufferPointer) -> Data in
+            guard let base = source.bindMemory(to: UInt8.self).baseAddress else { throw LinkError.invalid }
+            stream.pointee.src_ptr = base
+            stream.pointee.src_size = source.count
+            while true {
+                stream.pointee.dst_ptr = buffer
+                stream.pointee.dst_size = chunk
+                let status = compression_stream_process(stream, Int32(COMPRESSION_STREAM_FINALIZE.rawValue))
+                guard status != COMPRESSION_STATUS_ERROR else { throw LinkError.invalid }
+                output.append(buffer, count: chunk - stream.pointee.dst_size)
+                guard output.count <= limit else { throw LinkError.tooLarge }
+                if status == COMPRESSION_STATUS_END { return output }
+                // No more to read and nothing came out: the payload ends mid-stream.
+                if stream.pointee.src_size == 0, stream.pointee.dst_size == chunk { throw LinkError.invalid }
+            }
+        }
+    }
 }
 
 public enum LinkError: Error, Equatable {
     case tooLarge
     case invalid
+    /// A file name that could leave the folder it is written in.
+    case unsafeName
 }

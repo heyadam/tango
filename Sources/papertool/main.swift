@@ -211,10 +211,12 @@ case "link":
     print("Listening. Start the player with:  -linkkey \(key.text) -linkhost 127.0.0.1:\(port)")
     var shown: Int?
     var edited = false
+    var sent = false
     while true {
         spinRunLoop(0.1)
         // A phone that connects gets the document; `publish` does nothing until one has.
-        if let phone = link.phones.first, phone.shows == nil, shown == nil {
+        if !link.phones.isEmpty, !sent {
+            sent = true
             link.publish(.init(prototype: "papertool", name: arguments[1], package: package))
         }
         if let phone = link.phones.first, phone.shows != shown {
@@ -235,7 +237,10 @@ case "link":
                 }
             }
         }
-        if link.phones.isEmpty { shown = nil }
+        if link.phones.isEmpty {
+            shown = nil
+            sent = false
+        }
     }
 
 case "json":

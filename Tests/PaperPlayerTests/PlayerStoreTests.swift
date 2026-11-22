@@ -26,4 +26,12 @@ import PaperLink
         #expect(store.link == .unpaired)
         #expect(store.live == nil)
     }
+
+    @Test func triesComeLessOftenTheLongerNothingAnswers() {
+        #expect(PlayerStore.wait(after: 0) == 1)
+        #expect(PlayerStore.wait(after: 1) == 1)
+        #expect(PlayerStore.wait(after: 2) == 2)
+        #expect(PlayerStore.wait(after: 4) == 8)
+        #expect(PlayerStore.wait(after: 50) == 15)
+    }
 }

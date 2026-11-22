@@ -35,6 +35,8 @@ public struct LinkSnapshot: Sendable {
                 blobs[hash] = data
             }
         }
+        // What could not be framed is said here, not found out by a phone that waits for it.
+        guard blobs.values.allSatisfy({ $0.count <= LinkFrame.largestPayload }) else { throw LinkError.tooLarge }
         hashes.keep(only: Set(package.assets.keys.map { "asset/\($0)" })
             .union(package.extensions.flatMap { id, files in files.keys.map { "extension/\(id)/\($0)" } }))
         return LinkSnapshot(update: update, document: try LinkCoding.pack(package.document), blobs: blobs)
@@ -77,6 +79,8 @@ public struct LinkOutbox: Sendable {
     public private(set) var waiting: LinkSnapshot?
     /// The one the phone has not answered yet.
     public private(set) var inFlight: LinkSnapshot?
+    /// The files of it already sent: each goes once, however often it is asked for.
+    private var sent: Set<String> = []
 
     public init() {}
 
@@ -90,6 +94,7 @@ public struct LinkOutbox: Sendable {
         guard inFlight == nil, let snapshot = waiting else { return nil }
         waiting = nil
         inFlight = snapshot
+        sent = []
         return LinkFrame(.update(snapshot.update), payload: snapshot.document)
     }
 
@@ -98,17 +103,30 @@ public struct LinkOutbox: Sendable {
         if inFlight?.update.revision == revision { inFlight = nil }
     }
 
-    /// The files the phone asked for, of the update on its way. Hashes it made up get nothing.
-    public func blobs(for hashes: [String]) -> [LinkFrame] {
-        hashes.compactMap { hash in
-            inFlight?.blobs[hash].map { LinkFrame(.blob(hash: hash), payload: $0) }
+    /// The files the phone asked for, of the update on its way. Hashes it made up get
+    /// nothing, and one asked for again is not sent again.
+    public mutating func blobs(for hashes: [String]) -> [LinkFrame] {
+        var frames: [LinkFrame] = []
+        for hash in hashes where !sent.contains(hash) {
+            guard let data = inFlight?.blobs[hash] else { continue }
+            sent.insert(hash)
+            frames.append(LinkFrame(.blob(hash: hash), payload: data))
         }
+        return frames
+    }
+
+    /// The Mac stopped sending this prototype: nothing of it goes out any more.
+    public mutating func forget() {
+        waiting = nil
+        inFlight = nil
+        sent = []
     }
 
     /// The connection was made again: what was on its way is sent again.
     public mutating func reset() {
         if let inFlight, waiting == nil { waiting = inFlight }
         inFlight = nil
+        sent = []
     }
 }
 
@@ -122,6 +140,7 @@ public struct LinkInbox: Sendable {
 
     /// An update arrived. Returns the hashes to ask for; when there are none it is ready.
     public mutating func receive(_ update: LinkMessage.Update, payload: Data) throws -> [String] {
+        guard update.hasSafeNames else { throw LinkError.unsafeName }
         let document = try LinkCoding.unpack(payload)
         pending = (update, document)
         // Files no prototype names any more are let go.
@@ -129,10 +148,21 @@ public struct LinkInbox: Sendable {
         return update.hashes.subtracting(blobs.keys).sorted()
     }
 
-    /// A file arrived. One that is not what its hash says is dropped.
+    /// The most a prototype's files may come to on a phone.
+    public static let mostBytes = 2 << 30
+
+    /// A file arrived. One that is not what its hash says, or that nobody asked for, or
+    /// that would make the files more than a phone should hold, is dropped.
     public mutating func receive(blob data: Data, hash: String) {
-        guard LinkCoding.hash(data) == hash, pending?.update.hashes.contains(hash) == true else { return }
+        guard pending?.update.hashes.contains(hash) == true, blobs[hash] == nil,
+              blobs.values.reduce(data.count, { $0 + $1.count }) <= Self.mostBytes,
+              LinkCoding.hash(data) == hash else { return }
         blobs[hash] = data
+    }
+
+    /// The Mac closed a prototype: an update of it still waiting for files is let go.
+    public mutating func close(prototype: String) {
+        if pending?.update.prototype == prototype { pending = nil }
     }
 
     /// The package the pending update describes, once every file is here; taking it clears it.

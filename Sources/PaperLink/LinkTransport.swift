@@ -223,6 +223,19 @@ public final class LinkBrowser {
         let parameters = NWParameters()
         parameters.includePeerToPeer = true
         let browser = NWBrowser(for: .bonjour(type: LinkTransport.service, domain: nil), using: parameters)
+        // A browser that failed (the app was suspended, the network changed) finds nothing
+        // more by itself: it is started again.
+        browser.stateUpdateHandler = { [weak self, weak browser] state in
+            MainActor.assumeIsolated {
+                guard let self, self.browser === browser else { return }
+                if case .failed = state {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                        guard let self, self.browser === browser else { return }
+                        self.start()
+                    }
+                }
+            }
+        }
         browser.browseResultsChangedHandler = { [weak self] results, _ in
             MainActor.assumeIsolated {
                 guard let self else { return }

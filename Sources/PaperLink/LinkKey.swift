@@ -48,6 +48,13 @@ public struct LinkKey: Equatable, Sendable {
 public protocol LinkKeyStore: Sendable {
     func load() -> LinkKey?
     func save(_ key: LinkKey?)
+    /// Whether there may be a key that could not be read just now (the keychain said no).
+    /// Making a new one then would unpair every phone for nothing.
+    var isUnreadable: Bool { get }
+}
+
+extension LinkKeyStore {
+    public var isUnreadable: Bool { false }
 }
 
 /// The keychain, on this device only.
@@ -57,6 +64,15 @@ public struct KeychainLinkKeyStore: LinkKeyStore {
 
     private var query: [String: Any] {
         [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: "key"]
+    }
+
+    public var isUnreadable: Bool {
+        var query = query
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        return status != errSecSuccess && status != errSecItemNotFound
     }
 
     public func load() -> LinkKey? {

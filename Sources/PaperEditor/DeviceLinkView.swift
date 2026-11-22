@@ -11,7 +11,6 @@ struct DeviceLinkBridge: View {
     let store: DocumentStore
     let name: String
     let fileURL: URL?
-    let isFront: Bool
     @Bindable var link: DeviceLink
     /// For a document not saved yet: one id while its window is open.
     @State private var untitled = UUID().uuidString
@@ -35,7 +34,9 @@ struct DeviceLinkBridge: View {
     }
 
     private var trigger: Trigger {
-        guard link.isEnabled, isFront, !link.phones.isEmpty else { return Trigger() }
+        // The window that was in front last, also while another app is: an agent building
+        // from a terminal is seen on the phone as it works.
+        guard link.isEnabled, !link.phones.isEmpty, OpenDocuments.shared.front?.store === store else { return Trigger() }
         return Trigger(
             document: store.runtimeDocument, assets: store.assets, restartToken: store.restartToken,
             startScreen: store.previewScreen, extensions: Set(store.usedExtensionIDs), name: name, isFront: true
@@ -88,6 +89,10 @@ struct DeviceLinkPanel: View {
             if link.isEnabled {
                 if case let .failed(reason) = link.state {
                     Label(reason, systemImage: "exclamationmark.triangle").foregroundStyle(.red)
+                }
+                if let problem = link.problem {
+                    Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 ForEach(link.phones) { phone in
                     VStack(alignment: .leading, spacing: 2) {

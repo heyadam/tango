@@ -1,3 +1,4 @@
+import CoreImage
 import Foundation
 import Network
 import Testing
@@ -24,6 +25,7 @@ import PaperPlayer
 
     private func pair() async throws -> (mac: DeviceLink, phone: PlayerStore) {
         let mac = DeviceLink(keys: MemoryLinkKeyStore(), advertises: false)
+        mac.helloWait = 600
         mac.isEnabled = true
         try await wait("the Mac to listen") { mac.port != nil }
         let key = try #require(mac.key)
@@ -66,7 +68,7 @@ import PaperPlayer
         mac.isEnabled = false
     }
 
-    @Test func aDragSendsTheLastDocumentAndAVideoOnce() async throws {
+    @Test func aDragSendsTheLastDocumentAndNotEveryOneBetween() async throws {
         let (mac, phone) = try await pair()
         let video = Data((0..<200_000).map { UInt8($0 % 253) })
         var document = Gallery.item("card")!.make()
@@ -97,6 +99,9 @@ import PaperPlayer
         #expect(phone.live?.host !== first)
         mac.withdraw(prototype: "two")
         try await wait("it to close") { phone.live == nil }
+        // It does not come back: nothing of it was left waiting to be sent.
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(phone.live == nil)
         mac.isEnabled = false
     }
 
@@ -121,13 +126,50 @@ import PaperPlayer
         mac.newKey()
         #expect(mac.key != old)
         try await wait("the phone to be dropped") { mac.phones.isEmpty && phone.link == .searching }
+        // Coming back with the old key, it is turned away.
+        try await wait("the Mac to listen again") { mac.port != nil }
+        phone.connect(to: .hostPort(host: .ipv4(.loopback), port: NWEndpoint.Port(rawValue: mac.port!)!), name: "Mac")
+        try await wait("the handshake to fail") { phone.link == .searching }
+        #expect(mac.phones.isEmpty)
         mac.isEnabled = false
     }
 
-    @Test func offMeansNothingListensAndNothingIsBuilt() {
+    @Test func offMeansNothingListensAndNoKeyIsMade() {
         let mac = DeviceLink(keys: MemoryLinkKeyStore(), advertises: false)
         mac.publish(.init(prototype: "doc", name: "Card", package: Gallery.item("card")!.package()))
         #expect(mac.state == .stopped)
         #expect(mac.key == nil)
+    }
+}
+
+@Suite struct DeviceLinkCodeTests {
+    @Test func theCodeAPhoneScansHoldsTheKey() throws {
+        let key = LinkKey.random()
+        let code = try #require(DeviceLinkPanel.code(for: key.text))
+        // Read it back as a camera would, enlarged: a detector wants more than a pixel a module.
+        let image = CIImage(cgImage: code).transformed(by: CGAffineTransform(scaleX: 8, y: 8)).samplingNearest()
+        let detector = try #require(CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]))
+        let read = detector.features(in: image).compactMap { ($0 as? CIQRCodeFeature)?.messageString }
+        #expect(read == [key.text])
+        #expect(LinkKey(text: read.first ?? "") == key)
+    }
+}
+
+extension DeviceLinkTests {
+    @Test func aConnectionThatNeverSaysHelloIsDropped() async throws {
+        let mac = DeviceLink(keys: MemoryLinkKeyStore(), advertises: false)
+        mac.helloWait = 0.2
+        mac.isEnabled = true
+        try await wait("the Mac to listen") { mac.port != nil }
+        // It has the key, so the handshake succeeds; then it says nothing.
+        let silent = LinkConnection(
+            to: .hostPort(host: .ipv4(.loopback), port: NWEndpoint.Port(rawValue: mac.port!)!), key: try #require(mac.key)
+        )
+        var closed = false
+        silent.onState = { if case .closed = $0 { closed = true } }
+        silent.start()
+        try await wait("it to be dropped") { closed }
+        #expect(mac.phones.isEmpty)
+        mac.isEnabled = false
     }
 }

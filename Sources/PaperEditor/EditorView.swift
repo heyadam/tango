@@ -172,7 +172,7 @@ public struct EditorView: View {
             ))
             // A paired iPhone gets what the Viewer gets.
             .background(DeviceLinkBridge(
-                store: store, name: documentName, fileURL: fileURL, isFront: appearsActive, link: .shared
+                store: store, name: documentName, fileURL: fileURL, link: .shared
             ))
             }
         }

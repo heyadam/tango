@@ -45,6 +45,11 @@ public final class PlayerStore {
     private var inbox = LinkInbox()
     private let browser = LinkBrowser()
     private var searches = false
+    /// Connections in a row that ended before the Mac said hello: another Mac's, which
+    /// has another key, or one that is going away. The next try is a later Mac in the
+    /// list, after a longer wait.
+    private var failures = 0
+    private var greeted = false
 
     public init(keys: any LinkKeyStore, deviceName: String, screen: CGSize, sendsRequests: Bool = true) {
         self.keys = keys
@@ -67,6 +72,7 @@ public final class PlayerStore {
     public func pair(with key: LinkKey) {
         keys.save(key)
         self.key = key
+        failures = 0
         drop()
         link = .searching
         if searches { connectToFirstFound() }
@@ -89,14 +95,23 @@ public final class PlayerStore {
         browser.start()
     }
 
+    /// The app came back to the front: a search that died while it was away starts again.
+    public func resumeSearching() {
+        guard searches else { return }
+        browser.start()
+        connectToFirstFound()
+    }
+
     public func stopSearching() {
         searches = false
         browser.stop()
     }
 
     private func connectToFirstFound() {
-        guard connection == nil, key != nil, let first = found.first else { return }
-        connect(to: first.endpoint, name: first.name)
+        guard connection == nil, key != nil, !found.isEmpty else { return }
+        // Not always the first: a Mac nearby that is not the paired one never lets this in.
+        let next = found[failures % found.count]
+        connect(to: next.endpoint, name: next.name)
     }
 
     /// Connects to a Mac at a known place; tests come this way.
@@ -104,6 +119,7 @@ public final class PlayerStore {
         guard let key else { return }
         drop()
         link = .connecting(name)
+        greeted = false
         let connection = LinkConnection(to: endpoint, key: key)
         self.connection = connection
         connection.onState = { [weak self, weak connection] state in
@@ -119,8 +135,10 @@ public final class PlayerStore {
                 self.connection = nil
                 self.inbox = LinkInbox()
                 self.link = self.key == nil ? .unpaired : .searching
-                // The Mac may only have gone to sleep: look again shortly.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self.failures = self.greeted ? 0 : self.failures + 1
+                // The Mac may only have gone to sleep: look again shortly, and less often
+                // the longer nothing answers.
+                DispatchQueue.main.asyncAfter(deadline: .now() + Self.wait(after: self.failures)) { [weak self] in
                     guard let self, self.searches else { return }
                     self.connectToFirstFound()
                 }
@@ -131,6 +149,11 @@ public final class PlayerStore {
             self.receive(frame, from: connection)
         }
         connection.start()
+    }
+
+    /// Seconds before trying again: one, then doubling up to fifteen.
+    static func wait(after failures: Int) -> Double {
+        min(pow(2, Double(max(failures - 1, 0))), 15)
     }
 
     private func drop() {
@@ -149,6 +172,8 @@ public final class PlayerStore {
                 notice = "This app and tango on \(hello.name) are different versions and cannot talk. Update both."
                 return connection.close()
             }
+            greeted = true
+            failures = 0
             notice = hello.kinds == PrototypeHost.kinds
                 ? nil : "tango on \(hello.name) is a different version from this app. Some things may not look right."
         case let .update(update):
@@ -158,7 +183,8 @@ public final class PlayerStore {
                 showIfReady(to: connection)
             } catch {
                 let reason = (error as? Document.LoadError) != nil
-                    ? "It was made with a newer tango. Update this app." : "It could not be read."
+                    ? "It was made with a newer tango. Update this app."
+                    : (error as? LinkError) == .tooLarge ? "It is too large for this iPhone." : "It could not be read."
                 notice = "“\(update.name)” was not shown. \(reason)"
                 connection.send(.refused(prototype: update.prototype, revision: update.revision, reason: reason))
             }
@@ -166,6 +192,7 @@ public final class PlayerStore {
             inbox.receive(blob: frame.payload, hash: hash)
             showIfReady(to: connection)
         case let .close(prototype):
+            inbox.close(prototype: prototype)
             if live?.id == prototype { live = nil }
         case .need, .applied, .refused, .status:
             // Only a phone says these.
@@ -179,7 +206,8 @@ public final class PlayerStore {
         if let live, live.id == update.prototype {
             // The same prototype, edited: what is running keeps its state.
             live.host.update(
-                document: package.document, assets: package.assets, restartToken: update.restartToken, startScreen: start
+                document: package.document, assets: package.assets, registry: PrototypeHost.registry(for: package),
+                restartToken: update.restartToken, startScreen: start
             )
             self.live?.name = update.name
             self.live?.revision = update.revision

@@ -107,8 +107,16 @@ public final class PrototypeHost {
 
     /// The document changed, as the Mac's Viewer is told: patches that are still there keep
     /// their state. A new `restartToken` starts the prototype over, on `startScreen`.
-    public func update(document: Document, assets: [String: Data]? = nil, restartToken: Int? = nil, startScreen: LayerID? = nil) {
+    public func update(
+        document: Document, assets: [String: Data]? = nil, registry: PatchRegistry? = nil,
+        restartToken: Int? = nil, startScreen: LayerID? = nil
+    ) {
         if let assets { self.assets = assets }
+        // The extensions it carries changed: their patches' ports did too.
+        if let registry, registry.extensions != self.registry.extensions {
+            self.registry = registry
+            runtime.update(registry: registry)
+        }
         runtime.update(document: document)
         if let restartToken, restartToken != self.restartToken {
             self.restartToken = restartToken

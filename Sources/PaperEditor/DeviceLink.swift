@@ -55,6 +55,13 @@ public final class DeviceLink {
     }
 
     public private(set) var state = LinkServer.State.stopped
+    /// Why the prototype is not reaching phones, in words for the person.
+    public private(set) var problem: String?
+    /// The most connections held at once, phones and those still shaking hands.
+    static let mostPeers = 16
+    /// How long a connection has to say hello before it is dropped. Longer in tests, where
+    /// other tests hold the main thread for seconds at a time.
+    var helloWait = 10.0
     public private(set) var phones: [Phone] = []
     /// The key phones pair with; made the first time the link is turned on.
     public private(set) var key: LinkKey?
@@ -83,7 +90,17 @@ public final class DeviceLink {
         self.remembers = remembers
         isEnabled = remembers && UserDefaults.standard.bool(forKey: Self.enabledKey)
         key = keys.load()
-        server.onState = { [weak self] state in self?.state = state }
+        server.onState = { [weak self] state in
+            guard let self else { return }
+            self.state = state
+            // A listener that failed (the Mac slept, the network went) is started again.
+            if case .failed = state, self.isEnabled {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                    guard let self, self.isEnabled, case .failed = self.state else { return }
+                    self.listen()
+                }
+            }
+        }
         server.onConnection = { [weak self] connection in self?.accept(connection) }
     }
 
@@ -93,6 +110,13 @@ public final class DeviceLink {
     }
 
     private func listen() {
+        problem = nil
+        // A key the keychain would not hand over is not replaced: that would silently
+        // unpair every phone. New Code does it on purpose.
+        if key == nil, keys.isUnreadable {
+            problem = "tango could not read its pairing key from the keychain. Allow it when macOS asks, or make a New Code and pair again."
+            return
+        }
         if key == nil {
             let made = LinkKey.random()
             keys.save(made)
@@ -123,15 +147,22 @@ public final class DeviceLink {
     // MARK: Phones
 
     private func accept(_ connection: LinkConnection) {
+        // Anything can open a connection; only one with the key gets past the handshake.
+        // So they are few, and one that has not said hello in time is dropped.
+        guard peers.count < Self.mostPeers else { return connection.close() }
         let id = nextPeer
         nextPeer += 1
         peers[id] = (connection, LinkOutbox())
-        connection.onState = { [weak self] state in
+        DispatchQueue.main.asyncAfter(deadline: .now() + helloWait) { [weak self] in
+            guard let self, let peer = self.peers[id], !self.phones.contains(where: { $0.id == id }) else { return }
+            peer.connection.close()
+        }
+        connection.onState = { [weak self, weak connection] state in
             guard let self else { return }
             switch state {
             case .connecting: break
             case .ready:
-                connection.send(.hello(.init(kinds: PrototypeHost.kinds, name: Host.current().localizedName ?? "Mac")))
+                connection?.send(.hello(.init(kinds: PrototypeHost.kinds, name: Host.current().localizedName ?? "Mac")))
             case .closed:
                 self.peers[id] = nil
                 self.phones.removeAll { $0.id == id }
@@ -159,7 +190,7 @@ public final class DeviceLink {
                 build()
             }
         case let .need(wanted):
-            for blob in peer.outbox.blobs(for: wanted) { peer.connection.send(blob) }
+            for blob in peers[id]?.outbox.blobs(for: wanted) ?? [] { peer.connection.send(blob) }
         case let .applied(_, revision):
             peers[id]?.outbox.answered(revision: revision)
             update(id) { $0.shows = revision; if $0.notice?.hasPrefix("Its app") != true { $0.notice = nil } }
@@ -191,9 +222,7 @@ public final class DeviceLink {
     /// document is only kept, and made ready to send when one is.
     public func publish(_ source: Source) {
         guard isEnabled else { return }
-        if let old = self.source, old.prototype != source.prototype {
-            for peer in peers.values { peer.connection.send(.close(prototype: old.prototype)) }
-        }
+        if let old = self.source, old.prototype != source.prototype { close(old.prototype) }
         self.source = source
         snapshot = nil
         build()
@@ -202,9 +231,18 @@ public final class DeviceLink {
     /// The prototype's window closed.
     public func withdraw(prototype: String) {
         guard source?.prototype == prototype else { return }
-        for peer in peers.values { peer.connection.send(.close(prototype: prototype)) }
+        close(prototype)
         source = nil
         snapshot = nil
+    }
+
+    /// Tells every phone a prototype is over, and takes back what of it had not gone out:
+    /// an update left waiting would bring it back.
+    private func close(_ prototype: String) {
+        for id in peers.keys {
+            peers[id]?.outbox.forget()
+            peers[id]?.connection.send(.close(prototype: prototype))
+        }
     }
 
     /// Encodes, compresses and hashes off the main actor, one at a time: a change that
@@ -221,15 +259,24 @@ public final class DeviceLink {
         let revision = revision
         var hashes = hashes
         Task.detached(priority: .userInitiated) { [weak self] in
-            let made = try? LinkSnapshot.make(
-                of: source.package, prototype: source.prototype, name: source.name, revision: revision,
-                restartToken: source.restartToken, startScreen: source.startScreen?.uuidString, keeps: source.keeps, hashes: &hashes
-            )
+            var made: LinkSnapshot?
+            var failure: String?
+            do {
+                made = try LinkSnapshot.make(
+                    of: source.package, prototype: source.prototype, name: source.name, revision: revision,
+                    restartToken: source.restartToken, startScreen: source.startScreen?.uuidString, keeps: source.keeps, hashes: &hashes
+                )
+            } catch LinkError.tooLarge {
+                failure = "“\(source.name)” has a file too large to send to an iPhone."
+            } catch {
+                failure = "“\(source.name)” could not be sent to an iPhone."
+            }
             let kept = hashes
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 self.isBuilding = false
                 self.hashes = kept
+                self.problem = failure
                 if let made, self.source?.prototype == made.update.prototype {
                     self.snapshot = made
                     for id in self.peers.keys {

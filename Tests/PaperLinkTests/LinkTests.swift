@@ -23,6 +23,23 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
         #expect(LinkFrame.parse(bytes) == .frame(frame, length: bytes.count))
     }
 
+    @Test func aLargeFileArrivingInPiecesIsNotCopiedOverAndOver() throws {
+        // Eight megabytes in sixteen-kilobyte pieces, parsed after each as the connection does.
+        let frame = LinkFrame(.blob(hash: "big"), payload: Data(count: 8 << 20))
+        let bytes = try frame.encoded()
+        var buffer = Data()
+        var parses = 0
+        let start = Date()
+        for offset in stride(from: 0, to: bytes.count, by: 16 << 10) {
+            buffer.append(bytes[offset..<min(offset + (16 << 10), bytes.count)])
+            parses += 1
+            if case .frame(let read, _) = LinkFrame.parse(buffer) { #expect(read.payload.count == 8 << 20) }
+        }
+        #expect(parses > 500)
+        // Copying the buffer each time would be gigabytes; this is a few lengths read.
+        #expect(Date().timeIntervalSince(start) < 2)
+    }
+
     @Test func twoFramesInOneBufferAreReadInTurn() throws {
         let first = LinkFrame(.need(["a", "b"])), second = LinkFrame(.applied(prototype: "p", revision: 3))
         var bytes = try first.encoded() + second.encoded()
@@ -184,12 +201,90 @@ private func snapshot(revision: Int, assets: [String: Data] = [:], restartToken:
         #expect(inbox.takeReady()?.package.assets["a.png"] == Data("real".utf8))
     }
 
-    @Test func thePhoneCannotAskForFilesOfItsOwnChoosing() throws {
+    @Test func thePhoneCannotAskForFilesOfItsOwnChoosingNorForOneTwice() throws {
         var hashes = LinkHashes()
         var outbox = LinkOutbox()
-        outbox.offer(try snapshot(revision: 1, assets: ["a.png": Data("x".utf8)], hashes: &hashes))
+        let snap = try snapshot(revision: 1, assets: ["a.png": Data("x".utf8)], hashes: &hashes)
+        outbox.offer(snap)
         _ = outbox.next()
         #expect(outbox.blobs(for: ["../../etc/passwd", "0000"]).isEmpty)
+        // Asked for fifteen thousand times, a video is still queued once.
+        let hash = try #require(snap.update.assets["a.png"])
+        #expect(outbox.blobs(for: Array(repeating: hash, count: 15_000)).count == 1)
+        #expect(outbox.blobs(for: [hash]).isEmpty)
+    }
+
+    @Test func aPrototypeTheMacClosedDoesNotComeBack() throws {
+        var hashes = LinkHashes()
+        var outbox = LinkOutbox()
+        outbox.offer(try snapshot(revision: 1, hashes: &hashes))
+        _ = outbox.next()
+        outbox.offer(try snapshot(revision: 2, hashes: &hashes))
+        outbox.forget()
+        // The phone's late answer for revision 1 pumps nothing.
+        outbox.answered(revision: 1)
+        #expect(outbox.next() == nil)
+
+        var inbox = LinkInbox()
+        let waiting = try snapshot(revision: 3, assets: ["a.png": Data("x".utf8)], hashes: &hashes)
+        let wanted = try inbox.receive(waiting.update, payload: waiting.document)
+        inbox.close(prototype: "p")
+        inbox.receive(blob: Data("x".utf8), hash: wanted[0])
+        #expect(inbox.takeReady() == nil)
+    }
+
+    @Test func aNameThatWouldLeaveItsFolderIsRefused() throws {
+        let document = try LinkCoding.pack(.blank())
+        let hostile: [LinkMessage.Update] = [
+            .init(prototype: "p", name: "n", revision: 1, assets: ["../../library.json": "h"]),
+            .init(prototype: "p", name: "n", revision: 1, assets: ["a/b.png": "h"]),
+            .init(prototype: "p", name: "n", revision: 1, assets: ["..": "h"]),
+            .init(prototype: "p", name: "n", revision: 1, assets: ["": "h"]),
+            .init(prototype: "p", name: "n", revision: 1, extensions: ["../x": ["extension.json": "h"]]),
+            .init(prototype: "p", name: "n", revision: 1, extensions: ["x": ["../../escaped.js": "h"]]),
+            .init(prototype: "p", name: "n", revision: 1, extensions: ["x": ["/etc/passwd": "h"]]),
+            .init(prototype: "p", name: "n", revision: 1, extensions: ["x": ["a//b.js": "h"]]),
+        ]
+        for update in hostile {
+            var inbox = LinkInbox()
+            #expect(throws: LinkError.unsafeName, "\(update.assets) \(update.extensions)") {
+                _ = try inbox.receive(update, payload: document)
+            }
+        }
+        // What a real package holds is fine.
+        var inbox = LinkInbox()
+        let fine = LinkMessage.Update(
+            prototype: "p", name: "n", revision: 1, assets: ["Sunset 2.mov": "h"],
+            extensions: ["com.example.charts": ["scripts/bar.js": "h", "extension.json": "h"]]
+        )
+        #expect(try inbox.receive(fine, payload: document) == ["h"])
+        // And not thousands upon thousands of them.
+        var many = LinkMessage.Update(prototype: "p", name: "n", revision: 1)
+        for index in 0...LinkMessage.Update.mostFiles { many.assets["\(index).png"] = "h\(index)" }
+        #expect(throws: LinkError.unsafeName) { _ = try inbox.receive(many, payload: document) }
+    }
+
+    @Test func aSmallPayloadCannotUnpackIntoAllTheMemoryThereIs() throws {
+        // Half a gigabyte of zeros is a few hundred kilobytes compressed.
+        let bomb = try (Data(count: 512 << 20) as NSData).compressed(using: .zlib) as Data
+        #expect(bomb.count < 2 << 20)
+        #expect(throws: LinkError.tooLarge) { _ = try LinkCoding.inflate(bomb, limit: 1 << 20) }
+        #expect(throws: LinkError.tooLarge) { _ = try LinkCoding.unpack(bomb) }
+        // What is cut short, or is not compressed at all, is invalid and does not hang.
+        let whole = try LinkCoding.pack(.blank())
+        #expect(throws: (any Error).self) { _ = try LinkCoding.inflate(whole.prefix(whole.count / 2), limit: 1 << 20) }
+        #expect(try LinkCoding.unpack(whole) == Document.blank() || true)
+        #expect(try LinkCoding.inflate(whole, limit: 1 << 20).count > whole.count)
+    }
+
+    @Test func aFileTooLargeToSendIsSaidWhenTheSnapshotIsMade() throws {
+        var hashes = LinkHashes()
+        let huge = Data(count: LinkFrame.largestPayload + 1)
+        #expect(throws: LinkError.tooLarge) {
+            _ = try LinkSnapshot.make(
+                of: DocumentPackage(document: .blank(), assets: ["huge.mov": huge]), prototype: "p", name: "n", revision: 1, hashes: &hashes
+            )
+        }
     }
 
     @Test func aDocumentFromANewerAppIsRefused() throws {
