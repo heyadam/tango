@@ -6,7 +6,7 @@ import PaperModel
 /// is, how much of the region differs, where each has edges along the lines through its
 /// middle, and a picture with the two side by side and their differences in red.
 ///
-/// Pure functions on pixels, so they are tested without a simulator.
+/// Pure functions on pixels.
 public enum Redline {
     /// A picture as plain sRGB bytes, four to a pixel, top row first.
     public struct Picture {

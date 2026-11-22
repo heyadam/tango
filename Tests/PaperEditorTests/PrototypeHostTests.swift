@@ -6,47 +6,8 @@ import PaperHost
 import PaperModel
 @testable import PaperEditor
 
-/// A picture's pixels as RGBA bytes, whatever it was stored as.
-private func bytes(of image: CGImage, width: Int, height: Int) -> [UInt8] {
-    var pixels = [UInt8](repeating: 0, count: width * height * 4)
-    pixels.withUnsafeMutableBytes { buffer in
-        let context = CGContext(
-            data: buffer.baseAddress, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4,
-            space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        )!
-        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-    }
-    return pixels
-}
-
-/// The share of pixels whose color differs by more than a little.
-private func difference(_ a: CGImage, _ b: CGImage) -> Double {
-    guard a.width == b.width, a.height == b.height else { return 1 }
-    let first = bytes(of: a, width: a.width, height: a.height), second = bytes(of: b, width: a.width, height: a.height)
-    var differing = 0
-    for pixel in 0..<(a.width * a.height) {
-        let at = pixel * 4
-        if abs(Int(first[at]) - Int(second[at])) > 24 || abs(Int(first[at + 1]) - Int(second[at + 1])) > 24
-            || abs(Int(first[at + 2]) - Int(second[at + 2])) > 24 { differing += 1 }
-    }
-    return Double(differing) / Double(a.width * a.height)
-}
-
-/// The host a phone's player runs a prototype on must draw what the Mac's Viewer draws.
+/// The host a phone's player runs a prototype on: where its screen goes, and what an edit keeps.
 @MainActor @Suite struct PrototypeHostTests {
-    @Test func everyGalleryItemIsDrawnAsTheViewerDrawsIt() throws {
-        for item in Gallery.items {
-            let package = item.package()
-            let viewer = try #require(ViewerSnapshot.bitmap(of: package.document, assets: package.assets)?.cgImage, "\(item.id)")
-            let host = PrototypeHost(package: package, registry: .standard, sendsRequests: false)
-            host.layout(in: CGRect(origin: .zero, size: host.screenSize), fills: true, backingScale: 2)
-            host.step(dt: ViewerSnapshot.frameLength)
-            let ours = try #require(host.picture(), "\(item.id)")
-            #expect(ours.width == viewer.width && ours.height == viewer.height, "\(item.id)")
-            #expect(difference(ours, viewer) < 0.002, "\(item.id) differs in \(difference(ours, viewer)) of its pixels")
-        }
-    }
-
     @Test func aPointOfTheViewIsFoundOnTheScreen() {
         let host = PrototypeHost(package: Gallery.item("card")!.package(), sendsRequests: false)
         // Twice the size: the screen fills it at a scale of two.

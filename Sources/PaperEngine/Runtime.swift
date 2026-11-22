@@ -519,8 +519,11 @@ public final class Runtime {
         // a cycle is left as a back edge, which reads the previous frame's value.
         let byID = Dictionary(graph.nodes.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         var incoming: [NodeID: [Connection]] = [:]
+        // The views whose frame outputs a cable reads.
+        var framesRead: Set<NodeID> = []
         for connection in graph.connections {
             incoming[connection.to.node, default: []].append(connection)
+            if ViewOutput.ids.contains(connection.from.port) { framesRead.insert(connection.from.node) }
         }
         var order: [NodeID] = []
         var visited: Set<NodeID> = []
@@ -608,8 +611,12 @@ public final class Runtime {
                 role = .unknown
             }
 
+            // The cables into this patch, in the graph's order (the first into a port wins, as
+            // `graph.connection(into:)` has it): a view has an input for every property, and
+            // searching every cable of the graph for each was most of compiling.
+            let cablesIn = incoming[id] ?? []
             var sources: [Source] = ports.inputs.map { port in
-                if let connection = graph.connection(into: PortRef(node: id, port: port.id)),
+                if let connection = cablesIn.first(where: { $0.to.port == port.id }),
                    let sourceIndex = indexByID[connection.from.node],
                    let sourcePorts = portsByID[connection.from.node],
                    let outputIndex = sourcePorts.outputs.firstIndex(where: { $0.id == connection.from.port }),
@@ -631,7 +638,7 @@ public final class Runtime {
             // person asked to see them on the patch.
             var frameSlot: Int?
             if case .view = role, let first = ports.outputs.firstIndex(where: { $0.id == ViewOutput.x.id }),
-               graph.connections.contains(where: { $0.from.node == id && ViewOutput.ids.contains($0.from.port) })
+               framesRead.contains(id)
                 || (node.shownPorts ?? []).contains(where: ViewOutput.ids.contains) {
                 frameSlot = first
             }
@@ -1946,5 +1953,19 @@ public final class Runtime {
             tick(dt: min(step, remaining))
             remaining -= step
         }
+    }
+
+    /// Runs in fixed steps until nothing wants another frame, as a host pauses its clock, for
+    /// `seconds` at most. True when it came to rest. For tests that wait for motion to end:
+    /// unlike `advance` it does not run on through time in which nothing moves, so it is not
+    /// for waiting out a delay that counts time (two taps one second apart).
+    @discardableResult
+    public func settle(within seconds: Double, step: Double = 1.0 / 60.0) -> Bool {
+        var remaining = seconds
+        while remaining > 1e-9, needsFrame {
+            tick(dt: min(step, remaining))
+            remaining -= step
+        }
+        return !needsFrame
     }
 }

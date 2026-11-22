@@ -11,7 +11,7 @@ import PaperModel
 ///
 /// Both sides are measured against themselves, so a color that differs a little everywhere
 /// (the recording is not color-managed) does not count. Pure functions on pixels but for the
-/// two that make the clips, so they are tested without a simulator.
+/// two that make the clips.
 extension Redline {
     /// Pictures of the region a case follows, `frameLength` apart, the first at rest.
     public struct Clip {
@@ -94,25 +94,51 @@ extension Redline {
         kept.frames[0] = clip.frames[0]
         guard let rest = kept.frames.first, let end = kept.frames.last else { return nil }
         let count = rest.width * rest.height
+        // A frame of another size is read through `color`, which clamps; the frames of one
+        // clip are all one size, and are read straight from their bytes, in the same order
+        // and with the same arithmetic (this runs for every pixel of every frame).
+        func same(_ frame: Picture) -> Picture {
+            guard frame.width != rest.width || frame.height != rest.height else { return frame }
+            var bytes = [UInt8](repeating: 0, count: count * 4)
+            for y in 0..<rest.height {
+                for x in 0..<rest.width {
+                    let c = frame.color(x, y), at = (y * rest.width + x) * 4
+                    bytes[at] = UInt8(c.r); bytes[at + 1] = UInt8(c.g); bytes[at + 2] = UInt8(c.b)
+                }
+            }
+            return Picture(width: rest.width, height: rest.height, bytes: bytes, scale: frame.scale)
+        }
         var change = [Double](repeating: 0, count: count * 3)
         var whole = 0.0
-        for y in 0..<rest.height {
-            for x in 0..<rest.width {
-                let a = rest.color(x, y), b = end.color(x, y), at = (y * rest.width + x) * 3
-                change[at] = Double(b.r - a.r); change[at + 1] = Double(b.g - a.g); change[at + 2] = Double(b.b - a.b)
-                whole += change[at] * change[at] + change[at + 1] * change[at + 1] + change[at + 2] * change[at + 2]
+        rest.bytes.withUnsafeBufferPointer { a in
+            same(end).bytes.withUnsafeBufferPointer { b in
+                change.withUnsafeMutableBufferPointer { change in
+                    var pixel = 0
+                    while pixel < count {
+                        let p = pixel * 4, at = pixel * 3
+                        pixel += 1
+                        change[at] = Double(Int(b[p]) - Int(a[p])); change[at + 1] = Double(Int(b[p + 1]) - Int(a[p + 1])); change[at + 2] = Double(Int(b[p + 2]) - Int(a[p + 2]))
+                        whole += change[at] * change[at] + change[at + 1] * change[at + 1] + change[at + 2] * change[at + 2]
+                    }
+                }
             }
         }
         guard whole > 0 else { return nil }
-        let progress = kept.frames.map { frame -> Double in
-            var along = 0.0
-            for y in 0..<rest.height {
-                for x in 0..<rest.width {
-                    let a = rest.color(x, y), c = frame.color(x, y), at = (y * rest.width + x) * 3
-                    along += Double(c.r - a.r) * change[at] + Double(c.g - a.g) * change[at + 1] + Double(c.b - a.b) * change[at + 2]
+        let progress = change.withUnsafeBufferPointer { change in
+            rest.bytes.withUnsafeBufferPointer { a in
+                kept.frames.map { frame -> Double in
+                    same(frame).bytes.withUnsafeBufferPointer { c in
+                        var along = 0.0
+                        var pixel = 0
+                        while pixel < count {
+                            let p = pixel * 4, at = pixel * 3
+                            pixel += 1
+                            along += Double(Int(c[p]) - Int(a[p])) * change[at] + Double(Int(c[p + 1]) - Int(a[p + 1])) * change[at + 1] + Double(Int(c[p + 2]) - Int(a[p + 2])) * change[at + 2]
+                        }
+                        return along / whole
+                    }
                 }
             }
-            return along / whole
         }
         // Where it passed the onset level, read between the frames either side.
         var onset = 0.0
