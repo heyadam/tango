@@ -195,28 +195,32 @@ struct AssistantComposer: View {
                 ForEach(AssistantProvider.allCases) { provider in
                     Section(provider.name) { models(of: provider) }
                 }
-                Picker("Thinking", selection: $session.effort) {
-                    ForEach(AssistantSession.Effort.allCases) { effort in
-                        Text(effort.title).tag(effort)
-                    }
-                }
-                .pickerStyle(.inline)
             } label: {
-                HStack(spacing: 4) {
-                    Text(modelTitle).lineLimit(1)
-                    Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold))
-                }
-                .font(AssistantStyle.small)
-                .foregroundStyle(AssistantStyle.dim)
-                .padding(.horizontal, 6)
-                .frame(height: AssistantStyle.control)
-                .contentShape(.rect)
+                menuLabel(modelTitle)
             }
             .menuStyle(.button)
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
-            .help("Who answers, and how hard it thinks first. Changing the model starts a new chat; thinking applies from your next message.")
+            .help("Who answers. Changing the model starts a new chat.")
+
+            if session.model.provider != .local {
+                Menu {
+                    Picker("Thinking", selection: $session.effort) {
+                        ForEach(AssistantSession.Effort.allCases) { effort in
+                            Text(effort.title).tag(effort)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                } label: {
+                    menuLabel(session.effort.title)
+                }
+                .menuStyle(.button)
+                .buttonStyle(.plain)
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .help("How hard it thinks before answering: \(session.effort.title). Applies from your next message.")
+            }
 
             if session.isWorking, !canSend {
                 roundButton("Stop", symbol: "stop.fill", iconSize: 9, isOn: true, color: AnyShapeStyle(AssistantStyle.text), icon: Color(nsColor: .windowBackgroundColor)) { session.stop() }
@@ -274,8 +278,20 @@ struct AssistantComposer: View {
 
     /// The model that answers, by name once Claude has said which one Default is.
     private var modelTitle: String {
-        let model = session.model == .standard ? (session.answeringModel ?? "Default") : session.model.title
-        return session.effort == .standard ? model : "\(model) · \(session.effort.title)"
+        session.model == .standard ? (session.answeringModel ?? "Default") : session.model.title
+    }
+
+    /// A menu's label in the composer: dim words and a chevron.
+    private func menuLabel(_ title: String) -> some View {
+        HStack(spacing: 4) {
+            Text(title).lineLimit(1)
+            Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold))
+        }
+        .font(AssistantStyle.small)
+        .foregroundStyle(AssistantStyle.dim)
+        .padding(.horizontal, 6)
+        .frame(height: AssistantStyle.control)
+        .contentShape(.rect)
     }
 
     // MARK: Suggestions

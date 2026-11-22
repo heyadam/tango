@@ -62,7 +62,7 @@ public final class AssistantSession: Identifiable {
         public var id: String { rawValue }
         public var title: String {
             switch self {
-            case .standard: "Default"
+            case .standard: "Auto"
             case .xhigh: "Extra High"
             default: rawValue.capitalized
             }
