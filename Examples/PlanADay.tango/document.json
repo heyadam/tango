@@ -1,0 +1,3152 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "5E1072E4-C41D-4C8B-9FA9-BC7FC238CA0F",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 612,
+          "width" : 1392
+        },
+        "text" : "Cities · One chip per city; the tapped one is lit"
+      },
+      {
+        "id" : "8B98E8E4-7DC0-47D6-8106-8FC83D984ACE",
+        "origin" : {
+          "x" : 24,
+          "y" : 816
+        },
+        "size" : {
+          "height" : 456,
+          "width" : 1392
+        },
+        "text" : "Ask · Apple's on-device model, held to six fields"
+      },
+      {
+        "id" : "24073127-30DA-4802-BC16-4B1493BC190A",
+        "origin" : {
+          "x" : 1464,
+          "y" : 816
+        },
+        "size" : {
+          "height" : 396,
+          "width" : 528
+        },
+        "text" : "Card · The answer streams onto the card"
+      },
+      {
+        "id" : "230D8AE9-B5FF-430F-A257-34DC9270EA98",
+        "origin" : {
+          "x" : 312,
+          "y" : 1344
+        },
+        "size" : {
+          "height" : 372,
+          "width" : 240
+        },
+        "text" : "Glow · Only while it thinks"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "7D96C4B1-335C-4E93-9DD9-703F31115080",
+          "port" : "array"
+        },
+        "to" : {
+          "node" : "2F3C4BBE-A48C-41A3-9718-11B3FA4CE51A",
+          "port" : "array"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2F3C4BBE-A48C-41A3-9718-11B3FA4CE51A",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "82B063B8-8E7A-48B1-82B2-217D997A4ACF",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A0EA6CCB-5451-4EA1-8777-C930F5017FCC",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "E76596A2-728B-4F10-9FC4-68C879829108",
+          "port" : "set"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2F3C4BBE-A48C-41A3-9718-11B3FA4CE51A",
+          "port" : "index"
+        },
+        "to" : {
+          "node" : "CAA71F2F-E48A-45F7-B209-45BC5AD02922",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E76596A2-728B-4F10-9FC4-68C879829108",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "CAA71F2F-E48A-45F7-B209-45BC5AD02922",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "CAA71F2F-E48A-45F7-B209-45BC5AD02922",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "1D54874E-2416-47B3-BAAC-554512581516",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1D54874E-2416-47B3-BAAC-554512581516",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "24E06410-0571-4E8F-BEF5-AEA5CBA6AF18",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "1D54874E-2416-47B3-BAAC-554512581516",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8F59B075-AFB3-4521-B49B-F392CB85E0E0",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "24E06410-0571-4E8F-BEF5-AEA5CBA6AF18",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "30791C1F-1813-42E8-8185-3291274CDA88",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "8F59B075-AFB3-4521-B49B-F392CB85E0E0",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "82B063B8-8E7A-48B1-82B2-217D997A4ACF",
+          "port" : "textColor"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2F3C4BBE-A48C-41A3-9718-11B3FA4CE51A",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "F1C9938C-1276-4FDD-B4FA-561D8F5390D6",
+          "port" : "loop"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E76596A2-728B-4F10-9FC4-68C879829108",
+          "port" : "option"
+        },
+        "to" : {
+          "node" : "F1C9938C-1276-4FDD-B4FA-561D8F5390D6",
+          "port" : "index"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F1C9938C-1276-4FDD-B4FA-561D8F5390D6",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "54A46ADD-CCF9-487A-A620-875BA89809DF",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "54A46ADD-CCF9-487A-A620-875BA89809DF",
+          "port" : "text"
+        },
+        "to" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "prompt"
+        }
+      },
+      {
+        "from" : {
+          "node" : "E76596A2-728B-4F10-9FC4-68C879829108",
+          "port" : "picked"
+        },
+        "to" : {
+          "node" : "2543E57E-C458-4559-A1E4-3157364E13D3",
+          "port" : "a"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9C826F13-92CB-4B01-9C76-6531B7D5D6C5",
+          "port" : "tap"
+        },
+        "to" : {
+          "node" : "2543E57E-C458-4559-A1E4-3157364E13D3",
+          "port" : "b"
+        }
+      },
+      {
+        "from" : {
+          "node" : "2543E57E-C458-4559-A1E4-3157364E13D3",
+          "port" : "pulse"
+        },
+        "to" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "send"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "object"
+        },
+        "to" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "plan"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "loading"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "error"
+        },
+        "to" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "error"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "title"
+        },
+        "to" : {
+          "node" : "D26481D1-F81A-440E-9587-7C8DA5EE4862",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "vibe"
+        },
+        "to" : {
+          "node" : "9DBC8CE3-D738-4C44-AE00-2676ABF9651D",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "morning"
+        },
+        "to" : {
+          "node" : "62A20BA3-DCFD-4752-8CCD-4ADEC4110F45",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "afternoon"
+        },
+        "to" : {
+          "node" : "0E98C785-B54C-43B5-AAB6-790B7ECE3503",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "evening"
+        },
+        "to" : {
+          "node" : "D6FBA6F8-F8DA-4530-A27B-40D77A247DBD",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "tip"
+        },
+        "to" : {
+          "node" : "2E6FCD7C-BB1A-46E1-B389-9E619DC7A9F6",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "tipSymbol"
+        },
+        "to" : {
+          "node" : "0BCAF037-891F-488A-97FA-3413CBE42134",
+          "port" : "symbol"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "button"
+        },
+        "to" : {
+          "node" : "D4D3CB89-243A-4D92-86F5-7F2755F2DC6C",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+          "port" : "shown"
+        },
+        "to" : {
+          "node" : "F7FDD298-3126-4339-9CDE-1DC07A62C588",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F7FDD298-3126-4339-9CDE-1DC07A62C588",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "9F9D8AE9-7D98-41CB-8C1D-F906557A6841",
+          "port" : "opacity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "EBDFF4E5-C8F3-4325-BB79-DA3CC7C301DD",
+          "port" : "target"
+        }
+      },
+      {
+        "from" : {
+          "node" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+          "port" : "loading"
+        },
+        "to" : {
+          "node" : "B5DA14DD-4667-499C-8785-F7AF0963707B",
+          "port" : "running"
+        }
+      },
+      {
+        "from" : {
+          "node" : "EBDFF4E5-C8F3-4325-BB79-DA3CC7C301DD",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "11F02553-34DD-4162-ABC2-739FAB598104",
+          "port" : "shader.strength"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B5DA14DD-4667-499C-8785-F7AF0963707B",
+          "port" : "time"
+        },
+        "to" : {
+          "node" : "11F02553-34DD-4162-ABC2-739FAB598104",
+          "port" : "shader.phase"
+        }
+      },
+      {
+        "from" : {
+          "node" : "EBDFF4E5-C8F3-4325-BB79-DA3CC7C301DD",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8345A067-6B2C-4311-AB54-600AB5067C37",
+          "port" : "shader.thinking"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "E97E8C00-6C20-427B-A3EE-D78907A3552D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DEA20594-8C07-4DB1-8624-B6A82FA85E28",
+        "position" : {
+          "x" : 2064,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "8345A067-6B2C-4311-AB54-600AB5067C37",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8546DB16-2945-4F13-8F7D-0675F0A3A618",
+        "position" : {
+          "x" : 912,
+          "y" : 1728
+        },
+        "script" : "\/\/ Night over the city: a deep gradient with two soft lights, a little brighter while\n\/\/ the model is thinking.\nstruct Inputs {\n    float thinking = 0;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 uv = frame.uv;\n    float3 color = mix(float3(0.05, 0.05, 0.11), float3(0.09, 0.06, 0.17), uv.y);\n    float2 a = (frame.position - float2(0.15, 0.12) * frame.size) \/ frame.size.x;\n    float2 b = (frame.position - float2(0.95, 0.62) * frame.size) \/ frame.size.x;\n    color += float3(0.36, 0.20, 0.62) * exp(-dot(a, a) * 6.0) * (0.55 + 0.35 * in.thinking);\n    color += float3(0.12, 0.30, 0.62) * exp(-dot(b, b) * 5.0) * (0.45 + 0.35 * in.thinking);\n    return float4(color, 1);\n}"
+      },
+      {
+        "id" : "E2B9337A-8752-4454-BE11-C29A6229C590",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7ED93335-8AFC-4599-988F-E5D950F01CEF",
+        "position" : {
+          "x" : 912,
+          "y" : 1944
+        }
+      },
+      {
+        "id" : "6A4B7E55-FB80-446E-B161-983DBCA9009D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A157FF6B-AC55-4784-9A50-9F40BD467C68",
+        "position" : {
+          "x" : 912,
+          "y" : 2088
+        }
+      },
+      {
+        "id" : "98009503-A019-43FD-A9B7-F93A3701BF69",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "696EE4D5-881D-4146-8D39-5138F35068A7",
+        "position" : {
+          "x" : 912,
+          "y" : 2232
+        }
+      },
+      {
+        "id" : "3849D013-2E4C-48BD-998E-51C6FF232A98",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "141C02C7-696B-485D-8F19-3CC1574E6057",
+        "position" : {
+          "x" : 912,
+          "y" : 2376
+        }
+      },
+      {
+        "id" : "30791C1F-1813-42E8-8185-3291274CDA88",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FE70263B-CE91-4027-A4B4-943F4EBEB690",
+        "position" : {
+          "x" : 1488,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "82B063B8-8E7A-48B1-82B2-217D997A4ACF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "3D76B2FD-DD03-4383-A22C-3F07C88CFD9C",
+        "position" : {
+          "x" : 1488,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "11F02553-34DD-4162-ABC2-739FAB598104",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5F2002BA-1C93-4699-B498-E4D66837727D",
+        "position" : {
+          "x" : 912,
+          "y" : 1392
+        },
+        "script" : "\/\/ Apple Intelligence's glow: a line of shifting color along the card's edge with a soft\n\/\/ halo past it. Strength fades it in and out; Phase turns the colors round the card.\nstruct Inputs {\n    float strength = 0;\n    float phase = 0;\n    float radius = 30;\n    float inset = 28;\n};\n\nfloat glow_box(float2 p, float2 half_size, float r) {\n    float2 q = abs(p) - half_size + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 middle = frame.size * 0.5;\n    float2 p = frame.position - middle;\n    float d = glow_box(p, middle - in.inset, in.radius);\n    \/\/ Four colors round the card, turning with Phase.\n    float turn = fract(atan2(p.y, p.x) \/ 6.2831853 + in.phase * 0.12);\n    float3 orange = float3(1.0, 0.56, 0.26), pink = float3(0.98, 0.32, 0.62);\n    float3 violet = float3(0.62, 0.38, 1.0), blue = float3(0.28, 0.62, 1.0);\n    float k = turn * 4.0;\n    float3 color = k < 1.0 ? mix(orange, pink, k) : k < 2.0 ? mix(pink, violet, k - 1.0)\n                 : k < 3.0 ? mix(violet, blue, k - 2.0) : mix(blue, orange, k - 3.0);\n    \/\/ A bright edge that breathes a little, and a halo that falls away outside.\n    float breathe = 0.85 + 0.15 * sin(in.phase * 3.0 + turn * 12.566);\n    float edge = exp(-abs(d) \/ 2.2) * breathe;\n    float halo = d > 0.0 ? exp(-d \/ 11.0) * 0.55 : exp(d \/ 5.0) * 0.25;\n    \/\/ Gone before the view's own edge, so no box shows round it.\n    float2 room = middle - abs(p);\n    float fade = smoothstep(0.0, in.inset * 0.6, min(room.x, room.y));\n    float alpha = saturate((edge + halo) * in.strength * fade);\n    return float4(mix(color, float3(1.0), edge * 0.35), alpha);\n}"
+      },
+      {
+        "id" : "7867B03D-F8C6-495D-911D-E6C30F356287",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "637B6421-100A-495D-BFC0-97B6837355EB",
+        "position" : {
+          "x" : 912,
+          "y" : 2568
+        }
+      },
+      {
+        "id" : "9F9D8AE9-7D98-41CB-8C1D-F906557A6841",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AE616A87-1C6C-4EE9-9493-C28A47CCF83B",
+        "position" : {
+          "x" : 2064,
+          "y" : 864
+        }
+      },
+      {
+        "id" : "2FA5F875-C79D-4B04-ACF3-DF4369D1065F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FB43C764-2371-48AD-98D5-E43D12F4E1F7",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "72EE274B-6A7A-4546-9DF3-696E29B45DBB",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "83CEF642-5D09-42C1-8E26-2BD832622B0B",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "9DBC8CE3-D738-4C44-AE00-2676ABF9651D",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E78BE09F-1B78-41AE-8950-A1D99D1496DA",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "5286A61F-E02A-4CD2-96A0-825E8DA9566B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B87CA5F2-034E-4941-8F4B-F1AF4E7BE022",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "D26481D1-F81A-440E-9587-7C8DA5EE4862",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D9B27E23-E6B9-486F-92D7-D309A2FB3193",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "49D5D3D8-D174-44DA-9769-44BB7D9B6FCA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AEF1112A-5AB1-4D0D-84A3-79497F5D30C9",
+        "position" : {
+          "x" : 48,
+          "y" : 384
+        }
+      },
+      {
+        "id" : "5F0EAE58-189B-478C-8625-42415D96169B",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B9249AD0-A6F8-462D-BB10-3D8049A316EC",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "A99329E2-2B4B-42BF-BDFF-9655CE8FD559",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B7021BC3-35D5-452B-96FC-CC6B0BF9F299",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "090FD6A9-0E31-4B54-A0B4-B849BA4AD8BA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5D8436E8-B6A6-41AA-B3AE-DF7FCD448B4E",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "93E9E373-17FB-44EC-9601-DEE01B7B9E68",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B2914CCF-18E1-4FBC-BB69-8E07FE6861EC",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "62A20BA3-DCFD-4752-8CCD-4ADEC4110F45",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A7E94985-AFA9-4038-A85F-66C0D70331CE",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "F92B0F29-A434-4D8B-881C-294340A01C41",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C8D1BA62-0C75-4AC0-950F-D2730D2CA8BC",
+        "position" : {
+          "x" : 48,
+          "y" : 576
+        }
+      },
+      {
+        "id" : "E8E7EB8D-8CDD-41A9-B6CB-7B4EA66A8FB7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "90BB008B-CAF4-4E7E-8910-A1265A583F8D",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "F1DF6762-157D-4CD6-9990-EA6C71CF8DD5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "276A1D7B-58EC-4DF1-AF24-65FD998DA3DD",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "E3CB0BCF-8B1C-406B-82BD-1E0FE5D63668",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0485D989-8503-4433-86A9-1A4683B20B52",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "5CDDA195-3A03-4121-8DD6-0C5B16A78D51",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D8523170-A890-453F-B87C-9A83BCE1BC2D",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "0E98C785-B54C-43B5-AAB6-790B7ECE3503",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A080911D-4783-4B12-B6F7-40A9F5B6A777",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "6C2173C9-2B90-48CE-BD0C-C4AB94EF8540",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "1579DEC7-E1A2-42E4-A023-AB80FB5847AB",
+        "position" : {
+          "x" : 48,
+          "y" : 768
+        }
+      },
+      {
+        "id" : "C5856583-5979-4B0A-AC6F-B7A2B31ACBD5",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "23F9FE3D-5032-49E1-8F20-7DAFC20B3AFA",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "483B350F-68B6-4EE8-AD5F-586E8A1026C3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D5A82355-EA8A-44E0-8BF8-6AB6026CB04A",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "87005A1F-F881-453C-8B91-20856D7A7C7F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "502D55A9-B175-4C00-9DF4-1147F876D15F",
+        "position" : {
+          "x" : 48,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "BF94FC4F-3238-492B-AFD5-2FB17239D129",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "597BF0F4-DED5-4AA9-9658-71D54A015A7A",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "D6FBA6F8-F8DA-4530-A27B-40D77A247DBD",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2D23AA1F-1A37-44F1-93A6-909791FE5862",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "0CEC35F0-7CF2-4E88-9323-6161AAD9C798",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "44A5B853-4C73-48E4-8E15-A16DE48EC451",
+        "position" : {
+          "x" : 288,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "1F5B3752-BAEE-4F6D-9220-B098FBDB8388",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "F7B9FABC-7475-4BCD-BD62-424A2107D467",
+        "position" : {
+          "x" : 288,
+          "y" : 240
+        }
+      },
+      {
+        "id" : "0BCAF037-891F-488A-97FA-3413CBE42134",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E562551C-0EBF-4670-AF43-6A6E54080850",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "2E6FCD7C-BB1A-46E1-B389-9E619DC7A9F6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "241CDFC2-A4BD-4BB6-98BC-9F285AAAEF4A",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "CB716708-711E-4072-A65A-49BD62BBDFF7",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DA7D1839-1098-4656-8662-B55A8351614B",
+        "position" : {
+          "x" : 1152,
+          "y" : 1392
+        }
+      },
+      {
+        "id" : "0EE82C7A-5873-4539-BEE6-3B23E8BDD7D6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B5C2E057-0B3A-464D-AAD1-98ADEE8E9235",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DF3AF33A-6EF1-4702-9A4C-3E86A19F1735",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "D607EEDC-DD3F-49D1-AD43-848AF9F86FCE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "CC465D9B-7FD4-46EE-92C2-72A9B47D5D04",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4A7BEC7F-3A56-4580-8FEA-2B471CFBC7C8",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "F71398AD-F93A-4D00-93DA-CD58C98BBB4F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7C862BF2-AEE4-4DED-BE43-35EAA433402D",
+        "position" : {
+          "x" : 1152,
+          "y" : 1584
+        }
+      },
+      {
+        "id" : "13559CD0-E3A6-49DD-9610-9EC004E81459",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "7BCD2EE6-88C3-4C3F-989B-B0EA8F68B3F7",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "D4D3CB89-243A-4D92-86F5-7F2755F2DC6C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B462BA4B-358F-49A1-85A6-01C2833AF731",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "7D96C4B1-335C-4E93-9DD9-703F31115080",
+        "inputs" : {
+          "text" : {
+            "type" : "text",
+            "value" : "Kyoto, Lisbon, Marrakesh"
+          }
+        },
+        "kind" : "splitText",
+        "name" : "Cities",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "2F3C4BBE-A48C-41A3-9718-11B3FA4CE51A",
+        "inputs" : {
+
+        },
+        "kind" : "loopOverArray",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "A0EA6CCB-5451-4EA1-8777-C930F5017FCC",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "FE70263B-CE91-4027-A4B4-943F4EBEB690",
+        "position" : {
+          "x" : 48,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "E76596A2-728B-4F10-9FC4-68C879829108",
+        "inputs" : {
+
+        },
+        "kind" : "loopOptionSwitch",
+        "name" : "Chosen City",
+        "position" : {
+          "x" : 336,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "CAA71F2F-E48A-45F7-B209-45BC5AD02922",
+        "inputs" : {
+
+        },
+        "kind" : "equal",
+        "name" : "Is Chosen",
+        "position" : {
+          "x" : 624,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "1D54874E-2416-47B3-BAAC-554512581516",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.85
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.3
+          }
+        },
+        "kind" : "spring",
+        "name" : "Lit",
+        "position" : {
+          "x" : 912,
+          "y" : 312
+        }
+      },
+      {
+        "id" : "24E06410-0571-4E8F-BEF5-AEA5CBA6AF18",
+        "inputs" : {
+          "end" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "start" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.08,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Chip Fill",
+        "position" : {
+          "x" : 1200,
+          "y" : 312
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "8F59B075-AFB3-4521-B49B-F392CB85E0E0",
+        "inputs" : {
+          "end" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 0.11372549019607843,
+              "green" : 0.09411764705882353,
+              "red" : 0.09411764705882353
+            }
+          },
+          "start" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          }
+        },
+        "kind" : "transition",
+        "name" : "Chip Ink",
+        "position" : {
+          "x" : 1200,
+          "y" : 480
+        },
+        "valueType" : "color"
+      },
+      {
+        "id" : "F1C9938C-1276-4FDD-B4FA-561D8F5390D6",
+        "inputs" : {
+
+        },
+        "kind" : "loopSelect",
+        "name" : "City",
+        "position" : {
+          "x" : 624,
+          "y" : 528
+        },
+        "valueType" : "text"
+      },
+      {
+        "id" : "54A46ADD-CCF9-487A-A620-875BA89809DF",
+        "inputs" : {
+          "a" : {
+            "type" : "text",
+            "value" : "Plan one perfect day in "
+          }
+        },
+        "kind" : "joinText",
+        "name" : "Prompt",
+        "position" : {
+          "x" : 912,
+          "y" : 864
+        }
+      },
+      {
+        "id" : "9C826F13-92CB-4B01-9C76-6531B7D5D6C5",
+        "inputs" : {
+
+        },
+        "kind" : "interaction",
+        "layerID" : "7C862BF2-AEE4-4DED-BE43-35EAA433402D",
+        "position" : {
+          "x" : 48,
+          "y" : 1032
+        }
+      },
+      {
+        "id" : "2543E57E-C458-4559-A1E4-3157364E13D3",
+        "inputs" : {
+
+        },
+        "kind" : "eitherPulse",
+        "name" : "Ask",
+        "position" : {
+          "x" : 624,
+          "y" : 1032
+        }
+      },
+      {
+        "id" : "C99BE63F-5B2C-42BE-9B3D-E51207E92737",
+        "inputs" : {
+          "fields" : {
+            "type" : "text",
+            "value" : "title: text - an evocative title for the day, at most six words\nvibe: calm | lively | romantic | adventurous | foodie\nmorning: text - what to do in the morning, under twelve words\nafternoon: text - what to do in the afternoon, under twelve words\nevening: text - what to do in the evening, under twelve words\ntip: text - one insider tip, one short sentence"
+          },
+          "instructions" : {
+            "type" : "text",
+            "value" : "You are a well-travelled local friend. Name real places. Keep every part short and vivid."
+          }
+        },
+        "kind" : "aiObject",
+        "name" : "Plan the Day",
+        "position" : {
+          "x" : 1200,
+          "y" : 864
+        }
+      },
+      {
+        "id" : "78EF981E-1625-474D-9417-DCF4801FCC7C",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Card Words",
+        "position" : {
+          "x" : 1488,
+          "y" : 864
+        },
+        "script" : "\/\/ The plan as the card shows it. Until the model has answered, the plan the card\n\/\/ was drawn with stays; a failure shows in the tip, which is where the eye ends.\n\/\/ The last plan fades back while a new one is asked for, until its first field.\ninputs = { plan: {}, loading: false, error: \"\" };\noutputs = { title: \"\", vibe: \"\", morning: \"\", afternoon: \"\", evening: \"\", tip: \"\", tipSymbol: \"\", button: \"\", shown: 1 };\n\nlet asked = null;\n\nconst first = {\n  title: \"Temples, Tea and Lantern Light\", vibe: \"calm\",\n  morning: \"Walk Fushimi Inari's vermilion gates before the crowds.\",\n  afternoon: \"Matcha and sweets in a quiet Uji teahouse.\",\n  evening: \"Wander Gion's lantern-lit lanes as the shops close.\",\n  tip: \"Buy an ICOCA card: it pays for trains, buses and snacks.\",\n};\nfunction evaluate(inputs, outputs) {\n  const answered = inputs.plan && typeof inputs.plan === \"object\" && Object.keys(inputs.plan).length > 0;\n  const plan = answered ? inputs.plan : first;\n  for (const key of [\"title\", \"morning\", \"afternoon\", \"evening\", \"tip\"]) {\n    outputs[key] = typeof plan[key] === \"string\" ? plan[key] : \"\";\n  }\n  outputs.vibe = String(plan.vibe || (inputs.loading ? \"…\" : \"\")).toUpperCase();\n  outputs.tipSymbol = inputs.error ? \"exclamationmark.triangle.fill\" : \"lightbulb.fill\";\n  if (inputs.error && !inputs.loading) outputs.tip = inputs.error;\n  outputs.button = inputs.loading ? \"Planning…\" : \"Plan again\";\n  const now = JSON.stringify(inputs.plan);\n  if (!inputs.loading) asked = null;\n  else if (asked === null) asked = now;\n  outputs.shown = inputs.loading && now === asked ? 0.35 : 1;\n}"
+      },
+      {
+        "id" : "F7FDD298-3126-4339-9CDE-1DC07A62C588",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.35
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 1
+          }
+        },
+        "kind" : "spring",
+        "name" : "Shown",
+        "position" : {
+          "x" : 1776,
+          "y" : 864
+        }
+      },
+      {
+        "id" : "EBDFF4E5-C8F3-4325-BB79-DA3CC7C301DD",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 1
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.5
+          }
+        },
+        "kind" : "spring",
+        "name" : "Thinking",
+        "position" : {
+          "x" : 336,
+          "y" : 1392
+        }
+      },
+      {
+        "id" : "B5DA14DD-4667-499C-8785-F7AF0963707B",
+        "inputs" : {
+
+        },
+        "kind" : "time",
+        "name" : "Phase",
+        "position" : {
+          "x" : 336,
+          "y" : 1608
+        }
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "8546DB16-2945-4F13-8F7D-0675F0A3A618",
+        "kind" : "view",
+        "name" : "Night",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 874,
+              "width" : 402
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+
+          },
+          "source" : "\/\/ Night over the city: a deep gradient with two soft lights, a little brighter while\n\/\/ the model is thinking.\nstruct Inputs {\n    float thinking = 0;\n};\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 uv = frame.uv;\n    float3 color = mix(float3(0.05, 0.05, 0.11), float3(0.09, 0.06, 0.17), uv.y);\n    float2 a = (frame.position - float2(0.15, 0.12) * frame.size) \/ frame.size.x;\n    float2 b = (frame.position - float2(0.95, 0.62) * frame.size) \/ frame.size.x;\n    color += float3(0.36, 0.20, 0.62) * exp(-dot(a, a) * 6.0) * (0.55 + 0.35 * in.thinking);\n    color += float3(0.12, 0.30, 0.62) * exp(-dot(b, b) * 5.0) * (0.45 + 0.35 * in.thinking);\n    return float4(color, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "7ED93335-8AFC-4599-988F-E5D950F01CEF",
+        "kind" : "text",
+        "name" : "Kicker",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 76
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "ON DEVICE · PRIVATE"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.7,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A157FF6B-AC55-4784-9A50-9F40BD467C68",
+        "kind" : "text",
+        "name" : "Title",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 96
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Plan a Day"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "696EE4D5-881D-4146-8D39-5138F35068A7",
+        "kind" : "text",
+        "name" : "Blurb",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 15
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 400
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 152
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 40,
+              "width" : 362
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Pick a city. The model on this device plans it: no key, nothing sent."
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.6,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "3D76B2FD-DD03-4383-A22C-3F07C88CFD9C",
+                "kind" : "text",
+                "name" : "City",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 15
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Kyoto"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "FE70263B-CE91-4027-A4B4-943F4EBEB690",
+            "kind" : "view",
+            "name" : "Chip",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 19
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.08,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 38,
+                  "width" : 80
+                }
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "141C02C7-696B-485D-8F19-3CC1574E6057",
+        "kind" : "view",
+        "name" : "Cities",
+        "properties" : {
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 196
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 38,
+              "width" : 362
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "5F2002BA-1C93-4699-B498-E4D66837727D",
+        "kind" : "view",
+        "name" : "Glow",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : -8,
+              "y" : 224
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 528,
+              "width" : 418
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "inset" : {
+              "type" : "number",
+              "value" : 28
+            },
+            "radius" : {
+              "type" : "number",
+              "value" : 30
+            }
+          },
+          "source" : "\/\/ Apple Intelligence's glow: a line of shifting color along the card's edge with a soft\n\/\/ halo past it. Strength fades it in and out; Phase turns the colors round the card.\nstruct Inputs {\n    float strength = 0;\n    float phase = 0;\n    float radius = 30;\n    float inset = 28;\n};\n\nfloat glow_box(float2 p, float2 half_size, float r) {\n    float2 q = abs(p) - half_size + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 middle = frame.size * 0.5;\n    float2 p = frame.position - middle;\n    float d = glow_box(p, middle - in.inset, in.radius);\n    \/\/ Four colors round the card, turning with Phase.\n    float turn = fract(atan2(p.y, p.x) \/ 6.2831853 + in.phase * 0.12);\n    float3 orange = float3(1.0, 0.56, 0.26), pink = float3(0.98, 0.32, 0.62);\n    float3 violet = float3(0.62, 0.38, 1.0), blue = float3(0.28, 0.62, 1.0);\n    float k = turn * 4.0;\n    float3 color = k < 1.0 ? mix(orange, pink, k) : k < 2.0 ? mix(pink, violet, k - 1.0)\n                 : k < 3.0 ? mix(violet, blue, k - 2.0) : mix(blue, orange, k - 3.0);\n    \/\/ A bright edge that breathes a little, and a halo that falls away outside.\n    float breathe = 0.85 + 0.15 * sin(in.phase * 3.0 + turn * 12.566);\n    float edge = exp(-abs(d) \/ 2.2) * breathe;\n    float halo = d > 0.0 ? exp(-d \/ 11.0) * 0.55 : exp(d \/ 5.0) * 0.25;\n    \/\/ Gone before the view's own edge, so no box shows round it.\n    float2 room = middle - abs(p);\n    float fade = smoothstep(0.0, in.inset * 0.6, min(room.x, room.y));\n    float alpha = saturate((edge + halo) * in.strength * fade);\n    return float4(mix(color, float3(1.0), edge * 0.35), alpha);\n}"
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "E78BE09F-1B78-41AE-8950-A1D99D1496DA",
+                        "kind" : "text",
+                        "name" : "Vibe",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 12
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "CALM"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "83CEF642-5D09-42C1-8E26-2BD832622B0B",
+                    "kind" : "view",
+                    "name" : "Vibe Pill",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 13
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.35,
+                          "blue" : 0.9607843137254902,
+                          "green" : 0.4,
+                          "red" : 0.5176470588235295
+                        }
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "paddingHorizontal" : {
+                        "type" : "number",
+                        "value" : 12
+                      },
+                      "paddingVertical" : {
+                        "type" : "number",
+                        "value" : 0
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 26,
+                          "width" : 60
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Auto"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "B87CA5F2-034E-4941-8F4B-F1AF4E7BE022",
+                    "kind" : "symbol",
+                    "name" : "Sparkle",
+                    "properties" : {
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.7,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 20,
+                          "width" : 20
+                        }
+                      },
+                      "symbol" : {
+                        "type" : "text",
+                        "value" : "apple.intelligence"
+                      }
+                    }
+                  }
+                ],
+                "id" : "FB43C764-2371-48AD-98D5-E43D12F4E1F7",
+                "kind" : "view",
+                "name" : "Top",
+                "properties" : {
+                  "alignment" : {
+                    "type" : "text",
+                    "value" : "Center"
+                  },
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "distribution" : {
+                    "type" : "text",
+                    "value" : "Space Between"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 26,
+                      "width" : 314
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "D9B27E23-E6B9-486F-92D7-D309A2FB3193",
+                "kind" : "text",
+                "name" : "Plan Title",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 28
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 700
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 70,
+                      "width" : 314
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Temples, Tea and Lantern Light"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Fixed"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "B7021BC3-35D5-452B-96FC-CC6B0BF9F299",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 0.25098039215686274,
+                              "green" : 0.7019607843137254,
+                              "red" : 1
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 20,
+                              "width" : 20
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "sunrise.fill"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "B9249AD0-A6F8-462D-BB10-3D8049A316EC",
+                    "kind" : "view",
+                    "name" : "Badge",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.22,
+                          "blue" : 0.25098039215686274,
+                          "green" : 0.7019607843137254,
+                          "red" : 1
+                        }
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 44,
+                          "width" : 44
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "B2914CCF-18E1-4FBC-BB69-8E07FE6861EC",
+                        "kind" : "text",
+                        "name" : "When",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 12
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "MORNING"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.5,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "A7E94985-AFA9-4038-A85F-66C0D70331CE",
+                        "kind" : "text",
+                        "name" : "Morning Plan",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 16
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 500
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 42,
+                              "width" : 256
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "Walk Fushimi Inari's vermilion gates before the crowds."
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "5D8436E8-B6A6-41AA-B3AE-DF7FCD448B4E",
+                    "kind" : "view",
+                    "name" : "Words",
+                    "properties" : {
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 62,
+                          "width" : 256
+                        }
+                      },
+                      "spacing" : {
+                        "type" : "number",
+                        "value" : 3
+                      }
+                    }
+                  }
+                ],
+                "id" : "AEF1112A-5AB1-4D0D-84A3-79497F5D30C9",
+                "kind" : "view",
+                "name" : "Morning",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 62,
+                      "width" : 314
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "276A1D7B-58EC-4DF1-AF24-65FD998DA3DD",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 0.5411764705882353,
+                              "green" : 0.7058823529411765,
+                              "red" : 0.36470588235294116
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 20,
+                              "width" : 20
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "cup.and.saucer.fill"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "90BB008B-CAF4-4E7E-8910-A1265A583F8D",
+                    "kind" : "view",
+                    "name" : "Badge",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.22,
+                          "blue" : 0.5411764705882353,
+                          "green" : 0.7058823529411765,
+                          "red" : 0.36470588235294116
+                        }
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 44,
+                          "width" : 44
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "D8523170-A890-453F-B87C-9A83BCE1BC2D",
+                        "kind" : "text",
+                        "name" : "When",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 12
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "AFTERNOON"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.5,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "A080911D-4783-4B12-B6F7-40A9F5B6A777",
+                        "kind" : "text",
+                        "name" : "Afternoon Plan",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 16
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 500
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 42,
+                              "width" : 256
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "Matcha and sweets in a quiet Uji teahouse."
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "0485D989-8503-4433-86A9-1A4683B20B52",
+                    "kind" : "view",
+                    "name" : "Words",
+                    "properties" : {
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 62,
+                          "width" : 256
+                        }
+                      },
+                      "spacing" : {
+                        "type" : "number",
+                        "value" : 3
+                      }
+                    }
+                  }
+                ],
+                "id" : "C8D1BA62-0C75-4AC0-950F-D2730D2CA8BC",
+                "kind" : "view",
+                "name" : "Afternoon",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 62,
+                      "width" : 314
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "D5A82355-EA8A-44E0-8BF8-6AB6026CB04A",
+                        "kind" : "symbol",
+                        "name" : "Glyph",
+                        "properties" : {
+                          "fill" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 0.6627450980392157,
+                              "red" : 0.35294117647058826
+                            }
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 20,
+                              "width" : 20
+                            }
+                          },
+                          "symbol" : {
+                            "type" : "text",
+                            "value" : "moon.stars.fill"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "23F9FE3D-5032-49E1-8F20-7DAFC20B3AFA",
+                    "kind" : "view",
+                    "name" : "Badge",
+                    "properties" : {
+                      "alignment" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "axis" : {
+                        "type" : "text",
+                        "value" : "Horizontal"
+                      },
+                      "cornerRadius" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "distribution" : {
+                        "type" : "text",
+                        "value" : "Center"
+                      },
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.22,
+                          "blue" : 1,
+                          "green" : 0.6627450980392157,
+                          "red" : 0.35294117647058826
+                        }
+                      },
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 44,
+                          "width" : 44
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "597BF0F4-DED5-4AA9-9658-71D54A015A7A",
+                        "kind" : "text",
+                        "name" : "When",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 12
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 700
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "EVENING"
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 0.5,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Auto"
+                          }
+                        }
+                      },
+                      {
+                        "children" : [
+
+                        ],
+                        "id" : "2D23AA1F-1A37-44F1-93A6-909791FE5862",
+                        "kind" : "text",
+                        "name" : "Evening Plan",
+                        "properties" : {
+                          "fontSize" : {
+                            "type" : "number",
+                            "value" : 16
+                          },
+                          "fontWeight" : {
+                            "type" : "number",
+                            "value" : 500
+                          },
+                          "heightMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          },
+                          "position" : {
+                            "type" : "point",
+                            "value" : {
+                              "x" : 0,
+                              "y" : 0
+                            }
+                          },
+                          "size" : {
+                            "type" : "size",
+                            "value" : {
+                              "height" : 42,
+                              "width" : 256
+                            }
+                          },
+                          "text" : {
+                            "type" : "text",
+                            "value" : "Wander Gion's lantern-lit lanes as the shops close."
+                          },
+                          "textColor" : {
+                            "type" : "color",
+                            "value" : {
+                              "alpha" : 1,
+                              "blue" : 1,
+                              "green" : 1,
+                              "red" : 1
+                            }
+                          },
+                          "widthMode" : {
+                            "type" : "text",
+                            "value" : "Fixed"
+                          }
+                        }
+                      }
+                    ],
+                    "id" : "502D55A9-B175-4C00-9DF4-1147F876D15F",
+                    "kind" : "view",
+                    "name" : "Words",
+                    "properties" : {
+                      "layout" : {
+                        "type" : "text",
+                        "value" : "Stack"
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 62,
+                          "width" : 256
+                        }
+                      },
+                      "spacing" : {
+                        "type" : "number",
+                        "value" : 3
+                      }
+                    }
+                  }
+                ],
+                "id" : "1579DEC7-E1A2-42E4-A023-AB80FB5847AB",
+                "kind" : "view",
+                "name" : "Evening",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 62,
+                      "width" : 314
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "44A5B853-4C73-48E4-8E15-A16DE48EC451",
+                "kind" : "view",
+                "name" : "Rule",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 0.12,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 1,
+                      "width" : 314
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              },
+              {
+                "children" : [
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "E562551C-0EBF-4670-AF43-6A6E54080850",
+                    "kind" : "symbol",
+                    "name" : "Tip Glyph",
+                    "properties" : {
+                      "fill" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 1,
+                          "blue" : 0.25098039215686274,
+                          "green" : 0.7019607843137254,
+                          "red" : 1
+                        }
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 16,
+                          "width" : 16
+                        }
+                      },
+                      "symbol" : {
+                        "type" : "text",
+                        "value" : "lightbulb.fill"
+                      }
+                    }
+                  },
+                  {
+                    "children" : [
+
+                    ],
+                    "id" : "241CDFC2-A4BD-4BB6-98BC-9F285AAAEF4A",
+                    "kind" : "text",
+                    "name" : "Tip",
+                    "properties" : {
+                      "fontSize" : {
+                        "type" : "number",
+                        "value" : 14
+                      },
+                      "fontWeight" : {
+                        "type" : "number",
+                        "value" : 400
+                      },
+                      "heightMode" : {
+                        "type" : "text",
+                        "value" : "Fixed"
+                      },
+                      "position" : {
+                        "type" : "point",
+                        "value" : {
+                          "x" : 0,
+                          "y" : 0
+                        }
+                      },
+                      "size" : {
+                        "type" : "size",
+                        "value" : {
+                          "height" : 38,
+                          "width" : 288
+                        }
+                      },
+                      "text" : {
+                        "type" : "text",
+                        "value" : "Buy an ICOCA card: it pays for trains, buses and snacks."
+                      },
+                      "textColor" : {
+                        "type" : "color",
+                        "value" : {
+                          "alpha" : 0.7,
+                          "blue" : 1,
+                          "green" : 1,
+                          "red" : 1
+                        }
+                      },
+                      "widthMode" : {
+                        "type" : "text",
+                        "value" : "Fixed"
+                      }
+                    }
+                  }
+                ],
+                "id" : "F7B9FABC-7475-4BCD-BD62-424A2107D467",
+                "kind" : "view",
+                "name" : "Tip Row",
+                "properties" : {
+                  "axis" : {
+                    "type" : "text",
+                    "value" : "Horizontal"
+                  },
+                  "layout" : {
+                    "type" : "text",
+                    "value" : "Stack"
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 38,
+                      "width" : 314
+                    }
+                  },
+                  "spacing" : {
+                    "type" : "number",
+                    "value" : 10
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Grow"
+                  }
+                }
+              }
+            ],
+            "id" : "AE616A87-1C6C-4EE9-9493-C28A47CCF83B",
+            "kind" : "view",
+            "name" : "Plan",
+            "properties" : {
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 24
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 472,
+                  "width" : 362
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 16
+              }
+            }
+          }
+        ],
+        "id" : "637B6421-100A-495D-BFC0-97B6837355EB",
+        "kind" : "view",
+        "name" : "Card",
+        "properties" : {
+          "backgroundBlur" : {
+            "type" : "number",
+            "value" : 24
+          },
+          "clips" : {
+            "type" : "bool",
+            "value" : true
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 30
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.07,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 252
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 472,
+              "width" : 362
+            }
+          },
+          "strokeColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.14,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "strokeWidth" : {
+            "type" : "number",
+            "value" : 1
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "D607EEDC-DD3F-49D1-AD43-848AF9F86FCE",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "apple.intelligence"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "4A7BEC7F-3A56-4580-8FEA-2B471CFBC7C8",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Tap a city to plan a day there"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "B5C2E057-0B3A-464D-AAD1-98ADEE8E9235",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "DA7D1839-1098-4656-8662-B55A8351614B",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 734
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "7BCD2EE6-88C3-4C3F-989B-B0EA8F68B3F7",
+            "kind" : "symbol",
+            "name" : "Glyph",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 18,
+                  "width" : 18
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "sparkles"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "B462BA4B-358F-49A1-85A6-01C2833AF731",
+            "kind" : "text",
+            "name" : "Label",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Plan again"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 0.11372549019607843,
+                  "green" : 0.09411764705882353,
+                  "red" : 0.09411764705882353
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "7C862BF2-AEE4-4DED-BE43-35EAA433402D",
+        "kind" : "view",
+        "name" : "Plan Button",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 28
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 20,
+              "y" : 778
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 56,
+              "width" : 362
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      }
+    ],
+    "id" : "DEA20594-8C07-4DB1-8624-B6A82FA85E28",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0,
+          "green" : 0,
+          "red" : 0
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
+    }
+  },
+  "version" : 4
+}

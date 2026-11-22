@@ -744,6 +744,8 @@ public enum Gallery {
                     section: .showcase, fileName: "Weather") { SampleDocuments.weather().document },
         GalleryItem(id: "holo", title: "Holographic Card", summary: "Drag the card to tilt it: its foil shader slides a rainbow and moves the glare, and it settles back with a spring.",
                     section: .showcase, fileName: "HoloCard") { SampleDocuments.holoCard().document },
+        GalleryItem(id: "plan", title: "Plan a Day", summary: "Apple's on-device model, held to six fields, plans a day in a city: the card fills in as it streams and glows while it thinks. Free and private.",
+                    section: .showcase, fileName: "PlanADay") { SampleDocuments.planADay().document },
         GalleryItem(id: "card", title: "Card That Opens", summary: "One tap opens a story: one spring value moves its place, size, corners and the dimming together.",
                     section: .examples, fileName: "Card") { SampleDocuments.card().document },
         GalleryItem(id: "signin", title: "Typing a Name", summary: "What is typed drives a greeting, and wakes the button once there is a name.",
