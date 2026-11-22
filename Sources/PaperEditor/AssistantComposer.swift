@@ -69,6 +69,16 @@ struct AssistantComposer: View {
     /// What choosing a model does; the list of chats starts a new chat for it when this one has begun.
     var changeModel: ((AssistantSession.Model) -> Void)?
 
+    @Environment(\.openSettings) private var openSettings
+
+    /// Opens Settings on the pane that has the keys and the local server.
+    private func showAISettings() {
+        UserDefaults.standard.set(SettingsPane.ai.rawValue, forKey: "settingsPane")
+        openSettings()
+    }
+
+    /// The local server's models, followed here so the menu has them as soon as Settings lists them.
+    @AppStorage(AssistantSettings.localModelsKey) private var localModels = ""
     @State private var highlighted = 0
     /// The draft for which the person closed the list of suggestions with Escape.
     @State private var dismissedFor: String?
@@ -182,15 +192,9 @@ struct AssistantComposer: View {
             Spacer(minLength: 4)
 
             Menu {
-                Picker("Model", selection: Binding(
-                    get: { session.model },
-                    set: { model in if let changeModel { changeModel(model) } else { session.model = model } }
-                )) {
-                    ForEach(AssistantSession.Model.allCases) { model in
-                        Text(model.title).tag(model)
-                    }
+                ForEach(AssistantProvider.allCases) { provider in
+                    Section(provider.name) { models(of: provider) }
                 }
-                .pickerStyle(.inline)
                 Picker("Thinking", selection: $session.effort) {
                     ForEach(AssistantSession.Effort.allCases) { effort in
                         Text(effort.title).tag(effort)
@@ -212,7 +216,7 @@ struct AssistantComposer: View {
             .buttonStyle(.plain)
             .menuIndicator(.hidden)
             .fixedSize()
-            .help("The Claude model that answers, and how hard it thinks first. Changing the model starts a new chat; thinking applies from your next message.")
+            .help("Who answers, and how hard it thinks first. Changing the model starts a new chat; thinking applies from your next message.")
 
             if session.isWorking, !canSend {
                 roundButton("Stop", symbol: "stop.fill", iconSize: 9, isOn: true, color: AnyShapeStyle(AssistantStyle.text), icon: Color(nsColor: .windowBackgroundColor)) { session.stop() }
@@ -243,6 +247,29 @@ struct AssistantComposer: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
+    }
+
+    /// What the menu offers of one provider: its models, or the way to set it up.
+    @ViewBuilder private func models(of provider: AssistantProvider) -> some View {
+        let models = provider == .local
+            ? AssistantSession.Model.models(listed: AssistantSettings.models(in: localModels))
+            : AssistantSession.Model.models(for: provider)
+        if provider == .local, models.isEmpty {
+            Button("Set Up a Local Server…", action: showAISettings)
+        } else if [.openAI, .gemini].contains(provider), !AIKeys.shared.hasKey(account: provider.keyAccount) {
+            Button("Add a Key in Settings…", action: showAISettings)
+        } else {
+            ForEach(models) { model in
+                Toggle(model.title, isOn: Binding(
+                    get: { session.model == model },
+                    set: { chosen in
+                        guard chosen, session.model != model else { return }
+                        AssistantSettings.remember(model)
+                        if let changeModel { changeModel(model) } else { session.model = model }
+                    }
+                ))
+            }
+        }
     }
 
     /// The model that answers, by name once Claude has said which one Default is.

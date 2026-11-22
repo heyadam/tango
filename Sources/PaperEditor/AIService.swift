@@ -11,56 +11,68 @@ import PaperModel
 // provider, sends it, and reports back with `Runtime.update(ai:_:)`. Building and reading
 // are plain functions (`AIService.urlRequest`, `AIStream`), tested without a network.
 
-/// The API keys of the AI patches: in this Mac's keychain, one per provider. Whether a key
-/// is saved, and its last characters, are kept in the defaults, so Settings can say so
-/// without opening the keychain.
+/// The API keys of the AI patches and of the assistant: in this Mac's keychain, one per
+/// account (a provider's name). Whether a key is saved, and its last characters, are kept
+/// in the defaults, so Settings can say so without opening the keychain.
 @Observable
 final class AIKeys {
     static let shared = AIKeys(vault: KeychainVault(service: KeychainVault.aiService, label: "tango AI key"))
 
+    /// Every account a key can be saved for: the AI patches' providers, which the assistant
+    /// shares, and the ones only the assistant uses.
+    static let accounts = AIProvider.allCases.map(\.rawValue) + [gemini, local]
+    static let gemini = "gemini"
+    /// The key of a local server, for the few that want one.
+    static let local = "local"
+
     private let vault: any KeyVault
     private let defaults: UserDefaults
-    /// The last four characters of each saved key.
-    private(set) var hints: [AIProvider: String] = [:]
-    /// Values read this launch. The keychain is asked once per provider.
-    @ObservationIgnored private var cache: [AIProvider: String] = [:]
+    /// The last four characters of each saved key, by account.
+    private(set) var hints: [String: String] = [:]
+    /// Values read this launch. The keychain is asked once per account.
+    @ObservationIgnored private var cache: [String: String] = [:]
 
     init(vault: any KeyVault = MemoryVault(), defaults: UserDefaults = .standard) {
         self.vault = vault
         self.defaults = defaults
-        for provider in AIProvider.allCases {
-            if let hint = defaults.string(forKey: Self.hintKey(provider)) { hints[provider] = hint }
+        for account in Self.accounts {
+            if let hint = defaults.string(forKey: Self.hintKey(account)) { hints[account] = hint }
         }
     }
 
-    private static func hintKey(_ provider: AIProvider) -> String { "aiKeyHint." + provider.rawValue }
+    private static func hintKey(_ account: String) -> String { "aiKeyHint." + account }
 
-    func hasKey(for provider: AIProvider) -> Bool { hints[provider] != nil }
+    func hasKey(account: String) -> Bool { hints[account] != nil }
 
-    func key(for provider: AIProvider) -> String? {
-        if let cached = cache[provider] { return cached }
-        guard hasKey(for: provider), let value = vault.value(for: provider.rawValue), !value.isEmpty else { return nil }
-        cache[provider] = value
+    func key(account: String) -> String? {
+        if let cached = cache[account] { return cached }
+        guard hasKey(account: account), let value = vault.value(for: account), !value.isEmpty else { return nil }
+        cache[account] = value
         return value
     }
 
-    func set(_ value: String, for provider: AIProvider) throws {
+    func set(_ value: String, account: String) throws {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return try remove(provider) }
-        try vault.set(trimmed, for: provider.rawValue)
-        cache[provider] = trimmed
+        guard !trimmed.isEmpty else { return try remove(account: account) }
+        try vault.set(trimmed, for: account)
+        cache[account] = trimmed
         let hint = String(trimmed.suffix(4))
-        hints[provider] = hint
-        defaults.set(hint, forKey: Self.hintKey(provider))
+        hints[account] = hint
+        defaults.set(hint, forKey: Self.hintKey(account))
     }
 
     /// Forgets the key. If the keychain refuses, the key is still there, and so is its hint.
-    func remove(_ provider: AIProvider) throws {
-        try vault.remove(provider.rawValue)
-        cache[provider] = nil
-        hints[provider] = nil
-        defaults.removeObject(forKey: Self.hintKey(provider))
+    func remove(account: String) throws {
+        try vault.remove(account)
+        cache[account] = nil
+        hints[account] = nil
+        defaults.removeObject(forKey: Self.hintKey(account))
     }
+
+    func hasKey(for provider: AIProvider) -> Bool { hasKey(account: provider.rawValue) }
+    func key(for provider: AIProvider) -> String? { key(account: provider.rawValue) }
+    func set(_ value: String, for provider: AIProvider) throws { try set(value, account: provider.rawValue) }
+    func remove(_ provider: AIProvider) throws { try remove(account: provider.rawValue) }
 
     /// Where a person gets a key.
     static func consoleURL(for provider: AIProvider) -> URL {
@@ -533,6 +545,11 @@ final class AIService {
 
     /// The words for a failed call: the provider's own message when it sent one.
     static func problem(status: Int, body: Data, provider: AIProvider) -> String {
+        problem(status: status, body: body, name: provider.name)
+    }
+
+    /// The same for anyone who answers like these providers, by name.
+    static func problem(status: Int, body: Data, name: String) -> String {
         var text = body
         // A stream that failed may still carry the error as an event's data.
         if let lines = String(data: body, encoding: .utf8) {
@@ -543,11 +560,11 @@ final class AIService {
         let message = Value.parseJSON(text)?.value(atPath: "error.message")?.textValue ?? ""
         switch status {
         case 401, 403:
-            return "\(provider.name) refused the API key. Check it in Settings (Command-comma)."
+            return "\(name) refused the API key. Check it in Settings (Command-comma)."
         case 429:
-            return message.isEmpty ? "\(provider.name) is receiving too many requests from this key. Try again shortly." : message
+            return message.isEmpty ? "\(name) is receiving too many requests from this key. Try again shortly." : message
         default:
-            return message.isEmpty ? "\(provider.name) answered \(status)." : message
+            return message.isEmpty ? "\(name) answered \(status)." : message
         }
     }
 
