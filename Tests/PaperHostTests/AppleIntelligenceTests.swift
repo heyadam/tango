@@ -21,8 +21,13 @@ import PaperModel
         mood: happy | sad
         moods: list of happy | sad
         """)
-        #expect(fields.count == 9)
+        #expect(fields.map(\.kind) == [
+            .text, .number, .whole, .bool, .list(.text, count: nil), .list(.text, count: 3), .list(.number, count: 2),
+            .choice(["happy", "sad"]), .list(.choice(["happy", "sad"]), count: nil),
+        ])
         _ = try AppleIntelligence.schema(for: fields)
+        // Names that a schema inside might also have do not collide.
+        _ = try AppleIntelligence.schema(for: AIField.parse("Object: a | b\nx: list of c | d\nxItem: e | f"))
     }
 
     @Test func aConversationBecomesATranscript() {

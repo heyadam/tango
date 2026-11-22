@@ -31,6 +31,8 @@ extension AITests {
         steps: list of 3 text
         scores: 5 numbers
         mood: happy | sad | calm
+        moods: list of Happy | sad
+        picks: 2 red | blue
 
         - "note"
         title: number
@@ -45,6 +47,8 @@ extension AITests {
             AIField("steps", .list(.text, count: 3)),
             AIField("scores", .list(.number, count: 5)),
             AIField("mood", .choice(["happy", "sad", "calm"])),
+            AIField("moods", .list(.choice(["Happy", "sad"]), count: nil)),
+            AIField("picks", .list(.choice(["red", "blue"]), count: 2)),
             AIField("note", .text),
         ])
         #expect(AIField.parse("").isEmpty)

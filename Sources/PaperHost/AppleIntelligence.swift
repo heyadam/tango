@@ -206,6 +206,8 @@ public final class AppleIntelligence {
     }
 
     /// The schema that holds the model to `fields`.
+    /// The schemas inside are named by place, not by field, so no field name can collide
+    /// with another schema's.
     static func schema(for fields: [AIField]) throws -> GenerationSchema {
         func schema(_ kind: AIField.Kind, named name: String) -> DynamicGenerationSchema {
             switch kind {
@@ -215,13 +217,13 @@ public final class AppleIntelligence {
             case .bool: DynamicGenerationSchema(type: Bool.self)
             case let .choice(choices): DynamicGenerationSchema(name: name, anyOf: choices)
             case let .list(element, count):
-                DynamicGenerationSchema(arrayOf: schema(element, named: name + "Item"), minimumElements: count, maximumElements: count)
+                DynamicGenerationSchema(arrayOf: schema(element, named: name + ".item"), minimumElements: count, maximumElements: count)
             }
         }
-        let root = DynamicGenerationSchema(name: "Object", properties: fields.map { field in
+        let root = DynamicGenerationSchema(name: "tango.object", properties: fields.enumerated().map { index, field in
             DynamicGenerationSchema.Property(
                 name: field.name, description: field.about.isEmpty ? nil : field.about,
-                schema: schema(field.kind, named: field.name)
+                schema: schema(field.kind, named: "tango.field\(index)")
             )
         })
         return try GenerationSchema(root: root, dependencies: [])
@@ -249,7 +251,10 @@ public final class AppleIntelligence {
             if source.minimalIdentifier == target.minimalIdentifier {
                 return deliver(id, .finished(text: request.prompt, picture: ""))
             }
-            switch await LanguageAvailability().status(from: source, to: target) {
+            let status = await LanguageAvailability().status(from: source, to: target)
+            // Replaced or stopped while it looked: nothing to say.
+            if Task.isCancelled { return }
+            switch status {
             case .installed:
                 break
             case .supported:
@@ -295,6 +300,11 @@ public final class AppleIntelligence {
         // Fetched at once: there is nothing to wait for.
         deliver(id, .finished(text: "", picture: ""))
         guard !hidden else { return deliver(id, .playing(false)) }
+        #if os(iOS)
+        // The player's session would follow the ring switch; speech is what was asked for.
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+        try? AVAudioSession.sharedInstance().setActive(true)
+        #endif
         let utterance = AVSpeechUtterance(string: request.prompt)
         utterance.voice = Self.voice(named: request.voice)
         let voice = Voice { [weak self] in

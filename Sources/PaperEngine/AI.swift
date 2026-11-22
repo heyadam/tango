@@ -311,7 +311,8 @@ extension StandardPatches {
 ///
 /// Kinds: `text` (the default), `number`, `whole` (or `integer`, `int`), `yes/no` (or
 /// `bool`, `boolean`), `list` (of text) or `list of <kind>`, and choices written with bars,
-/// `happy | sad | calm`. A list can say how many: `list of 3 text`, `3 numbers`.
+/// `happy | sad | calm`. A list can say how many: `list of 3 text`, `3 numbers`, and can be
+/// of choices: `list of happy | sad`.
 public struct AIField: Sendable, Hashable {
     public indirect enum Kind: Sendable, Hashable {
         case text, number, whole, bool
@@ -359,33 +360,36 @@ public struct AIField: Sendable, Hashable {
     }
 
     static func kind(_ text: String) -> Kind {
-        let text = text.trimmingCharacters(in: .whitespaces)
-        if text.contains("|") {
-            let choices = text.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
-            return choices.isEmpty ? .text : .choice(choices)
-        }
-        var words = text.lowercased().split(separator: " ").map(String.init)
-        guard !words.isEmpty else { return .text }
+        // A list, and how many, come first: "list of", "3", or both. What is left is the
+        // kind of each item, choices included.
+        var words = text.split(separator: " ").map(String.init)
         var listed = false
         var count: Int?
-        if ["list", "array", "lists"].contains(words[0]) {
+        if let first = words.first, ["list", "array", "lists"].contains(first.lowercased()) {
             listed = true
             words.removeFirst()
-            if words.first == "of" { words.removeFirst() }
+            if words.first?.lowercased() == "of" { words.removeFirst() }
         }
         if let first = words.first, let number = Int(first) {
             count = min(max(number, 1), 100)
             listed = true
             words.removeFirst()
         }
-        var single = words.joined(separator: " ")
-        // "3 numbers", "list of words": a plural names the kind.
-        if listed, single.hasSuffix("s"), single.count > 1 { single.removeLast() }
-        let element: Kind = switch single {
-        case "number", "double", "float", "decimal": .number
-        case "whole", "integer", "int", "count", "whole number": .whole
-        case "bool", "boolean", "yes/no", "yes or no", "flag": .bool
-        default: .text
+        let rest = words.joined(separator: " ")
+        let element: Kind
+        if rest.contains("|") {
+            let choices = rest.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            element = choices.isEmpty ? .text : .choice(choices)
+        } else {
+            var single = rest.lowercased()
+            // "3 numbers", "list of words": a plural names the kind.
+            if listed, single.hasSuffix("s"), single.count > 1 { single.removeLast() }
+            element = switch single {
+            case "number", "double", "float", "decimal": .number
+            case "whole", "integer", "int", "count", "whole number": .whole
+            case "bool", "boolean", "yes/no", "yes or no", "flag": .bool
+            default: .text
+            }
         }
         return listed ? .list(element, count: count) : element
     }
