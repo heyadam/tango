@@ -216,7 +216,27 @@ enum WelcomeEntry: Identifiable, Hashable {
 
 /// The app's mark: a tile with three patches cabled together.
 struct WelcomeMark: View {
+    /// The app's own icon, as the system draws it (rounded, with its margin and shadow), when there is one:
+    /// `papertool` and tests run with no app bundle, and get the drawn mark instead.
+    static var appIcon: NSImage? {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleIconName") == nil ? nil : NSApp.applicationIconImage
+    }
+
     var body: some View {
+        if let icon = Self.appIcon {
+            Image(nsImage: icon)
+                .resizable()
+                .interpolation(.high)
+                .aspectRatio(contentMode: .fit)
+                // The icon carries the system's margin (about a tenth each side), so it is drawn larger than the mark.
+                .scaleEffect(1.22)
+                .accessibilityHidden(true)
+        } else {
+            drawn
+        }
+    }
+
+    private var drawn: some View {
         GeometryReader { proxy in
             let side = proxy.size.width
             ZStack {
