@@ -117,14 +117,14 @@ final class DeviceServices: NSObject {
 
     private func startMicrophone() {
         set("microphone.available", .bool(false))
-        AVCaptureDevice.requestAccess(for: .audio) { granted in
-            Task { @MainActor [weak self] in
+        AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
+            Task { @MainActor in
                 guard let self, granted, self.active.contains(.microphone), self.audio == nil else { return }
                 let engine = AVAudioEngine()
                 let input = engine.inputNode
                 let format = input.outputFormat(forBus: 0)
                 guard format.channelCount > 0, format.sampleRate > 0 else { return }
-                input.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+                input.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
                     guard let samples = buffer.floatChannelData?[0], buffer.frameLength > 0 else { return }
                     var sum: Float = 0
                     for index in 0..<Int(buffer.frameLength) { sum += samples[index] * samples[index] }
@@ -132,7 +132,7 @@ final class DeviceServices: NSObject {
                     // Map roughly -50 dB…0 dB onto 0…1.
                     let decibels = 20 * log10(max(rms, 0.000_01))
                     let level = Double(min(max((decibels + 50) / 50, 0), 1))
-                    Task { @MainActor [weak self] in self?.set("microphone.level", .number(level)) }
+                    Task { @MainActor in self?.set("microphone.level", .number(level)) }
                 }
                 do {
                     try engine.start()
@@ -186,8 +186,8 @@ final class DeviceServices: NSObject {
 
     private func startCamera() {
         set("camera.available", .bool(false))
-        AVCaptureDevice.requestAccess(for: .video) { granted in
-            Task { @MainActor [weak self] in
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+            Task { @MainActor in
                 guard let self, granted, self.active.contains(.camera), self.session == nil,
                       let camera = AVCaptureDevice.default(for: .video),
                       let input = try? AVCaptureDeviceInput(device: camera)
@@ -244,7 +244,7 @@ final class DeviceServices: NSObject {
 }
 
 /// Carries a capture session to the background queue that starts or stops it.
-private final class SessionBox: @unchecked Sendable {
+nonisolated private final class SessionBox: @unchecked Sendable {
     let session: AVCaptureSession
     init(_ session: AVCaptureSession) { self.session = session }
 }

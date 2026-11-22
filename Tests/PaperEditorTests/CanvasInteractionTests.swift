@@ -654,8 +654,8 @@ import PaperModel
         }
         let open = Self.view("Open", 100, 300)
         bench.store.apply("Setup") { $0.screen.update(a.id) { $0.children.append(open) } }
-        try #require(bench.store.addFlow(from: button.id, to: b.id))
-        try #require(bench.store.addFlow(from: open.id, to: c, style: .modal))
+        _ = try #require(bench.store.addFlow(from: button.id, to: b.id))
+        _ = try #require(bench.store.addFlow(from: open.id, to: c, style: .modal))
         let toA = try #require(bench.store.addFlow(from: back.id, to: nil))
         let fromC = try #require(bench.store.addFlow(from: close.id, to: nil))
         bench.sync()
