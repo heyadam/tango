@@ -286,15 +286,15 @@ public enum TextMeasurer {
         // included: the size Core Text suggests leaves that leading off, and a text layer
         // given only that drops its last line and runs its words off the edge of the one
         // before (`TextMeasurerTests`).
-        let frameWidth = min(limit.width, 1_000_000)
+        // One line already fits the size suggested, and stays as it was measured; only
+        // taller text is broken into lines to count them, which costs a second layout.
+        let lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font)
+        guard fitted.height > lineHeight * 1.5 else { return Size2(width: ceil(fitted.width), height: ceil(fitted.height)) }
         let frame = CTFramesetterCreateFrame(
             framesetter, CFRange(location: 0, length: 0),
-            CGPath(rect: CGRect(x: 0, y: 0, width: frameWidth, height: 1_000_000), transform: nil), nil
+            CGPath(rect: CGRect(x: 0, y: 0, width: min(limit.width, 1_000_000), height: 1_000_000), transform: nil), nil
         )
         let lines = max((CTFrameGetLines(frame) as? [CTLine])?.count ?? 1, 1)
-        let lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font)
-        // One line already fits the size suggested, and stays as it was measured.
-        let height = lines > 1 ? max(ceil(fitted.height), ceil(Double(lines) * lineHeight)) : ceil(fitted.height)
-        return Size2(width: ceil(fitted.width), height: height)
+        return Size2(width: ceil(fitted.width), height: max(ceil(fitted.height), ceil(Double(lines) * lineHeight)))
     }
 }

@@ -147,4 +147,18 @@ extension AITests {
         runtime.tick(dt: frame)
         #expect(out(runtime, ai, "text") == .text("Once upon"))
     }
+
+    @Test func stoppingBeforeTheFirstWordKeepsTheQuestion() {
+        let (runtime, ai, sent) = setUp("aiText", inputs: ["prompt": .text("Tell a story"), "model": .text(AIRequest.onDevice)])
+        tap(runtime)
+        runtime.update(document: {
+            var document = runtime.document
+            document.graph.update(ai) { $0.inputs["stop"] = .pulse(true) }
+            return document
+        }())
+        runtime.tick(dt: frame)
+        #expect(sent.value.last?.phase == .cancel)
+        #expect(out(runtime, ai, "conversation").arrayValue.map { $0.value(atPath: "role")?.textValue } == ["user"])
+        #expect(out(runtime, ai, "text") == .text(""))
+    }
 }

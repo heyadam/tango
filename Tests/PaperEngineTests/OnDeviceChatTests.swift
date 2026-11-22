@@ -38,7 +38,6 @@ extension ShowcaseTests {
         var texts: [String] { shown.map { $0.value(atPath: "text")?.textValue ?? "" } }
         var marks: Value { runtime.outputValue(PortRef(node: example.feedback, port: "marks")) ?? .object([:]) }
         var welcome: Bool { runtime.resolved.find(example.welcome) != nil }
-        func asks(_ index: Int) -> [AIRequest] { sent.filter { $0.task == .text && $0.phase == .send } }
         var lastAsk: AIRequest { sent.last { $0.task == .text && $0.phase == .send }! }
         func answer(_ text: String) {
             runtime.update(ai: lastAsk.id, .finished(text: text, picture: ""))

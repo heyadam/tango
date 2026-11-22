@@ -443,11 +443,14 @@ extension Runtime {
                 set("error", .text(""), in: ports)
                 publishConversation()
             }
-            // Stop: what was written so far is the answer, as if it had ended there.
+            // Stop: what was written so far is the answer, as if it had ended there. Stopped
+            // before its first word, the question stays without one (an empty answer is
+            // left out, as the APIs refuse an empty turn).
             if pulse(8), let pending = state.pending {
                 send(AIRequest(id: pending, task: .text, phase: .cancel, model: text(2)))
-                if let asked = state.asked, !state.partial.isEmpty, inputs.count > 6 ? inputs[6].boolValue : true {
-                    state.conversation += [asked, AITurn(.assistant, state.partial)]
+                if let asked = state.asked, inputs.count > 6 ? inputs[6].boolValue : true {
+                    state.conversation.append(asked)
+                    if !state.partial.isEmpty { state.conversation.append(AITurn(.assistant, state.partial)) }
                 }
                 state.asked = nil
                 state.pending = nil

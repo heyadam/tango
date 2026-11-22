@@ -116,4 +116,55 @@ import PaperModel
         #expect(runtime.outputValue(PortRef(node: words, port: "value")) == .text("second"))
         #expect(runtime.number(count, "count") == 2)
     }
+
+    /// A Clear gives the old words for its own frame, then the empty Text with a Changed
+    /// pulse on the next, which the runtime asks for itself, so a resting Viewer gets it.
+    @Test func aClearedFieldGivesItsEmptyTextWithChangedOnTheNextFrame() {
+        let field = Layer(name: "Field", kind: .textField, properties: [
+            .position: .point(.zero), .size: .size(Size2(width: 300, height: 50)),
+        ])
+        let button = Layer(name: "Clear", kind: .view, properties: [
+            .position: .point(Point2(x: 0, y: 100)), .size: .size(Size2(width: 100, height: 50)),
+        ])
+        var screen = Layer(name: "Screen", kind: .screen)
+        screen.children = [field, button]
+        var b = SampleDocuments.Builder(screen: screen)
+        let input = b.attach("textInput", to: field.id, at: Point2(x: 48, y: 96))
+        let press = b.interaction(on: button.id, at: Point2(x: 48, y: 312))
+        let kept = b.add("sampleHold", at: Point2(x: 336, y: 96), type: .text)
+        b.connect(press, "tap", to: input, "clear")
+        b.connect(input, "text", to: kept, "value")
+        b.connect(input, "changed", to: kept, "sample")
+        let runtime = Runtime(document: b.document)
+        func text() -> Value { runtime.outputValue(PortRef(node: input, port: "text")) ?? .text("?") }
+        func changed() -> Bool { runtime.outputValue(PortRef(node: input, port: "changed"))?.pulseValue ?? false }
+        runtime.tick(dt: frame)
+        runtime.send(.touchDown(Point2(x: 10, y: 10)))
+        runtime.tick(dt: frame)
+        runtime.send(.touchUp(Point2(x: 10, y: 10)))
+        runtime.tick(dt: frame)
+        runtime.send(.text("Hello"))
+        runtime.tick(dt: frame)
+        #expect(runtime.outputValue(PortRef(node: kept, port: "value")) == .text("Hello"))
+        runtime.settle(within: 1)
+
+        runtime.send(.touchDown(Point2(x: 10, y: 110)))
+        runtime.tick(dt: frame)
+        runtime.send(.touchUp(Point2(x: 10, y: 110)))
+        runtime.tick(dt: frame)
+        // The tap's frame: the Clear reaches the field, which still gives its words.
+        var frames = 0
+        while text() == .text("Hello"), frames < 3 {
+            #expect(!changed())
+            #expect(runtime.needsAnotherFrame)
+            runtime.tick(dt: frame)
+            frames += 1
+        }
+        #expect(text() == .text(""))
+        #expect(changed())
+        #expect(runtime.outputValue(PortRef(node: kept, port: "value")) == .text(""))
+        // And then it rests.
+        #expect(runtime.settle(within: 1))
+        #expect(text() == .text(""))
+    }
 }
