@@ -220,7 +220,7 @@ import PaperModel
     }
 
     @Test func thinkingEffortIsSentAtTheStartAndCanChangeMidChat() async throws {
-        #expect(AssistantSession.Effort.allCases.map(\.title) == ["Default", "Low", "Medium", "High", "Extra High", "Max"])
+        #expect(AssistantSession.Effort.allCases.map(\.title) == ["Auto", "Low", "Medium", "High", "Extra High", "Max"])
         let (session, transport) = make(DocumentStore())
         // Chosen before the chat begins: nothing to tell yet.
         session.effort = .high
