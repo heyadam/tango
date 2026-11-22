@@ -1,5 +1,6 @@
 import AppKit
 import PaperEngine
+import PaperHost
 import PaperModel
 import PaperRender
 import QuartzCore
@@ -13,6 +14,8 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
     private let store: DocumentStore
     /// One renderer per frame of the board.
     private var renderers: [LayerRenderer] = []
+    /// The document's pictures, decoded once for every screen's renderer.
+    private let pictures = PictureStore()
     /// Holds the renderers' layers, under the overlays.
     private let screensLayer = CALayer()
     /// Everything drawn over the screens, in view points, y down.
@@ -372,10 +375,8 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
         overlay.frame = bounds
         while renderers.count < board.frames.count {
             let renderer = LayerRenderer()
-            renderer.imageProvider = { [weak store] name in
-                if let image = ExtensionImages.image(name, in: store?.runtimeRegistry) { return image }
-                guard let data = store?.assets[name] else { return nil }
-                return NSImage(data: data)?.cgImage(forProposedRect: nil, context: nil, hints: nil)
+            renderer.imageProvider = { [weak store, pictures] name in
+                pictures.picture(named: name, assets: store?.assets ?? [:], registry: store?.runtimeRegistry)
             }
             // A video shows the frame its Time names.
             renderer.videoURL = { [weak store] source in VideoFiles.url(for: source, assets: store?.assets ?? [:]) }

@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import Testing
 import PaperEngine
+import PaperHost
 import PaperModel
 @testable import PaperEditor
 
@@ -268,7 +269,7 @@ import PaperModel
             url: "http://localhost:47821/mcp", method: "POST", body: #"{"jsonrpc":"2.0"}"#,
             headers: "Origin: https://example.com\nCookie: a=b\nHost: evil\nX-Token: 1", query: ""
         )
-        let outgoing = ViewerView.urlRequest(for: request, url: try #require(URL(string: request.url)))
+        let outgoing = PrototypeNetwork.urlRequest(for: request, url: try #require(URL(string: request.url)))
         // The agent port refuses any request with an Origin; this one has `null`.
         #expect(outgoing.value(forHTTPHeaderField: "Origin") == "null")
         #expect(outgoing.value(forHTTPHeaderField: "Cookie") == nil)
@@ -283,22 +284,22 @@ import PaperModel
             url: "https://api.example.com/items/3", method: "PUT", body: "name=Ada",
             headers: "Content-Type: application/x-www-form-urlencoded", query: ""
         )
-        let outgoing = ViewerView.urlRequest(for: put, url: try #require(URL(string: put.url)))
+        let outgoing = PrototypeNetwork.urlRequest(for: put, url: try #require(URL(string: put.url)))
         #expect(outgoing.httpMethod == "PUT")
         #expect(outgoing.httpBody == Data("name=Ada".utf8))
         #expect(outgoing.value(forHTTPHeaderField: "Content-Type") == "application/x-www-form-urlencoded")
         #expect(outgoing.value(forHTTPHeaderField: "Origin") == nil)
 
         let get = NetworkRequest.forPatch(url: "https://api.example.com", method: "GET", body: "x", headers: "", query: "")
-        #expect(ViewerView.urlRequest(for: get, url: try #require(URL(string: get.url))).httpBody == nil)
+        #expect(PrototypeNetwork.urlRequest(for: get, url: try #require(URL(string: get.url))).httpBody == nil)
     }
 
     @Test func aRedirectToThisMacIsMarkedAsWell() throws {
         // A server anywhere can answer 307 and send the POST, body and all, on to the agent port.
         let hop = URLRequest(url: try #require(URL(string: "http://127.0.0.1:47821/mcp")))
-        #expect(ViewerView.guarded(hop).value(forHTTPHeaderField: "Origin") == "null")
+        #expect(PrototypeNetwork.guarded(hop).value(forHTTPHeaderField: "Origin") == "null")
         let elsewhere = URLRequest(url: try #require(URL(string: "https://cdn.example.com/a.png")))
-        #expect(ViewerView.guarded(elsewhere).value(forHTTPHeaderField: "Origin") == nil)
+        #expect(PrototypeNetwork.guarded(elsewhere).value(forHTTPHeaderField: "Origin") == nil)
     }
 
     @Test func aHeaderValueCannotStartAnotherHeader() throws {
@@ -306,7 +307,7 @@ import PaperModel
             url: "https://api.example.com", method: "GET", body: "",
             headers: #"{"X-A": "1\r\nX-Injected: 2", "X-B": "ok"}"#, query: ""
         )
-        let outgoing = ViewerView.urlRequest(for: request, url: try #require(URL(string: request.url)))
+        let outgoing = PrototypeNetwork.urlRequest(for: request, url: try #require(URL(string: request.url)))
         #expect(outgoing.value(forHTTPHeaderField: "X-A") == nil)
         #expect(outgoing.value(forHTTPHeaderField: "X-B") == "ok")
     }

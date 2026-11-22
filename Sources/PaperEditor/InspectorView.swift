@@ -1,5 +1,6 @@
 import AppKit
 import PaperEngine
+import PaperHost
 import PaperModel
 import PaperRender
 import SwiftUI

@@ -417,22 +417,3 @@ public final class ExtensionStore {
         PatchRegistry.standard.adding(set(carrying: carried))
     }
 }
-
-/// The pictures that views of extensions draw. A drawing names one as
-/// `ext:<extension id>/<path>`, and it is looked for among that extension's files only.
-enum ExtensionImages {
-    private static let cache = NSCache<NSString, CGImage>()
-
-    static func image(_ name: String, in registry: PatchRegistry?) -> CGImage? {
-        guard name.hasPrefix("ext:"), let registry else { return nil }
-        let rest = name.dropFirst(4)
-        guard let slash = rest.firstIndex(of: "/") else { return nil }
-        let id = String(rest[..<slash]), path = String(rest[rest.index(after: slash)...])
-        guard let member = registry.extensions.member(id), member.isAvailable, let data = member.package.files[path] else { return nil }
-        let key = "\(id) \(member.package.version) \(path) \(data.count)" as NSString
-        if let known = cache.object(forKey: key) { return known }
-        guard let image = NSImage(data: data)?.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
-        cache.setObject(image, forKey: key)
-        return image
-    }
-}

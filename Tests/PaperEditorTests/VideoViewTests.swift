@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import Testing
 import PaperEngine
+import PaperHost
 import PaperModel
 import PaperRender
 @testable import PaperEditor
