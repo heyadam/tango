@@ -90,7 +90,7 @@ public enum AssistantProvider: String, CaseIterable, Identifiable, Sendable {
             }
             let base = provider.baseURL(defaults: defaults)
             if base == nil { problem = "The local server's address in Settings (Command-comma) is not one that can be reached." }
-            return ChatTransport(
+            let transport = ChatTransport(
                 ChatTransport.Config(
                     name: provider == .local ? "The local model" : provider.name,
                     base: base ?? URL(string: "http://localhost")!, key: key, model: model.rawValue,
@@ -99,6 +99,8 @@ public enum AssistantProvider: String, CaseIterable, Identifiable, Sendable {
                 ),
                 problem: problem
             )
+            transport.currentKey = { keys.key(account: provider.keyAccount) }
+            return transport
         }
     }
 }

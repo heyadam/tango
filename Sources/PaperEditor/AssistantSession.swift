@@ -535,6 +535,15 @@ public final class AssistantSession: Identifiable {
         let signedOut = ["auth login", "/login", "authenticate", "invalid api key", "not logged in"].contains { lowered.contains($0) }
         if signedOut, model.provider == .claude, AssistantSettings.claudeUsesKey() {
             entries.append(Entry(kind: .problem, text: "Claude refused the API key. Check it in Settings (Command-comma)."))
+            // The line was opened with that key: the next message opens one with whatever
+            // key is saved by then.
+            settleLive()
+            transport?.onMessage = nil
+            transport?.onClose = nil
+            transport?.stop()
+            transport = nil
+            isWorking = false
+            status = ""
         } else if signedOut, model.provider == .claude {
             entries.append(Entry(kind: .signIn, text: "Claude is not signed in on this Mac. Sign in with your Claude account, then send your message again."))
         } else {

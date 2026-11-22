@@ -56,7 +56,10 @@ public final class ChatTransport: AssistantTransport {
     /// How many times the model may be asked in one answer, as the Node program allows Claude.
     static let mostTurns = 80
 
-    let config: Config
+    private(set) var config: Config
+    /// Reads the saved key again before each request, so one replaced in Settings after
+    /// it was refused is the one the next message goes out with.
+    var currentKey: (() -> String?)?
     /// Why the line cannot open, such as a key that was never entered.
     private let problem: String?
     /// How the request is sent; tests answer it themselves.
@@ -148,6 +151,7 @@ public final class ChatTransport: AssistantTransport {
                     break
                 }
                 requests += 1
+                if let currentKey { config.key = currentKey() }
                 reader = ChatStream(request: requests, dialect: config.dialect)
                 kept = false
                 let request = ChatRequest.build(config, effort: effort, system: system, messages: messages)

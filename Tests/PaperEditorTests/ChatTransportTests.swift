@@ -277,6 +277,30 @@ import PaperModel
         #expect(second.entries.last?.text.hasPrefix("Add an OpenAI API key") == true)
     }
 
+    @Test func aKeyReplacedAfterItWasRefusedIsUsedInTheSameChat() async throws {
+        let defaults = try #require(UserDefaults(suiteName: "ChatTransportTests.refused"))
+        defaults.removePersistentDomain(forName: "ChatTransportTests.refused")
+        let keys = AIKeys(vault: MemoryVault(), defaults: defaults)
+        try keys.set("sk-old", account: AssistantProvider.openAI.keyAccount)
+        let server = Server([(401, [#"{"error":{"message":"Incorrect API key provided"}}"#]), (200, Self.responseWords("Hello."))])
+        let model = AssistantSession.Model(.openAI, "gpt-test")
+        let session = AssistantSession(store: DocumentStore(), model: model) {
+            let transport = AssistantProvider.transport(for: model, keys: keys, defaults: defaults) as! ChatTransport
+            transport.lines = server.lines
+            return transport
+        }
+        await session.send("Hello")
+        await finished(session)
+        #expect(session.entries.last?.kind == .problem)
+        // The person does what the message says, and sends again without starting over.
+        try keys.set("sk-new", account: AssistantProvider.openAI.keyAccount)
+        await session.send("Hello again")
+        await finished(session)
+        #expect(server.requests.map { $0.value(forHTTPHeaderField: "Authorization") } == ["Bearer sk-old", "Bearer sk-new"])
+        #expect(session.entries.last?.text == "Hello.")
+        defaults.removePersistentDomain(forName: "ChatTransportTests.refused")
+    }
+
     @Test func stopEndsTheAnswerAndTheNextMessageGoesOn() async throws {
         let server = Server([(200, [Self.words("Let me")])])
         server.holdsOpen = true
