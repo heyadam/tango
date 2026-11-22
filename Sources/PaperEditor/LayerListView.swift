@@ -226,7 +226,7 @@ struct LayerRow: View {
                 // line, so the controls at the end of every row stay in one column.
                 let starts = layer.isPage && layer.id == store.startScreen
                 Label {
-                    Text(layer.name) + Text(starts ? "  Start" : "").font(.caption).foregroundColor(.secondary)
+                    Text("\(layer.name)\(Text(starts ? "  Start" : "").font(.caption).foregroundColor(.secondary))")
                 } icon: {
                     Image(systemName: symbolName)
                 }

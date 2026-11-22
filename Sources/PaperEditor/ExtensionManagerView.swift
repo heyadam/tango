@@ -494,7 +494,7 @@ private struct ExtensionRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.package.name)
                 HStack(spacing: 6) {
-                    Text("Version \(entry.package.version)")
+                    Text("Version \(entry.package.version.description)")
                     if entry.isLinked { badge("Development", .purple) }
                     if !entry.problems.isEmpty {
                         badge("Problem", .orange)
@@ -562,7 +562,7 @@ private struct ExtensionDetail: View {
                     LabeledContent {
                         Button("Update…") { review(ExtensionReview(package: update, source: entry.source)) }
                     } label: {
-                        Label("Version \(update.version) is available", systemImage: "arrow.down.circle")
+                        Label("Version \(update.version.description) is available", systemImage: "arrow.down.circle")
                     }
                 }
             }

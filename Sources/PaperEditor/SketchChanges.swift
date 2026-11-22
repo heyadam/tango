@@ -244,8 +244,8 @@ struct SketchChanges {
             let ports = registry.ports(for: node).inputs
             var inputs: [String: Any] = [:]
             for port in ports {
-                let from = before.inputs[port.id] ?? port.defaultValue ?? Value.defaultValue(for: port.type)
-                let to = node.inputs[port.id] ?? port.defaultValue ?? Value.defaultValue(for: port.type)
+                let from = before.inputs[port.id] ?? port.defaultValue
+                let to = node.inputs[port.id] ?? port.defaultValue
                 if from != to { inputs[port.id] = ["from": AssistantToolbox.plain(from), "to": AssistantToolbox.plain(to)] }
             }
             if !inputs.isEmpty { entry["inputs"] = inputs }

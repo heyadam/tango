@@ -568,7 +568,6 @@ extension SampleDocuments {
     /// glare moves the other way, the card turns and lifts. Let go and it settles back.
     public static func holoCard() -> HoloCard {
         typealias S = ExampleStyle
-        let w = S.device.width
         let white = ColorValue(white: 1)
         func faint(_ alpha: Double) -> ColorValue { ColorValue(white: 1, alpha: alpha) }
 

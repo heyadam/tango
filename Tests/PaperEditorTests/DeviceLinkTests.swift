@@ -142,7 +142,7 @@ import PaperPlayer
     }
 }
 
-@Suite struct DeviceLinkCodeTests {
+@MainActor @Suite struct DeviceLinkCodeTests {
     @Test func theCodeAPhoneScansHoldsTheKey() throws {
         let key = LinkKey.random()
         let code = try #require(DeviceLinkPanel.code(for: key.text))
