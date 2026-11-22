@@ -184,6 +184,18 @@ public final class PrototypeHost {
         set { renderer.playsVideo = newValue }
     }
 
+    /// Whether the prototype is on screen. Off, it falls silent: videos stop playing and
+    /// on-device speech stops, as if it had ended, and speech that arrives is not played,
+    /// so a closed prototype that is kept (the live one) is never heard over another.
+    public var isOnScreen = true {
+        didSet {
+            guard isOnScreen != oldValue else { return }
+            playsVideo = isOnScreen
+            if isOnScreen { apple.hidden = false } else { apple.quiet() }
+            onWake?()
+        }
+    }
+
     // MARK: Layout
 
     /// The size of the prototype's screen in points.

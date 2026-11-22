@@ -794,7 +794,9 @@ enum StandardPatches {
             summary: "Makes a loop with one value per item of an array.",
             inputs: [PortSpec("array", "Array", .array)],
             outputs: [.generic("value", "Value"), PortSpec("index", "Index", .number)],
-            genericTypes: loopValue
+            // Text first: a patch whose type was never chosen works on the first, and saved
+            // documents rely on Loop Over Array giving text.
+            genericTypes: [.text] + loopValue.filter { $0 != .text }
         ).wholeLoop { ctx in
             let items = (ctx.first(0)?.arrayValue ?? []).prefix(loopLimit)
             ctx.outputs = items.enumerated().map { index, item in

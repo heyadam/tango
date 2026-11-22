@@ -68,6 +68,23 @@ import PaperModel
         #expect(!listening.apple.isBusy)
     }
 
+    /// A prototype taken off screen falls silent, and one that is shown again speaks:
+    /// a kept live prototype is never heard over another.
+    @Test func aPrototypeOffScreenIsSilent() {
+        let host = PrototypeHost(package: DocumentPackage(document: Document(screen: Layer(name: "Screen", kind: .screen))))
+        host.playsVideo = true
+        var updates: [AIUpdate] = []
+        host.apple.deliver = { _, update in updates.append(update) }
+        host.isOnScreen = false
+        #expect(!host.playsVideo && host.apple.hidden)
+        // Speech asked for while hidden ends at once, and nothing speaks.
+        host.apple.handle(AIRequest(task: .speech, model: AIRequest.onDevice, prompt: "Hello"))
+        #expect(updates == [.finished(text: "", picture: ""), .playing(false)])
+        #expect(!host.apple.isBusy)
+        host.isOnScreen = true
+        #expect(host.playsVideo && !host.apple.hidden)
+    }
+
     // MARK: On this Mac's own models
 
     nonisolated static var modelIsHere: Bool { AppleIntelligence.unavailable == nil }

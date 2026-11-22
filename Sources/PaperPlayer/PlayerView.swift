@@ -47,8 +47,8 @@ public final class PlayerView: UIView {
 
     public override func didMoveToWindow() {
         super.didMoveToWindow()
-        // Only a prototype on screen plays video, with its sound.
-        host.playsVideo = window != nil
+        // Only a prototype on screen makes sound: its video, and on-device speech.
+        host.isOnScreen = window != nil
         if window == nil {
             link?.invalidate()
             link = nil

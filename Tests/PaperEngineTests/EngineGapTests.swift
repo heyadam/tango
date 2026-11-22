@@ -167,4 +167,17 @@ import PaperModel
         #expect(runtime.settle(within: 1))
         #expect(text() == .text(""))
     }
+
+    /// Widening the loop patches' types left each one's default where it was: a patch
+    /// whose type was never chosen works on the first.
+    @Test func theLoopPatchesKeepTheirDefaultTypes() {
+        let registry = PatchRegistry.standard
+        #expect(registry.valueType(for: PatchNode(kind: "loopOverArray")) == .text)
+        #expect(registry.valueType(for: PatchNode(kind: "loopSelect")) == .number)
+        #expect(registry.valueType(for: PatchNode(kind: "loopCount")) == .number)
+        #expect(registry.valueType(for: PatchNode(kind: "loopBuilder")) == .number)
+        for kind in ["loopOverArray", "loopSelect", "loopCount", "loopBuilder"] {
+            #expect(registry.valueType(for: PatchNode(kind: kind, valueType: .json)) == .json)
+        }
+    }
 }
