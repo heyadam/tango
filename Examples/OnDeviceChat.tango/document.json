@@ -5,8 +5,8 @@
   "graph" : {
     "comments" : [
       {
-        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
-        "id" : "D286E819-E821-43E4-8866-7FF98F8A7469",
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "D5931AF9-09D6-47A3-8BFC-E45B9E0C103F",
         "origin" : {
           "x" : 24,
           "y" : 48
@@ -18,19 +18,19 @@
         "text" : "Start · One card per suggestion"
       },
       {
-        "id" : "C9CBA046-2C17-4CFC-BF76-A53776F02E1E",
+        "id" : "CB87B0B4-0EBC-41B3-936D-2CE0C39F30B8",
         "origin" : {
           "x" : 24,
           "y" : 1200
         },
         "size" : {
           "height" : 828,
-          "width" : 1680
+          "width" : 1392
         },
         "text" : "Ask · Apple's model on this device keeps the chat"
       },
       {
-        "id" : "CB42B0EC-42C7-4DFB-B0B7-C1FCFB35A6DE",
+        "id" : "A14D0A8D-BDB0-4F0A-9254-6D7CB0130180",
         "origin" : {
           "x" : 24,
           "y" : 2112
@@ -42,7 +42,7 @@
         "text" : "Composer · Talk, send or stop"
       },
       {
-        "id" : "56329EFA-DCF0-4192-8EB5-B175831346C9",
+        "id" : "10E36524-3A5E-4AC9-9A08-A2D11C8D4929",
         "origin" : {
           "x" : 1752,
           "y" : 1200
@@ -54,19 +54,19 @@
         "text" : "Thread · What fits, newest last"
       },
       {
-        "id" : "99700288-ECEC-4D2F-BFE9-B0946267C411",
+        "id" : "7783F375-4CA9-4925-926A-F59A61FEBBC1",
         "origin" : {
           "x" : 2328,
           "y" : 1200
         },
         "size" : {
-          "height" : 492,
+          "height" : 444,
           "width" : 240
         },
         "text" : "Style · Bubble or plain words"
       },
       {
-        "id" : "12AE1653-C816-4800-B2E8-B7AB13B734A4",
+        "id" : "E4758308-49B1-4E40-AC15-161F922F67DB",
         "origin" : {
           "x" : 1752,
           "y" : 2016
@@ -78,7 +78,7 @@
         "text" : "Actions · Each tap knows its message"
       },
       {
-        "id" : "FA93E722-41AB-40E1-B441-A7153746228C",
+        "id" : "F514FE53-35A3-4EC9-B3F2-11F6CE3B7EE4",
         "origin" : {
           "x" : 1176,
           "y" : 2352
@@ -93,1289 +93,1249 @@
     "connections" : [
       {
         "from" : {
-          "node" : "6429463D-EE3A-4414-A11B-1597EB15E37F",
+          "node" : "C2FE7DD7-2A1C-499E-BBFC-B1048CA1E7C0",
           "port" : "array"
         },
         "to" : {
-          "node" : "8E828352-5B13-474B-A333-38501E109A7A",
+          "node" : "41D2462C-698A-4FB9-A112-ADE4F898EFA4",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "8E828352-5B13-474B-A333-38501E109A7A",
+          "node" : "41D2462C-698A-4FB9-A112-ADE4F898EFA4",
           "port" : "value"
         },
         "to" : {
-          "node" : "311E30F2-9E32-43BD-BAD5-E4F1B460D048",
+          "node" : "358DDA12-352F-43C6-85AF-96344FFEB7B9",
           "port" : "fill"
         }
       },
       {
         "from" : {
-          "node" : "BED2CF4A-8AA3-4779-83ED-492177FE5D22",
+          "node" : "98140A57-9BFE-4A65-95E9-84BE892EA50D",
           "port" : "array"
         },
         "to" : {
-          "node" : "47BEECEF-3EB0-468A-89F4-CA4749B23108",
+          "node" : "B52FB72C-BC52-4183-AC61-C68FA5DE3479",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "6B678FB1-7622-491B-82EB-6310F6072FEA",
+          "node" : "56480C3C-1537-4AE7-ACF6-B39B39AFCD84",
           "port" : "array"
         },
         "to" : {
-          "node" : "8A0979E1-2F0B-49C0-831E-67E5F2845B08",
+          "node" : "A7A0D65A-51CB-40CF-9B77-80F447DE01A1",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "E39803B5-DEE6-40B3-8E7E-DB3EB069B24D",
+          "node" : "2C9D9613-45F4-420A-A556-CA3DF7225AD9",
           "port" : "array"
         },
         "to" : {
-          "node" : "40151BF3-5A3E-4001-8DA5-FE7D543D8B76",
+          "node" : "2E1AEA6D-FD0F-439E-9173-9FB1FD338281",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "47BEECEF-3EB0-468A-89F4-CA4749B23108",
+          "node" : "B52FB72C-BC52-4183-AC61-C68FA5DE3479",
           "port" : "value"
         },
         "to" : {
-          "node" : "73688C1E-78FD-473D-933D-EE82159298F7",
+          "node" : "CD6B8FBD-8FC9-4908-8903-DCEFA43F4D03",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "8A0979E1-2F0B-49C0-831E-67E5F2845B08",
+          "node" : "A7A0D65A-51CB-40CF-9B77-80F447DE01A1",
           "port" : "value"
         },
         "to" : {
-          "node" : "E6FFA67A-4575-466C-AF1B-9A3150FCBB09",
+          "node" : "EE771549-56D2-4717-8EB7-586122BB9E57",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "E2767010-8C21-40AC-9D77-3A3B6ACD9E0C",
+          "node" : "B0A8283E-3D40-4791-B1FA-9C6A942A7DC4",
           "port" : "tap"
         },
         "to" : {
-          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
           "port" : "set"
         }
       },
       {
         "from" : {
-          "node" : "40151BF3-5A3E-4001-8DA5-FE7D543D8B76",
+          "node" : "2E1AEA6D-FD0F-439E-9173-9FB1FD338281",
           "port" : "value"
         },
         "to" : {
-          "node" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
+          "node" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
           "port" : "loop"
         }
       },
       {
         "from" : {
-          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
           "port" : "option"
         },
         "to" : {
-          "node" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
+          "node" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
           "port" : "index"
         }
       },
       {
         "from" : {
-          "node" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+          "node" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
           "port" : "tap"
         },
         "to" : {
-          "node" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+          "node" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
           "port" : "pulse"
         }
       },
       {
         "from" : {
-          "node" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+          "node" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
           "port" : "tap"
         },
         "to" : {
-          "node" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+          "node" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
           "port" : "pulse"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "loading"
         },
         "to" : {
-          "node" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+          "node" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
           "port" : "open"
         }
       },
       {
         "from" : {
-          "node" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+          "node" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
           "port" : "down"
         },
         "to" : {
-          "node" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+          "node" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
           "port" : "a"
         }
       },
       {
         "from" : {
-          "node" : "2449F358-ED15-4F66-A248-D0084CC4B50B",
+          "node" : "148E8A8D-B022-4F18-BEC7-F38329082AE0",
           "port" : "down"
         },
         "to" : {
-          "node" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+          "node" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
           "port" : "a"
         }
       },
       {
         "from" : {
-          "node" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+          "node" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
           "port" : "result"
         },
         "to" : {
-          "node" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+          "node" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+          "node" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
           "port" : "result"
         },
         "to" : {
-          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
           "port" : "record"
         }
       },
       {
         "from" : {
-          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
           "port" : "submitted"
         },
         "to" : {
-          "node" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
           "port" : "a"
         }
       },
       {
         "from" : {
-          "node" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+          "node" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
           "port" : "pulse"
         },
         "to" : {
-          "node" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
           "port" : "pulse"
         },
         "to" : {
-          "node" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+          "node" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
           "port" : "a"
         }
       },
       {
         "from" : {
-          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
           "port" : "done"
         },
         "to" : {
-          "node" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+          "node" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
           "port" : "picked"
         },
         "to" : {
-          "node" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+          "node" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
           "port" : "a"
         }
       },
       {
         "from" : {
-          "node" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+          "node" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
           "port" : "pulse"
         },
         "to" : {
-          "node" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+          "node" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
           "port" : "done"
         },
         "to" : {
-          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
           "port" : "text"
         },
         "to" : {
-          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
           "port" : "then"
         }
       },
       {
         "from" : {
-          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
           "port" : "text"
         },
         "to" : {
-          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
           "port" : "else"
         }
       },
       {
         "from" : {
-          "node" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
+          "node" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
           "port" : "picked"
         },
         "to" : {
-          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
           "port" : "condition"
         }
       },
       {
         "from" : {
-          "node" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
+          "node" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
           "port" : "value"
         },
         "to" : {
-          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
           "port" : "then"
         }
       },
       {
         "from" : {
-          "node" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+          "node" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
           "port" : "value"
         },
         "to" : {
-          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
           "port" : "else"
         }
       },
       {
         "from" : {
-          "node" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+          "node" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
           "port" : "value"
         },
         "to" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "prompt"
         }
       },
       {
         "from" : {
-          "node" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+          "node" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
           "port" : "pulse"
         },
         "to" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "send"
         }
       },
       {
         "from" : {
-          "node" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+          "node" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
           "port" : "pulse"
         },
         "to" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "stop"
         }
       },
       {
         "from" : {
-          "node" : "031ABEDE-2F19-4B6B-B272-664B782A352C",
+          "node" : "819EB845-B689-4A43-B5A7-16C46C4F1860",
           "port" : "tap"
         },
         "to" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "reset"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
-          "port" : "loading"
+          "node" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
+          "port" : "pulse"
         },
         "to" : {
-          "node" : "B53B809A-E2A9-4593-A964-AB92C1692BB6",
-          "port" : "value"
-        }
-      },
-      {
-        "from" : {
-          "node" : "B53B809A-E2A9-4593-A964-AB92C1692BB6",
-          "port" : "turnedOn"
-        },
-        "to" : {
-          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
           "port" : "clear"
         }
       },
       {
         "from" : {
-          "node" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+          "node" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
           "port" : "text"
         },
         "to" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "typed"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "loading"
         },
         "to" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "loading"
         }
       },
       {
         "from" : {
-          "node" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+          "node" : "83B44869-350D-4060-8FA4-18F47AA43376",
           "port" : "recording"
         },
         "to" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "recording"
         }
       },
       {
         "from" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "symbol"
         },
         "to" : {
-          "node" : "1F417343-31A3-4790-AC27-FC4DC54D9032",
+          "node" : "C37B49D3-B6F3-4797-A812-89413F573F84",
           "port" : "symbol"
         }
       },
       {
         "from" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "placeholder"
         },
         "to" : {
-          "node" : "9A7E71C8-C227-433F-AA65-C10D5DB395BB",
+          "node" : "7D2100D0-6EE1-4FA2-AA2C-66EBF64C623E",
           "port" : "placeholder"
         }
       },
       {
         "from" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "mic"
         },
         "to" : {
-          "node" : "81DFF6A7-BC23-4DDE-AAAF-78AFD3F0BA3F",
+          "node" : "5AA081BA-49DE-4B37-B18E-895F57184828",
           "port" : "fill"
         }
       },
       {
         "from" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "talks"
         },
         "to" : {
-          "node" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+          "node" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
           "port" : "b"
         }
       },
       {
         "from" : {
-          "node" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+          "node" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
           "port" : "sends"
         },
         "to" : {
-          "node" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+          "node" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
           "port" : "open"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "conversation"
         },
         "to" : {
-          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
           "port" : "conversation"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "loading"
         },
         "to" : {
-          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
           "port" : "loading"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "error"
         },
         "to" : {
-          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
           "port" : "error"
         }
       },
       {
         "from" : {
-          "node" : "9379C43B-85F4-4EED-9160-BB4F3D97922C",
+          "node" : "44F40316-6EE8-4195-8545-D14B54DF31E6",
           "port" : "tap"
         },
         "to" : {
-          "node" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+          "node" : "28148E89-EF42-4617-AC24-F38901D236C9",
           "port" : "set"
         }
       },
       {
         "from" : {
-          "node" : "AEC2A29A-7962-4A84-8BB1-AF720DB8FC06",
+          "node" : "79756E5A-2F75-4B60-B8D5-A5FBC751F959",
           "port" : "tap"
         },
         "to" : {
-          "node" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+          "node" : "25092F11-9088-4849-A764-82C899A909A2",
           "port" : "set"
         }
       },
       {
         "from" : {
-          "node" : "2FFB3DF5-C876-41EC-BCD8-D46CEBB6F313",
+          "node" : "9B283DE1-A39B-4259-AAB0-B51CE4539510",
           "port" : "tap"
         },
         "to" : {
-          "node" : "18A12812-EE47-4B40-B580-82148043594B",
+          "node" : "6AD56C29-E30D-420D-9474-CE447420039A",
           "port" : "set"
         }
       },
       {
         "from" : {
-          "node" : "5FEC1B7F-0717-4DC3-8011-0333B3EA7B7D",
+          "node" : "F6385BE6-39D8-4395-B98E-811CDB8BC9D1",
           "port" : "tap"
         },
         "to" : {
-          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
           "port" : "set"
         }
       },
       {
         "from" : {
-          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
           "port" : "option"
         },
         "to" : {
-          "node" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+          "node" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
           "port" : "index"
         }
       },
       {
         "from" : {
-          "node" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+          "node" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
           "port" : "value"
         },
         "to" : {
-          "node" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+          "node" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
           "port" : "picked"
         },
         "to" : {
-          "node" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+          "node" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
           "port" : "speak"
         }
       },
       {
         "from" : {
-          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
           "port" : "shown"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "shown"
         }
       },
       {
         "from" : {
-          "node" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+          "node" : "28148E89-EF42-4617-AC24-F38901D236C9",
           "port" : "picked"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "copy"
         }
       },
       {
         "from" : {
-          "node" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+          "node" : "28148E89-EF42-4617-AC24-F38901D236C9",
           "port" : "option"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "copyAt"
         }
       },
       {
         "from" : {
-          "node" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+          "node" : "25092F11-9088-4849-A764-82C899A909A2",
           "port" : "picked"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "like"
         }
       },
       {
         "from" : {
-          "node" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+          "node" : "25092F11-9088-4849-A764-82C899A909A2",
           "port" : "option"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "likeAt"
         }
       },
       {
         "from" : {
-          "node" : "18A12812-EE47-4B40-B580-82148043594B",
+          "node" : "6AD56C29-E30D-420D-9474-CE447420039A",
           "port" : "picked"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "dislike"
         }
       },
       {
         "from" : {
-          "node" : "18A12812-EE47-4B40-B580-82148043594B",
+          "node" : "6AD56C29-E30D-420D-9474-CE447420039A",
           "port" : "option"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "dislikeAt"
         }
       },
       {
         "from" : {
-          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
           "port" : "picked"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "read"
         }
       },
       {
         "from" : {
-          "node" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+          "node" : "7899A25F-DECB-4235-9C22-EED62F242105",
           "port" : "option"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "readAt"
         }
       },
       {
         "from" : {
-          "node" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+          "node" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
           "port" : "speaking"
         },
         "to" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "speaking"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "shown"
         },
         "to" : {
-          "node" : "4986DC83-481B-468D-80FB-E1F8CFA0F86A",
+          "node" : "FD63606E-495D-4708-9BCC-5317CF249245",
           "port" : "visible"
         }
       },
       {
         "from" : {
-          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
           "port" : "shown"
         },
         "to" : {
-          "node" : "A436E09F-52A1-45A3-9D57-40E4A606A869",
+          "node" : "23E939D6-8021-4353-BEED-732696788CC1",
           "port" : "array"
         }
       },
       {
         "from" : {
-          "node" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+          "node" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
           "port" : "empty"
         },
         "to" : {
-          "node" : "9D192997-2EC2-4654-876B-97508160A1B9",
+          "node" : "A31AA26B-0B3D-4B6A-AEC2-CBD6F178D30F",
           "port" : "visible"
         }
       },
       {
         "from" : {
-          "node" : "A436E09F-52A1-45A3-9D57-40E4A606A869",
+          "node" : "23E939D6-8021-4353-BEED-732696788CC1",
           "port" : "value"
         },
         "to" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "message"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "text"
         },
         "to" : {
-          "node" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+          "node" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
           "port" : "loop"
         }
       },
       {
         "from" : {
-          "node" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+          "node" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
           "port" : "marks"
         },
         "to" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "marks"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "side"
         },
         "to" : {
-          "node" : "F04C9BCD-3101-4E38-83C5-BB464D90D332",
+          "node" : "41573706-D3A9-483D-8B10-01D24BF850D5",
           "port" : "distribution"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "fill"
         },
         "to" : {
-          "node" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
+          "node" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
           "port" : "fill"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "padding"
         },
         "to" : {
-          "node" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
+          "node" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
           "port" : "paddingHorizontal"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "padding"
         },
         "to" : {
-          "node" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
+          "node" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
           "port" : "paddingVertical"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "text"
         },
         "to" : {
-          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
+          "node" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "width"
         },
         "to" : {
-          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
+          "node" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
           "port" : "width"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
-          "port" : "height"
-        },
-        "to" : {
-          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
-          "port" : "height"
-        }
-      },
-      {
-        "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "opacity"
         },
         "to" : {
-          "node" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
+          "node" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
           "port" : "opacity"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "actions"
         },
         "to" : {
-          "node" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
-          "port" : "scale"
+          "node" : "A74FCECD-B06A-480B-A9FE-135B595AE8C4",
+          "port" : "visible"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
-          "port" : "actions"
-        },
-        "to" : {
-          "node" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
-          "port" : "opacity"
-        }
-      },
-      {
-        "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
-          "port" : "actionsHeight"
-        },
-        "to" : {
-          "node" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
-          "port" : "height"
-        }
-      },
-      {
-        "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "copy"
         },
         "to" : {
-          "node" : "DB08A0AA-6F64-4F26-954C-696A3EE7E174",
+          "node" : "D9C45DFB-B7AB-4781-950F-C61D7D8397C4",
           "port" : "symbol"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "like"
         },
         "to" : {
-          "node" : "501FBDA2-ECF9-4586-AA7D-AE189F9C0AB9",
+          "node" : "9135C447-C196-4CC6-9018-4556394F28E3",
           "port" : "symbol"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "dislike"
         },
         "to" : {
-          "node" : "0569E323-1D5F-45FB-B07D-3D9D8DBB3887",
+          "node" : "B93A4F4C-2399-40F5-A805-0BC154613B2D",
           "port" : "symbol"
         }
       },
       {
         "from" : {
-          "node" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+          "node" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
           "port" : "read"
         },
         "to" : {
-          "node" : "895EC36D-09B6-447C-8731-EAE38128A73A",
+          "node" : "6A6DE19A-02A8-45C8-AFC8-0A20EC1E6098",
           "port" : "symbol"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "loading"
         },
         "to" : {
-          "node" : "6FAA60D5-706A-45E7-8F32-7C4A81087004",
+          "node" : "F89A03A1-B3E1-4A56-9BBF-855327E0FE93",
           "port" : "target"
         }
       },
       {
         "from" : {
-          "node" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+          "node" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
           "port" : "loading"
         },
         "to" : {
-          "node" : "986A90B4-A7C2-4CC0-9C4E-794ABAF44E6B",
+          "node" : "97DDA55D-0028-47AD-841A-B8AB550D6AED",
           "port" : "running"
         }
       },
       {
         "from" : {
-          "node" : "6FAA60D5-706A-45E7-8F32-7C4A81087004",
+          "node" : "F89A03A1-B3E1-4A56-9BBF-855327E0FE93",
           "port" : "value"
         },
         "to" : {
-          "node" : "A3668C5D-DEE5-4993-B7F7-01847B5EF060",
+          "node" : "8C9C6181-5A17-48C5-BE73-CA4F02B11E80",
           "port" : "shader.strength"
         }
       },
       {
         "from" : {
-          "node" : "986A90B4-A7C2-4CC0-9C4E-794ABAF44E6B",
+          "node" : "97DDA55D-0028-47AD-841A-B8AB550D6AED",
           "port" : "time"
         },
         "to" : {
-          "node" : "A3668C5D-DEE5-4993-B7F7-01847B5EF060",
+          "node" : "8C9C6181-5A17-48C5-BE73-CA4F02B11E80",
           "port" : "shader.phase"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "827F0E12-E9CA-41BA-87E7-4F0DE6C23DB5",
+        "id" : "F73CF33C-648C-412B-BF4F-20AA93ACA161",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E168D92C-0166-4622-B70A-7FFBC4442A66",
+        "layerID" : "B518C72F-9E5D-4AAF-B3D0-260D5F7BFCD1",
         "position" : {
           "x" : 2640,
           "y" : 528
         }
       },
       {
-        "id" : "4585FBE3-134A-470D-80EC-08AF44E37A4B",
+        "id" : "7B7ADC10-36B6-4C57-8D9B-59BB47389AAE",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "D05D4F6B-9EF8-40CD-9314-828BD143F607",
+        "layerID" : "DF6B3C8F-2603-4C55-BC0A-51FB6009011D",
         "position" : {
           "x" : 2928,
           "y" : 528
         }
       },
       {
-        "id" : "4986DC83-481B-468D-80FB-E1F8CFA0F86A",
+        "id" : "FD63606E-495D-4708-9BCC-5317CF249245",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "3022CDB3-5C65-45DF-8773-C5BA8B004353",
+        "layerID" : "5563C96F-A5FD-4ECA-B2DA-CAEEDBC17BEE",
         "position" : {
           "x" : 2640,
           "y" : 1824
         }
       },
       {
-        "id" : "F04C9BCD-3101-4E38-83C5-BB464D90D332",
+        "id" : "41573706-D3A9-483D-8B10-01D24BF850D5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "15BB78A3-230F-4F94-85AA-97F14A39DADC",
+        "layerID" : "0E57BC10-1BB3-41B2-8BA4-1227EF586320",
         "position" : {
           "x" : 2640,
           "y" : 1248
         }
       },
       {
-        "id" : "0595E7A8-8A5B-4113-9997-B0310FDCE585",
+        "id" : "AB45736F-9E21-414E-A3A1-C3AA9EF3AE88",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "423D1B3F-7B23-4480-BB75-F21B1D7A8BFF",
+        "layerID" : "8021BD08-88F8-4013-8A8F-925E7C00B769",
         "position" : {
           "x" : 2928,
           "y" : 1248
         }
       },
       {
-        "id" : "C17F5329-06DB-43BC-A8CC-3D9EAAC24114",
+        "id" : "0BC0701E-2778-4FB1-AAB1-E08CAB071817",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "B729A2FA-4B5B-4B39-861D-E52DCA81E5B0",
+        "layerID" : "DABFC0E4-1E4B-44CF-B548-4B72BA95E9B5",
         "position" : {
           "x" : 2928,
           "y" : 1536
         }
       },
       {
-        "id" : "BCC14B41-6465-4D2B-B221-4BFA2302144A",
+        "id" : "A74FCECD-B06A-480B-A9FE-135B595AE8C4",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "0106A010-E7BC-45B7-A333-051E9A3D1322",
+        "layerID" : "E0734E32-CF87-4D5E-9336-FE5755E3FBD6",
         "position" : {
           "x" : 2640,
           "y" : 1536
         }
       },
       {
-        "id" : "1D28F182-F284-4510-BE0C-D092A28ED77D",
+        "id" : "4F89692C-AC41-4BB6-A615-099F67343189",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "2C64350A-A246-4787-851D-9BF171017AD2",
+        "layerID" : "C496D54B-581F-4B8B-A594-FCEDE0FC2028",
         "position" : {
           "x" : 1776,
           "y" : 2064
         }
       },
       {
-        "id" : "DB08A0AA-6F64-4F26-954C-696A3EE7E174",
+        "id" : "D9C45DFB-B7AB-4781-950F-C61D7D8397C4",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "CB2311AB-E13C-4340-919D-AF4014DB0850",
+        "layerID" : "9DBB6E45-18EE-492F-9F29-38AF41032070",
         "position" : {
           "x" : 2928,
           "y" : 1824
         }
       },
       {
-        "id" : "8BD1AB27-3155-4CA9-83B7-8110C82D447D",
+        "id" : "AF48B0F3-5B93-4D2A-A791-3DC40559158F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "84CDE697-7429-4F85-8117-94EB18C385CC",
+        "layerID" : "967874FD-82B3-4B5C-AECD-2A7B19925549",
         "position" : {
           "x" : 1776,
           "y" : 2256
         }
       },
       {
-        "id" : "501FBDA2-ECF9-4586-AA7D-AE189F9C0AB9",
+        "id" : "9135C447-C196-4CC6-9018-4556394F28E3",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8926CA82-4CA4-4808-9F80-7E49F3A153EE",
+        "layerID" : "C48602D2-BEE6-474C-AD43-583B08397F2C",
         "position" : {
           "x" : 2928,
           "y" : 2064
         }
       },
       {
-        "id" : "083FF453-2E4D-406B-BE9C-66D185DE35A6",
+        "id" : "40F485B1-0BC3-4978-B784-8732C0823458",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E8E38E6B-C2D9-4335-9959-874CC71848BE",
+        "layerID" : "F2D60270-604E-4672-9E15-51FE59D4CB6F",
         "position" : {
           "x" : 1776,
           "y" : 2448
         }
       },
       {
-        "id" : "0569E323-1D5F-45FB-B07D-3D9D8DBB3887",
+        "id" : "B93A4F4C-2399-40F5-A805-0BC154613B2D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "AD675086-26D3-4039-8D0E-28FE563840B6",
+        "layerID" : "1D90A598-7F1D-487D-827A-0703F1D13E5F",
         "position" : {
           "x" : 2928,
           "y" : 2280
         }
       },
       {
-        "id" : "6DD1B7C8-B28A-4D61-AFE0-50183EECA0A5",
+        "id" : "0E494045-88AD-44C5-8565-555F541EF42D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "DFC0DFAF-2471-433F-A4CC-ECD7349602E8",
+        "layerID" : "869A1078-C74A-4147-8760-097E21D8F19F",
         "position" : {
           "x" : 1776,
           "y" : 2640
         }
       },
       {
-        "id" : "895EC36D-09B6-447C-8731-EAE38128A73A",
+        "id" : "6A6DE19A-02A8-45C8-AFC8-0A20EC1E6098",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "A672F548-A457-479A-B7C7-B1DFD805FB5B",
+        "layerID" : "208E3713-8703-47A3-8EEC-609E41258D13",
         "position" : {
           "x" : 2928,
           "y" : 2496
         }
       },
       {
-        "id" : "9D192997-2EC2-4654-876B-97508160A1B9",
+        "id" : "A31AA26B-0B3D-4B6A-AEC2-CBD6F178D30F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E05F69F8-CBA5-417B-81BA-5924E756428B",
+        "layerID" : "D4B2190A-7A0C-4AC3-898B-0F3BEC2A60EA",
         "position" : {
           "x" : 2064,
           "y" : 1608
         }
       },
       {
-        "id" : "8F7D7C84-4274-4806-8266-376BE4E8AE55",
+        "id" : "E55B8666-7AE6-478E-97B6-5EBF5325DB34",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "B05E6E7F-445E-4BF8-B911-42C3B3843A38",
+        "layerID" : "1E909186-CF10-46A9-9F5B-B83DFE313DBA",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "F942BF7D-C4BF-4B73-90BB-6807315A5061",
+        "id" : "2F3FE1C6-3F3A-4E71-8F6A-9DED320F90D1",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "31D494D2-C157-42B3-9628-D39A0CC0059F",
+        "layerID" : "14B225FA-F36A-4D7C-AB04-EFE95C4B1BAD",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "2741A599-446C-4DA6-B08E-832ED6A600CF",
+        "id" : "74549976-8288-4A85-BBCC-4BC62105FF85",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "7CDAB7FE-30F7-4864-B2CC-578060055B8A",
+        "layerID" : "20032919-11CC-45E7-B3CC-79B8BE398633",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "A3D7C7DB-6C41-4A3C-9C40-F9CFE499988D",
+        "id" : "E1F6AB60-2D7D-4400-B7E7-5D7136C1447A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "26E94125-DF00-4653-8161-3E795849748C",
+        "layerID" : "6795E207-5A81-434F-A24F-6A110B6FD731",
         "position" : {
           "x" : 48,
           "y" : 480
         }
       },
       {
-        "id" : "D1DF9883-FD4E-4E26-BCB9-1DEA83297D5E",
+        "id" : "BDF279BE-635A-4E0D-8147-3915A79F7BB4",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F82B657D-31CD-46C8-80C7-285BDE6A706E",
+        "layerID" : "8AAA500D-EDC0-414F-B37E-3C39607A3654",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "F46EE730-EBDC-4EF1-91DE-8592F098CFB5",
+        "id" : "655F84B5-CADA-4C5A-A8CE-BEBD061738D7",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "4C57D412-E4BB-4421-A2F5-8BEE85A0F6E4",
+        "layerID" : "CE24A3F3-757E-4491-93E9-0A188748C642",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "F89F9FC2-1C1C-4487-9B07-E968891A1B27",
+        "id" : "683BF0C2-DDA1-49B0-AEC9-06EF6F0046BD",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F5D63D39-DF2D-4B55-BE77-8CAE73044561",
+        "layerID" : "8A212CF0-53B4-49FB-A4CD-EDFAEB6B3760",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "2C30FAE5-B7A4-46C8-B5A2-6B7BF26C2D57",
+        "id" : "CE9EA6DF-3B43-4422-8176-C93068039598",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
+        "layerID" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
         "position" : {
           "x" : 48,
           "y" : 672
         }
       },
       {
-        "id" : "311E30F2-9E32-43BD-BAD5-E4F1B460D048",
+        "id" : "358DDA12-352F-43C6-85AF-96344FFEB7B9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "layerID" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
         "position" : {
           "x" : 624,
           "y" : 744
         }
       },
       {
-        "id" : "73688C1E-78FD-473D-933D-EE82159298F7",
+        "id" : "CD6B8FBD-8FC9-4908-8903-DCEFA43F4D03",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "3933A332-DDAD-4A7E-AB69-4ADB6B99FD39",
+        "layerID" : "D91D5D29-33C3-491E-A816-748E59B4B7C5",
         "position" : {
           "x" : 624,
           "y" : 96
         }
       },
       {
-        "id" : "E6FFA67A-4575-466C-AF1B-9A3150FCBB09",
+        "id" : "EE771549-56D2-4717-8EB7-586122BB9E57",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "62B46DB1-43C2-4611-98E1-8AE97A6C0BF0",
+        "layerID" : "789B1E06-FF31-467F-8BBF-83CC71A0AFEE",
         "position" : {
           "x" : 624,
           "y" : 312
         }
       },
       {
-        "id" : "E2EBC84A-840E-4EB2-96BF-66C120113410",
+        "id" : "7DCF1858-AD6D-49FD-83A0-6DD87DFDFE72",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "25410299-511B-4A2D-83A0-07D571470CE0",
+        "layerID" : "AA614F5B-6287-4112-BCB4-E690975C44CC",
         "position" : {
           "x" : 2064,
           "y" : 1824
         }
       },
       {
-        "id" : "B4C4AFF4-EC0A-4BB6-AE4B-13C244949C79",
+        "id" : "00E878B3-9E27-42A0-885C-9098CDB5F474",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1B424AEF-6550-45B7-9120-18106278D4B7",
+        "layerID" : "CB0D1641-9151-4E9D-9BE5-6476EFE3C5A4",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "2D502E93-5FF7-45E4-8E7C-9A97788092E1",
+        "id" : "2B644193-9468-49BF-94AF-8076CCF26ED9",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "D1153547-C845-4B8D-92D1-2167CF8BA714",
+        "layerID" : "4CF4D76C-EE50-4F93-A12D-D8E150576B95",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "3CCFFA33-09BA-4849-8EF1-CB88F13BBAB9",
+        "id" : "C4CB292E-1506-466D-B8F3-75FC57BAE223",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1F572EA9-6D2C-46F4-9235-B950A69F94D1",
+        "layerID" : "7C1C8760-8428-4FDD-B5C9-0CE5D583F949",
         "position" : {
           "x" : 2064,
           "y" : 2016
         }
       },
       {
-        "id" : "139992EA-9B36-432E-8AEC-C3818CBD8C65",
+        "id" : "E0F2450F-8E69-47AE-9876-09D725CDB9FA",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "A1820A9A-90DF-46CC-852F-A7D89E6F8254",
+        "layerID" : "B1C8F39A-D67E-4C4D-AEB7-E07E137CAE2E",
         "position" : {
           "x" : 2064,
           "y" : 2160
         }
       },
       {
-        "id" : "DC642677-2782-4ED2-9F35-6B39CFCE71B7",
+        "id" : "68C2C078-ED2B-4483-B84E-7173FEA0FAB7",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "899C8D98-9030-4604-8C91-D87657C87BC9",
+        "layerID" : "AEC16D9D-D92C-498D-9986-04E531778DCA",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "A3668C5D-DEE5-4993-B7F7-01847B5EF060",
+        "id" : "8C9C6181-5A17-48C5-BE73-CA4F02B11E80",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "9340463F-CCDE-4382-B6C9-7DE14F5E039D",
+        "layerID" : "6D3AECFA-B040-452E-AA1F-C9BFF2198E2B",
         "position" : {
           "x" : 1488,
           "y" : 2952
@@ -1383,104 +1343,104 @@
         "script" : "\/\/ Apple Intelligence's glow: a line of shifting color along the card's edge with a soft\n\/\/ halo past it. Strength fades it in and out; Phase turns the colors round the card.\nstruct Inputs {\n    float strength = 0;\n    float phase = 0;\n    float radius = 30;\n    float inset = 28;\n};\n\nfloat glow_box(float2 p, float2 half_size, float r) {\n    float2 q = abs(p) - half_size + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 middle = frame.size * 0.5;\n    float2 p = frame.position - middle;\n    float d = glow_box(p, middle - in.inset, in.radius);\n    \/\/ Four colors round the card, turning with Phase.\n    float turn = fract(atan2(p.y, p.x) \/ 6.2831853 + in.phase * 0.12);\n    float3 orange = float3(1.0, 0.56, 0.26), pink = float3(0.98, 0.32, 0.62);\n    float3 violet = float3(0.62, 0.38, 1.0), blue = float3(0.28, 0.62, 1.0);\n    float k = turn * 4.0;\n    float3 color = k < 1.0 ? mix(orange, pink, k) : k < 2.0 ? mix(pink, violet, k - 1.0)\n                 : k < 3.0 ? mix(violet, blue, k - 2.0) : mix(blue, orange, k - 3.0);\n    \/\/ A bright edge that breathes a little, and a halo that falls away outside.\n    float breathe = 0.85 + 0.15 * sin(in.phase * 3.0 + turn * 12.566);\n    float edge = exp(-abs(d) \/ 2.2) * breathe;\n    float halo = d > 0.0 ? exp(-d \/ 11.0) * 0.55 : exp(d \/ 5.0) * 0.25;\n    \/\/ Gone before the view's own edge, so no box shows round it.\n    float2 room = middle - abs(p);\n    float fade = smoothstep(0.0, in.inset * 0.6, min(room.x, room.y));\n    float alpha = saturate((edge + halo) * in.strength * fade);\n    return float4(mix(color, float3(1.0), edge * 0.35), alpha);\n}"
       },
       {
-        "id" : "EC4BBDCA-771B-4A09-A825-E085736F3139",
+        "id" : "E48ADC2F-77E1-40E0-A45E-609F14D300AE",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "FE3D5F3D-050B-4397-8F45-5106966BEAC0",
+        "layerID" : "D1354FB8-6132-42CC-B061-1FA6C39A8007",
         "position" : {
           "x" : 1488,
           "y" : 3240
         }
       },
       {
-        "id" : "D6DCA859-2637-408B-BAF4-9A8D6F0A9161",
+        "id" : "7836CA0D-8028-4FB0-88CF-BB8C6559C8AE",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "D69D9F37-F260-4E07-8972-16556FDED670",
+        "layerID" : "051EC261-B17E-4851-8614-CD027F3EB281",
         "position" : {
           "x" : 912,
           "y" : 1248
         }
       },
       {
-        "id" : "CAB24C0A-C46A-41CF-B6DE-196FC3B602D0",
+        "id" : "D9DE7DCD-8A56-413D-8E4C-51851CA0C2C6",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "BEA88805-6A43-4262-B13F-28EB079C5A11",
+        "layerID" : "854E9904-7BD1-4D9A-8555-DD45C525E398",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "9A7E71C8-C227-433F-AA65-C10D5DB395BB",
+        "id" : "7D2100D0-6EE1-4FA2-AA2C-66EBF64C623E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "2A962AEE-58AD-4179-A7B0-1B81FE233ECB",
+        "layerID" : "9CA981E2-680C-4B88-9432-19C82DCA8BB9",
         "position" : {
           "x" : 624,
           "y" : 2448
         }
       },
       {
-        "id" : "6A6A2986-30DC-4823-8045-7F89EBA5F279",
+        "id" : "4849CFBB-2B16-4039-8E2B-42F22B3E900C",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "ED89E18C-FB02-4D6B-B2EB-EE7FCA3447BE",
+        "layerID" : "E8628B45-B7D4-4B42-91DF-358C46D76D3B",
         "position" : {
           "x" : 624,
           "y" : 2640
         }
       },
       {
-        "id" : "81DFF6A7-BC23-4DDE-AAAF-78AFD3F0BA3F",
+        "id" : "5AA081BA-49DE-4B37-B18E-895F57184828",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "61B22223-3C13-48ED-A81D-AE00E1BD7497",
+        "layerID" : "B12B0E80-F567-4D69-AAD9-32E8929502BE",
         "position" : {
           "x" : 624,
           "y" : 2736
         }
       },
       {
-        "id" : "49BEBB20-8967-419F-9406-8F3C1119C028",
+        "id" : "FB6A7112-595A-4960-BAF9-33902336D4BB",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8DB4C49A-A7BE-440C-9ECF-D0D7FA16FD44",
+        "layerID" : "3B2C324D-F946-49DB-A29D-A860907301D7",
         "position" : {
           "x" : 624,
           "y" : 2832
         }
       },
       {
-        "id" : "1F417343-31A3-4790-AC27-FC4DC54D9032",
+        "id" : "C37B49D3-B6F3-4797-A812-89413F573F84",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C616CAEB-CFD5-48E7-8F08-0F3F37374162",
+        "layerID" : "2BDD90AB-8EDB-42A6-9BE5-683487E524C4",
         "position" : {
           "x" : 624,
           "y" : 2160
         }
       },
       {
-        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
-        "id" : "BED2CF4A-8AA3-4779-83ED-492177FE5D22",
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "98140A57-9BFE-4A65-95E9-84BE892EA50D",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -1499,8 +1459,8 @@
         }
       },
       {
-        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
-        "id" : "6B678FB1-7622-491B-82EB-6310F6072FEA",
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "56480C3C-1537-4AE7-ACF6-B39B39AFCD84",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -1519,7 +1479,7 @@
         }
       },
       {
-        "id" : "E39803B5-DEE6-40B3-8E7E-DB3EB069B24D",
+        "id" : "2C9D9613-45F4-420A-A556-CA3DF7225AD9",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -1538,8 +1498,8 @@
         }
       },
       {
-        "home" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
-        "id" : "6429463D-EE3A-4414-A11B-1597EB15E37F",
+        "home" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
+        "id" : "C2FE7DD7-2A1C-499E-BBFC-B1048CA1E7C0",
         "inputs" : {
           "separator" : {
             "type" : "text",
@@ -1558,8 +1518,8 @@
         }
       },
       {
-        "home" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
-        "id" : "8E828352-5B13-474B-A333-38501E109A7A",
+        "home" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
+        "id" : "41D2462C-698A-4FB9-A112-ADE4F898EFA4",
         "inputs" : {
 
         },
@@ -1572,8 +1532,8 @@
         "valueType" : "color"
       },
       {
-        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
-        "id" : "47BEECEF-3EB0-468A-89F4-CA4749B23108",
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "B52FB72C-BC52-4183-AC61-C68FA5DE3479",
         "inputs" : {
 
         },
@@ -1586,8 +1546,8 @@
         "valueType" : "text"
       },
       {
-        "home" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
-        "id" : "8A0979E1-2F0B-49C0-831E-67E5F2845B08",
+        "home" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
+        "id" : "A7A0D65A-51CB-40CF-9B77-80F447DE01A1",
         "inputs" : {
 
         },
@@ -1600,7 +1560,7 @@
         "valueType" : "text"
       },
       {
-        "id" : "40151BF3-5A3E-4001-8DA5-FE7D543D8B76",
+        "id" : "2E1AEA6D-FD0F-439E-9173-9FB1FD338281",
         "inputs" : {
 
         },
@@ -1613,19 +1573,19 @@
         "valueType" : "text"
       },
       {
-        "id" : "E2767010-8C21-40AC-9D77-3A3B6ACD9E0C",
+        "id" : "B0A8283E-3D40-4791-B1FA-9C6A942A7DC4",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+        "layerID" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
         "position" : {
           "x" : 48,
           "y" : 960
         }
       },
       {
-        "id" : "4F0971FF-905F-46EF-8034-D48041D2B0FF",
+        "id" : "E2297B91-8084-436F-BE6C-29ED98BA7E51",
         "inputs" : {
 
         },
@@ -1637,7 +1597,7 @@
         }
       },
       {
-        "id" : "67FCA22F-5A78-4AF0-8E35-C77FEB7F3E6A",
+        "id" : "5CBE4AE4-0BC7-4350-AFD9-065CCBC3E564",
         "inputs" : {
 
         },
@@ -1650,43 +1610,43 @@
         "valueType" : "text"
       },
       {
-        "id" : "129F59D4-348C-41D9-8E41-02266C97FAA3",
+        "id" : "FB9A2FDD-AD44-4F91-BCE3-88A97E7A0897",
         "inputs" : {
 
         },
         "kind" : "textInput",
-        "layerID" : "2A962AEE-58AD-4179-A7B0-1B81FE233ECB",
+        "layerID" : "9CA981E2-680C-4B88-9432-19C82DCA8BB9",
         "position" : {
           "x" : 48,
           "y" : 1248
         }
       },
       {
-        "id" : "C705F8A1-3224-431E-ADA6-708429107C7A",
+        "id" : "AD6F44FF-0FB4-46E2-BB0F-774272CC63FE",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "8DB4C49A-A7BE-440C-9ECF-D0D7FA16FD44",
+        "layerID" : "3B2C324D-F946-49DB-A29D-A860907301D7",
         "position" : {
           "x" : 48,
           "y" : 1488
         }
       },
       {
-        "id" : "2449F358-ED15-4F66-A248-D0084CC4B50B",
+        "id" : "148E8A8D-B022-4F18-BEC7-F38329082AE0",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "ED89E18C-FB02-4D6B-B2EB-EE7FCA3447BE",
+        "layerID" : "E8628B45-B7D4-4B42-91DF-358C46D76D3B",
         "position" : {
           "x" : 48,
           "y" : 1776
         }
       },
       {
-        "id" : "3E37F172-9138-4DF7-BD28-39901DA1572A",
+        "id" : "315DC533-06BA-44FC-A9A3-DDEFFB816CC2",
         "inputs" : {
 
         },
@@ -1698,7 +1658,7 @@
         }
       },
       {
-        "id" : "9ED2A1F4-A578-466D-B761-23A978DE48AE",
+        "id" : "0BEB17A6-EBFB-4E66-923A-790568DE1323",
         "inputs" : {
 
         },
@@ -1710,7 +1670,7 @@
         }
       },
       {
-        "id" : "7808E68E-C417-40C9-87DB-D52DF8A00379",
+        "id" : "3DCAC8E3-57DE-41B0-9016-E4C58EAE58B5",
         "inputs" : {
 
         },
@@ -1722,7 +1682,7 @@
         }
       },
       {
-        "id" : "EB971DC9-FAC4-4F6B-B1B3-1246DAB290ED",
+        "id" : "86B4AC2F-53E9-4A14-BCEC-1DD3E9B859DE",
         "inputs" : {
 
         },
@@ -1734,7 +1694,7 @@
         }
       },
       {
-        "id" : "5644C557-BC0E-4C62-B15F-8DCCB09CFE5F",
+        "id" : "83B44869-350D-4060-8FA4-18F47AA43376",
         "inputs" : {
           "model" : {
             "type" : "text",
@@ -1749,7 +1709,7 @@
         }
       },
       {
-        "id" : "FF8AD234-65FD-4A0F-BDC7-217FD6CA2B9A",
+        "id" : "7F58BC10-74BA-4FCA-9729-A64F2CFB4E90",
         "inputs" : {
 
         },
@@ -1761,7 +1721,7 @@
         }
       },
       {
-        "id" : "71EEF60F-E93E-4B7C-AB78-FB5A381ED758",
+        "id" : "7FEA9D52-5050-4930-A2F4-E30732E08AD0",
         "inputs" : {
 
         },
@@ -1773,7 +1733,7 @@
         }
       },
       {
-        "id" : "41F068E7-3EFC-43E8-9E2A-1654528DC4CA",
+        "id" : "B808DCFD-5EFB-477C-B86F-5824C29C4915",
         "inputs" : {
 
         },
@@ -1785,7 +1745,7 @@
         }
       },
       {
-        "id" : "01A4159C-FB33-4DFB-AC2C-8D56AF9B032A",
+        "id" : "E2BE1FB0-716B-478E-A6FF-AC4F9204B320",
         "inputs" : {
 
         },
@@ -1798,7 +1758,7 @@
         "valueType" : "text"
       },
       {
-        "id" : "2A701256-6DAB-40DD-929F-33A1F25DBF5C",
+        "id" : "4A813B7D-D6B4-4E00-83BC-CF2A6EC28D7A",
         "inputs" : {
 
         },
@@ -1811,19 +1771,19 @@
         "valueType" : "text"
       },
       {
-        "id" : "031ABEDE-2F19-4B6B-B272-664B782A352C",
+        "id" : "819EB845-B689-4A43-B5A7-16C46C4F1860",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "A1820A9A-90DF-46CC-852F-A7D89E6F8254",
+        "layerID" : "B1C8F39A-D67E-4C4D-AEB7-E07E137CAE2E",
         "position" : {
           "x" : 1200,
           "y" : 1776
         }
       },
       {
-        "id" : "1A37D9DA-F197-46C9-8D5E-DEA066B9EBE4",
+        "id" : "3D33BD18-2B0B-4F6C-B6BD-4C27759D6069",
         "inputs" : {
           "instructions" : {
             "type" : "text",
@@ -1842,19 +1802,7 @@
         }
       },
       {
-        "id" : "B53B809A-E2A9-4593-A964-AB92C1692BB6",
-        "inputs" : {
-
-        },
-        "kind" : "pulse",
-        "name" : "Sent",
-        "position" : {
-          "x" : 1488,
-          "y" : 1776
-        }
-      },
-      {
-        "id" : "2A0F0352-727A-4477-8FAE-C5E44ECF0917",
+        "id" : "FA84BA45-7238-4366-A662-BDD561E21B3C",
         "inputs" : {
 
         },
@@ -1867,7 +1815,7 @@
         "script" : "\/\/ The round button talks while the field is empty, sends once there are words,\n\/\/ and stops an answer that is being written.\ninputs = { typed: \"\", loading: false, recording: false };\noutputs = { symbol: \"waveform\", placeholder: \"Ask anything\", talks: true, sends: false, mic: color(\"#FFFFFFCC\") };\n\nfunction evaluate(inputs, outputs) {\n  const words = String(inputs.typed).trim().length > 0;\n  outputs.symbol = inputs.loading ? \"stop.fill\" : words ? \"arrow.up\" : \"waveform\";\n  outputs.talks = !inputs.loading && !words;\n  outputs.sends = !inputs.loading && words;\n  outputs.placeholder = inputs.recording ? \"Listening…\" : \"Ask anything\";\n  outputs.mic = inputs.recording ? color(\"#FF5A4E\") : color(\"#FFFFFFCC\");\n}"
       },
       {
-        "id" : "F4C1097B-9FED-424B-95B5-D95AC7208EF6",
+        "id" : "B70F88DE-8E3C-4EDE-8758-9CA115456D32",
         "inputs" : {
 
         },
@@ -1880,7 +1828,7 @@
         "script" : "\/\/ The messages to show, oldest first: as many of the newest as fit the screen.\n\/\/ While the model writes, its answer ends in a dot, which is all there is before\n\/\/ its first word. A failure shows as the model's message. Each message has a key\n\/\/ that a new chat does not reuse, for what was done to it (Feedback).\ninputs = { conversation: [], loading: false, error: \"\" };\noutputs = { shown: [], empty: true };\n\nconst room = 650;\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nlet chatNumber = 0, had = false;\nfunction height(m) {\n  return lines(m.text, m.user ? narrow : wide) * line + (m.user ? 20 : 0) + (m.actions ? actionsRow : 0) + 20;\n}\nfunction evaluate(inputs, outputs) {\n  const all = Array.isArray(inputs.conversation) ? inputs.conversation : [];\n  if (all.length === 0 && had) chatNumber++;\n  had = all.length > 0;\n  const turns = all.map((turn, index) => {\n    const user = turn.role === \"user\";\n    const writing = !user && inputs.loading && index === all.length - 1;\n    let text = String(turn.text || \"\");\n    if (writing) text = text.length ? text + \" ●\" : \"●\";\n    return { key: chatNumber + \"-\" + index, text: text, user: user, dim: writing && !turn.text, actions: !user && !writing };\n  });\n  if (inputs.error && !inputs.loading) turns.push({ key: chatNumber + \"-error\", text: inputs.error, user: false, dim: true, actions: false });\n  const shown = [];\n  let used = 0;\n  for (let i = turns.length - 1; i >= 0; i--) {\n    used += height(turns[i]);\n    if (used > room && shown.length > 0) break;\n    shown.unshift(turns[i]);\n  }\n  outputs.shown = shown;\n  outputs.empty = turns.length === 0;\n}"
       },
       {
-        "id" : "A436E09F-52A1-45A3-9D57-40E4A606A869",
+        "id" : "23E939D6-8021-4353-BEED-732696788CC1",
         "inputs" : {
 
         },
@@ -1893,19 +1841,19 @@
         "valueType" : "json"
       },
       {
-        "id" : "9379C43B-85F4-4EED-9160-BB4F3D97922C",
+        "id" : "44F40316-6EE8-4195-8545-D14B54DF31E6",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "2C64350A-A246-4787-851D-9BF171017AD2",
+        "layerID" : "C496D54B-581F-4B8B-A594-FCEDE0FC2028",
         "position" : {
           "x" : 1488,
           "y" : 2064
         }
       },
       {
-        "id" : "FC8F7A08-B651-4180-B3AA-5309D959ABF0",
+        "id" : "28148E89-EF42-4617-AC24-F38901D236C9",
         "inputs" : {
           "start" : {
             "type" : "number",
@@ -1920,19 +1868,19 @@
         }
       },
       {
-        "id" : "AEC2A29A-7962-4A84-8BB1-AF720DB8FC06",
+        "id" : "79756E5A-2F75-4B60-B8D5-A5FBC751F959",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "84CDE697-7429-4F85-8117-94EB18C385CC",
+        "layerID" : "967874FD-82B3-4B5C-AECD-2A7B19925549",
         "position" : {
           "x" : 1488,
           "y" : 2280
         }
       },
       {
-        "id" : "77686AE4-2C55-4E51-8197-5F3CA4FC03CD",
+        "id" : "25092F11-9088-4849-A764-82C899A909A2",
         "inputs" : {
           "start" : {
             "type" : "number",
@@ -1947,19 +1895,19 @@
         }
       },
       {
-        "id" : "2FFB3DF5-C876-41EC-BCD8-D46CEBB6F313",
+        "id" : "9B283DE1-A39B-4259-AAB0-B51CE4539510",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "E8E38E6B-C2D9-4335-9959-874CC71848BE",
+        "layerID" : "F2D60270-604E-4672-9E15-51FE59D4CB6F",
         "position" : {
           "x" : 1488,
           "y" : 2496
         }
       },
       {
-        "id" : "18A12812-EE47-4B40-B580-82148043594B",
+        "id" : "6AD56C29-E30D-420D-9474-CE447420039A",
         "inputs" : {
           "start" : {
             "type" : "number",
@@ -1974,19 +1922,19 @@
         }
       },
       {
-        "id" : "5FEC1B7F-0717-4DC3-8011-0333B3EA7B7D",
+        "id" : "F6385BE6-39D8-4395-B98E-811CDB8BC9D1",
         "inputs" : {
 
         },
         "kind" : "interaction",
-        "layerID" : "DFC0DFAF-2471-433F-A4CC-ECD7349602E8",
+        "layerID" : "869A1078-C74A-4147-8760-097E21D8F19F",
         "position" : {
           "x" : 1488,
           "y" : 2712
         }
       },
       {
-        "id" : "FEE46A43-5E3E-4E39-A7EF-819A0E0F5E08",
+        "id" : "7899A25F-DECB-4235-9C22-EED62F242105",
         "inputs" : {
           "start" : {
             "type" : "number",
@@ -2001,7 +1949,7 @@
         }
       },
       {
-        "id" : "4F443735-834F-4A28-AD10-3A49C0168BA8",
+        "id" : "24A5C436-33AB-4EA8-9DF3-FF2E91056812",
         "inputs" : {
 
         },
@@ -2014,7 +1962,7 @@
         "valueType" : "text"
       },
       {
-        "id" : "041E7477-DF54-4936-A29A-B1D70A2BEB38",
+        "id" : "8EE334E3-6ACB-4CDB-B6A6-13D17929DE50",
         "inputs" : {
           "model" : {
             "type" : "text",
@@ -2029,7 +1977,7 @@
         }
       },
       {
-        "id" : "6D3AFB1D-36CF-4DE2-ABFA-370DF07164BD",
+        "id" : "E50CAD43-0C69-451E-929E-45FA91D7CF47",
         "inputs" : {
 
         },
@@ -2042,7 +1990,7 @@
         "script" : "\/\/ A thumb chosen stays on its message (the other thumb goes); the last message\n\/\/ copied shows a tick; the one being read aloud shows it.\ninputs = { shown: [], copy: pulse(), copyAt: -1, like: pulse(), likeAt: -1,\n           dislike: pulse(), dislikeAt: -1, read: pulse(), readAt: -1, speaking: false };\noutputs = { marks: {} };\n\nconst votes = {};\nlet copiedKey = \"\", readKey = \"\";\nfunction evaluate(given, outputs) {\n  const keyAt = index => ((given.shown || [])[index] || {}).key || \"\";\n  if (given.like) { const k = keyAt(given.likeAt); votes[k] = votes[k] === \"up\" ? \"\" : \"up\"; }\n  if (given.dislike) { const k = keyAt(given.dislikeAt); votes[k] = votes[k] === \"down\" ? \"\" : \"down\"; }\n  if (given.copy) copiedKey = keyAt(given.copyAt);\n  if (given.read) readKey = keyAt(given.readAt);\n  const marks = {};\n  for (const m of given.shown || []) {\n    marks[m.key] = { vote: votes[m.key] || \"\", copied: m.key === copiedKey, reading: given.speaking && m.key === readKey };\n  }\n  outputs.marks = marks;\n}"
       },
       {
-        "id" : "38F1AB78-F70E-4C2C-B5EF-F7A27FDEC928",
+        "id" : "74B6A5D4-F8A1-4F79-A445-6076648465A5",
         "inputs" : {
 
         },
@@ -2052,10 +2000,10 @@
           "x" : 2352,
           "y" : 1248
         },
-        "script" : "\/\/ The person's words in a bubble on the right, as wide as they are; the model's\n\/\/ as plain text across the screen on the left, with its actions under it.\ninputs = { message: {}, marks: {} };\noutputs = { shown: true, text: \"\", side: \"End\", fill: color(\"#303030\"), padding: 16, width: 290, height: 22, opacity: 1,\n            actions: 0, actionsHeight: 0, copy: \"doc.on.doc\", like: \"hand.thumbsup\", dislike: \"hand.thumbsdown\", read: \"speaker.wave.2\" };\n\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nfunction evaluate(inputs, outputs) {\n  const m = inputs.message || {};\n  const mark = (inputs.marks || {})[m.key] || {};\n  const text = String(m.text || \"\");\n  outputs.text = text;\n  outputs.side = m.user ? \"End\" : \"Start\";\n  outputs.fill = m.user ? color(\"#303030\") : color(\"#00000000\");\n  outputs.padding = m.user ? 16 : 0;\n  const longest = Math.max(...text.split(\"\\n\").map(p => p.length), 1);\n  outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;\n  outputs.height = lines(text, outputs.width) * line;\n  outputs.opacity = m.dim ? 0.5 : 1;\n  \/\/ Not hidden but shrunk to nothing: a view hidden in some copies of a\n  \/\/ repeated view and not others loses its taps.\n  outputs.actions = m.actions ? 1 : 0;\n  outputs.actionsHeight = m.actions ? 32 : 0;\n  outputs.copy = mark.copied ? \"checkmark\" : \"doc.on.doc\";\n  outputs.like = mark.vote === \"up\" ? \"hand.thumbsup.fill\" : \"hand.thumbsup\";\n  outputs.dislike = mark.vote === \"down\" ? \"hand.thumbsdown.fill\" : \"hand.thumbsdown\";\n  outputs.read = mark.reading ? \"speaker.wave.2.fill\" : \"speaker.wave.2\";\n}"
+        "script" : "\/\/ The person's words in a bubble on the right, as wide as they are; the model's\n\/\/ as plain text across the screen on the left, with its actions under it.\ninputs = { message: {}, marks: {} };\noutputs = { shown: true, text: \"\", side: \"End\", fill: color(\"#303030\"), padding: 16, width: 290, opacity: 1,\n            actions: false, copy: \"doc.on.doc\", like: \"hand.thumbsup\", dislike: \"hand.thumbsdown\", read: \"speaker.wave.2\" };\n\nconst wide = 362, narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;\n    function lines(text, width) {\n      const perLine = Math.max(1, Math.floor(width \/ perChar));\n      let count = 0;\n      for (const paragraph of String(text).split(\"\\n\")) {\n        let left = 0;\n        \/\/ Words that do not fit go to the next line, as the renderer wraps them.\n        for (const word of paragraph.split(\" \")) {\n          const length = word.length + (left > 0 ? 1 : 0);\n          if (left > 0 && left + length > perLine) { count++; left = word.length; } else { left += length; }\n        }\n        count++;\n      }\n      return Math.max(count, 1);\n    }\nfunction evaluate(inputs, outputs) {\n  const m = inputs.message || {};\n  const mark = (inputs.marks || {})[m.key] || {};\n  const text = String(m.text || \"\");\n  outputs.text = text;\n  outputs.side = m.user ? \"End\" : \"Start\";\n  outputs.fill = m.user ? color(\"#303030\") : color(\"#00000000\");\n  outputs.padding = m.user ? 16 : 0;\n  const longest = Math.max(...text.split(\"\\n\").map(p => p.length), 1);\n  outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;\n  outputs.opacity = m.dim ? 0.5 : 1;\n  outputs.actions = !!m.actions;\n  outputs.copy = mark.copied ? \"checkmark\" : \"doc.on.doc\";\n  outputs.like = mark.vote === \"up\" ? \"hand.thumbsup.fill\" : \"hand.thumbsup\";\n  outputs.dislike = mark.vote === \"down\" ? \"hand.thumbsdown.fill\" : \"hand.thumbsdown\";\n  outputs.read = mark.reading ? \"speaker.wave.2.fill\" : \"speaker.wave.2\";\n}"
       },
       {
-        "id" : "6FAA60D5-706A-45E7-8F32-7C4A81087004",
+        "id" : "F89A03A1-B3E1-4A56-9BBF-855327E0FE93",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -2074,7 +2022,7 @@
         }
       },
       {
-        "id" : "986A90B4-A7C2-4CC0-9C4E-794ABAF44E6B",
+        "id" : "97DDA55D-0028-47AD-841A-B8AB550D6AED",
         "inputs" : {
 
         },
@@ -2101,7 +2049,7 @@
                         "children" : [
 
                         ],
-                        "id" : "B729A2FA-4B5B-4B39-861D-E52DCA81E5B0",
+                        "id" : "DABFC0E4-1E4B-44CF-B548-4B72BA95E9B5",
                         "kind" : "text",
                         "name" : "Words",
                         "properties" : {
@@ -2115,7 +2063,7 @@
                           },
                           "heightMode" : {
                             "type" : "text",
-                            "value" : "Fixed"
+                            "value" : "Auto"
                           },
                           "size" : {
                             "type" : "size",
@@ -2144,7 +2092,7 @@
                         }
                       }
                     ],
-                    "id" : "423D1B3F-7B23-4480-BB75-F21B1D7A8BFF",
+                    "id" : "8021BD08-88F8-4013-8A8F-925E7C00B769",
                     "kind" : "view",
                     "name" : "Bubble",
                     "properties" : {
@@ -2191,7 +2139,7 @@
                     }
                   }
                 ],
-                "id" : "15BB78A3-230F-4F94-85AA-97F14A39DADC",
+                "id" : "0E57BC10-1BB3-41B2-8BA4-1227EF586320",
                 "kind" : "view",
                 "name" : "Line",
                 "properties" : {
@@ -2232,7 +2180,7 @@
                         "children" : [
 
                         ],
-                        "id" : "CB2311AB-E13C-4340-919D-AF4014DB0850",
+                        "id" : "9DBB6E45-18EE-492F-9F29-38AF41032070",
                         "kind" : "symbol",
                         "name" : "Glyph",
                         "properties" : {
@@ -2266,7 +2214,7 @@
                         }
                       }
                     ],
-                    "id" : "2C64350A-A246-4787-851D-9BF171017AD2",
+                    "id" : "C496D54B-581F-4B8B-A594-FCEDE0FC2028",
                     "kind" : "view",
                     "name" : "Copy",
                     "properties" : {
@@ -2301,7 +2249,7 @@
                         "children" : [
 
                         ],
-                        "id" : "8926CA82-4CA4-4808-9F80-7E49F3A153EE",
+                        "id" : "C48602D2-BEE6-474C-AD43-583B08397F2C",
                         "kind" : "symbol",
                         "name" : "Glyph",
                         "properties" : {
@@ -2335,7 +2283,7 @@
                         }
                       }
                     ],
-                    "id" : "84CDE697-7429-4F85-8117-94EB18C385CC",
+                    "id" : "967874FD-82B3-4B5C-AECD-2A7B19925549",
                     "kind" : "view",
                     "name" : "Like",
                     "properties" : {
@@ -2370,7 +2318,7 @@
                         "children" : [
 
                         ],
-                        "id" : "AD675086-26D3-4039-8D0E-28FE563840B6",
+                        "id" : "1D90A598-7F1D-487D-827A-0703F1D13E5F",
                         "kind" : "symbol",
                         "name" : "Glyph",
                         "properties" : {
@@ -2404,7 +2352,7 @@
                         }
                       }
                     ],
-                    "id" : "E8E38E6B-C2D9-4335-9959-874CC71848BE",
+                    "id" : "F2D60270-604E-4672-9E15-51FE59D4CB6F",
                     "kind" : "view",
                     "name" : "Dislike",
                     "properties" : {
@@ -2439,7 +2387,7 @@
                         "children" : [
 
                         ],
-                        "id" : "A672F548-A457-479A-B7C7-B1DFD805FB5B",
+                        "id" : "208E3713-8703-47A3-8EEC-609E41258D13",
                         "kind" : "symbol",
                         "name" : "Glyph",
                         "properties" : {
@@ -2473,7 +2421,7 @@
                         }
                       }
                     ],
-                    "id" : "DFC0DFAF-2471-433F-A4CC-ECD7349602E8",
+                    "id" : "869A1078-C74A-4147-8760-097E21D8F19F",
                     "kind" : "view",
                     "name" : "Read Aloud",
                     "properties" : {
@@ -2503,17 +2451,13 @@
                     }
                   }
                 ],
-                "id" : "0106A010-E7BC-45B7-A333-051E9A3D1322",
+                "id" : "E0734E32-CF87-4D5E-9336-FE5755E3FBD6",
                 "kind" : "view",
                 "name" : "Actions",
                 "properties" : {
                   "axis" : {
                     "type" : "text",
                     "value" : "Horizontal"
-                  },
-                  "clips" : {
-                    "type" : "bool",
-                    "value" : true
                   },
                   "layout" : {
                     "type" : "text",
@@ -2537,7 +2481,7 @@
                 }
               }
             ],
-            "id" : "3022CDB3-5C65-45DF-8773-C5BA8B004353",
+            "id" : "5563C96F-A5FD-4ECA-B2DA-CAEEDBC17BEE",
             "kind" : "view",
             "name" : "Message",
             "properties" : {
@@ -2567,7 +2511,7 @@
             }
           }
         ],
-        "id" : "D05D4F6B-9EF8-40CD-9314-828BD143F607",
+        "id" : "DF6B3C8F-2603-4C55-BC0A-51FB6009011D",
         "kind" : "view",
         "name" : "Messages",
         "properties" : {
@@ -2617,7 +2561,7 @@
             "children" : [
 
             ],
-            "id" : "B05E6E7F-445E-4BF8-B911-42C3B3843A38",
+            "id" : "1E909186-CF10-46A9-9F5B-B83DFE313DBA",
             "kind" : "symbol",
             "name" : "Mark",
             "properties" : {
@@ -2654,7 +2598,7 @@
             "children" : [
 
             ],
-            "id" : "31D494D2-C157-42B3-9628-D39A0CC0059F",
+            "id" : "14B225FA-F36A-4D7C-AB04-EFE95C4B1BAD",
             "kind" : "text",
             "name" : "Question",
             "properties" : {
@@ -2711,7 +2655,7 @@
             "children" : [
 
             ],
-            "id" : "7CDAB7FE-30F7-4864-B2CC-578060055B8A",
+            "id" : "20032919-11CC-45E7-B3CC-79B8BE398633",
             "kind" : "text",
             "name" : "Promise",
             "properties" : {
@@ -2772,7 +2716,7 @@
                     "children" : [
 
                     ],
-                    "id" : "4C57D412-E4BB-4421-A2F5-8BEE85A0F6E4",
+                    "id" : "CE24A3F3-757E-4491-93E9-0A188748C642",
                     "kind" : "symbol",
                     "name" : "Glyph",
                     "properties" : {
@@ -2809,7 +2753,7 @@
                     "children" : [
 
                     ],
-                    "id" : "F5D63D39-DF2D-4B55-BE77-8CAE73044561",
+                    "id" : "8A212CF0-53B4-49FB-A4CD-EDFAEB6B3760",
                     "kind" : "text",
                     "name" : "Words",
                     "properties" : {
@@ -2852,7 +2796,7 @@
                     }
                   }
                 ],
-                "id" : "F82B657D-31CD-46C8-80C7-285BDE6A706E",
+                "id" : "8AAA500D-EDC0-414F-B37E-3C39607A3654",
                 "kind" : "view",
                 "name" : "Pill",
                 "properties" : {
@@ -2940,7 +2884,7 @@
                 }
               }
             ],
-            "id" : "26E94125-DF00-4653-8161-3E795849748C",
+            "id" : "6795E207-5A81-434F-A24F-6A110B6FD731",
             "kind" : "view",
             "name" : "Hint",
             "properties" : {
@@ -2984,7 +2928,7 @@
                     "children" : [
 
                     ],
-                    "id" : "3933A332-DDAD-4A7E-AB69-4ADB6B99FD39",
+                    "id" : "D91D5D29-33C3-491E-A816-748E59B4B7C5",
                     "kind" : "text",
                     "name" : "Suggestion Title",
                     "properties" : {
@@ -3023,7 +2967,7 @@
                     "children" : [
 
                     ],
-                    "id" : "62B46DB1-43C2-4611-98E1-8AE97A6C0BF0",
+                    "id" : "789B1E06-FF31-467F-8BBF-83CC71A0AFEE",
                     "kind" : "text",
                     "name" : "Suggestion Detail",
                     "properties" : {
@@ -3055,7 +2999,7 @@
                     }
                   }
                 ],
-                "id" : "7179026C-06AC-4C30-90F0-237D4884E5BF",
+                "id" : "1754D3EB-DEA6-4153-B801-879CA67E5230",
                 "kind" : "view",
                 "name" : "Suggestion",
                 "properties" : {
@@ -3115,7 +3059,7 @@
                 }
               }
             ],
-            "id" : "C144D86B-4A44-41AD-BBF5-B94CEB035648",
+            "id" : "316E6E7C-5458-40A9-B8A5-FD2691F65B12",
             "kind" : "view",
             "name" : "Suggestions",
             "properties" : {
@@ -3156,7 +3100,7 @@
             }
           }
         ],
-        "id" : "E05F69F8-CBA5-417B-81BA-5924E756428B",
+        "id" : "D4B2190A-7A0C-4AC3-898B-0F3BEC2A60EA",
         "kind" : "view",
         "name" : "Welcome",
         "properties" : {
@@ -3175,7 +3119,7 @@
             "children" : [
 
             ],
-            "id" : "1B424AEF-6550-45B7-9120-18106278D4B7",
+            "id" : "CB0D1641-9151-4E9D-9BE5-6476EFE3C5A4",
             "kind" : "text",
             "name" : "Model",
             "properties" : {
@@ -3221,7 +3165,7 @@
             "children" : [
 
             ],
-            "id" : "D1153547-C845-4B8D-92D1-2167CF8BA714",
+            "id" : "4CF4D76C-EE50-4F93-A12D-D8E150576B95",
             "kind" : "symbol",
             "name" : "Chevron",
             "properties" : {
@@ -3259,7 +3203,7 @@
             }
           }
         ],
-        "id" : "25410299-511B-4A2D-83A0-07D571470CE0",
+        "id" : "AA614F5B-6287-4112-BCB4-E690975C44CC",
         "kind" : "view",
         "name" : "Bar",
         "properties" : {
@@ -3312,7 +3256,7 @@
         "children" : [
 
         ],
-        "id" : "1F572EA9-6D2C-46F4-9235-B950A69F94D1",
+        "id" : "7C1C8760-8428-4FDD-B5C9-0CE5D583F949",
         "kind" : "symbol",
         "name" : "Menu",
         "properties" : {
@@ -3351,7 +3295,7 @@
             "children" : [
 
             ],
-            "id" : "899C8D98-9030-4604-8C91-D87657C87BC9",
+            "id" : "AEC16D9D-D92C-498D-9986-04E531778DCA",
             "kind" : "symbol",
             "name" : "Glyph",
             "properties" : {
@@ -3385,7 +3329,7 @@
             }
           }
         ],
-        "id" : "A1820A9A-90DF-46CC-852F-A7D89E6F8254",
+        "id" : "B1C8F39A-D67E-4C4D-AEB7-E07E137CAE2E",
         "kind" : "view",
         "name" : "New Chat",
         "properties" : {
@@ -3425,7 +3369,7 @@
         "children" : [
 
         ],
-        "id" : "9340463F-CCDE-4382-B6C9-7DE14F5E039D",
+        "id" : "6D3AECFA-B040-452E-AA1F-C9BFF2198E2B",
         "kind" : "view",
         "name" : "Glow",
         "properties" : {
@@ -3475,7 +3419,7 @@
                 "children" : [
 
                 ],
-                "id" : "BEA88805-6A43-4262-B13F-28EB079C5A11",
+                "id" : "854E9904-7BD1-4D9A-8555-DD45C525E398",
                 "kind" : "symbol",
                 "name" : "Glyph",
                 "properties" : {
@@ -3513,7 +3457,7 @@
                 }
               }
             ],
-            "id" : "D69D9F37-F260-4E07-8972-16556FDED670",
+            "id" : "051EC261-B17E-4851-8614-CD027F3EB281",
             "kind" : "view",
             "name" : "Plus",
             "properties" : {
@@ -3559,7 +3503,7 @@
             "children" : [
 
             ],
-            "id" : "2A962AEE-58AD-4179-A7B0-1B81FE233ECB",
+            "id" : "9CA981E2-680C-4B88-9432-19C82DCA8BB9",
             "kind" : "textField",
             "name" : "Ask",
             "properties" : {
@@ -3612,7 +3556,7 @@
                 "children" : [
 
                 ],
-                "id" : "61B22223-3C13-48ED-A81D-AE00E1BD7497",
+                "id" : "B12B0E80-F567-4D69-AAD9-32E8929502BE",
                 "kind" : "symbol",
                 "name" : "Glyph",
                 "properties" : {
@@ -3646,7 +3590,7 @@
                 }
               }
             ],
-            "id" : "ED89E18C-FB02-4D6B-B2EB-EE7FCA3447BE",
+            "id" : "E8628B45-B7D4-4B42-91DF-358C46D76D3B",
             "kind" : "view",
             "name" : "Mic",
             "properties" : {
@@ -3681,7 +3625,7 @@
                 "children" : [
 
                 ],
-                "id" : "C616CAEB-CFD5-48E7-8F08-0F3F37374162",
+                "id" : "2BDD90AB-8EDB-42A6-9BE5-683487E524C4",
                 "kind" : "symbol",
                 "name" : "Glyph",
                 "properties" : {
@@ -3719,7 +3663,7 @@
                 }
               }
             ],
-            "id" : "8DB4C49A-A7BE-440C-9ECF-D0D7FA16FD44",
+            "id" : "3B2C324D-F946-49DB-A29D-A860907301D7",
             "kind" : "view",
             "name" : "Talk Send Stop",
             "properties" : {
@@ -3762,7 +3706,7 @@
             }
           }
         ],
-        "id" : "FE3D5F3D-050B-4397-8F45-5106966BEAC0",
+        "id" : "D1354FB8-6132-42CC-B061-1FA6C39A8007",
         "kind" : "view",
         "name" : "Composer",
         "properties" : {
@@ -3824,7 +3768,7 @@
         }
       }
     ],
-    "id" : "E168D92C-0166-4622-B70A-7FFBC4442A66",
+    "id" : "B518C72F-9E5D-4AAF-B3D0-260D5F7BFCD1",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {

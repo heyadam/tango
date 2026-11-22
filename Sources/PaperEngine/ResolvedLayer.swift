@@ -173,11 +173,14 @@ public struct ResolvedLayer: Sendable, Hashable, Identifiable {
         }.filter(\.isThere)
     }
 
-    /// How many times each layer appears in this tree.
+    /// How many rows each layer's patches have: one per copy, counted to the last copy in
+    /// the tree, so a copy left out (`visible` off) keeps its row and the copies after it
+    /// keep theirs. Counted by appearances, it gave a tap on the copy after a hidden one
+    /// no row to land in.
     public func instanceCounts() -> [LayerID: Int] {
         var counts: [LayerID: Int] = [:]
         func walk(_ layer: ResolvedLayer) {
-            counts[layer.id, default: 0] += 1
+            counts[layer.id] = max(counts[layer.id] ?? 0, min(layer.instance, 9_999) + 1)
             layer.children.forEach(walk)
         }
         walk(self)

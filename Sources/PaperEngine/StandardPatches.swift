@@ -4,6 +4,8 @@ import PaperModel
 /// The patches that ship with the Foundational tier.
 enum StandardPatches {
     static let anyValue: [PortType] = [.number, .bool, .text, .color, .point, .size]
+    /// What a loop can hold: everything Loop Over Array makes, JSON included.
+    static let loopValue: [PortType] = anyValue + [.json]
     static let blendable: [PortType] = [.number, .point, .size, .color]
 
     static var all: [PatchDefinition] {
@@ -778,7 +780,7 @@ enum StandardPatches {
             summary: "Makes a loop from the values you give it, one per input. Right-click to add or remove inputs.",
             inputs: [.generic("value", "Value")],
             outputs: [.generic("loop", "Loop"), PortSpec("index", "Index", .number)],
-            genericTypes: anyValue,
+            genericTypes: loopValue,
             variableInputs: VariableInputs(standard: 3, range: 1...24)
         ).wholeLoop { ctx in
             ctx.outputs = ctx.inputs.enumerated().map { index, values in
@@ -792,7 +794,7 @@ enum StandardPatches {
             summary: "Makes a loop with one value per item of an array.",
             inputs: [PortSpec("array", "Array", .array)],
             outputs: [.generic("value", "Value"), PortSpec("index", "Index", .number)],
-            genericTypes: [.text, .number, .bool, .color, .point, .size, .json]
+            genericTypes: loopValue
         ).wholeLoop { ctx in
             let items = (ctx.first(0)?.arrayValue ?? []).prefix(loopLimit)
             ctx.outputs = items.enumerated().map { index, item in
@@ -845,7 +847,7 @@ enum StandardPatches {
             summary: "Picks the value at one index of a loop, turning the loop back into a single value.",
             inputs: [.generic("loop", "Loop"), PortSpec("index", "Index", .number)],
             outputs: [.generic("value", "Value")],
-            genericTypes: anyValue
+            genericTypes: loopValue
         ).wholeLoop { ctx in
             let loop = ctx.inputs[0]
             let index = (ctx.first(1)?.numberValue ?? 0).whole
@@ -859,7 +861,7 @@ enum StandardPatches {
             summary: "Outputs how many values a loop has.",
             inputs: [.generic("loop", "Loop")],
             outputs: [PortSpec("count", "Count", .number)],
-            genericTypes: anyValue
+            genericTypes: loopValue
         ).wholeLoop { ctx in
             ctx.outputs = [[.number(Double(ctx.inputs[0].count))]]
         },

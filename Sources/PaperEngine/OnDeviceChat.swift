@@ -81,8 +81,9 @@ extension SampleDocuments {
     }
     """
 
-    /// How the chat's scripts size a message's words: generously, so a line too many is
-    /// spare room and never a line cut off.
+    /// How the chat's scripts guess a message's size: how wide a bubble is, and how many
+    /// messages fit. Generous, so a guess too big is spare room, never a message cut off;
+    /// the words themselves are laid out by their text views.
     static let chatMeasure = """
     const wide = \(Int(ExampleStyle.column)), narrow = 290, perChar = 8.2, line = 22, actionsRow = 40;
         function lines(text, width) {
@@ -133,7 +134,7 @@ extension SampleDocuments {
         // plain words on the left for the model with its actions under them.
         let words = Layer(name: "Words", kind: .text, properties: [
             .text: .text(""), .fontSize: .number(16), .fontWeight: .number(400), .textColor: .color(white),
-            .size: .size(Size2(width: S.column, height: 22)), .widthMode: .text("Fixed"), .heightMode: .text("Fixed"),
+            .size: .size(Size2(width: S.column, height: 22)), .widthMode: .text("Fixed"), .heightMode: .text("Auto"),
         ])
         let bubble = Layer(name: "Bubble", kind: .view, properties: [
             .size: .size(Size2(width: 100, height: 40)), .widthMode: .text("Auto"), .heightMode: .text("Auto"),
@@ -156,7 +157,7 @@ extension SampleDocuments {
         let speaker = action("Read Aloud", "speaker.wave.2")
         let actions = Layer(name: "Actions", kind: .view, properties: [
             .size: .size(Size2(width: 160, height: 32)), .widthMode: .text("Auto"),
-            .layout: .text("Stack"), .axis: .text("Horizontal"), .spacing: .number(6), .clips: .bool(true),
+            .layout: .text("Stack"), .axis: .text("Horizontal"), .spacing: .number(6),
         ], children: [copy, like, dislike, speaker])
         let message = Layer(name: "Message", kind: .view, properties: [
             .size: .size(Size2(width: S.column, height: 40)), .widthMode: .text("Grow"), .heightMode: .text("Auto"),
@@ -279,7 +280,8 @@ extension SampleDocuments {
         b.connect(picked, "option", to: pickedPrompt, "index")
 
         // What is asked: a card's words, what was said into the microphone, or what was
-        // typed. Return or the round button sends; it stops while an answer is written.
+        // typed. Return or the round button sends, and empties the field; while an answer
+        // is written the same button stops it.
         let typing = b.attach("textInput", to: field.id, at: Point2(x: 48, y: 1248))
         let press = b.interaction(on: circle.id, at: Point2(x: 48, y: 1488))
         let hold = b.interaction(on: mic.id, at: Point2(x: 48, y: 1776))
@@ -297,7 +299,6 @@ extension SampleDocuments {
         let chat = b.add("aiText", at: Point2(x: 1200, y: 1248), name: "Chat", inputs: [
             "model": .text(AIRequest.onDevice), "instructions": .text(C.instructions),
         ])
-        let sent = b.add("pulse", at: Point2(x: 1488, y: 1776), name: "Sent")
         b.connect(press, "tap", to: sendGate, "pulse")
         b.connect(press, "tap", to: stopGate, "pulse")
         b.connect(chat, "loading", to: stopGate, "open")
@@ -321,10 +322,7 @@ extension SampleDocuments {
         b.connect(asked, "pulse", to: chat, "send")
         b.connect(stopGate, "pulse", to: chat, "stop")
         b.connect(fresh, "tap", to: chat, "reset")
-        // The field empties once the model has the words (from its own Submitted would be
-        // a loop through the field, and Return would send nothing).
-        b.connect(chat, "loading", to: sent, "value")
-        b.connect(sent, "turnedOn", to: typing, "clear")
+        b.connect(typed, "pulse", to: typing, "clear")
 
         // What the composer shows: the round button's symbol, and the field's words while
         // listening.
@@ -464,8 +462,8 @@ extension SampleDocuments {
             // The person's words in a bubble on the right, as wide as they are; the model's
             // as plain text across the screen on the left, with its actions under it.
             inputs = { message: {}, marks: {} };
-            outputs = { shown: true, text: "", side: "End", fill: color("#303030"), padding: 16, width: 290, height: 22, opacity: 1,
-                        actions: 0, actionsHeight: 0, copy: "doc.on.doc", like: "hand.thumbsup", dislike: "hand.thumbsdown", read: "speaker.wave.2" };
+            outputs = { shown: true, text: "", side: "End", fill: color("#303030"), padding: 16, width: 290, opacity: 1,
+                        actions: false, copy: "doc.on.doc", like: "hand.thumbsup", dislike: "hand.thumbsdown", read: "speaker.wave.2" };
 
             \(chatMeasure)
             function evaluate(inputs, outputs) {
@@ -478,12 +476,8 @@ extension SampleDocuments {
               outputs.padding = m.user ? 16 : 0;
               const longest = Math.max(...text.split("\\n").map(p => p.length), 1);
               outputs.width = m.user ? Math.min(narrow, Math.ceil(longest * perChar) + 2) : wide;
-              outputs.height = lines(text, outputs.width) * line;
               outputs.opacity = m.dim ? 0.5 : 1;
-              // Not hidden but shrunk to nothing: a view hidden in some copies of a
-              // repeated view and not others loses its taps.
-              outputs.actions = m.actions ? 1 : 0;
-              outputs.actionsHeight = m.actions ? 32 : 0;
+              outputs.actions = !!m.actions;
               outputs.copy = mark.copied ? "checkmark" : "doc.on.doc";
               outputs.like = mark.vote === "up" ? "hand.thumbsup.fill" : "hand.thumbsup";
               outputs.dislike = mark.vote === "down" ? "hand.thumbsdown.fill" : "hand.thumbsdown";
@@ -511,11 +505,8 @@ extension SampleDocuments {
         b.connect(style, "padding", to: bubbleView, LayerProperty.paddingVertical.rawValue)
         b.connect(style, "text", to: wordsView, LayerProperty.text.rawValue)
         b.connect(style, "width", to: wordsView, "width")
-        b.connect(style, "height", to: wordsView, "height")
         b.connect(style, "opacity", to: wordsView, LayerProperty.opacity.rawValue)
-        b.connect(style, "actions", to: actionsView, LayerProperty.scale.rawValue)
-        b.connect(style, "actions", to: actionsView, LayerProperty.opacity.rawValue)
-        b.connect(style, "actionsHeight", to: actionsView, "height")
+        b.connect(style, "actions", to: actionsView, LayerProperty.visible.rawValue)
         for (layer, output, y) in [(copy, "copy", 1824.0), (like, "like", 2064), (dislike, "dislike", 2280), (speaker, "read", 2496)] {
             let glyph = b.view(layer.children[0].id, at: Point2(x: 2928, y: y))
             b.connect(style, output, to: glyph, LayerProperty.symbol.rawValue)
@@ -531,7 +522,7 @@ extension SampleDocuments {
         b.connect(phase, "time", to: glowView, ShaderUse.portID("phase"))
 
         b.note("Start · One card per suggestion", around: [fills, eachFill, titles, details, prompts, eachTitle, eachDetail, eachPrompt, tapped, picked, pickedPrompt])
-        b.note("Ask · Apple's model on this device keeps the chat", around: [typing, press, hold, sendGate, stopGate, talkHeld, holding, listen, typed, spoken, asked, saidOrTyped, prompt, fresh, chat, sent])
+        b.note("Ask · Apple's model on this device keeps the chat", around: [typing, press, hold, sendGate, stopGate, talkHeld, holding, listen, typed, spoken, asked, saidOrTyped, prompt, fresh, chat])
         b.note("Composer · Talk, send or stop", around: [composerLook])
         b.note("Thread · What fits, newest last", around: [thread, eachMessage])
         b.note("Style · Bubble or plain words", around: [style])
