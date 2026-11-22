@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.tango
   deploymentTarget:
     macOS: "26.0"
+    iOS: "26.0"
   createIntermediateGroups: true
 packages:
   TangoKit:
@@ -70,3 +71,36 @@ targets:
       configs:
         Release:
           ENABLE_HARDENED_RUNTIME: YES   # notarization requires it (scripts/release.sh)
+  # The iOS player: an @main around PaperPlayer, as App/ is around PaperEditor.
+  TangoPlayer:
+    type: application
+    platform: iOS
+    sources:
+      - path: Player
+        excludes: ["*.xcconfig"]
+    dependencies:
+      - package: TangoKit
+        product: PaperPlayer
+    configFiles:
+      Debug: Player/Signing.xcconfig
+      Release: Player/Signing.xcconfig
+    info:
+      path: Player/Info.plist
+      properties:
+        CFBundleName: tango
+        CFBundleDisplayName: tango
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
+        # Prototypes run at the display's full rate.
+        CADisableMinimumFrameDurationOnPhone: true
+    settings:
+      base:
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        PRODUCT_NAME: TangoPlayer
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic

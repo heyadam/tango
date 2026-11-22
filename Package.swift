@@ -3,13 +3,14 @@ import PackageDescription
 
 let package = Package(
     name: "TangoKit",
-    platforms: [.macOS(.v26)],
+    platforms: [.macOS(.v26), .iOS(.v26)],
     products: [
         .library(name: "PaperModel", targets: ["PaperModel"]),
         .library(name: "PaperEngine", targets: ["PaperEngine"]),
         .library(name: "PaperRender", targets: ["PaperRender"]),
         .library(name: "PaperHost", targets: ["PaperHost"]),
         .library(name: "PaperEditor", targets: ["PaperEditor"]),
+        .library(name: "PaperPlayer", targets: ["PaperPlayer"]),
     ],
     targets: [
         .target(name: "PaperModel"),
@@ -36,6 +37,12 @@ let package = Package(
             dependencies: ["PaperModel", "PaperEngine", "PaperRender", "PaperHost"],
             // The assistant's Node program, installed in Application Support on first use.
             resources: [.copy("Assistant")],
+            swiftSettings: [.defaultIsolation(MainActor.self)]
+        ),
+        // The iOS player. Its views are iOS only; the Mac builds what is left, for tests.
+        .target(
+            name: "PaperPlayer",
+            dependencies: ["PaperModel", "PaperEngine", "PaperHost"],
             swiftSettings: [.defaultIsolation(MainActor.self)]
         ),
         .executableTarget(

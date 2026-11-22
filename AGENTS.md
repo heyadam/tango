@@ -11,6 +11,10 @@ swift test                      # all tests (Swift Testing); run after every cha
 xcodegen generate               # regenerate Tango.xcodeproj from project.yml (the project is gitignored)
 xcodebuild -project Tango.xcodeproj -scheme Tango -configuration Debug -derivedDataPath build build
 open build/Build/Products/Debug/Tango.app
+
+# the iOS player, in the simulator (after touching anything it links: swift test never compiles its UIKit code)
+xcodebuild -project Tango.xcodeproj -scheme TangoPlayer -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath build build
+scripts/player-shots.sh [gallery id…]   # its pictures beside the Mac's, in build/player-shots
 ```
 
 Releases (a signed, notarized DMG on GitHub, from a `v*` tag) are `scripts/release.sh` and `.github/workflows/release.yml`; `RELEASING.md` has the steps and the signing setup. Hardened runtime is on in Release only, so a new device capability needs its entitlement in `project.yml`.
@@ -38,19 +42,23 @@ Every command takes `--extensions <folder>`, which keeps installed extensions th
 
 ## Layout
 
-One Swift package, `TangoKit`, with a strict one-way dependency chain, wrapped by a thin app target (`App/`, an `@main` around `EditorScene`).
+One Swift package, `TangoKit`, with a strict one-way dependency chain, wrapped by two thin app targets: `App/` (macOS, an `@main` around `EditorScene`) and `Player/` (iOS, an `@main` around `PlayerScene`).
 
 ```
-PaperModel  <-  PaperEngine  <-  PaperRender  <-  PaperHost  <-  PaperEditor  <-  App
+PaperModel  <-  PaperEngine  <-  PaperRender  <-  PaperHost  <-  PaperEditor  <-  App      (macOS)
+                                                             <-  PaperPlayer  <-  Player   (iOS)
 ```
 
 - **PaperModel** — values and documents, no UI imports. `Value`/`PortType`, `Layer`/`LayerProperty`/`ViewType`/`ViewInput`, `Graph`/`PatchNode`/`Connection`/`GraphComment`, `ComponentDefinition`, `Document` (with `normalize` and the version 2 upgrade), `DocumentPackage` (the `.tango` package: `document.json` plus `assets/` and `extensions/`), `ExtensionManifest` and `PaperExtension` (an extension as its files).
 - **PaperEngine** — runs a document. `PatchDefinition` + `StandardPatches`, `PatchRegistry`, `Runtime`, `ResolvedLayer` + `Layout`, `ComponentExpansion`, `ComponentLibrary` (`Library/`: the iOS shelf, its tokens in `SystemStyle`, and `ViewTemplate`), `Script` (JavaScript patches), `ShaderSource` (reads a shader view's source; no Metal), `Samples` and `Patterns` (the example documents, built in code, and the `Gallery` catalog that lists them; `Media/` holds the one clip an example plays), `Extension` (`ExtensionSet`, what extensions add to the registry, `ExtensionLog`) and `Drawing` (`DrawCommand`, `ViewPainter`).
 - **PaperRender** — `LayerRenderer`: a resolved layer tree to a `CALayer` tree. `ShaderCompiler` and `ShaderSurface` (`ShaderRenderer.swift`): Metal for shader views, the only GPU code. `DrawingRasterizer`: what an extension's view drew, as a picture. `VideoStills` and `VideoPlayer` (`VideoRenderer.swift`): AVFoundation for video views.
-- **PaperHost** — what anything that hosts a running prototype does that is not a view, so it is written once: `PrototypeNetwork` (a Network Request patch's request as a `URLRequest`, the guarded session, sending), `PictureStore` (the pictures a prototype shows by name: assets decoded once, fetched and made ones kept, `ExtensionImages`), `VideoFiles`, `Viewport` (where a screen goes in the view that shows it). The Mac's Viewer and Canvas use it; a host service a second host needs moves here from `PaperEditor`, it is not copied. AppKit only behind `canImport`.
+- **PaperHost** — what anything that hosts a running prototype does that is not a view, so it is written once: `PrototypeNetwork` (a Network Request patch's request as a `URLRequest`, the guarded session, sending), `PictureStore` (the pictures a prototype shows by name: assets decoded once, fetched and made ones kept, `ExtensionImages`), `VideoFiles`, `Viewport` (where a screen goes in the view that shows it), and `PrototypeHost`, which owns a `Runtime`, a `LayerRenderer` and all of those for a view that only forwards touches and frames (the player's; `ViewerView` is not on it yet). The Mac's Viewer and Canvas use the rest; a host service a second host needs moves here from `PaperEditor`, it is not copied. AppKit only behind `canImport`.
+- **PaperPlayer** — the iOS player (see "The device player"): `PlayerScene`, `PlayerView`. Its files are whole inside `#if os(iOS)`, so on the Mac the module is what is left.
 - **PaperEditor** — the app's UI. `DocumentStore` (+ `DocumentCommands`, `Clipboard`), `EditorView`, `CanvasView`, `PatchEditorView`, `ViewerView` + `ViewerWindow` + `ViewerSnapshot`, `InspectorView`, `LayerListView`, `GalleryView`, `DeviceServices`, `Recorder`, and the assistant (`AssistantToolbox`, `AssistantPrompt`, `AssistantSession`, `AssistantTransport`, `AssistantView`, `Assistant/sidecar.mjs`), the MCP server for outside agents (`AgentServer`, `AgentListener`, `OpenDocuments`, `AgentSettingsView`), and extensions (`ExtensionStore`, `ExtensionNetwork`, `KeyVault`, `ExtensionManagerView`).
 
-`PaperRender`, `PaperHost`, `PaperEditor` and `papertool` use `defaultIsolation(MainActor.self)`. `PaperModel` and `PaperEngine` are isolation-free and must stay free of AppKit.
+`PaperRender`, `PaperHost`, `PaperPlayer`, `PaperEditor` and `papertool` use `defaultIsolation(MainActor.self)`. `PaperModel` and `PaperEngine` are isolation-free and must stay free of AppKit.
+
+The package builds for macOS and iOS. Everything in `Sources/` compiles for macOS and is tested there; `PaperModel`, `PaperEngine`, `PaperRender`, `PaperHost` and `PaperPlayer` also compile for iOS, so AppKit and UIKit appear in them only behind `canImport`. `PaperEditor` and `papertool` never build for iOS: only the `TangoPlayer` scheme is built for it (the package's own schemes would try to build the editor).
 
 ## Views are patches
 
@@ -124,6 +132,20 @@ Not in the product spec. A prototype can have several screens, shown side by sid
 - **Where the Viewer starts is marked**: the play mark before a screen's title on the Canvas (in the accent color when it is not the first), and "Start" after its name in the outline (`store.startScreen`). On that screen, Preview from Here becomes Preview from the Start.
 - The examples are `Gallery` items `flow` (Screens and Flows: Push, Modal, back, and swiping back) and `morph` (Card to Screen: a card that grows into its own screen with Morph). `RandomizedTests` adds, moves and unmakes screens and draws flows.
 - Limits: every screen has the device's size; frames cannot be placed freely on the board; swipe back is from the left edge of a pushed screen only (no edge gestures of a person's own); the Canvas does not play the prototype.
+
+## The device player
+
+Spec 7.9 (a companion player; device mirroring). An iOS app that runs prototypes with the same engine and renderer, under real fingers. So far it plays the gallery's examples; receiving a prototype live from the Mac, and keeping it, are not built.
+
+- **The phone runs the real thing**, not a stream of pictures: `PrototypeHost` (PaperHost) with a `Runtime` and a `LayerRenderer`, in `PlayerView`, the player's one UIKit view. It forwards every `UITouch` as `touchBegan(id:)`… (the lowest number no finger has, so one finger is finger 0), runs a `CADisplayLink` at up to 120 Hz that rests when `needsAnotherFrame` is false, and plays video while it is in a window.
+- **The screen is fitted** to the phone with `Viewport.fit`, filling it; a phone of another shape shows black beside it.
+- **Every touch is the prototype's.** The status bar is hidden and the system's edge gestures are deferred, so a prototype's own swipe back works. Three fingers held down bring up the player's bar (Restart, Close).
+- **What does not run on the phone yet**: extensions (`PrototypeHost.registry(for:)` registers what a document carries as unavailable, so its patches keep their ports and run nothing), AI patches (they fail at once with `PrototypeHost.noAI`), and device services (haptics, camera, microphone, location, sound; effects reach `onEffect`, which nothing hears yet). There is no keyboard for text fields.
+- **`project.yml`** has the target `TangoPlayer`. `Player/Signing.xcconfig` is committed and includes `Player/Signing.local.xcconfig` if there is one: put `DEVELOPMENT_TEAM` and a `PRODUCT_BUNDLE_IDENTIFIER` you own there to run on a phone. The simulator needs neither.
+- **`-example <gallery id>`** on the command line opens an example at once; `scripts/player-shots.sh` uses it to take the player's pictures in the simulator beside `papertool viewer`'s. It compares nothing: look at them.
+- **`PrototypeHostTests`** (in `PaperEditorTests`, since it needs `ViewerSnapshot`) holds `PrototypeHost.picture` to what the Mac's Viewer draws for every gallery item. That is on the Mac; nothing tests pixels on iOS.
+- **What iOS does differently**, found in the simulator: a view's layer is y-down there, so `LayerRenderer.flipsRoot` is off (`ShaderSurface.flipsRoot`, for the root a `CARenderer` draws, stays on); SF Symbols are drawn through `UIImage`; and text inside a shader view showed twice when the pixel density changed after its first drawing, so `LayerRenderer` draws a text layer again at once when it does.
+- Not checked: touch in the simulator (`simctl` sends none), a real phone, and the glass shader's frame time on one.
 
 ## Shader views
 
@@ -387,4 +409,4 @@ Built: the Foundational and Depth tiers (views as patches with frame outputs, po
 
 Built outside the spec: several screens on a Canvas board with flows between them (push, modal, fade, instant, morph, back, and swiping back from the edge), AI patches (Claude and OpenAI text, OpenAI images, speech and transcription, with keys in Settings), the assistant, the MCP server that lets Claude Code and Codex drive the app, sketching a screen from code and carrying changes back through that server, and extensions with their manager and key vault.
 
-Not built: system components drawn by Apple's own code, text that sizes to its content by default, more than two simulated fingers in the Viewer (the runtime takes any number), screen-edge and pencil gestures, a way to make one gesture wait for another beyond tap and double tap, screens of different sizes, Figma import, publishable libraries, a device player, WebSockets, an on-screen keyboard and caret movement inside a text field, inserting a pattern into an open document (the gallery opens copies), map/Lottie/particle layers, and for extensions: signing, a catalog to install from, gallery examples of their own, outputs on the views they draw, opening one from the Finder.
+Not built: system components drawn by Apple's own code, text that sizes to its content by default, more than two simulated fingers in the Viewer (the runtime takes any number), screen-edge and pencil gestures, a way to make one gesture wait for another beyond tap and double tap, screens of different sizes, Figma import, publishable libraries, sending a prototype to the device player and keeping it there, WebSockets, an on-screen keyboard and caret movement inside a text field, inserting a pattern into an open document (the gallery opens copies), map/Lottie/particle layers, and for extensions: signing, a catalog to install from, gallery examples of their own, outputs on the views they draw, opening one from the Finder.
