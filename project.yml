@@ -2,8 +2,8 @@ name: Tango
 options:
   bundleIdPrefix: com.tango
   deploymentTarget:
-    macOS: "26.0"
-    iOS: "26.0"
+    macOS: "27.0"
+    iOS: "27.0"
   createIntermediateGroups: true
 packages:
   TangoKit:

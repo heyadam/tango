@@ -10,7 +10,7 @@ A native macOS app for designing interactive interfaces. Every view is a patch i
 
 ## Build
 
-Requires Xcode 27, Swift 6.2, macOS 26 and `brew install xcodegen`. The assistant also needs Node.js 18 or later.
+Requires Xcode 27, Swift 6.4, macOS 27 (iOS 27 for the iPhone player) and `brew install xcodegen`. The assistant also needs Node.js 18 or later.
 
 ```bash
 swift test

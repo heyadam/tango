@@ -21,7 +21,7 @@ Releases (a signed, notarized DMG on GitHub, from a `v*` tag) are `scripts/relea
 
 The app icon is `Icon/Tango.icon`, an Icon Composer file both apps build from (`ASSETCATALOG_COMPILER_APPICON_NAME: Tango`). It holds the full-bleed square artwork only: macOS and iOS cut the rounded shape, the margin, the shadow and the glass edge themselves, so never bake corners into `Assets/tango.png`. Edit it in Icon Composer (in Xcode's Applications), which also gives it dark and tinted looks.
 
-Requires Xcode 27 / Swift 6.2 / macOS 26, and `brew install xcodegen`. The assistant also needs Node.js 18 or later at run time; nothing else does.
+Requires Xcode 27 / Swift 6.4 / macOS 27 (the iPhone player iOS 27), and `brew install xcodegen`. The assistant also needs Node.js 18 or later at run time; nothing else does.
 
 `papertool` drives the same code without showing a window:
 
