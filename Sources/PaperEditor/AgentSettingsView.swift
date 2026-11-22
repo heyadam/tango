@@ -1,5 +1,6 @@
 import AppKit
 import PaperEngine
+import PaperHost
 import SwiftUI
 
 /// The Settings window: three panes in its toolbar, as a Mac app's settings are. General
@@ -79,6 +80,8 @@ struct AISettingsPane: View {
     let keys: AIKeys
     @AppStorage(AIKeys.asksFirstKey) private var asksFirst = true
     @AppStorage(AssistantSettings.claudeUsesKeyKey) private var claudeUsesKey = false
+    /// Read once when the pane opens: whether Apple's model can answer on this Mac.
+    @State private var apple = AppleIntelligence.status
 
     var body: some View {
         Form {
@@ -113,6 +116,15 @@ struct AISettingsPane: View {
                 ProviderFooter("Answers in the assistant.", provider: .gemini)
             }
             LocalModelsSection(keys: keys)
+            Section {
+                LabeledContent("Model", value: apple.available ? apple.detail : "Not available")
+            } header: {
+                ProviderHeader("Apple Intelligence", status: apple.available ? .ready("On this Mac") : .off("Not available"))
+            } footer: {
+                Text(apple.available
+                    ? "Answers in Generate Text, Generate Object, Speak, Transcribe and Translate patches with the apple-on-device model, on this Mac and on the iPhone player. No key, no cost, and nothing leaves the device."
+                    : "\(apple.detail) Generate Text, Generate Object, Speak, Transcribe and Translate patches use it with the apple-on-device model.")
+            }
             Section {
                 Toggle("Ask before a prototype uses a key", isOn: $asksFirst)
             } header: {

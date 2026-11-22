@@ -16,7 +16,7 @@ ids=("$@")
 out=build/player-shots
 mkdir -p $out
 
-device=${PLAYER_DEVICE:-$(xcrun simctl list devices available | grep "iPhone 17 Pro (" | tail -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')}
+device=${PLAYER_DEVICE:-$(xcrun simctl list devices available | grep -A40 -- "-- iOS 27" | grep "iPhone 17 Pro (" | tail -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')}
 xcodegen generate --quiet
 xcodebuild -project Tango.xcodeproj -scheme TangoPlayer -destination "platform=iOS Simulator,id=$device" \
   -derivedDataPath build build 2>&1 | grep -E "error|BUILD" | sort -u

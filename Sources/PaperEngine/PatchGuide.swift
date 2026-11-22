@@ -808,12 +808,12 @@ public struct PatchGuide: Sendable {
             tags: ["fetch", "http", "https", "api", "rest", "get", "post", "put", "patch", "delete", "headers", "query", "parameters", "authorization", "image", "picture", "url", "download", "ajax", "request", "server", "endpoint", "load data", "urlsession"]
         ),
         "aiText": PatchGuide(
-            "Sends Prompt to Claude or an OpenAI model when Send pulses, and streams the answer into Text as it is written. Instructions set how it behaves, like a system prompt. With Remember on it keeps the conversation, so the next prompt follows on; Conversation lists every turn for a chat built with a loop. It needs your API key in Settings, and pictures made by the assistant and the gallery never send.",
+            "Sends Prompt to Claude, an OpenAI model or Apple's on-device model when Send pulses, and streams the answer into Text as it is written. Instructions set how it behaves, like a system prompt. With Remember on it keeps the conversation, so the next prompt follows on; Conversation lists every turn for a chat built with a loop. Claude and OpenAI need your API key in Settings; apple-on-device needs none, costs nothing and never leaves the Mac or the phone, and runs where Apple Intelligence is on. Pictures made by the assistant and the gallery never send.",
             tip: "A Text Field's Submitted into Send and its text into Prompt; Conversation into Loop Over Array to draw the chat bubbles.",
             inputs: [
                 "prompt": "What to ask.",
                 "instructions": "How the model should behave: its role, tone and the shape of its answers.",
-                "model": "Which model answers. Names that start with claude go to Claude; the others to OpenAI.",
+                "model": "Which model answers. Names that start with claude go to Claude, apple-on-device to Apple's model on this device; the others to OpenAI.",
                 "effort": "For Claude: how hard it thinks. Low answers fastest.",
                 "image": "A picture to show the model with the prompt, such as a Camera photo or a generated image.",
                 "send": "A pulse sends the prompt.",
@@ -850,13 +850,13 @@ public struct PatchGuide: Sendable {
             tags: ["ai", "image generation", "openai", "gpt image", "dall-e", "picture", "draw", "art", "generate", "edit photo", "text to image"]
         ),
         "aiSpeech": PatchGuide(
-            "Reads Text out loud in a natural voice with OpenAI when Speak pulses. Instructions say how to say it, such as cheerfully or in a whisper. Speaking is on while it talks and Done pulses when it finishes. It needs your OpenAI API key in Settings.",
+            "Reads Text out loud in a natural voice with OpenAI when Speak pulses. Instructions say how to say it, such as cheerfully or in a whisper. Speaking is on while it talks and Done pulses when it finishes. OpenAI needs your API key in Settings; the apple-on-device model speaks with the device's own voices, with no key and nothing sent (Voice can name one, such as Samantha; Instructions are not used).",
             tip: "Generate Text's Done into Speak and its Text into Text, for an assistant that answers aloud.",
             inputs: [
                 "text": "The words to say.",
                 "voice": "Whose voice: marin and cedar sound best.",
                 "instructions": "How to say it: tone, pace, accent, emotion.",
-                "model": "The speech model.",
+                "model": "The speech model: OpenAI's, or apple-on-device for the device's own voices.",
                 "speak": "A pulse says Text.",
                 "stop": "A pulse stops talking.",
             ],
@@ -870,11 +870,11 @@ public struct PatchGuide: Sendable {
             tags: ["ai", "text to speech", "tts", "voice", "speak", "say", "read aloud", "openai", "audio", "narration"]
         ),
         "aiTranscribe": PatchGuide(
-            "Records from the microphone while Record is on, then sends what it heard to OpenAI and puts the words in Text. It needs your OpenAI API key in Settings, and macOS asks for the microphone the first time.",
+            "Records from the microphone while Record is on, then turns what it heard into words in Text: with OpenAI, which needs your API key in Settings, or with apple-on-device, on this device, with no key and nothing sent. macOS asks for the microphone the first time.",
             tip: "An Interaction's Down into Record makes a hold-to-talk button; Done into Generate Text's Send with Text as its Prompt.",
             inputs: [
                 "record": "Listens while on; turning it off sends the recording.",
-                "model": "The transcription model.",
+                "model": "The transcription model: OpenAI's, or apple-on-device to transcribe on this device.",
             ],
             outputs: [
                 "text": "What was said.",
@@ -885,6 +885,44 @@ public struct PatchGuide: Sendable {
                 "error": "What went wrong, in words.",
             ],
             tags: ["ai", "speech to text", "transcribe", "dictation", "voice input", "microphone", "listen", "whisper", "openai", "audio", "recognize speech"]
+        ),
+        "aiObject": PatchGuide(
+            "Asks Apple's on-device model for an object with exactly the fields you list, when Send pulses: the model is held to them (guided generation), so the answer is always data you can use, not prose to pick apart. Object fills in field by field as it streams. Fields has one field a line, `name: kind - what it is`: kinds are text, number, whole, yes/no, list (or list of numbers, 3 text) and choices written with bars, such as happy | sad | calm. It needs no key, costs nothing and never leaves the device; it runs where Apple Intelligence is on.",
+            tip: "Fields `title: text`, `ingredients: list`, `minutes: whole`; JSON Value with path ingredients into a Loop Over Array to fill a list.",
+            inputs: [
+                "prompt": "What to make, such as a recipe for what is in the photo.",
+                "instructions": "How the model should behave.",
+                "fields": "One field a line: name, then a colon and its kind, then a dash and what it is.",
+                "model": "Apple's model on this device.",
+                "image": "A picture to show the model with the prompt.",
+                "send": "A pulse asks.",
+            ],
+            outputs: [
+                "object": "The object, as JSON, its fields filled in as they are written.",
+                "loading": "On from sending until the whole object has come.",
+                "done": "Pulses when it is complete.",
+                "failed": "Pulses when it fails.",
+                "error": "What went wrong, in words.",
+            ],
+            tags: ["ai", "apple intelligence", "foundation models", "on-device", "local", "structured output", "guided generation", "generable", "json", "schema", "extract", "classify", "generate", "llm", "private", "offline"]
+        ),
+        "aiTranslate": PatchGuide(
+            "Translates Text into the language To names when Send pulses, on the device with Apple's translation models: no key, no cost, nothing sent. From says what language Text is in; Detect works it out. A language whose model is not on the device fails with a note saying to add it in System Settings > General > Language & Region > Translation Languages.",
+            tip: "A Text Field's text into Text and its Submitted into Send; Text into a Text view.",
+            inputs: [
+                "text": "The words to translate.",
+                "to": "The language to translate into. A language code such as pt-PT works too.",
+                "from": "The language Text is in, or Detect.",
+                "send": "A pulse translates.",
+            ],
+            outputs: [
+                "text": "The translation.",
+                "loading": "On while it translates.",
+                "done": "Pulses when it is ready.",
+                "failed": "Pulses when it fails.",
+                "error": "What went wrong, in words.",
+            ],
+            tags: ["ai", "translate", "translation", "language", "localize", "apple", "on-device", "offline", "private", "spanish", "french", "japanese", "multilingual"]
         ),
         "jsonValue": PatchGuide(
             "Reaches into JSON and picks out one value by its path: names of fields and numbers of array items, joined by dots, such as items.0.name. Choose the type of the value it gives: text, a number, an array to loop over, or more JSON. Fed a loop of objects, it picks from each one.",

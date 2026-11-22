@@ -14,6 +14,8 @@ public final class PrototypeHost {
     public let runtime: Runtime
     public let renderer = LayerRenderer()
     public let pictures = PictureStore()
+    /// Apple's models on this device: the only AI patches that run here.
+    public let apple = AppleIntelligence()
     /// Add this to the view's layer. It holds the renderer's root.
     public let layer = CALayer()
     public private(set) var assets: [String: Data]
@@ -41,8 +43,11 @@ public final class PrototypeHost {
         return SHA256.hash(data: Data(names.joined(separator: "\n").utf8)).prefix(8).map { String(format: "%02x", $0) }.joined()
     }()
 
-    /// What AI patches are told where none can run.
-    public static let noAI = "AI patches do not run on this device yet."
+    /// What AI patches are told when they ask a cloud model, which needs a key this
+    /// device does not have.
+    public static let noAI = "Only Apple's on-device models run on this device: choose \(AIRequest.onDevice)."
+    /// What Transcribe is told: nothing records here yet.
+    public static let noRecording = "Transcribe does not record on this device yet."
 
     /// The patches a package runs with where no extension is installed: its extensions'
     /// patches keep their ports and cables and run nothing.
@@ -81,10 +86,25 @@ public final class PrototypeHost {
             self.runtime.setVideoUnplayable(source)
             self.onWake?()
         }
-        runtime.aiHandler = { [weak self] request in
-            guard sendsRequests, request.phase == .send || request.phase == .startRecording else { return }
-            self?.runtime.update(ai: request.id, .failed(Self.noAI))
+        apple.picture = { [weak self, pictures] name in
+            pictures.picture(named: name, assets: self?.assets ?? [:], registry: self?.registry)
+        }
+        apple.deliver = { [weak self] id, update in
+            self?.runtime.update(ai: id, update)
             self?.onWake?()
+        }
+        runtime.aiHandler = { [weak self] request in
+            guard sendsRequests, let self else { return }
+            if request.phase == .cancel { return self.apple.cancel(request.id) }
+            if request.task == .transcription {
+                guard request.phase == .startRecording else { return }
+                self.runtime.update(ai: request.id, .failed(Self.noRecording))
+            } else if request.provider == .apple {
+                return self.apple.handle(request)
+            } else if request.phase == .send {
+                self.runtime.update(ai: request.id, .failed(Self.noAI))
+            }
+            self.onWake?()
         }
         runtime.requestHandler = { [weak self] request in
             guard sendsRequests else { return }
@@ -129,6 +149,7 @@ public final class PrototypeHost {
     }
 
     public func restart() {
+        apple.stopAll()
         runtime.restart()
         onWake?()
     }
