@@ -66,6 +66,8 @@ struct AssistantComposer: View {
     var typing: FocusState<Bool>.Binding
     /// True while files are dragged over the panel.
     var isDropTarget: Bool
+    /// What choosing a model does; the list of chats starts a new chat for it when this one has begun.
+    var changeModel: ((AssistantSession.Model) -> Void)?
 
     @State private var highlighted = 0
     /// The draft for which the person closed the list of suggestions with Escape.
@@ -180,7 +182,10 @@ struct AssistantComposer: View {
             Spacer(minLength: 4)
 
             Menu {
-                Picker("Model", selection: $session.model) {
+                Picker("Model", selection: Binding(
+                    get: { session.model },
+                    set: { model in if let changeModel { changeModel(model) } else { session.model = model } }
+                )) {
                     ForEach(AssistantSession.Model.allCases) { model in
                         Text(model.title).tag(model)
                     }

@@ -57,7 +57,7 @@ public struct EditorView: View {
     @Bindable var store: DocumentStore
     @Environment(\.undoManager) private var undoManager
     @Environment(\.appearsActive) private var appearsActive
-    @State private var assistant: AssistantSession
+    @State private var assistant: AssistantChats
     private let fileURL: URL?
     /// What is installed on this Mac; a change there changes what this document's patches do.
     private let extensions: ExtensionStore
@@ -69,15 +69,15 @@ public struct EditorView: View {
         fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled"
     }
 
-    /// `assistant` is given by `papertool`, to show a conversation it has prepared.
+    /// `assistant` is given by `papertool`, to show conversations it has prepared.
     public init(
-        store: DocumentStore, fileURL: URL? = nil, assistant: AssistantSession? = nil, extensions: ExtensionStore = .shared
+        store: DocumentStore, fileURL: URL? = nil, assistant: AssistantChats? = nil, extensions: ExtensionStore = .shared
     ) {
         self.store = store
         self.fileURL = fileURL
         self.extensions = extensions
         // Opus while the assistant is being tested; `.standard` leaves the choice to the account.
-        _assistant = State(initialValue: assistant ?? AssistantSession(store: store, model: .opus))
+        _assistant = State(initialValue: assistant ?? AssistantChats(store: store, model: .opus))
     }
 
     private func useInstalledExtensions() {
@@ -94,7 +94,7 @@ public struct EditorView: View {
             Group {
                 switch store.sidebarMode {
                 case .views: LayerSidebar(store: store)
-                case .assistant: AssistantView(session: assistant)
+                case .assistant: AssistantView(chats: assistant)
                 }
             }
             .navigationSplitViewColumnWidth(min: 240, ideal: 300, max: 520)
@@ -111,9 +111,11 @@ public struct EditorView: View {
                 // In the place the outline's Group button has, so the switch does not move.
                 if store.sidebarMode == .assistant {
                     ToolbarItem {
+                        // One button, as the outline has, so the switch does not move; the chats
+                        // themselves are listed above the transcript.
                         Button("New Chat", systemImage: "square.and.pencil") { assistant.newChat() }
-                            .disabled(assistant.entries.isEmpty)
-                            .help("Start a new chat. The document keeps its changes.")
+                            .disabled(assistant.current.isEmpty)
+                            .help("Start another chat (Option-Command-N). The others keep going, and the document keeps every change.")
                     }
                 }
             }
@@ -257,6 +259,7 @@ public struct EditorView: View {
         }
         .onChange(of: undoManager) { _, manager in store.undoManager = manager }
         .focusedSceneValue(\.documentStore, store)
+        .focusedSceneValue(\.assistantChats, assistant)
     }
 }
 
@@ -443,8 +446,20 @@ extension FocusedValues {
     }
 }
 
+struct AssistantChatsKey: FocusedValueKey {
+    typealias Value = AssistantChats
+}
+
+extension FocusedValues {
+    var assistantChats: AssistantChats? {
+        get { self[AssistantChatsKey.self] }
+        set { self[AssistantChatsKey.self] = newValue }
+    }
+}
+
 struct EditorCommands: Commands {
     @FocusedValue(\.documentStore) private var focusedStore
+    @FocusedValue(\.assistantChats) private var chats
     @Environment(\.openWindow) private var openWindow
     @AppStorage(ViewerView.recordsTouchesKey) private var recordsTouches = true
     @AppStorage(ViewerView.showsAssistantTouchesKey) private var showsAssistantTouches = true
@@ -483,6 +498,24 @@ struct EditorCommands: Commands {
             Button("Add Selection to Assistant") { store?.addToAssistant() }
                 .keyboardShortcut("l", modifiers: .command)
                 .disabled(store?.selectedNodes.isEmpty != false)
+            Divider()
+            Button("New Chat") {
+                chats?.newChat()
+                store?.sidebarMode = .assistant
+                store?.showsSidebar = true
+            }
+            .keyboardShortcut("n", modifiers: [.command, .option])
+            .disabled(chats == nil)
+            // The list of chats is in the sidebar's menu: the menu bar is not drawn again
+            // when chats come and go, so it has only what needs no list.
+            Button("Show Next Chat") { chats?.step(by: 1) }
+                .keyboardShortcut("]", modifiers: [.command, .option])
+                .disabled(chats == nil)
+            Button("Show Previous Chat") { chats?.step(by: -1) }
+                .keyboardShortcut("[", modifiers: [.command, .option])
+                .disabled(chats == nil)
+            Button("Delete Chat") { chats.map { $0.delete($0.currentID) } }
+                .disabled(chats == nil)
         }
         CommandMenu("Insert") {
             ForEach(LibraryItem.views) { item in

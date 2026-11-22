@@ -154,6 +154,8 @@ public final class DocumentStore {
     /// The refs agents gave what they made, kept while the document is open so a later batch
     /// can name what an earlier one made. Ids only; a ref whose thing is gone is ignored.
     @ObservationIgnored public var agentRefs = AgentRefs()
+    @ObservationIgnored private var transactionHolds = 0
+    @ObservationIgnored private var holdsOwnTransaction = false
     /// Bumped to ask the assistant's composer to take the keyboard.
     public private(set) var assistantFocusRequest = 0
     public func requestAssistantFocus() { assistantFocusRequest += 1 }
@@ -412,6 +414,30 @@ public final class DocumentStore {
         transactionBase = fullDocument
         return true
     }
+
+    /// A transaction several holders share, such as chats building the document at once:
+    /// the first hold opens it (unless one is open already, which then takes these edits)
+    /// and the last release closes it, so overlapping batches are one undo step and none
+    /// is left applying its edits a step at a time when another finishes first.
+    public func holdTransaction() {
+        if transactionHolds == 0 { holdsOwnTransaction = beginTransaction() }
+        transactionHolds += 1
+        holdsBegun += 1
+    }
+
+    /// How many holds have begun, ever: a holder that sees it move knows another began after it.
+    public private(set) var holdsBegun = 0
+
+    public func releaseTransaction(_ actionName: String) {
+        guard transactionHolds > 0 else { return }
+        transactionHolds -= 1
+        guard transactionHolds == 0, holdsOwnTransaction else { return }
+        holdsOwnTransaction = false
+        endTransaction(actionName)
+    }
+
+    /// How many hold the shared transaction: more than one means another is building too.
+    public var transactionHolders: Int { transactionHolds }
 
     public func endTransaction(_ actionName: String) {
         guard let before = transactionBase else { return }
