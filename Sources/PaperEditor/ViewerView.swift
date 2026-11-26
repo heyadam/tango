@@ -64,6 +64,7 @@ public final class ViewerView: NSView {
         // runtime from whoever loaded it: the player here, or at once from the file when
         // nothing plays it (a picture, a test).
         renderer.videoURL = { [weak store] source in VideoFiles.url(for: source, assets: store?.assets ?? [:]) }
+        renderer.modelURL = { [weak store] name in VideoFiles.assetURL(for: name, assets: store?.assets ?? [:]) }
         // Material glyphs and Google fonts: the document's, else fetched (never for a picture).
         WebAssetClient(
             assets: { [weak store] in store?.assets ?? [:] }, fetches: sendsRequests,

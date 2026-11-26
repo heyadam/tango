@@ -139,7 +139,7 @@ extension DocumentStore {
 
     /// The types a view can be changed to and from without losing anything: they are one
     /// stored kind with different settings.
-    public static let convertibleTypes: [ViewType] = [.view, .stack, .grid, .scrollView, .shader]
+    public static let convertibleTypes: [ViewType] = [.view, .stack, .grid, .scrollView, .shader, .scene]
 
     /// Makes a view a stack, a grid, a scroll view or a plain view again. Its patch, its
     /// cables and its children stay.
@@ -147,15 +147,26 @@ extension DocumentStore {
         guard let layer = document.layer(id), layer.kind == .view, layer.type != type,
               DocumentStore.convertibleTypes.contains(type) else { return }
         apply("Change to \(type.displayName)") { document in
+            // A patch whose ports were chosen shows a new scene's usual ports too.
+            if type == .scene, let patch = document.graph.viewNode(layer: id), let shown = patch.shownPorts {
+                document.graph.update(patch.id) { $0.shownPorts = shown + SceneUse.presetPorts.filter { !shown.contains($0) } }
+            }
             document.screen.update(id) { view in
                 // What an extension drew there goes; the view and what is in it stay.
                 view.custom = nil
                 // A shader view keeps arranging what is in it the way it did.
                 if type == .shader {
+                    view.scene = nil
                     view.shader = ShaderUse(source: ShaderUse.template)
                     return
                 }
                 view.shader = nil
+                // A scene view too keeps arranging what is in it.
+                if type == .scene {
+                    view.scene = SceneUse.template
+                    return
+                }
+                view.scene = nil
                 switch type {
                 case .stack, .scrollView: view.set(.layout, .text("Stack"))
                 case .grid: view.set(.layout, .text("Grid"))
@@ -238,7 +249,10 @@ extension DocumentStore {
         let all = registry.ports(for: node)
         guard node.kind == PatchKind.view, let layer = node.layerID.flatMap({ document.layer($0) }) else { return all }
         var inputs = shownInputs(of: layer, on: node).compactMap { all.input($0.id) }
-        inputs += all.inputs.filter { ViewInput(id: $0.id) == nil }
+        // A scene has an input for everything about every object in it: like the view's own
+        // inputs they show when chosen or cabled.
+        let scene = shownScenePorts(of: layer, on: node)
+        inputs += all.inputs.filter { ViewInput(id: $0.id) == nil && (SceneUse.key(port: $0.id) == nil || scene.contains($0.id)) }
         // Offset, velocity and dragging are a scroll view's; a component shows its own outputs.
         // The frame outputs show when chosen or cabled, like inputs. What is published from
         // inside always shows.
@@ -319,6 +333,35 @@ extension DocumentStore {
                 var ports = patch.shownPorts ?? view.preset
                 ports.removeAll { $0 == input.id }
                 if shown { ports.append(input.id) }
+                patch.shownPorts = ports
+            }
+        }
+    }
+
+    /// The inputs of a scene its view's patch shows: the chosen ones and every cabled one.
+    public func shownScenePorts(of layer: Layer, on node: PatchNode) -> Set<String> {
+        guard layer.scene != nil else { return [] }
+        var shown = Set((node.shownPorts ?? layer.preset).filter { SceneUse.key(port: $0) != nil })
+        for connection in document.graph.connections where connection.to.node == node.id && SceneUse.key(port: connection.to.port) != nil {
+            shown.insert(connection.to.port)
+        }
+        for holder in document.graph.nodes {
+            for port in holder.published ?? [] where !port.isOutput && port.inner.node == node.id && SceneUse.key(port: port.inner.port) != nil {
+                shown.insert(port.inner.port)
+            }
+        }
+        return shown
+    }
+
+    /// Shows or hides the port of one of a scene's inputs on its view's patch.
+    public func setScenePort(_ port: String, of layer: LayerID, shown: Bool) {
+        guard let view = document.layer(layer), let node = viewNode(for: layer), let key = SceneUse.key(port: port),
+              let input = view.scene?.input(for: key) else { return }
+        apply(shown ? "Show \(input.name) Port" : "Hide \(input.name) Port") { document in
+            document.graph.update(node.id) { patch in
+                var ports = patch.shownPorts ?? view.preset
+                ports.removeAll { $0 == port }
+                if shown { ports.append(port) }
                 patch.shownPorts = ports
             }
         }
@@ -648,6 +691,8 @@ extension DocumentStore {
                 setShader(value.textValue, of: layer, interactive: interactive)
             } else if let name = ShaderUse.inputName(port: port) {
                 setShaderInput(name, of: layer, to: value, interactive: interactive)
+            } else if let key = SceneUse.key(port: port) {
+                setSceneInput(key, of: layer, to: value, interactive: interactive)
             } else if let name = CustomViewUse.inputName(port: port) {
                 setCustomInput(name, of: layer, to: value, interactive: interactive)
             } else {
@@ -941,6 +986,9 @@ extension DocumentStore {
             }
             if let name = CustomViewUse.inputName(port: port.id) {
                 return layer?.custom?.inputs[name]?.coerced(to: port.type) ?? port.defaultValue
+            }
+            if let key = SceneUse.key(port: port.id) {
+                return layer?.scene?.value(for: key) ?? port.defaultValue
             }
             return layer?.component?.inputs[port.id]?.coerced(to: port.type) ?? port.defaultValue
         }
@@ -1373,6 +1421,57 @@ extension DocumentStore {
             self.interactive(change)
         } else {
             apply("Change \(Script.title(name))", change)
+        }
+    }
+
+    // MARK: Scenes
+
+    /// Changes a scene view's scene as a whole. Cables into an object that is gone go with it.
+    public func setScene(of id: LayerID, named name: String = "Edit Scene", interactive: Bool = false, _ body: @escaping (inout SceneUse) -> Void) {
+        guard let layer = document.layer(id), layer.kind == .view, var scene = layer.scene else { return }
+        body(&scene)
+        scene.settleStoredValues()
+        guard scene != layer.scene else { return }
+        let change: (inout PaperModel.Document) -> Void = { [scene] in $0.screen.update(id) { $0.scene = scene } }
+        if interactive {
+            self.interactive(change)
+        } else {
+            apply(name, change)
+        }
+    }
+
+    /// Sets the value an input of a scene, or of an object in it, has when no cable drives it.
+    public func setSceneInput(_ key: SceneUse.Key, of id: LayerID, to value: Value, interactive: Bool = false) {
+        guard let input = document.layer(id)?.scene?.input(for: key) else { return }
+        setScene(of: id, named: "Change \(input.name)", interactive: interactive) { $0.set(value, for: key) }
+    }
+
+    /// Adds a shape to a scene, or a model read from one of the document's assets.
+    @discardableResult
+    public func addSceneObject(_ shape: SceneObject.Shape, model: String? = nil, named name: String? = nil, to id: LayerID) -> String? {
+        guard let scene = document.layer(id)?.scene else { return nil }
+        let base = name ?? (shape == .model ? (model.map { ($0 as NSString).deletingPathExtension } ?? "Model") : shape.displayName)
+        var unique = base
+        var index = 2
+        while scene.objects.contains(where: { $0.name == unique }) {
+            unique = "\(base) \(index)"
+            index += 1
+        }
+        let object = SceneObject(name: unique, shape: shape, model: model)
+        setScene(of: id, named: "Add \(shape.displayName)") { $0.objects.append(object) }
+        return object.id
+    }
+
+    public func removeSceneObject(_ object: String, from id: LayerID) {
+        setScene(of: id, named: "Remove Object") { $0.objects.removeAll { $0.id == object } }
+    }
+
+    public func renameSceneObject(_ object: String, to name: String, in id: LayerID) {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        setScene(of: id, named: "Rename Object") { scene in
+            guard let index = scene.objects.firstIndex(where: { $0.id == object }) else { return }
+            scene.objects[index].name = trimmed
         }
     }
 

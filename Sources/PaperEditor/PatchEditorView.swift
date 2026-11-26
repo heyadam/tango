@@ -52,6 +52,8 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
     private var lastMouseUp: TimeInterval = 0
     private var pulseTimes: [PortRef: CFTimeInterval] = [:]
     private var fadeScheduled = false
+    /// Outputs whose cables were still flashing, moving or fading when last drawn.
+    private var fadingSources: Set<PortRef> = []
     /// What each connected output last carried and when that last changed, so a cable can
     /// show its value moving while it is.
     private var lastValues: [PortRef: [Value]] = [:]
@@ -65,6 +67,8 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
     private var colorTarget: (node: NodeID, port: String)?
     private var popover: NSPopover?
     private var lastMouseGraphPoint = CGPoint(x: 60, y: 60)
+    private var gridPicture: (key: GridKey, image: NSImage)?
+    private var shadowPictures: [String: (image: NSImage, pad: CGFloat)] = [:]
 
     public init(store: DocumentStore) {
         self.store = store
@@ -173,17 +177,47 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
     }
 
     private func frameDidTick() {
-        // Remember when each pulse output last fired, so its cables can flash.
-        if let runtime = store.runtime {
-            let now = CACurrentMediaTime()
-            for source in Set(graph.connections.map(\.from)) {
-                let values = runtime.outputValues(source)
-                if values.contains(.pulse(true)) { pulseTimes[source] = now }
-                if let previous = lastValues[source], previous != values { changeTimes[source] = now }
-                lastValues[source] = values
-            }
+        guard let runtime = store.runtime else { return }
+        // Remember when each output last fired or changed, so its cables can flash and move,
+        // and draw again only where that shows: the patch, its cables and labels, and the
+        // patches they lead to. Drawing the whole graph on each frame of a running prototype
+        // cost more than the prototype.
+        let now = CACurrentMediaTime()
+        var sources = Set(graph.connections.map(\.from))
+        for node in graph.nodes {
+            for port in layouts[node.id]?.ports.outputs ?? [] { sources.insert(PortRef(node: node.id, port: port.id)) }
         }
-        needsDisplay = true
+        var dirty = CGRect.null
+        for source in sources {
+            let values = runtime.outputValues(source)
+            if values.contains(.pulse(true)) { pulseTimes[source] = now }
+            // The first value an output has is a change too: the graph may have been drawn
+            // before it arrived, and a value that never changes again would never show.
+            if lastValues[source] != values {
+                if lastValues[source] != nil { changeTimes[source] = now }
+                dirty = dirty.union(area(showing: source))
+            }
+            lastValues[source] = values
+        }
+        for source in fadingSources { dirty = dirty.union(area(showing: source)) }
+        if !dirty.isNull { setNeedsDisplay(dirty) }
+    }
+
+    /// Where an output's live value shows, in view coordinates: its patch, its cables with
+    /// their labels, and the patches the cables lead to.
+    private func area(showing source: PortRef) -> CGRect {
+        let around: CGFloat = 16
+        var area = layouts[source.node].map { $0.frame.insetBy(dx: -around, dy: -around) } ?? .null
+        for connection in graph.connections(from: source) {
+            if let target = layouts[connection.to.node] { area = area.union(target.frame.insetBy(dx: -around, dy: -around)) }
+            guard let from = layouts[source.node]?.outputPortCenter(id: source.port),
+                  let to = layouts[connection.to.node]?.inputPortCenter(id: connection.to.port) else { continue }
+            let cable = Cable(from: from, to: to)
+            area = area.union(cable.path.bounds.insetBy(dx: -12, dy: -12))
+            let middle = cable.point(at: 0.5)
+            area = area.union(CGRect(x: middle.x - 90, y: middle.y - 14, width: 180, height: 28))
+        }
+        return area.isNull ? area : viewRect(area)
     }
 
     // MARK: Coordinates
@@ -266,6 +300,11 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
         context.saveGState()
         context.translateBy(x: pan.x, y: pan.y)
         context.scaleBy(x: zoom, y: zoom)
+        // The part being drawn again, in graph coordinates.
+        let drawn = CGRect(
+            x: (dirtyRect.minX - pan.x) / zoom, y: (dirtyRect.minY - pan.y) / zoom,
+            width: dirtyRect.width / zoom, height: dirtyRect.height / zoom
+        )
 
         for comment in graph.comments { drawComment(comment) }
 
@@ -273,6 +312,7 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
         var hidden: PortRef?
         if case let .cable(_, _, rerouting) = drag { hidden = rerouting }
         var stillFading = false
+        var fading: Set<PortRef> = []
         var labels: [(point: CGPoint, values: [Value], color: NSColor, alpha: CGFloat)] = []
 
         // Cables that leave this level: the end that is here, and what is at the other end.
@@ -293,7 +333,7 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
             var flash: CGFloat = 0
             if let fired = pulseTimes[connection.from] {
                 flash = max(0, 1 - CGFloat(now - fired) / 0.35)
-                if flash > 0 { stillFading = true }
+                if flash > 0 { stillFading = true; fading.insert(connection.from) }
             }
             // Live values: the cable moves while its value changes, and names the value
             // for a moment afterwards. A traced cable keeps its label.
@@ -305,9 +345,11 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
             // A pulse says all it has to with its flash, and a short cable has no room: the
             // ports at either end already show the value.
             if type == .pulse || values.isEmpty || hypot(to.x - from.x, to.y - from.y) < 84 { label = 0 }
-            if flow > 0 || (label > 0 && label < 1) { stillFading = true }
+            if flow > 0 || (label > 0 && label < 1) { stillFading = true; fading.insert(connection.from) }
             let cable = Cable(from: from, to: to)
             let resting = values.count == 1 && (values[0] == .bool(false) || values[0] == .pulse(false))
+            // Only what is in the part being drawn again is drawn; what fades is still noted.
+            if !cable.path.bounds.insetBy(dx: -110, dy: -20).intersects(drawn) { continue }
             drawCable(
                 cable, color: PatchStyle.color(for: type), dimmed: dimmed, emphasized: traced,
                 flash: flash, flow: flow, resting: resting, time: now
@@ -317,7 +359,7 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
         for label in labels { drawFlowLabel(label.values, at: label.point, color: label.color, alpha: label.alpha) }
 
         for node in graph.nodes {
-            if let layout = layouts[node.id] { drawNode(node, layout) }
+            if let layout = layouts[node.id], layout.frame.insetBy(dx: -24, dy: -24).intersects(drawn) { drawNode(node, layout) }
         }
         for (ref, end) in leaving { drawLeavingCable(from: ref, end.point, to: end.others, isInput: end.isInput) }
 
@@ -364,13 +406,51 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
             )
         }
 
+        // A redraw of part of the graph only adds to what is fading.
+        if dirtyRect.contains(bounds) { fadingSources = fading } else { fadingSources.formUnion(fading) }
         if stillFading, !fadeScheduled {
             fadeScheduled = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0 / 60.0) { [weak self] in
-                self?.fadeScheduled = false
-                self?.needsDisplay = true
+                guard let self else { return }
+                self.fadeScheduled = false
+                let sources = self.fadingSources
+                self.fadingSources = []
+                for source in sources { self.setNeedsDisplay(self.area(showing: source)) }
             }
         }
+    }
+
+    /// A patch's drop shadow around a body of any size: a rounded rectangle with its shadow,
+    /// drawn once per look, whose middle stretches.
+    private func shadowPicture(selected: Bool) -> (image: NSImage, pad: CGFloat) {
+        let key = "\(selected) \(effectiveAppearance.name.rawValue)"
+        if let kept = shadowPictures[key] { return kept }
+        let blur: CGFloat = selected ? 14 : 8
+        let drop: CGFloat = selected ? 5 : 2
+        let pad = blur + drop + 2
+        let radius = PatchLayout.cornerRadius
+        let side = (pad + radius) * 2 + 2
+        let appearance = effectiveAppearance
+        let image = NSImage(size: NSSize(width: side, height: side), flipped: true) { _ in
+            appearance.performAsCurrentDrawingAppearance {
+                let shadow = NSShadow()
+                shadow.shadowColor = NSColor.black.withAlphaComponent(selected ? 0.3 : 0.16)
+                shadow.shadowBlurRadius = blur
+                shadow.shadowOffset = NSSize(width: 0, height: -drop)
+                shadow.set()
+                NSColor.controlBackgroundColor.setFill()
+                NSBezierPath(
+                    roundedRect: CGRect(x: pad, y: pad, width: side - pad * 2, height: side - pad * 2),
+                    xRadius: radius, yRadius: radius
+                ).fill()
+            }
+            return true
+        }
+        let cap = pad + radius
+        image.capInsets = NSEdgeInsets(top: cap, left: cap, bottom: cap, right: cap)
+        image.resizingMode = .stretch
+        shadowPictures[key] = (image, pad)
+        return (image, pad)
     }
 
     private func drawComment(_ comment: GraphComment) {
@@ -404,29 +484,48 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
 
     /// The dot grid, drawn in view space so dots stay crisp at any zoom. Dots sit every two
     /// grid units; zoomed far out, only every fourth dot is kept so the field never gets busy.
+    /// Its picture is kept until the pan, zoom, size or appearance changes: the graph is
+    /// drawn again on every frame a value moves, and thousands of dots cost more than the
+    /// rest of it.
     private func drawGrid() {
-        guard let context = NSGraphicsContext.current?.cgContext else { return }
         var spacing = CGFloat(PatchGrid.unit) * 2 * zoom
         while spacing < 14 { spacing *= 4 }
-        let minorColor = NSColor.labelColor.withAlphaComponent(0.13).cgColor
-        let majorColor = NSColor.labelColor.withAlphaComponent(0.26).cgColor
-        let firstColumn = ((bounds.minX - pan.x) / spacing).rounded(.down)
-        let firstRow = ((bounds.minY - pan.y) / spacing).rounded(.down)
-        var row = firstRow
-        while pan.y + row * spacing < bounds.maxY {
-            var column = firstColumn
-            while pan.x + column * spacing < bounds.maxX {
-                let isMajor = Int(column) % 4 == 0 && Int(row) % 4 == 0
-                let radius: CGFloat = isMajor ? 1.25 : 1
-                context.setFillColor(isMajor ? majorColor : minorColor)
-                context.fillEllipse(in: CGRect(
-                    x: pan.x + column * spacing - radius, y: pan.y + row * spacing - radius,
-                    width: radius * 2, height: radius * 2
-                ))
-                column += 1
+        let key = GridKey(size: bounds.size, pan: pan, spacing: spacing, appearance: effectiveAppearance.name)
+        if gridPicture?.key != key {
+            let size = bounds.size, pan = pan
+            let image = NSImage(size: size, flipped: true) { _ in
+                guard let context = NSGraphicsContext.current?.cgContext else { return false }
+                let minorColor = NSColor.labelColor.withAlphaComponent(0.13).cgColor
+                let majorColor = NSColor.labelColor.withAlphaComponent(0.26).cgColor
+                let firstColumn = (-pan.x / spacing).rounded(.down)
+                let firstRow = (-pan.y / spacing).rounded(.down)
+                var row = firstRow
+                while pan.y + row * spacing < size.height {
+                    var column = firstColumn
+                    while pan.x + column * spacing < size.width {
+                        let isMajor = Int(column) % 4 == 0 && Int(row) % 4 == 0
+                        let radius: CGFloat = isMajor ? 1.25 : 1
+                        context.setFillColor(isMajor ? majorColor : minorColor)
+                        context.fillEllipse(in: CGRect(
+                            x: pan.x + column * spacing - radius, y: pan.y + row * spacing - radius,
+                            width: radius * 2, height: radius * 2
+                        ))
+                        column += 1
+                    }
+                    row += 1
+                }
+                return true
             }
-            row += 1
+            gridPicture = (key, image)
         }
+        gridPicture?.image.draw(in: bounds)
+    }
+
+    private struct GridKey: Equatable {
+        var size: CGSize
+        var pan: CGPoint
+        var spacing: CGFloat
+        var appearance: NSAppearance.Name
     }
 
     /// The curve of one cable, with the means to place things along it.
@@ -594,15 +693,12 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
         let missing = store.missingExtension(for: node)
 
         // Shadow and body. A selected patch lifts a little.
-        NSGraphicsContext.saveGraphicsState()
-        let shadow = NSShadow()
-        shadow.shadowColor = NSColor.black.withAlphaComponent(isSelected ? 0.3 : 0.16)
-        shadow.shadowBlurRadius = isSelected ? 14 : 8
-        shadow.shadowOffset = NSSize(width: 0, height: isSelected ? -5 : -2)
-        shadow.set()
+        // The shadow is one picture made once and stretched, since blurring each patch's
+        // shape again on every frame a value moves is most of what drawing the graph costs.
+        let shade = shadowPicture(selected: isSelected)
+        shade.image.draw(in: frame.insetBy(dx: -shade.pad, dy: -shade.pad))
         NSColor.controlBackgroundColor.setFill()
         body.fill()
-        NSGraphicsContext.restoreGraphicsState()
 
         // Header tint, clipped to the rounded body.
         NSGraphicsContext.saveGraphicsState()

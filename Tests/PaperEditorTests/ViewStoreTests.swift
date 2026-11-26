@@ -292,7 +292,7 @@ import PaperModel
 
     @Test func theLibraryOffersViewsAndNoLongerTheScrollPatch() {
         #expect(LibraryItem.views.map(\.name) == [
-            "View", "Stack", "Grid", "Scroll View", "Ellipse", "Text", "Image", "Symbol", "Text Field", "Camera", "Video", "Shader",
+            "View", "Stack", "Grid", "Scroll View", "Ellipse", "Text", "Image", "Symbol", "Text Field", "Camera", "Video", "Shader", "Scene",
         ])
         #expect(!PatchRegistry.standard.library.contains { $0.kind == "scroll" })
         // A document that has one still runs it.

@@ -186,6 +186,10 @@ extension Document {
                 if node.custom != known[layer]?.custom?.kind {
                     graph.update(node.id) { $0.custom = known[layer]?.custom?.kind }
                 }
+                // The patch of a scene view carries the scene's objects, which have inputs.
+                if node.scene != known[layer]?.scene?.entries {
+                    graph.update(node.id) { $0.scene = known[layer]?.scene?.entries }
+                }
             } else {
                 stale.append(node.id)
             }
@@ -198,6 +202,7 @@ extension Document {
             node.script = layer.shader?.source
             node.arrivingScript = layer.shader?.arriving
             node.custom = layer.custom?.kind
+            node.scene = layer.scene?.entries
             node.position = place(node, for: layer, root: root, graph: graph, components: components, measure: measure, ignoring: [])
             graph.add(node)
             viewOf[layer.id] = node.id
@@ -278,6 +283,10 @@ extension Document {
             rows += node.published?.count ?? 0
             rows += layer.shader.map { $0.inputCount + 1 } ?? 0
             rows += layer.custom?.inputCount ?? 0
+            if layer.scene != nil {
+                let shown = Set(node.shownPorts ?? layer.preset).union(cabled)
+                rows += shown.filter { SceneUse.key(port: $0) != nil }.count
+            }
             return PatchGrid.nodeHeight(rows: rows, subtitle: true)
         }
 

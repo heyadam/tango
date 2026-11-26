@@ -39,6 +39,8 @@ public struct PatchGuide: Sendable {
 
     /// What each input a view's patch shows by default means, shared by every view type.
     public static let viewInputs: [String: String] = [
+        "scene.cameraYaw": "How far round the scene the camera stands, in degrees: 0 looks at its front, 90 at its right side.",
+        "scene.cameraPitch": "How far above the horizon the camera stands, in degrees: 0 is level, 90 looks straight down.",
         "backgroundBlur": "How much what is behind the view is blurred where the view covers it, in points. With a fill that is partly clear, the view is a material: a bar or a sheet that what scrolls under shows through.",
         "x": "Distance of the view's anchor from the left edge of the view it is in, in points. Dimmed when a stack or grid places it.",
         "y": "Distance of the view's anchor from the top edge of the view it is in, in points. Dimmed when a stack or grid places it.",
@@ -145,6 +147,11 @@ public struct PatchGuide: Sendable {
             tags: ["metal", "glsl", "gpu", "effect", "filter", "gradient", "noise", "blur", "distortion", "fragment", "msl", "visual effect"]
         ),
         .custom: PatchGuide("A view an extension draws with a script."),
+        .scene: PatchGuide(
+            "Shows things in three dimensions, drawn by Metal: shapes made here (box, rounded box, sphere, cylinder, cone, capsule, torus, plane) and models from USDZ or OBJ files, each with a color, a metalness and a roughness, lit by one light and by its surroundings. A camera circles the middle of the scene. The camera, the light and every object's place, turn, size and material are inputs on the view's patch, shown once chosen or cabled. The scene is drawn over the view's fill and under the views inside it, so labels and buttons sit on top.",
+            tip: "Cable a Pan's translation through a Spring into Camera Yaw to turn a product with a finger.",
+            tags: ["3d", "three dimensions", "model", "usdz", "obj", "mesh", "product", "scenekit", "realitykit", "model3d", "cube", "sphere", "camera", "light", "pbr", "render"]
+        ),
     ]
 
     // MARK: Patches

@@ -79,6 +79,7 @@ extension ViewType {
         case .component: "A use of a component."
         case .shader: "A view drawn by Metal shader code you write. The shader's inputs are ports on its patch, and it can draw from scratch or change the look of the views inside it."
         case .custom: "A view an extension draws."
+        case .scene: "Shows things in three dimensions: shapes and model files, with a camera and a light. Everything about them is a port on its patch, so a drag can turn an object and a spring can move the camera."
         }
     }
 }

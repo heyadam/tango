@@ -90,6 +90,10 @@ public struct PatchRegistry: Sendable {
             if let kind = node.custom, node.componentID == nil, let view = views[kind] {
                 ports.inputs += view.ports
             }
+            // A scene view's patch has the scene's inputs and those of every object in it.
+            if let objects = node.scene, node.componentID == nil {
+                ports.inputs += PatchRegistry.scenePorts(objects)
+            }
             for published in node.published ?? [] {
                 let port = Port(id: published.id, name: published.name, type: published.type, options: published.options)
                 if published.isOutput { ports.outputs.append(port) } else { ports.inputs.append(port) }
@@ -119,6 +123,18 @@ public struct PatchRegistry: Sendable {
             }
         }
         return NodePorts(inputs: inputs, outputs: definition.outputs.map(resolve))
+    }
+
+    /// The inputs a scene gives its view's patch: its own, then each object's, named after
+    /// the object.
+    public static func scenePorts(_ objects: [SceneEntry]) -> [Port] {
+        func port(_ input: SceneInput, id: String, name: String) -> Port {
+            Port(id: id, name: name, type: input.type, defaultValue: input.defaultValue, options: input.options)
+        }
+        return SceneUse.inputs.map { port($0, id: SceneUse.portID($0.id), name: $0.name) }
+            + objects.flatMap { object in
+                SceneObject.inputs.map { port($0, id: SceneUse.portID(object: object.id, $0.id), name: "\(object.name) \($0.name)") }
+            }
     }
 
     /// What a scroll view reports. Every view's patch has these outputs; only a scroll
@@ -232,6 +248,9 @@ public struct PatchRegistry: Sendable {
             if let view = views[connection.to.node], ViewInput(id: connection.to.port) == nil {
                 if ShaderUse.inputName(port: connection.to.port) != nil || connection.to.port == ShaderUse.codePort {
                     // An input of the view's shader: there as long as the source declares it.
+                    fits = canConnect(from: connection.from, to: connection.to, in: graph)
+                } else if SceneUse.key(port: connection.to.port) != nil {
+                    // An input of the view's scene: there as long as the scene has the object.
                     fits = canConnect(from: connection.from, to: connection.to, in: graph)
                 } else if CustomViewUse.inputName(port: connection.to.port) != nil {
                     // An input of a view an extension draws: there as long as the extension

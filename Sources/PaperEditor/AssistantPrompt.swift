@@ -81,6 +81,8 @@ public enum AssistantPrompt {
         separate scroll patch.
         - A `shader` is a view drawn by Metal code you write: backgrounds, glows, noise, and \
         effects over the views inside it. It holds views like any view. See "Shaders" below.
+        - A `scene` is a view that shows things in three dimensions, drawn by Metal with real \
+        light: a product to turn, a globe, a trophy, floating shapes. See "Scenes" below.
         - A new `view` is light gray so it can be seen; give it the `fill` you want. A stack, \
         grid or scrollView has no fill unless you set one.
         - A `textField` can be typed in: a tap gives it focus. Attach a `textInput` patch to \
@@ -188,6 +190,9 @@ public enum AssistantPrompt {
         to; `inside` is the view whose level it is kept in (absent means the screen's level).
         - `cables` are written `from.output -> to.input`, with a view named by its id and a \
         published port by its name.
+        - A scene view has `scene`: its `inputs` (camera, light, surroundings) and its \
+        `objects`, each with its shape and what is set on it; `in` lists the names `connect` \
+        takes. In `cables` a scene input is written `scene.cameraYaw` or `scene.<object id>.rotationY`.
         - A shader view has `shader` (its Metal code), `in` (its inputs: `code`, then those the \
         code declares, as name: type), `inputs` (their values) and, when the code does not \
         compile, `shader_error`. `shader_arriving` is code that a cable brings to its `code` \
@@ -248,6 +253,9 @@ public enum AssistantPrompt {
         - `rename_patch` {patch, name} · `delete_patch` {patch} · `set_script` {patch, script}
         - `set_shader` {view, shader?, inputs?: {input name: value}} replaces a shader view's \
         code, sets its inputs, or both. `add_view` with kind `shader` takes `shader` and `inputs` too.
+        - `set_scene` {view, inputs?: {input: value}, objects?: [{name, shape?, ...}], remove?: [names]} \
+        changes a scene view. An object in `objects` is found by its `name` and changed, or \
+        added when there is none. `add_view` with kind `scene` takes `objects` and `inputs` too.
         - `connect` {from, output, to, input} · `disconnect` {to, input}. Either end may be a view.
         - `add_comment` {text, patches: [..]} draws a titled box around those patches
         - `set_source` {view or patch, source} notes where it came from in code, such as "ProfileHeader.swift:42". \
@@ -334,6 +342,8 @@ public enum AssistantPrompt {
 
         A glow over everything that brightens while the card is open:
         \(shaderExample)
+
+        \(scenes)
 
         \(assets())
 
@@ -442,6 +452,68 @@ public enum AssistantPrompt {
         }
         """),
     ]
+
+    /// What agents are told about scene views.
+    static var scenes: String {
+        """
+        # Scenes
+
+        A `scene` view shows things in three dimensions. Nobody writes code for it: it is a \
+        list of objects, a camera and a light, and everything about them is an input on the \
+        view's patch, so a drag can turn an object and a spring can move the camera. It is \
+        drawn over the view's `fill` (clear unless you set one) and under the views inside \
+        it, so labels and buttons go in it like in any view.
+
+        - Space: y is up, x to the right, z towards the viewer. Every shape is 1 unit across, \
+        centered where it stands, and at the usual camera about 1.9 units fit across the \
+        view's shorter side. Angles are degrees.
+        - Shapes: \(SceneObject.Shape.builtIn.map { "`\($0.rawValue)`" }.joined(separator: ", ")). A `cylinder`, \
+        `cone` and `capsule` stand upright; a `torus` and a `plane` lie flat (a plane under \
+        things is a floor, scaled up). Build a thing out of several: a phone is a flattened \
+        look made from a `roundedBox`, a ring a `torus` turned with `rotationX` 90.
+        - An object: \(SceneObject.inputs.map { "`\($0.id)` (\($0.type.rawValue), \($0.defaultValue.summary))" }.joined(separator: ", ")). \
+        `scale` is one number: a shape keeps its proportions. `metalness` 1 with a low \
+        `roughness` is polished metal; 0 with a high one is matte plastic or clay.
+        - The scene: \(SceneUse.inputs.map { "`\($0.id)` (\($0.options.isEmpty ? $0.defaultValue.summary : $0.options.joined(separator: " | ")))" }.joined(separator: ", ")). \
+        The camera circles the middle of the scene: `cameraYaw` round it (90 looks from the \
+        right), `cameraPitch` above the horizon, at `cameraDistance`. The light is a direction \
+        given the same way. `environment` is what stands round the scene and shows in \
+        anything shiny.
+        - Ray tracing is on unless `rayTracing` is false: things cast soft shadows on one \
+        another, and shiny things mirror the others. A device whose GPU traces no rays draws \
+        the scene without them, so do not make a design depend on a shadow.
+        - A model file (USDZ, USD, OBJ) is an object with `"model": "<file name>"`; you can \
+        use one that is already among the document's files, and only the person can add one \
+        (Inspector, Add to Scene). It is fitted to 1 unit and keeps its own colors until you \
+        set `color`, `metalness` or `roughness` on it. `shape_error` in `get_document` says \
+        why one shows nothing.
+        - To move anything, `connect` to the view with the input's name: "Camera Yaw", \
+        "Light Intensity", "<object name> Rotation Y", "<object name> Scale", "<object name> Color". \
+        To turn a thing with a finger: a `pan` on the scene view, its translation through \
+        `splitPoint` and `multiply` (about 0.4 degrees a point) into "<object> Rotation Y", \
+        with a `spring` between for weight. A scene costs nothing while nothing in it changes.
+        - Always look at what you made with `view_prototype`, and after a drag with `interact_prototype`.
+
+        A product that turns under a finger:
+        \(sceneExample)
+        """
+    }
+
+    static let sceneExample = #"""
+    [{"op":"add_view","kind":"scene","name":"Product","ref":"product","properties":{"x":51,"y":220,"width":300,"height":300},
+      "objects":[{"name":"Body","shape":"roundedBox","color":"#3D7BF7","roughness":0.35},
+                 {"name":"Ring","shape":"torus","y":0.62,"scale":0.6,"color":"#FFD27A","metalness":1,"roughness":0.15},
+                 {"name":"Floor","shape":"plane","y":-0.5,"scale":4,"color":"#FFFFFF","roughness":1}],
+      "inputs":{"environment":"Studio","cameraPitch":18}},
+     {"op":"add_patch","kind":"pan","view":"product","ref":"drag"},
+     {"op":"add_patch","kind":"splitPoint","ref":"split"},
+     {"op":"add_patch","kind":"multiply","ref":"degrees","inputs":{"b":0.4}},
+     {"op":"add_patch","kind":"spring","ref":"weight","inputs":{"response":0.35,"damping":0.85}},
+     {"op":"connect","from":"drag","output":"translation","to":"split","input":"point"},
+     {"op":"connect","from":"split","output":"x","to":"degrees","input":"a"},
+     {"op":"connect","from":"degrees","output":"result","to":"weight","input":"target"},
+     {"op":"connect","from":"weight","output":"value","to":"product","input":"Body Rotation Y"}]
+    """#
 
     static let shaderExample = #"""
     [{"op":"add_view","kind":"shader","name":"Glow","ref":"glow","properties":{"x":0,"y":0,"width":402,"height":874,"enabled":false},
