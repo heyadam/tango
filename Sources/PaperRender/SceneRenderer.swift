@@ -593,6 +593,9 @@ final class SceneSurface {
                 )
                 // A size of nothing has no inverse: there is nothing to draw of it either.
                 guard (0..<4).allSatisfy({ column in (0..<4).allSatisfy { own.normal[column][$0].isFinite && own.model[column][$0].isFinite } }) else { continue }
+                // A color set on the object replaces the file's, its picture included.
+                var part = part
+                if object.values["color"] != nil { part.picture = nil }
                 draws.append((part, own))
             }
         }

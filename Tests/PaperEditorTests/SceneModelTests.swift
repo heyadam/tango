@@ -121,6 +121,12 @@ import simd
         #expect(SceneViewTests.isMostly(0, try SceneViewTests.color(picture, at: SIMD3(0.25, 0.3, 0), in: document)))
         #expect(SceneViewTests.isMostly(2, try SceneViewTests.color(picture, at: SIMD3(-0.4, 0.3, 0), in: document)))
         #expect(SceneViewTests.isMostly(1, try SceneViewTests.color(picture, at: SIMD3(0, -0.3, 0), in: document)))
+
+        // A color set on the object replaces the picture, rather than tinting it.
+        let painted = Self.document(model: "label.usdz", values: ["color": .color(SceneViewTests.blue)])
+        let again = ViewerSnapshot.bitmap(of: painted, assets: ["label.usdz": data])
+        #expect(SceneViewTests.isMostly(2, try SceneViewTests.color(again, at: SIMD3(0.25, 0.3, 0), in: painted)))
+        #expect(SceneViewTests.isMostly(2, try SceneViewTests.color(again, at: SIMD3(0, -0.3, 0), in: painted)))
     }
 
     @Test func aMeshCutIntoPartsIsNotCopiedWholeIntoEach() throws {
