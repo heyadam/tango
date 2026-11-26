@@ -1,0 +1,112 @@
+import Foundation
+import Testing
+@testable import PaperEditor
+import PaperEngine
+import PaperHost
+import PaperModel
+import PaperRender
+
+/// A document keeps the files of the fetched fonts and icons it uses, and lets go of the
+/// ones it stops using. A fake Google answers, so nothing leaves the Mac.
+@MainActor
+@Suite(.serialized) struct WebAssetTests {
+    nonisolated static let glyph = #"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-120 120-480l360-360 360 360-360 360Z"/></svg>"#
+    static let font = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        .appendingPathComponent("Fixtures/fonts/ABeeZee-400.ttf")
+
+    final class Asked: @unchecked Sendable {
+        private let lock = NSLock()
+        private var urls: [URL] = []
+        func add(_ url: URL) { lock.lock(); urls.append(url); lock.unlock() }
+        var all: [URL] { lock.lock(); defer { lock.unlock() }; return urls }
+    }
+
+    /// Makes `WebAssets.shared` answer from memory, for the length of `body`.
+    static func withFakeGoogle(_ body: (Asked) async throws -> Void) async rethrows {
+        let shared = WebAssets.shared
+        let (transport, folder) = (shared.transport, shared.folder)
+        let asked = Asked()
+        let fontData = try? Data(contentsOf: font)
+        shared.folder = nil
+        shared.transport = { url in
+            asked.add(url)
+            if url.host == "fonts.googleapis.com" { return Data("src: url(https://fonts.gstatic.com/s/abeezee/x.ttf) format('truetype');".utf8) }
+            if url.path.hasSuffix(".ttf") { return fontData ?? Data() }
+            return Data(glyph.utf8)
+        }
+        defer {
+            shared.transport = transport
+            shared.folder = folder
+        }
+        try await body(asked)
+    }
+
+    static func until(_ condition: () -> Bool) async {
+        for _ in 0..<200 where !condition() { try? await Task.sleep(for: .milliseconds(10)) }
+    }
+
+    @Test func aMaterialIconAndAGoogleFontAreKeptWhileUsedAndLetGoAfter() async throws {
+        try await Self.withFakeGoogle { asked in
+            var document = Document()
+            var symbol = Layer.new(.symbol)
+            symbol.properties[.symbol] = .text("material-sharp:bolt.fill")
+            var text = Layer.new(.text)
+            text.properties[.fontFamily] = .text("ABeeZee")
+            document.screen.children += [symbol, text]
+            let store = DocumentStore(package: DocumentPackage(document: document))
+            store.keepsWebAssets = true
+            let icon = "web.material-sharp.bolt.fill1.svg", font = "web.font.ABeeZee.400.ttf"
+            await Self.until { store.assets[icon] != nil && store.assets[font] != nil }
+            #expect(store.assets[icon] == Data(Self.glyph.utf8))
+            #expect(store.assets[font]?.isEmpty == false)
+            #expect(asked.all.contains { $0.absoluteString == "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolssharp/bolt/fill1/24px.svg" })
+            #expect(asked.all.contains { $0.host == "fonts.googleapis.com" })
+            #expect(FontBook.isAvailable("ABeeZee"))
+
+            // The document now names neither: both are let go; a picture of its own stays.
+            store.assets["photo.png"] = Data([1])
+            store.setProperty(.symbol, of: symbol.id, to: .text("lucide:zap"))
+            store.setProperty(.fontFamily, of: text.id, to: .text("New York"))
+            await Self.until { store.assets[icon] == nil && store.assets[font] == nil }
+            #expect(store.assets.keys.sorted() == ["photo.png"])
+        }
+    }
+
+    @Test func whatTheViewerDrewIsKeptThoughNothingStoredNamesIt() async throws {
+        try await Self.withFakeGoogle { _ in
+            let store = DocumentStore(package: DocumentPackage(document: Document()))
+            store.keepsWebAssets = true
+            let name = "web.material.home.default.svg"
+            _ = WebAssets.shared.glyph(IconName(set: .material, name: "home"), weight: 400, assets: [:], fetches: true)
+            await Self.until { WebAssets.shared.data(named: name) != nil }
+            store.noteWebAsset(name)
+            await Self.until { store.assets[name] != nil }
+            #expect(store.assets[name] != nil)
+            // A store that only makes pictures keeps nothing.
+            let pictures = DocumentStore(package: DocumentPackage(document: Document()))
+            pictures.noteWebAsset(name)
+            #expect(pictures.assets.isEmpty)
+        }
+    }
+
+    @Test func onlyGooglesFontServersAreEverAsked() async {
+        for address in ["https://evil.example/x.svg", "http://fonts.gstatic.com/x", "https://fonts.gstatic.com.evil.example/x"] {
+            await #expect(throws: (any Error).self) { try await WebAssets.fetchFromGoogle(URL(string: address)!) }
+        }
+    }
+
+    @Test func aSymbolViewDrawsLucideAtOnceAndMaterialFromTheDocument() {
+        var document = Document()
+        var lucide = Layer.new(.symbol)
+        lucide.properties[.symbol] = .text("lucide:heart")
+        var material = Layer.new(.symbol)
+        material.properties[.symbol] = .text("material:home")
+        document.screen.children += [lucide, material]
+        let renderer = LayerRenderer()
+        WebAssetClient(assets: { ["web.material.home.default.svg": Data(Self.glyph.utf8)] }, fetches: false).attach(to: renderer)
+        renderer.render(ResolvedLayer(document.screen).laidOut())
+        let drawn = renderer.rootLayer.sublayers?.first?.sublayers?.first?.sublayers ?? []
+        #expect(drawn.count == 2)
+        #expect(drawn.allSatisfy { $0.contents != nil })
+    }
+}

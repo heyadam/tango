@@ -252,6 +252,18 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
         startMarkLayer.lineWidth = 0
         overlay.addSublayer(badge.layer)
         overlay.addSublayer(viewerPill.layer)
+        // A font or an icon that arrived is laid out and drawn with at once.
+        arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.webAssetArrived() }
+        }
+    }
+
+    private var arrivalObserver: NSObjectProtocol?
+
+    private func webAssetArrived() {
+        resolved = CanvasView.resolve(shown, registry: store.runtimeRegistry, painter: painter)
+        trees = CanvasView.trees(of: resolved, on: board)
+        redraw()
     }
 
     @available(*, unavailable)
@@ -380,6 +392,8 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
             }
             // A video shows the frame its Time names.
             renderer.videoURL = { [weak store] source in VideoFiles.url(for: source, assets: store?.assets ?? [:]) }
+            WebAssetClient(assets: { [weak store] in store?.assets ?? [:] }, fetches: true, used: { [weak store] in store?.noteWebAsset($0) })
+                .attach(to: renderer)
             screensLayer.addSublayer(renderer.rootLayer)
             renderers.append(renderer)
         }

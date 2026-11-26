@@ -33,6 +33,7 @@ enum PatchStyle {
         case .loop: .systemYellow
         case .data: .systemCyan
         case .ai: .systemIndigo
+        case .media: .systemBrown
         case .device: .systemRed
         case .utility: .systemGray
         case .component: .systemMint

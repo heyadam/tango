@@ -491,10 +491,11 @@ public final class LayerRenderer {
 
         case .symbol:
             layer.contentsGravity = .resizeAspect
-            layer.contents = symbolImage(
+            layer.contents = iconImage(
                 node.value(.symbol).textValue,
                 weight: node.value(.fontWeight).numberValue,
                 color: node.value(.fill).colorValue,
+                width: width,
                 height: height
             )
 
@@ -524,7 +525,7 @@ public final class LayerRenderer {
             guard let text = layer as? CATextLayer else { break }
             let fontSize = max(node.value(.fontSize).numberValue, 1)
             text.string = node.value(.text).textValue
-            text.font = PlatformFont.systemFont(ofSize: fontSize, weight: fontWeight(node.value(.fontWeight).numberValue))
+            text.font = font(of: node, size: fontSize)
             text.fontSize = fontSize
             text.foregroundColor = node.value(.textColor).colorValue.cgColor
             let singleLine = node.value(.singleLine).boolValue
@@ -661,7 +662,7 @@ public final class LayerRenderer {
         }
 
         let fontSize = max(node.value(.fontSize).numberValue, 1)
-        let font = PlatformFont.systemFont(ofSize: fontSize, weight: fontWeight(node.value(.fontWeight).numberValue))
+        let font = font(of: node, size: fontSize) as PlatformFont
         let typed = node.value(.text).textValue
         let shown = typed.isEmpty ? node.value(.placeholder).textValue : typed
         let color = node.value(.textColor).colorValue
@@ -713,6 +714,40 @@ public final class LayerRenderer {
         } else {
             caret.removeAnimation(forKey: "blink")
         }
+    }
+
+    /// The font a text or a text field is set in: the same `FontBook` face layout measured.
+    private func font(of node: ResolvedLayer, size: Double) -> CTFont {
+        let family = node.value(.fontFamily).textValue
+        let weight = node.value(.fontWeight).numberValue, italic = node.value(.italic).boolValue
+        if !FontBook.isSystemDesign(family) { onFont?(family, weight, italic) }
+        return FontBook.font(family: family, size: size, weight: weight, italic: italic)
+    }
+
+    /// Hears every family other than the system's that text is set in, with its weight and
+    /// slant, before it is set: the host makes sure a Google family is registered (or on its
+    /// way) and the editor keeps its file in the document.
+    public var onFont: ((String, Double, Bool) -> Void)?
+
+    /// Finds the glyphs of icon sets that are not shipped (Material Symbols): from the
+    /// document's assets, or fetched. Nil, or nil for an icon, draws nothing until it is
+    /// there; the host draws again when it arrives.
+    public var iconProvider: ((IconName, Double) -> VectorGlyph?)?
+
+    /// What a Symbol view shows: an SF Symbol sized to its height, or an icon of another set
+    /// fitted into its frame.
+    private func iconImage(_ value: String, weight: Double, color: ColorValue, width: Double, height: Double) -> CGImage? {
+        guard let icon = IconName(value) else { return nil }
+        if icon.set == .sf { return symbolImage(icon.name, weight: weight, color: color, height: height) }
+        guard width > 0, height > 0, width <= 4096, height <= 4096 else { return nil }
+        let pixelWidth = Int((width * contentsScale).rounded(.up)), pixelHeight = Int((height * contentsScale).rounded(.up))
+        let key = "\(icon.value)|\(weight.whole)|\(color.hex)|\(pixelWidth)x\(pixelHeight)"
+        if let cached = symbolCache[key] { return cached }
+        let glyph = icon.set == .lucide ? LucideIcons.glyph(icon.name, weight: weight) : iconProvider?(icon, weight)
+        guard let glyph, let rendered = glyph.image(width: pixelWidth, height: pixelHeight, color: color.cgColor) else { return nil }
+        if symbolCache.count > 400 { symbolCache.removeAll() }
+        symbolCache[key] = rendered
+        return rendered
     }
 
     private var symbolCache: [String: CGImage] = [:]

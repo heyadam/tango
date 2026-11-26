@@ -46,6 +46,10 @@ public struct NetworkRequest: Sendable, Hashable {
     public var origin: String?
     /// Seconds to wait for an answer; 0 leaves it to the host.
     public var timeout: Double = 0
+    /// A service a built-in patch asks for by name (`unsplash`): the host adds what that
+    /// service needs, such as the person's key, and sends it only to that service's hosts.
+    /// Nil for the Network Request patch and for scripts.
+    public var service: String?
 
     public init(
         id: UUID = UUID(), url: String, method: String = "GET", body: String = "",
@@ -776,6 +780,10 @@ public final class Runtime {
     /// Whether another tick would change anything. When false the host can pause its frame clock.
     public var needsAnotherFrame: Bool { needsFrame }
 
+    /// Asks for a frame because something the prototype is drawn with arrived from outside
+    /// (a font, an icon): the next frame lays out and draws with it.
+    public func setNeedsFrame() { needsFrame = true }
+
     private struct TouchTargets {
         /// The patches that listen for touches on each layer, in the order they run, as
         /// the arena's recognizers.
@@ -1078,7 +1086,7 @@ public final class Runtime {
                 guard let owner = scriptRequests.removeValue(forKey: id) else { continue }
                 responses[id] = nil
                 openRequests.remove(id)
-                scriptReplies[owner.node, default: []].append((owner.row, ScriptReply(token: owner.token, response: response)))
+                scriptReplies[owner.node, default: []].append((owner.row, ScriptReply(token: owner.token, response: response, id: id)))
             }
         }
 
@@ -1669,10 +1677,12 @@ public final class Runtime {
             definition.evaluate(&context)
             effects.append(contentsOf: context.effects)
             for asked in context.requests {
-                let request = NetworkRequest(
+                var request = NetworkRequest(
                     url: asked.url, method: asked.method, body: asked.body, headers: asked.headers,
                     origin: definition.origin?.id, timeout: asked.timeout
                 )
+                // Only a built-in patch names a service; a script's request never does.
+                if definition.origin == nil { request.service = asked.service }
                 openRequests.insert(request.id)
                 scriptRequests[request.id] = (node, row, asked.token)
                 if let requestHandler {

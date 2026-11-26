@@ -69,6 +69,8 @@ extension ResolvedLayer {
                 value(.text).textValue,
                 fontSize: value(.fontSize).numberValue,
                 weight: value(.fontWeight).numberValue,
+                family: value(.fontFamily).textValue,
+                italic: value(.italic).boolValue,
                 // A single-line label never wraps; it is cut short with an ellipsis instead.
                 maxWidth: autoWidth || value(.singleLine).boolValue ? nil : width
             )
@@ -242,20 +244,12 @@ extension ResolvedLayer {
     }
 }
 
-/// Measures text the way the renderer draws it (system font).
+/// Measures text the way the renderer draws it, in the font `FontBook` gives both.
 public enum TextMeasurer {
-    /// The system font at a size and a weight from 100 to 900, in the same nine steps the
+    /// The font at a size and a weight from 100 to 900, in the same nine steps the
     /// renderer draws with, so text takes the room it is drawn in.
-    public static func font(size: Double, weight: Double) -> CTFont {
-        let font = CTFontCreateUIFontForLanguage(.system, max(size, 1), nil)
-            ?? CTFontCreateWithName("Helvetica" as CFString, max(size, 1), nil)
-        let trait = weightTrait(weight)
-        guard trait != 0 else { return font }
-        let traits = [kCTFontWeightTrait: trait] as CFDictionary
-        let descriptor = CTFontDescriptorCreateCopyWithAttributes(
-            CTFontCopyFontDescriptor(font), [kCTFontTraitsAttribute: traits] as CFDictionary
-        )
-        return CTFontCreateWithFontDescriptor(descriptor, max(size, 1), nil)
+    public static func font(size: Double, weight: Double, family: String = "", italic: Bool = false) -> CTFont {
+        FontBook.font(family: family, size: size, weight: weight, italic: italic)
     }
 
     /// Core Text's weight for a font weight, the values AppKit and UIKit name ultraLight to black.
@@ -273,8 +267,10 @@ public enum TextMeasurer {
         }
     }
 
-    public static func measure(_ text: String, fontSize: Double, weight: Double, maxWidth: Double?) -> Size2 {
-        let font = font(size: fontSize, weight: weight)
+    public static func measure(
+        _ text: String, fontSize: Double, weight: Double, family: String = "", italic: Bool = false, maxWidth: Double?
+    ) -> Size2 {
+        let font = font(size: fontSize, weight: weight, family: family, italic: italic)
         let attributed = NSAttributedString(
             string: text.isEmpty ? " " : text,
             attributes: [NSAttributedString.Key(kCTFontAttributeName as String): font]

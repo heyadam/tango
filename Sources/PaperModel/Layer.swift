@@ -81,6 +81,12 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
     case text
     case fontSize
     case fontWeight
+    /// The typeface: empty for the system's (SF Pro), one of the Apple families every
+    /// device has (`FontBook.systemFamilies`), or a Google Fonts family, fetched when a
+    /// document first uses it and then kept in its assets.
+    case fontFamily
+    /// Whether text is set in the italic of its typeface.
+    case italic
     case textColor
     case textAlignment
     case singleLine
@@ -155,6 +161,8 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
         case .text: "Text"
         case .fontSize: "Font Size"
         case .fontWeight: "Font Weight"
+        case .fontFamily: "Font"
+        case .italic: "Italic"
         case .textColor: "Text Color"
         case .textAlignment: "Text Alignment"
         case .singleLine: "Single Line"
@@ -216,9 +224,9 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
              .spacing, .padding, .paddingHorizontal, .paddingVertical, .paddingTop, .paddingBottom, .paddingLeft, .paddingRight,
              .columns, .pageSize, .contentOffset, .volume, .playbackRate, .time: .number
         case .fill, .strokeColor, .shadowColor, .textColor: .color
-        case .text, .placeholder, .image, .symbol, .video, .contentMode, .textAlignment, .layout, .axis, .alignment, .distribution,
+        case .text, .placeholder, .image, .symbol, .fontFamily, .video, .contentMode, .textAlignment, .layout, .axis, .alignment, .distribution,
              .widthMode, .heightMode: .text
-        case .clips, .enabled, .visible, .absolute, .singleLine, .scrolls, .playing, .loops, .muted: .bool
+        case .clips, .enabled, .visible, .absolute, .singleLine, .italic, .scrolls, .playing, .loops, .muted: .bool
         }
     }
 
@@ -257,6 +265,8 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
         case .placeholder: return .text("Placeholder")
         case .fontSize: return .number(17)
         case .fontWeight: return .number(400)
+        case .fontFamily: return .text("")
+        case .italic: return .bool(false)
         case .textColor: return .color(.black)
         case .textAlignment: return .text("Left")
         case .singleLine: return .bool(false)
@@ -337,7 +347,7 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
         case .ellipse:
             return geometry + [.fill, .strokeColor, .strokeWidth] + shadow + [.enabled] + child
         case .text:
-            return geometry + [.text, .fontSize, .fontWeight, .textColor, .textAlignment, .singleLine, .enabled] + child
+            return geometry + [.text, .fontFamily, .fontSize, .fontWeight, .italic, .textColor, .textAlignment, .singleLine, .enabled] + child
         case .image:
             return geometry + [.image, .cornerRadius] + shadow + [.enabled] + child
         case .symbol:
@@ -348,7 +358,7 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
             return geometry + [.video, .contentMode, .playing, .loops, .time, .playbackRate, .muted, .volume,
                                .fill, .cornerRadius, .enabled] + child
         case .textField:
-            return geometry + [.text, .placeholder, .fontSize, .fontWeight, .textColor, .textAlignment,
+            return geometry + [.text, .placeholder, .fontFamily, .fontSize, .fontWeight, .italic, .textColor, .textAlignment,
                                .fill, .cornerRadius, .strokeColor, .strokeWidth, .padding, .enabled] + child
         case .component:
             return LayerProperty.instanceOwned

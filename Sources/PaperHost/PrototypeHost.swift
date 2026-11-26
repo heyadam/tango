@@ -28,6 +28,7 @@ public final class PrototypeHost {
     public var onEffect: ((DeviceEffect) -> Void)?
 
     private var restartToken: Int
+    private var arrivalObserver: NSObjectProtocol?
     /// What the screen was last fitted into, and its size then.
     private var fitted: (bounds: CGRect, fills: Bool, backingScale: CGFloat, screen: CGSize)?
     /// The scale and corner the screen is shown at, in the layer's coordinates (y-down).
@@ -76,6 +77,18 @@ public final class PrototypeHost {
             pictures.picture(named: name, assets: self?.assets ?? [:], registry: self?.registry)
         }
         renderer.videoURL = { [weak self] source in VideoFiles.url(for: source, assets: self?.assets ?? [:]) }
+        // Fonts and Material glyphs come with the document; one a cable names that it does
+        // not carry is fetched, as on the Mac.
+        FontBook.register(assets: assets)
+        WebAssetClient(assets: { [weak self] in self?.assets ?? [:] }, fetches: sendsRequests).attach(to: renderer)
+        if sendsRequests {
+            arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.runtime.setNeedsFrame()
+                    self?.onWake?()
+                }
+            }
+        }
         renderer.onVideoDuration = { [weak self] source, seconds in
             guard let self, self.runtime.videoDuration(of: source) != seconds else { return }
             self.runtime.setVideoDuration(seconds, for: source)
@@ -114,6 +127,11 @@ public final class PrototypeHost {
                 self?.finish(id, NetworkResponse(status: 0, error: "The extension that asked is not installed."))
                 return
             }
+            // The Unsplash key stays on the Mac.
+            guard request.service == nil else {
+                self?.finish(id, NetworkResponse(status: 0, error: "Unsplash photos are found only on the Mac, with its access key."))
+                return
+            }
             PrototypeNetwork.send(request) { [weak self] answer in self?.finish(id, answer) }
         }
         runtime.tick(dt: 0)
@@ -133,7 +151,10 @@ public final class PrototypeHost {
         document: Document, assets: [String: Data]? = nil, registry: PatchRegistry? = nil,
         restartToken: Int? = nil, startScreen: LayerID? = nil
     ) {
-        if let assets { self.assets = assets }
+        if let assets {
+            self.assets = assets
+            FontBook.register(assets: assets)
+        }
         // The extensions it carries changed: their patches' ports did too.
         if let registry, registry.extensions != self.registry.extensions {
             self.registry = registry

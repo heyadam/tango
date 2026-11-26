@@ -48,7 +48,9 @@ public struct PatchGuide: Sendable {
         "spacing": "The gap between neighbouring views inside it, in points.",
         "text": "The words it shows.",
         "image": "The picture it shows: an image added to the document, or one a patch hands it, such as the Photo of a Camera patch.",
-        "symbol": "The name of an SF Symbol, such as heart.fill or chevron.right.",
+        "symbol": "The icon: an SF Symbol by name (heart.fill), or another set before a colon: lucide:heart, material:home, material-rounded:favorite.fill, material-sharp:star. An Icon patch can name one.",
+        "fontFamily": "The typeface: empty for the system's (SF Pro), SF Pro Rounded, New York, SF Mono, an Apple family every device has (Avenir Next, Georgia…), or any Google Fonts family (Inter, Playfair Display…), fetched once and kept in the document.",
+        "italic": "Sets the text in its typeface's italic.",
         "video": "What it plays: the name of a movie added to the document, or a web address. A video from the web shows a placeholder in pictures of the prototype.",
         "contentMode": "Fill covers the whole view and crops what does not fit; Fit shows all of the picture, with the fill around it.",
         "playing": "On while it plays. Off holds it where it is, which costs nothing.",
@@ -115,9 +117,9 @@ public struct PatchGuide: Sendable {
             tags: ["picture", "photo", "bitmap", "png", "jpeg", "img", "uiimageview", "asset", "avatar", "thumbnail"]
         ),
         .symbol: PatchGuide(
-            "Draws a glyph from Apple's SF Symbols by name, such as heart.fill or chevron.right, in a color and at a weight. Symbols scale cleanly and match the system's icons.",
+            "Draws an icon in a color and at a weight: an SF Symbol by name, such as heart.fill or chevron.right, or an icon from Lucide (lucide:heart) or Google's Material Symbols (material:home, material-rounded:favorite.fill). Lucide ships with Tango; a Material glyph is fetched the first time it is used and then kept in the document.",
             tip: "Swap between heart and heart.fill with an If patch driven by a Switch to make a like button.",
-            tags: ["icon", "glyph", "sf symbols", "sfsymbol", "chevron", "pictogram", "emoji"]
+            tags: ["icon", "glyph", "sf symbols", "sfsymbol", "chevron", "pictogram", "emoji", "lucide", "material symbols", "material icons"]
         ),
         .textField: PatchGuide(
             "A box the person can type into. A tap gives it focus and shows a caret; typing comes from the Mac's keyboard while the Viewer is in front. Attach a Text Input patch to read what was typed and to focus or clear it from the graph.",
@@ -149,7 +151,7 @@ public struct PatchGuide: Sendable {
 
     static let patches: [String: PatchGuide] = {
         var all: [String: PatchGuide] = [:]
-        for group in [input, state, logic, math, animation, loops, data, device, utility] {
+        for group in [input, state, logic, math, animation, loops, data, media, device, utility] {
             all.merge(group) { first, _ in first }
         }
         return all
@@ -947,6 +949,55 @@ public struct PatchGuide: Sendable {
                 "valid": "On when the text was JSON.",
             ],
             tags: ["json", "parse", "decode", "mock data", "sample data", "fixture", "stub", "placeholder content", "fake data"]
+        ),
+    ]
+
+    static let media: [String: PatchGuide] = [
+        "icon": PatchGuide(
+            "Names an icon for a Symbol view's Symbol input, from SF Symbols, Lucide or Google's Material Symbols (Outlined, Rounded or Sharp). Lucide's 2,000 icons ship with Tango and draw offline; a Material glyph is fetched from Google the first time it is used and kept in the document, so it then shows offline and on iPhone. The Symbol view's Weight sets Lucide's line width and Material's weight; its Fill is the color.",
+            tip: "A Switch into Filled, and Symbol into a Symbol view, for a like button that fills when tapped.",
+            inputs: [
+                "set": "Which set: SF Symbols, Lucide, Material Symbols, Material Symbols Rounded or Material Symbols Sharp.",
+                "name": "The icon's name in that set: heart for Lucide, favorite for Material, heart.fill for SF Symbols. A whole value such as lucide:heart is taken as it is.",
+                "filled": "The filled glyph: Material's fill, or an SF Symbol's .fill. Lucide's icons are lines only.",
+            ],
+            outputs: [
+                "symbol": "The value a Symbol view's Symbol input takes, such as material-rounded:favorite.fill.",
+                "known": "Whether the set has an icon by that name. SF Symbols are always taken as known.",
+            ],
+            tags: ["lucide", "material", "material symbols", "material icons", "google icons", "glyph", "pictogram", "icon font", "feather", "sf symbols"]
+        ),
+        "font": PatchGuide(
+            "Names a typeface for a Text or Text Field's Font input: the system's (SF Pro and its Rounded, New York and Mono designs), an Apple family on every Mac and iPhone (Avenir Next, Georgia, Futura…), or any of Google Fonts' families. A Google family is fetched the first time it is used and kept in the document, so it then shows offline and on iPhone; Apple's are never copied, since every device has them.",
+            tip: "Font into the Font input of every text of a screen, to try a typeface everywhere at once.",
+            inputs: ["family": "The family's name, such as Inter, Playfair Display or New York. Empty or System is SF Pro."],
+            outputs: [
+                "font": "The family as the text's Font input takes it, spelt as its source spells it.",
+                "source": "System, Google Fonts, or Unknown for a name neither has (a font installed only on this Mac shows here but not on iPhone).",
+            ],
+            tags: ["typeface", "typography", "google fonts", "font family", "inter", "serif", "web font", "custom font", "uifont"]
+        ),
+        "unsplashPhoto": PatchGuide(
+            "Finds photos on Unsplash, by search or at random, and gives one as an Image for an Image view, with its photographer's name and profile link to credit, its description and its average color. Photos are always loaded from Unsplash while the prototype runs, as Unsplash's terms ask, and never kept in the document. It needs a free Unsplash access key in Settings > AI; pictures of the prototype and the iPhone player send nothing.",
+            tip: "Color into the Image view's Fill shows the photo's color while it loads. Photographer into a small caption, as Unsplash asks.",
+            inputs: [
+                "query": "What to search for. Empty picks random photos.",
+                "orientation": "Any, Landscape, Portrait or Squarish.",
+                "index": "Which of the photos found to show, from 0. A loop of indexes gives a loop of photos, for a grid.",
+                "next": "A pulse shows the next photo.",
+                "size": "Small (400 wide), Regular (1080 wide) or Full.",
+            ],
+            outputs: [
+                "image": "The photo, for an Image view's Image.",
+                "photographer": "Who took it, to credit.",
+                "profile": "The photographer's page on Unsplash.",
+                "description": "What the photo shows, in words.",
+                "color": "The photo's average color.",
+                "count": "How many photos were found.",
+                "loading": "On while a search or a photo is on its way.",
+                "error": "What went wrong, such as a missing key.",
+            ],
+            tags: ["photo", "picture", "stock photo", "image search", "placeholder", "unsplash", "random image", "lorem picsum"]
         ),
     ]
 

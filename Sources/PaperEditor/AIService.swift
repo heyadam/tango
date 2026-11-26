@@ -21,7 +21,9 @@ final class AIKeys {
 
     /// Every account a key can be saved for: the AI patches' providers, which the assistant
     /// shares, and the ones only the assistant uses.
-    static let accounts = AIProvider.keyed.map(\.rawValue) + [gemini, local]
+    static let accounts = AIProvider.keyed.map(\.rawValue) + [gemini, local, unsplash]
+    /// The access key of Unsplash Photo patches.
+    static let unsplash = "unsplash"
     static let gemini = "gemini"
     /// The key of a local server, for the few that want one.
     static let local = "local"

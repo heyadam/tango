@@ -10,6 +10,8 @@ public enum PatchCategory: String, Sendable, CaseIterable {
     case loop = "Loop"
     case data = "Data"
     case ai = "AI"
+    /// Icons, fonts and photos from outside the app.
+    case media = "Media"
     case device = "Device"
     case utility = "Utility"
     case component = "Component"

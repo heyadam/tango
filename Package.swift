@@ -18,8 +18,9 @@ let package = Package(
         .target(
             name: "PaperEngine",
             dependencies: ["PaperModel"],
-            // The clip the Video Scrubbing pattern plays (`papertool sample-video`).
-            resources: [.copy("Media")]
+            // The clip the Video Scrubbing pattern plays (`papertool sample-video`), and the
+            // catalogs of icons and fonts (`scripts/update-catalogs.py`).
+            resources: [.copy("Media"), .copy("Catalogs")]
         ),
         .target(
             name: "PaperRender",
