@@ -71,4 +71,3 @@ gh release create v0.2 build/release/Tango-0.2.dmg build/release/Tango-0.2.dmg.s
 
 - Updates inside the app (Sparkle, with an appcast on the releases). Until then people download each new DMG.
 - An app icon and a DMG window background.
-- The bundle id is `com.tango.app`; change `PRODUCT_BUNDLE_IDENTIFIER` in `project.yml` to one you own before the first public release, since macOS ties a person's settings and keychain items to it.

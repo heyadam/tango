@@ -185,12 +185,14 @@ public final class ProcessTransport: AssistantTransport {
         let files = FileManager.default
         try files.createDirectory(at: directory, withIntermediateDirectories: true)
         var needsInstall = !files.fileExists(atPath: directory.appendingPathComponent("node_modules/@anthropic-ai/claude-agent-sdk").path)
-        for name in ["package.json", "sidecar.mjs"] {
+        // The lockfile pins every package and its hash, so each Mac installs exactly what
+        // was tested and nothing published later.
+        for name in ["package.json", "package-lock.json", "sidecar.mjs"] {
             let fresh = try Data(contentsOf: source.appendingPathComponent(name))
             let target = directory.appendingPathComponent(name)
             if (try? Data(contentsOf: target)) != fresh {
                 try fresh.write(to: target)
-                if name == "package.json" { needsInstall = true }
+                if name != "sidecar.mjs" { needsInstall = true }
             }
         }
         guard needsInstall else { return }
@@ -200,7 +202,7 @@ public final class ProcessTransport: AssistantTransport {
             throw AssistantSetupError(message: "npm was not found next to Node at \(node.path).")
         }
         do {
-            _ = try await run(npm, ["install", "--no-audit", "--no-fund"], in: directory, environment: environment(node: node))
+            _ = try await run(npm, ["ci", "--no-audit", "--no-fund"], in: directory, environment: environment(node: node))
         } catch {
             throw AssistantSetupError(message: "Could not install the assistant: \(error.localizedDescription)")
         }

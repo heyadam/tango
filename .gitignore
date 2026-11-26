@@ -15,3 +15,6 @@ node_modules/
 
 # Your own team and bundle id for the iOS player (see Player/Signing.xcconfig)
 Signing.local.xcconfig
+
+# Loose artwork kept locally, not in the repo
+/tango.png
