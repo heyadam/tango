@@ -277,6 +277,11 @@ case "json":
         fail("Could not encode: \(error)")
     }
 
+case "reference":
+    // What agents are told: every view type and property, every patch with its port ids,
+    // every shelf component, icons and fonts. Port ids here are the ones `Builder.connect` takes.
+    print(AssistantPrompt.reference(registry: .standard, components: []))
+
 case "viewer":
     guard arguments.count >= 3 else { fail("viewer needs a document and an output path") }
     _ = NSApplication.shared
