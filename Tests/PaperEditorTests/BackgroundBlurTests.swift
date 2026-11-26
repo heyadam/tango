@@ -178,6 +178,25 @@ import PaperRender
         #expect(edge.green > 0.95 && edge.red < 0.05)
     }
 
+    /// Layers wholly outside the picture are left out of it, which must go by what they
+    /// draw: a stroke lies half outside its shape's frame.
+    @Test func aStrokeThatReachesIntoThePictureIsInIt() throws {
+        try #require(ShaderCompiler.shared != nil, "no GPU to compile with")
+        // The view ends at 60 and reads 25 further down, to 85 at most; the picture reaches
+        // 32 past the view, to 92. The ellipse's frame starts below that, at 96, but its
+        // stroke, 40 wide, reaches up to 76.
+        let lower = "float4 shader(Frame frame, Inputs in) { return behind(frame, frame.position + float2(0, 25)); }"
+        var made = shaded(lower, y: 20)
+        let ring = Layer(name: "Ring", kind: .ellipse, properties: [
+            .position: .point(Point2(x: 60, y: 96)), .size: .size(Size2(width: 80, height: 60)),
+            .fill: .color(ColorValue(white: 1, alpha: 0)),
+            .strokeColor: .color(.black), .strokeWidth: .number(40),
+        ])
+        made.screen.children.insert(ring, at: 4)
+        let seen = color(made, at: Point2(x: 100, y: 55))
+        #expect(seen.red < 0.05 && seen.green < 0.05 && seen.blue < 0.05, "the stroke was left out of the picture")
+    }
+
     // MARK: At another size on screen
 
     /// The color at a point of the screen when the Viewer shows it `zoom` times as large,
