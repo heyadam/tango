@@ -156,29 +156,38 @@ public final class WebAssets {
 
 /// What a host that draws a prototype hands its renderer for icons and fonts that are
 /// fetched: the document's assets come first, then the device's cache, then (when the host
-/// may) Google. `used` hears every such asset that is drawn, so the editor can keep it.
+/// may, `fetches`) Google. `drawn` hears the whole set of such assets each renderer drew
+/// last, so the editor can keep exactly those.
 public struct WebAssetClient {
     public var assets: () -> [String: Data]
-    public var fetches: Bool
-    public var used: ((String) -> Void)?
+    public var fetches: () -> Bool
+    public var drawn: ((ObjectIdentifier, Set<String>) -> Void)?
 
-    public init(assets: @escaping () -> [String: Data], fetches: Bool, used: ((String) -> Void)? = nil) {
+    public init(
+        assets: @escaping () -> [String: Data], fetches: @escaping () -> Bool,
+        drawn: ((ObjectIdentifier, Set<String>) -> Void)? = nil
+    ) {
         self.assets = assets
         self.fetches = fetches
-        self.used = used
+        self.drawn = drawn
+    }
+
+    public init(assets: @escaping () -> [String: Data], fetches: Bool, drawn: ((ObjectIdentifier, Set<String>) -> Void)? = nil) {
+        self.init(assets: assets, fetches: { fetches }, drawn: drawn)
     }
 
     /// Sets `renderer` to find Material glyphs and Google fonts through `WebAssets.shared`.
     public func attach(to renderer: LayerRenderer) {
         let client = self
         renderer.iconProvider = { icon, weight in
-            if let name = MaterialSymbols.assetName(icon, weight: weight) { client.used?(name) }
-            return WebAssets.shared.glyph(icon, weight: weight, assets: client.assets(), fetches: client.fetches)
+            WebAssets.shared.glyph(icon, weight: weight, assets: client.assets(), fetches: client.fetches())
         }
         renderer.onFont = { family, weight, italic in
-            if let name = WebAssets.shared.wantFont(family: family, weight: weight, italic: italic, assets: client.assets(), fetches: client.fetches) {
-                client.used?(name)
-            }
+            WebAssets.shared.wantFont(family: family, weight: weight, italic: italic, assets: client.assets(), fetches: client.fetches())
+        }
+        if let drawn {
+            let id = ObjectIdentifier(renderer)
+            renderer.onDrawnWebAssets = { drawn(id, $0) }
         }
     }
 }

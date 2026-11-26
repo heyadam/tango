@@ -20,16 +20,22 @@ extension DocumentStore {
         scheduleWebAssets()
     }
 
-    /// Hears that a host drew a fetched font or icon of this document.
-    public func noteWebAsset(_ name: String) {
-        guard WebAssetNames.isWebAsset(name), notedWebAssets.insert(name).inserted else { return }
+    /// Hears the whole set of fetched fonts and icons one renderer drew last, in place of
+    /// what it said before.
+    public func setDrawnWebAssets(_ names: Set<String>, by renderer: ObjectIdentifier) {
+        let names = names.filter(WebAssetNames.isWebAsset)
+        guard drawnWebAssets[renderer] != names else { return }
+        drawnWebAssets[renderer] = names
         scheduleWebAssets()
     }
 
-    /// Whether this document drew, or names, the web asset `name`: what an arrival must be
-    /// for its Viewer and Canvas to draw again.
+    /// What some renderer of this document drew last.
+    var drawnWebAssetNames: Set<String> { drawnWebAssets.values.reduce(into: []) { $0.formUnion($1) } }
+
+    /// Whether this document draws, or has used, the web asset `name`: what an arrival must
+    /// be for its Viewer and Canvas to draw again.
     public func usesWebAsset(_ name: String) -> Bool {
-        notedWebAssets.contains(name) || usedWebAssets.contains(name)
+        drawnWebAssetNames.contains(name) || usedWebAssets.contains(name)
     }
 
     /// Looks again once the current burst of changes is over, not on every step of a drag.
@@ -48,7 +54,7 @@ extension DocumentStore {
     /// those that have not, and lets go of the ones it no longer uses.
     func keepWebAssets() {
         guard keepsWebAssets else { return }
-        let wanted = namedWebAssets(fetching: true).union(notedWebAssets)
+        let wanted = namedWebAssets(fetching: true).union(drawnWebAssetNames)
         usedWebAssets.formUnion(wanted)
         var next = assets.filter { !WebAssetNames.isWebAsset($0.key) || wanted.contains($0.key) || !usedWebAssets.contains($0.key) }
         for name in wanted where next[name] == nil {

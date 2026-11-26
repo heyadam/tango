@@ -66,9 +66,10 @@ public final class DocumentStore {
         }
     }
 
-    /// Fetched fonts and icons the Viewer or the Canvas drew this session, which the
-    /// document keeps though nothing it stores names them (a cable chose them).
-    @ObservationIgnored var notedWebAssets: Set<String> = []
+    /// The fetched fonts and icons each Viewer or Canvas renderer drew in its last render,
+    /// which the document keeps though nothing it stores names them (a cable chose them).
+    /// Each report replaces that renderer's last, so what is no longer drawn can go.
+    @ObservationIgnored var drawnWebAssets: [ObjectIdentifier: Set<String>] = [:]
     /// Every web asset seen in use this session. Only these are ever let go: a file the
     /// document came with that nothing here has asked for yet (one a script picks) stays.
     @ObservationIgnored var usedWebAssets: Set<String> = []

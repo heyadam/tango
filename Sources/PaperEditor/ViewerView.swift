@@ -67,7 +67,7 @@ public final class ViewerView: NSView {
         // Material glyphs and Google fonts: the document's, else fetched (never for a picture).
         WebAssetClient(
             assets: { [weak store] in store?.assets ?? [:] }, fetches: sendsRequests,
-            used: { [weak store] in store?.noteWebAsset($0) }
+            drawn: { [weak store] in store?.setDrawnWebAssets($1, by: $0) }
         ).attach(to: renderer)
         if sendsRequests {
             arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] note in

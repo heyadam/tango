@@ -125,8 +125,13 @@ public final class LayerRenderer {
     public func render(_ tree: ResolvedLayer) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
+        drawing = []
         var seen: Set<Key> = []
         let screen = sync(tree, seen: &seen)
+        if drawing != drawn {
+            drawn = drawing
+            onDrawnWebAssets?(drawn)
+        }
         if contentLayer.sublayers?.first !== screen || contentLayer.sublayers?.count != 1 {
             contentLayer.sublayers = [screen]
         }
@@ -724,6 +729,9 @@ public final class LayerRenderer {
     private func font(of node: ResolvedLayer, size: Double) -> CTFont {
         let family = node.value(.fontFamily).textValue
         let weight = node.value(.fontWeight).numberValue, italic = node.value(.italic).boolValue
+        if !FontBook.isSystemDesign(family), onDrawnWebAssets != nil, let asset = fontAsset(family, weight, italic) {
+            drawing.insert(asset)
+        }
         if !FontBook.isSystemDesign(family), onFont != nil {
             // Once per face, and again after fonts are registered (one may have failed).
             if reportedGeneration != FontBook.generation {
@@ -738,6 +746,25 @@ public final class LayerRenderer {
     /// Hears every family other than the system's that text is set in, with its weight and
     /// slant, before it is set: the host makes sure a Google family is registered (or on its
     /// way) and the editor keeps its file in the document.
+    /// Hears the fetched fonts and icons (`web.…` assets) the last render drew, whenever
+    /// that set changes: the whole set, which replaces what it said before, so what a
+    /// document stops drawing can be let go.
+    public var onDrawnWebAssets: ((Set<String>) -> Void)?
+    private var drawing: Set<String> = []
+    private var drawn: Set<String> = []
+    private var fontAssets: [String: String?] = [:]
+
+    private func fontAsset(_ family: String, _ weight: Double, _ italic: Bool) -> String? {
+        let key = "\(family)|\(GoogleFonts.weight(weight))|\(italic)"
+        if let known = fontAssets[key] { return known }
+        let name = GoogleFonts.family(family).flatMap { found in
+            GoogleFonts.style(of: found, weight: weight, italic: italic).map { GoogleFonts.assetName(family: found, style: $0) }
+        }
+        if fontAssets.count > 500 { fontAssets.removeAll() }
+        fontAssets[key] = name
+        return name
+    }
+
     public var onFont: ((String, Double, Bool) -> Void)? {
         didSet { reportedFonts.removeAll() }
     }
@@ -757,6 +784,9 @@ public final class LayerRenderer {
     /// fitted into its frame.
     private func iconImage(_ value: String, weight: Double, color: ColorValue, width: Double, height: Double) -> CGImage? {
         guard let icon = IconName(value) else { return nil }
+        if icon.set.isMaterial, onDrawnWebAssets != nil, let asset = MaterialSymbols.assetName(icon, weight: weight) {
+            drawing.insert(asset)
+        }
         if icon.set == .sf { return symbolImage(icon.name, weight: weight, color: color, height: height) }
         guard width > 0, height > 0, width <= 4096, height <= 4096 else { return nil }
         let pixelWidth = Int((width * contentsScale).rounded(.up)), pixelHeight = Int((height * contentsScale).rounded(.up))

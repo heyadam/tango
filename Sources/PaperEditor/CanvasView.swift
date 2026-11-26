@@ -400,7 +400,12 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
             }
             // A video shows the frame its Time names.
             renderer.videoURL = { [weak store] source in VideoFiles.url(for: source, assets: store?.assets ?? [:]) }
-            WebAssetClient(assets: { [weak store] in store?.assets ?? [:] }, fetches: true, used: { [weak store] in store?.noteWebAsset($0) })
+            // Only a document that keeps what it fetches fetches: a picture of the editor
+            // (`papertool editor --canvas`) draws what the document carries and asks nobody.
+            WebAssetClient(
+                assets: { [weak store] in store?.assets ?? [:] }, fetches: { [weak store] in store?.keepsWebAssets ?? false },
+                drawn: { [weak store] in store?.setDrawnWebAssets($1, by: $0) }
+            )
                 .attach(to: renderer)
             screensLayer.addSublayer(renderer.rootLayer)
             renderers.append(renderer)

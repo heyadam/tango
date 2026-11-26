@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Testing
 @testable import PaperEditor
@@ -109,13 +110,55 @@ import PaperRender
             let name = "web.material.home.default.svg"
             _ = WebAssets.shared.glyph(IconName(set: .material, name: "home"), weight: 400, assets: [:], fetches: true)
             await Self.until { WebAssets.shared.data(named: name) != nil }
-            store.noteWebAsset(name)
+            let viewer = ObjectIdentifier(NSObject())
+            store.setDrawnWebAssets([name], by: viewer)
             await Self.until { store.assets[name] != nil }
             #expect(store.assets[name] != nil)
+            // Once that renderer draws something else, it is let go.
+            store.setDrawnWebAssets([], by: viewer)
+            await Self.until { store.assets[name] == nil }
+            #expect(store.assets[name] == nil)
             // A store that only makes pictures keeps nothing.
             let pictures = DocumentStore(package: DocumentPackage(document: Document()))
-            pictures.noteWebAsset(name)
+            pictures.setDrawnWebAssets([name], by: viewer)
             #expect(pictures.assets.isEmpty)
+        }
+    }
+
+    @Test func aRendererSaysWhatItDrewEachTimeThatChanges() {
+        var document = Document()
+        var symbol = Layer.new(.symbol)
+        symbol.properties[.symbol] = .text("material:home")
+        var text = Layer.new(.text)
+        text.properties[.fontFamily] = .text("Inter")
+        text.properties[.fontWeight] = .number(600)
+        document.screen.children += [symbol, text]
+        let renderer = LayerRenderer()
+        var reports: [Set<String>] = []
+        WebAssetClient(assets: { [:] }, fetches: false, drawn: { reports.append($1) }).attach(to: renderer)
+        renderer.render(ResolvedLayer(document.screen).laidOut())
+        renderer.render(ResolvedLayer(document.screen).laidOut())
+        #expect(reports == [["web.material.home.default.svg", "web.font.Inter.600.ttf"]])
+        document.screen.children.removeAll()
+        renderer.render(ResolvedLayer(document.screen).laidOut())
+        #expect(reports.last == [])
+    }
+
+    @Test func aCanvasForAPictureAsksNobody() async throws {
+        try await Self.withFakeGoogle { asked in
+            var document = Document()
+            var symbol = Layer.new(.symbol)
+            symbol.properties[.symbol] = .text("material:anchor")
+            document.screen.children.append(symbol)
+            let store = DocumentStore(package: DocumentPackage(document: document))
+            let canvas = CanvasView(store: store)
+            let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled], backing: .buffered, defer: true)
+            canvas.frame = CGRect(x: 0, y: 0, width: 800, height: 600)
+            window.contentView = canvas
+            canvas.layoutSubtreeIfNeeded()
+            try? await Task.sleep(for: .milliseconds(50))
+            #expect(asked.all.isEmpty)
+            #expect(store.drawnWebAssetNames.contains("web.material.anchor.default.svg"))
         }
     }
 
