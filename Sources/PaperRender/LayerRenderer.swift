@@ -220,6 +220,8 @@ public final class LayerRenderer {
     private func cull(_ layer: CALayer, outside place: CGRect, into hidden: inout [CALayer]) {
         for child in layer.sublayers ?? [] where !child.isHidden {
             var reach = child.borderWidth
+            // A shape's stroke is centered on its outline, so half of it lies outside.
+            if let shape = child as? CAShapeLayer, shape.strokeColor != nil { reach += shape.lineWidth / 2 }
             if child.shadowOpacity > 0 {
                 reach += child.shadowRadius * 2 + max(abs(child.shadowOffset.width), abs(child.shadowOffset.height))
             }

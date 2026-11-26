@@ -191,8 +191,10 @@ public final class PatchEditorView: NSView, NSTextFieldDelegate {
         for source in sources {
             let values = runtime.outputValues(source)
             if values.contains(.pulse(true)) { pulseTimes[source] = now }
-            if let previous = lastValues[source], previous != values {
-                changeTimes[source] = now
+            // The first value an output has is a change too: the graph may have been drawn
+            // before it arrived, and a value that never changes again would never show.
+            if lastValues[source] != values {
+                if lastValues[source] != nil { changeTimes[source] = now }
                 dirty = dirty.union(area(showing: source))
             }
             lastValues[source] = values
