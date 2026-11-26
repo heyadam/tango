@@ -64,6 +64,21 @@ public final class ViewerView: NSView {
         // runtime from whoever loaded it: the player here, or at once from the file when
         // nothing plays it (a picture, a test).
         renderer.videoURL = { [weak store] source in VideoFiles.url(for: source, assets: store?.assets ?? [:]) }
+        // Material glyphs and Google fonts: the document's, else fetched (never for a picture).
+        WebAssetClient(
+            assets: { [weak store] in store?.assets ?? [:] }, fetches: sendsRequests,
+            drawn: { [weak store] in store?.setDrawnWebAssets($1, by: $0) }
+        ).attach(to: renderer)
+        if sendsRequests {
+            arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] note in
+                let name = note.object as? String ?? ""
+                MainActor.assumeIsolated {
+                    guard let self, self.store.usesWebAsset(name) else { return }
+                    self.runtime.setNeedsFrame()
+                    self.wake()
+                }
+            }
+        }
         renderer.onVideoDuration = { [weak self] source, seconds in
             guard let self, self.runtime.videoDuration(of: source) != seconds else { return }
             self.runtime.setVideoDuration(seconds, for: source)
@@ -118,6 +133,10 @@ public final class ViewerView: NSView {
                 self?.sendForExtension(request, origin)
                 return
             }
+            if request.service == Unsplash.service {
+                self?.sendToUnsplash(request)
+                return
+            }
             let id = request.id
             PrototypeNetwork.send(request) { [weak self] answer in self?.finish(id, answer) }
         }
@@ -150,7 +169,28 @@ public final class ViewerView: NSView {
         }
     }
 
+    /// The Unsplash access key, from Settings; replaced in tests.
+    var unsplashKey: () -> String? = { AIKeys.shared.key(account: AIKeys.unsplash) }
+
+    /// A request of the Unsplash Photo patch: to Unsplash's API only, with the person's key.
+    private func sendToUnsplash(_ request: NetworkRequest) {
+        guard let key = unsplashKey() else {
+            return finish(request.id, NetworkResponse(status: 0, error: "Add an Unsplash access key in Settings > AI to find photos."))
+        }
+        guard var signed = Unsplash.signed(request, key: key) else {
+            return finish(request.id, NetworkResponse(status: 0, error: "Only Unsplash's own API can be asked."))
+        }
+        signed.service = nil
+        let id = request.id
+        PrototypeNetwork.send(signed) { [weak self] answer in self?.finish(id, answer) }
+    }
+
     private var services: DeviceServices?
+    private var arrivalObserver: NSObjectProtocol?
+
+    isolated deinit {
+        if let arrivalObserver { NotificationCenter.default.removeObserver(arrivalObserver) }
+    }
     /// Whether this Viewer may use the Mac's camera, microphone and so on. Off for
     /// snapshots and tests, which must not prompt for access.
     public var usesDevice = false {

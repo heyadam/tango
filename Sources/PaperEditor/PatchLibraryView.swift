@@ -131,6 +131,7 @@ extension PatchCategory {
         case .loop: "repeat"
         case .data: "curlybraces"
         case .ai: "sparkles"
+        case .media: "photo.on.rectangle.angled"
         case .device: "iphone"
         case .utility: "wrench.and.screwdriver"
         case .component: "puzzlepiece"

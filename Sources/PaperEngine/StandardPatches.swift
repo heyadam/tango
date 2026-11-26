@@ -9,7 +9,7 @@ enum StandardPatches {
     static let blendable: [PortType] = [.number, .point, .size, .color]
 
     static var all: [PatchDefinition] {
-        input + state + [dragValue] + logic + math + animation + [impulse] + loops + data + ai + device + utility + [Script.definition] + components
+        input + state + [dragValue] + logic + math + animation + [impulse] + loops + data + ai + media + device + utility + [Script.definition] + components
     }
 
     // MARK: Input

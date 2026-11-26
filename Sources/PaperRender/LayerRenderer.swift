@@ -125,8 +125,13 @@ public final class LayerRenderer {
     public func render(_ tree: ResolvedLayer) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
+        drawing = []
         var seen: Set<Key> = []
         let screen = sync(tree, seen: &seen)
+        if drawing != drawn {
+            drawn = drawing
+            onDrawnWebAssets?(drawn)
+        }
         if contentLayer.sublayers?.first !== screen || contentLayer.sublayers?.count != 1 {
             contentLayer.sublayers = [screen]
         }
@@ -491,10 +496,11 @@ public final class LayerRenderer {
 
         case .symbol:
             layer.contentsGravity = .resizeAspect
-            layer.contents = symbolImage(
+            layer.contents = iconImage(
                 node.value(.symbol).textValue,
                 weight: node.value(.fontWeight).numberValue,
                 color: node.value(.fill).colorValue,
+                width: width,
                 height: height
             )
 
@@ -524,7 +530,7 @@ public final class LayerRenderer {
             guard let text = layer as? CATextLayer else { break }
             let fontSize = max(node.value(.fontSize).numberValue, 1)
             text.string = node.value(.text).textValue
-            text.font = PlatformFont.systemFont(ofSize: fontSize, weight: fontWeight(node.value(.fontWeight).numberValue))
+            text.font = font(of: node, size: fontSize)
             text.fontSize = fontSize
             text.foregroundColor = node.value(.textColor).colorValue.cgColor
             let singleLine = node.value(.singleLine).boolValue
@@ -548,7 +554,11 @@ public final class LayerRenderer {
         case .image:
             let name = node.value(.image).textValue
             layer.contents = name.isEmpty ? nil : imageProvider?(name)
-            layer.backgroundColor = layer.contents == nil ? ColorValue(white: 0.9).cgColor : nil
+            // Gray says there is no picture. One that is on its way (a fetched photo, a
+            // picture an AI patch makes) leaves what is behind it showing, such as the
+            // photo's color; a missing asset is still gray.
+            let pending = name.hasPrefix("fetched:") || name.hasPrefix("ai:") || name.hasPrefix("capture:")
+            layer.backgroundColor = layer.contents == nil && !pending ? ColorValue(white: 0.9).cgColor : nil
             layer.contentsGravity = .resizeAspectFill
             layer.cornerRadius = cornerRadius
             layer.cornerCurve = .continuous
@@ -661,7 +671,7 @@ public final class LayerRenderer {
         }
 
         let fontSize = max(node.value(.fontSize).numberValue, 1)
-        let font = PlatformFont.systemFont(ofSize: fontSize, weight: fontWeight(node.value(.fontWeight).numberValue))
+        let font = font(of: node, size: fontSize) as PlatformFont
         let typed = node.value(.text).textValue
         let shown = typed.isEmpty ? node.value(.placeholder).textValue : typed
         let color = node.value(.textColor).colorValue
@@ -713,6 +723,80 @@ public final class LayerRenderer {
         } else {
             caret.removeAnimation(forKey: "blink")
         }
+    }
+
+    /// The font a text or a text field is set in: the same `FontBook` face layout measured.
+    private func font(of node: ResolvedLayer, size: Double) -> CTFont {
+        let family = node.value(.fontFamily).textValue
+        let weight = node.value(.fontWeight).numberValue, italic = node.value(.italic).boolValue
+        if !FontBook.isSystemDesign(family), onDrawnWebAssets != nil, let asset = fontAsset(family, weight, italic) {
+            drawing.insert(asset)
+        }
+        if !FontBook.isSystemDesign(family), onFont != nil {
+            // Once per face, and again after fonts are registered (one may have failed).
+            if reportedGeneration != FontBook.generation {
+                reportedFonts.removeAll()
+                reportedGeneration = FontBook.generation
+            }
+            if reportedFonts.insert("\(family)|\(GoogleFonts.weight(weight))|\(italic)").inserted { onFont?(family, weight, italic) }
+        }
+        return FontBook.font(family: family, size: size, weight: weight, italic: italic)
+    }
+
+    /// Hears every family other than the system's that text is set in, with its weight and
+    /// slant, before it is set: the host makes sure a Google family is registered (or on its
+    /// way) and the editor keeps its file in the document.
+    /// Hears the fetched fonts and icons (`web.…` assets) the last render drew, whenever
+    /// that set changes: the whole set, which replaces what it said before, so what a
+    /// document stops drawing can be let go.
+    public var onDrawnWebAssets: ((Set<String>) -> Void)?
+    private var drawing: Set<String> = []
+    private var drawn: Set<String> = []
+    private var fontAssets: [String: String?] = [:]
+
+    private func fontAsset(_ family: String, _ weight: Double, _ italic: Bool) -> String? {
+        let key = "\(family)|\(GoogleFonts.weight(weight))|\(italic)"
+        if let known = fontAssets[key] { return known }
+        let name = GoogleFonts.family(family).flatMap { found in
+            GoogleFonts.style(of: found, weight: weight, italic: italic).map { GoogleFonts.assetName(family: found, style: $0) }
+        }
+        if fontAssets.count > 500 { fontAssets.removeAll() }
+        fontAssets[key] = name
+        return name
+    }
+
+    public var onFont: ((String, Double, Bool) -> Void)? {
+        didSet { reportedFonts.removeAll() }
+    }
+    private var reportedFonts: Set<String> = []
+    private var reportedGeneration = -1
+
+    /// Hears every face again on the next render: after a fetch failed, say, or when the
+    /// document's assets changed.
+    public func reportFontsAgain() { reportedFonts.removeAll() }
+
+    /// Finds the glyphs of icon sets that are not shipped (Material Symbols): from the
+    /// document's assets, or fetched. Nil, or nil for an icon, draws nothing until it is
+    /// there; the host draws again when it arrives.
+    public var iconProvider: ((IconName, Double) -> VectorGlyph?)?
+
+    /// What a Symbol view shows: an SF Symbol sized to its height, or an icon of another set
+    /// fitted into its frame.
+    private func iconImage(_ value: String, weight: Double, color: ColorValue, width: Double, height: Double) -> CGImage? {
+        guard let icon = IconName(value) else { return nil }
+        if icon.set.isMaterial, onDrawnWebAssets != nil, let asset = MaterialSymbols.assetName(icon, weight: weight) {
+            drawing.insert(asset)
+        }
+        if icon.set == .sf { return symbolImage(icon.name, weight: weight, color: color, height: height) }
+        guard width > 0, height > 0, width <= 4096, height <= 4096 else { return nil }
+        let pixelWidth = Int((width * contentsScale).rounded(.up)), pixelHeight = Int((height * contentsScale).rounded(.up))
+        let key = "\(icon.value)|\(weight.whole)|\(color.hex)|\(pixelWidth)x\(pixelHeight)"
+        if let cached = symbolCache[key] { return cached }
+        let glyph = icon.set == .lucide ? LucideIcons.glyph(icon.name, weight: weight) : iconProvider?(icon, weight)
+        guard let glyph, let rendered = glyph.image(width: pixelWidth, height: pixelHeight, color: color.cgColor) else { return nil }
+        if symbolCache.count > 400 { symbolCache.removeAll() }
+        symbolCache[key] = rendered
+        return rendered
     }
 
     private var symbolCache: [String: CGImage] = [:]

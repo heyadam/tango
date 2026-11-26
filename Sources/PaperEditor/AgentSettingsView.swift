@@ -117,6 +117,13 @@ struct AISettingsPane: View {
             }
             LocalModelsSection(keys: keys)
             Section {
+                APIKeyRow(keys: keys, account: AIKeys.unsplash, prompt: "Paste access key")
+            } header: {
+                ProviderHeader("Unsplash", status: keys.hasKey(account: AIKeys.unsplash) ? .ready("Ready") : .off("No access key"))
+            } footer: {
+                Text("Finds photos for Unsplash Photo patches. A free key from an Unsplash developer app allows 50 searches an hour. [Get an access key](https://unsplash.com/oauth/applications)")
+            }
+            Section {
                 LabeledContent("Model", value: apple.available ? apple.detail : "Not available")
             } header: {
                 ProviderHeader("Apple Intelligence", status: apple.available ? .ready("On this Mac") : .off("Not available"))

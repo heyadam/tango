@@ -55,8 +55,8 @@ let inspectorSections: [(title: String, symbol: String, rows: [InspectorRow])] =
         .one("clips"),
     ]),
     ("Text", "textformat", [
-        .one("text"), .one("placeholder"),
-        .group("Font", ["fontSize", "fontWeight"], ["pt", "wt"]),
+        .one("text"), .one("placeholder"), .one("fontFamily"),
+        .group("Size & Weight", ["fontSize", "fontWeight"], ["pt", "wt"]), .one("italic"),
         .one("textColor"), .one("textAlignment"), .one("singleLine"), .one("padding"),
     ]),
     ("Image", "photo", [.one("image")]),
@@ -596,6 +596,10 @@ struct PropertyEditor: View {
         case .text:
             if property == .image {
                 ImageField(store: store, layer: layer)
+            } else if property == .fontFamily {
+                FontField(family: value.textValue) { set(.text($0)) }
+            } else if property == .symbol {
+                SymbolField(symbol: value.textValue) { set(.text($0)) }
             } else if property == .video {
                 VideoField(store: store, layer: layer)
             } else if let symbols = optionSymbols(for: property, in: layer) {

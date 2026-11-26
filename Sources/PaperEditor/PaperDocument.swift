@@ -24,6 +24,8 @@ public nonisolated final class PaperDocument: ReferenceFileDocument {
         store.onPackageChange = { [weak self] package in
             self?.latest.withLock { $0 = package }
         }
+        // Fonts and icons fetched from the web travel in the document.
+        store.keepsWebAssets = true
         return store
     }()
 

@@ -252,6 +252,26 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
         startMarkLayer.lineWidth = 0
         overlay.addSublayer(badge.layer)
         overlay.addSublayer(viewerPill.layer)
+        // A font or an icon that arrived is laid out and drawn with at once.
+        arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] note in
+            let name = note.object as? String ?? ""
+            MainActor.assumeIsolated {
+                guard let self, self.store.usesWebAsset(name) else { return }
+                self.webAssetArrived()
+            }
+        }
+    }
+
+    private var arrivalObserver: NSObjectProtocol?
+
+    isolated deinit {
+        if let arrivalObserver { NotificationCenter.default.removeObserver(arrivalObserver) }
+    }
+
+    private func webAssetArrived() {
+        resolved = CanvasView.resolve(shown, registry: store.runtimeRegistry, painter: painter)
+        trees = CanvasView.trees(of: resolved, on: board)
+        redraw()
     }
 
     @available(*, unavailable)
@@ -380,6 +400,13 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
             }
             // A video shows the frame its Time names.
             renderer.videoURL = { [weak store] source in VideoFiles.url(for: source, assets: store?.assets ?? [:]) }
+            // Only a document that keeps what it fetches fetches: a picture of the editor
+            // (`papertool editor --canvas`) draws what the document carries and asks nobody.
+            WebAssetClient(
+                assets: { [weak store] in store?.assets ?? [:] }, fetches: { [weak store] in store?.keepsWebAssets ?? false },
+                drawn: { [weak store] in store?.setDrawnWebAssets($1, by: $0) }
+            )
+                .attach(to: renderer)
             screensLayer.addSublayer(renderer.rootLayer)
             renderers.append(renderer)
         }

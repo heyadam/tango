@@ -39,6 +39,7 @@ public final class DocumentStore {
         didSet {
             if oldValue.components != fullDocument.components { registryCache = nil }
             onPackageChange?(package)
+            scheduleWebAssets()
         }
     }
 
@@ -58,7 +59,26 @@ public final class DocumentStore {
     }
 
     public var assets: [String: Data] {
-        didSet { onPackageChange?(package) }
+        didSet {
+            // Fonts the document carries are set as themselves before anything is laid out.
+            FontBook.register(assets: assets)
+            onPackageChange?(package)
+        }
+    }
+
+    /// The fetched fonts and icons each Viewer or Canvas renderer drew in its last render,
+    /// which the document keeps though nothing it stores names them (a cable chose them).
+    /// Each report replaces that renderer's last, so what is no longer drawn can go.
+    @ObservationIgnored var drawnWebAssets: [ObjectIdentifier: Set<String>] = [:]
+    /// Every web asset seen in use this session. Only these are ever let go: a file the
+    /// document came with that nothing here has asked for yet (one a script picks) stays.
+    @ObservationIgnored var usedWebAssets: Set<String> = []
+    @ObservationIgnored var webAssetsScheduled = false
+    @ObservationIgnored var webAssetObserver: NSObjectProtocol?
+    /// Whether this store fetches what its document uses and keeps it. Off for stores that
+    /// only make pictures, and in tests.
+    @ObservationIgnored public var keepsWebAssets = false {
+        didSet { if keepsWebAssets { startKeepingWebAssets() } }
     }
 
     /// Called with the new contents after every change, for saving.
@@ -228,6 +248,7 @@ public final class DocumentStore {
         self.assets = package.assets
         self.baseRegistry = registry
         self.copies = package.extensions
+        FontBook.register(assets: package.assets)
         remember(registry.extensions)
     }
 

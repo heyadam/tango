@@ -21,12 +21,18 @@ public struct ScriptRequest: Sendable, Hashable {
     public var body: String
     /// Seconds to wait for an answer; 0 leaves it to whoever makes the request.
     public var timeout: Double
+    /// A service a built-in patch asks the host to reach for it (`NetworkRequest.service`).
+    /// Scripts cannot set it.
+    public var service: String? = nil
 }
 
 /// The answer to a script's request.
 public struct ScriptReply: Sendable, Hashable {
     public var token: Int
     public var response: NetworkResponse
+    /// The request's id, which names a picture the host kept from the answer
+    /// (`NetworkRequest.pictureName(for:)`).
+    public var id: UUID = UUID()
 }
 
 /// JavaScript patches: a script declares its inputs and outputs and a function that
