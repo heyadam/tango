@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key><string>PaperReference</string>
-    <key>CFBundleIdentifier</key><string>com.tango.reference</string>
+    <key>CFBundleIdentifier</key><string>com.heyadam.tango.reference</string>
     <key>CFBundleName</key><string>PaperReference</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>1.0</string>

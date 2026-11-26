@@ -1,6 +1,6 @@
 name: Tango
 options:
-  bundleIdPrefix: com.tango
+  bundleIdPrefix: com.heyadam.tango
   deploymentTarget:
     macOS: "27.0"
     iOS: "27.0"
@@ -64,7 +64,7 @@ targets:
         com.apple.security.personal-information.location: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.tango.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.heyadam.tango
         MARKETING_VERSION: "0.1"
         CURRENT_PROJECT_VERSION: "1"
         PRODUCT_NAME: Tango

@@ -4,5 +4,5 @@
 //   DEVELOPMENT_TEAM = ABCDE12345
 //   PRODUCT_BUNDLE_IDENTIFIER = com.yourname.tango.player
 //
-PRODUCT_BUNDLE_IDENTIFIER = com.tango.player
+PRODUCT_BUNDLE_IDENTIFIER = com.heyadam.tango.player
 #include? "Signing.local.xcconfig"
