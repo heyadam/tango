@@ -40,6 +40,11 @@ public final class LayerRenderer {
     /// For views that extensions draw: the layer showing the drawing, and which drawing
     /// at what size it shows, so a picture is made again only when one of them changed.
     private var drawings: [Key: (layer: CALayer, stamp: Int, size: CGSize, scale: CGFloat)] = [:]
+    /// For scene views: what draws the scene, whose picture lies under the views inside.
+    private var scenes: [Key: SceneSurface] = [:]
+    /// The scene views of the tree being rendered. They are drawn before anything that
+    /// reads the picture of the tree: a shader view they are in, a blur over them.
+    private var pendingScenes: [(surface: SceneSurface, scene: SceneUse, size: CGSize)] = []
     /// For video views: the layer showing the picture, a glyph for when there is none,
     /// what the view plays and, in a Viewer that plays video, its player.
     private final class VideoEntry {
@@ -141,10 +146,14 @@ public final class LayerRenderer {
             clippers[key] = nil
             surfaces[key] = nil
             drawings[key] = nil
+            scenes[key] = nil
             backdrops[key] = nil
             videos.removeValue(forKey: key)?.player?.stop()
         }
         CATransaction.commit()
+        let staged = pendingScenes
+        pendingScenes = []
+        for item in staged { draw(item.scene, on: item.surface, size: item.size) }
         let shaders = pendingShaders
         pendingShaders = []
         // What only reads the views inside it is drawn first, innermost first. Then, back to
@@ -166,6 +175,12 @@ public final class LayerRenderer {
             }
             item.surface.draw(item.shader, size: item.size, scale: contentsScale, behind: texture, margin: LayerRenderer.behindMargin)
         }
+    }
+
+    // MARK: Scenes
+
+    private func draw(_ scene: SceneUse, on surface: SceneSurface, size: CGSize) {
+        surface.draw(scene, size: size, scale: contentsScale)
     }
 
     // MARK: What is behind a view
@@ -366,6 +381,17 @@ public final class LayerRenderer {
             children.insert(drawn(drawing, for: key, in: layer), at: 0)
         } else {
             drawings[key] = nil
+        }
+        // A scene is drawn there too, over the view's fill.
+        if node.kind == .view, let scene = node.scene, let surface = scenes[key] ?? SceneRendering.shared.map(SceneSurface.init) {
+            scenes[key] = surface
+            surface.display.frame = CGRect(origin: .zero, size: layer.bounds.size)
+            surface.display.cornerRadius = layer.cornerRadius
+            surface.display.cornerCurve = layer.cornerCurve
+            children.insert(surface.display, at: 0)
+            pendingScenes.append((surface, scene, layer.bounds.size))
+        } else {
+            scenes[key] = nil
         }
         // And under that, what is behind the view, blurred, when it asks for it.
         let blur = node.kind == .view ? CGFloat(node.value(.backgroundBlur).numberValue) : 0
