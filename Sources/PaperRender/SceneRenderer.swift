@@ -360,29 +360,50 @@ final class SceneRendering {
                 scene_frame(toLight, across, along);
                 // The places wind outwards in a spiral, turned by a different amount at each
                 // pixel: grain too fine to see, where the same places everywhere would band.
+                // Most of a picture is wholly in the light or wholly out of it. Six of the
+                // places, from the middle to the rim, are asked first; only where they
+                // disagree, at a shadow's edge, are the other eighteen.
                 float arriving = 0.0;
                 float start = 2.0 * M_PI_F * scene_noise(in.position.xy, 0.0);
-                for (int index = 0; index < 24; index++) {
-                    float turn = start + float(index) * 2.3999632;
-                    float out = sqrt((float(index) + 0.5) / 24.0) * 0.045;
-                    float3 toward = normalize(toLight + (across * cos(turn) + along * sin(turn)) * out);
-                    arriving += scene_blocked(structure, from, toward, 1000.0) ? 0.0 : 1.0;
+                for (int pass = 0; pass < 2; pass++) {
+                    for (int index = 0; index < 24; index++) {
+                        bool early = index % 4 == 3;
+                        if (early != (pass == 0)) { continue; }
+                        float turn = start + float(index) * 2.3999632;
+                        float out = sqrt((float(index) + 0.5) / 24.0) * 0.045;
+                        float3 toward = normalize(toLight + (across * cos(turn) + along * sin(turn)) * out);
+                        arriving += scene_blocked(structure, from, toward, 1000.0) ? 0.0 : 1.0;
+                    }
+                    if (pass == 0) {
+                        if (arriving == 0.0 || arriving == 6.0) {
+                            shade = arriving / 6.0;
+                            break;
+                        }
+                    } else {
+                        shade = arriving / 24.0;
+                    }
                 }
-                shade = arriving / 24.0;
             }
             // Where things are close to one another less of the surroundings reaches them.
             scene_frame(normal, across, along);
             float closed = 0.0;
             float begin = 2.0 * M_PI_F * scene_noise(in.position.xy, 11.0);
-            for (int index = 0; index < 16; index++) {
-                float ring = (float(index) + 0.5) / 16.0;
-                float turn = begin + float(index) * 2.3999632;
-                float3 toward = (across * cos(turn) + along * sin(turn)) * sqrt(ring) + normal * sqrt(1.0 - ring);
-                closed += scene_blocked(structure, from, toward, 0.6) ? 1.0 : 0.0;
+            // Likewise: where five rays spread over the sky above a point find nothing
+            // near, the other eleven are not sent.
+            for (int pass = 0; pass < 2; pass++) {
+                for (int index = 0; index < 16; index++) {
+                    bool early = index % 3 == 1;
+                    if (early != (pass == 0)) { continue; }
+                    float ring = (float(index) + 0.5) / 16.0;
+                    float turn = begin + float(index) * 2.3999632;
+                    float3 toward = (across * cos(turn) + along * sin(turn)) * sqrt(ring) + normal * sqrt(1.0 - ring);
+                    closed += scene_blocked(structure, from, toward, 0.6) ? 1.0 : 0.0;
+                }
+                if (pass == 0 && closed == 0.0) { break; }
             }
             open = 1.0 - 0.85 * closed / 16.0;
             // A shiny surface mirrors the other things in the scene, lit as they are.
-            if (roughness < 0.6) {
+            if (roughness < 0.5) {
                 float3 back = reflect(-toEye, normal);
                 intersector<triangle_data, instancing> finder;
                 ray probe;
@@ -405,7 +426,7 @@ final class SceneRendering {
                     if (otherLit > 0.0 && scene_blocked(structure, place + there * lift, toLight, 1000.0)) { otherLit = 0.0; }
                     float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F)
                         + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(back, there), otherRough);
-                    seen = mix(found, seen, smoothstep(0.3, 0.6, roughness));
+                    seen = mix(found, seen, smoothstep(0.25, 0.5, roughness));
                 }
             }
         }
@@ -531,6 +552,8 @@ final class SceneSurface {
     private var depth: MTLTexture?
     private var turn = 0
     private var pixels = (width: 0, height: 0)
+    /// The most pixels a point a scene is drawn with while rays are traced.
+    static let tracedScale: CGFloat = 2
     /// What the picture on show was drawn from, so the same scene is not drawn twice.
     private var shown: (scene: SceneUse, size: CGSize, scale: CGFloat, models: Int)?
 
@@ -544,7 +567,11 @@ final class SceneSurface {
     /// Draws the scene for a view of `size` points. `parts` gives what a model is made of;
     /// `models` changes when what it would give does.
     func draw(_ scene: SceneUse, size: CGSize, scale: CGFloat, models: Int = 0, parts: (SceneObject) -> [ScenePart] = { _ in [] }) {
-        let scale = min(max(scale.isFinite ? scale : 1, 0.25), 8)
+        // With rays every pixel costs a few dozen of them, so a traced scene is drawn with at
+        // most two pixels a point and shown larger where the screen has three, or the
+        // Canvas is zoomed in; four samples a pixel keep its edges clean.
+        let traces = rendering.traced != nil && scene.value("rayTracing").boolValue
+        let scale = min(max(scale.isFinite ? scale : 1, 0.25), traces ? SceneSurface.tracedScale : 8)
         if let shown, shown.scene == scene, shown.size == size, shown.scale == scale, shown.models == models { return }
         var width = (size.width * scale).rounded(.up), height = (size.height * scale).rounded(.up)
         guard width.isFinite, height.isFinite, width >= 1, height >= 1 else {
@@ -616,7 +643,14 @@ final class SceneSurface {
             encoder.setFragmentBuffer(rays.instances, offset: 0, index: 4)
             encoder.useResources(rays.used, usage: .read, stages: .fragment)
         }
-        for draw in draws {
+        // The nearest first: what is hidden behind it then fails the depth test before it is
+        // shaded, and with rays shading is most of the cost.
+        let eye = SIMD3(uniforms.camera.x, uniforms.camera.y, uniforms.camera.z)
+        func distance(_ draw: (part: ScenePart, uniforms: SceneRendering.ObjectUniforms)) -> Float {
+            let place = draw.uniforms.model.columns.3
+            return simd_distance_squared(eye, SIMD3(place.x, place.y, place.z))
+        }
+        for draw in draws.sorted(by: { distance($0) < distance($1) }) {
             var own = draw.uniforms
             encoder.setVertexBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
             encoder.setFragmentBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
@@ -672,15 +706,34 @@ final class SceneSurface {
             materials.append(TracedInstance(normal: draw.uniforms.normal, color: draw.uniforms.color, material: draw.uniforms.material))
         }
         let device = queue.device
-        guard let described = device.makeBuffer(bytes: instances, length: instances.count * MemoryLayout<MTLAccelerationStructureInstanceDescriptor>.stride),
-              let made = device.makeBuffer(bytes: materials, length: materials.count * MemoryLayout<TracedInstance>.stride) else { return nil }
-        let descriptor = MTLInstanceAccelerationStructureDescriptor()
-        descriptor.instancedAccelerationStructures = structures
-        descriptor.instanceCount = instances.count
-        descriptor.instanceDescriptorBuffer = described
-        guard let whole = SceneGeometry.build(descriptor, on: queue) else { return nil }
+        guard let made = device.makeBuffer(bytes: materials, length: materials.count * MemoryLayout<TracedInstance>.stride) else { return nil }
+        // Where things stand changes less often than how they are seen: while only the
+        // camera, the light or a color moves, the structure over them is the last one built.
+        let standing = draws.map { Standing(geometry: ObjectIdentifier($0.part.geometry), model: $0.uniforms.model) }
+        let whole: MTLAccelerationStructure
+        if let built, built.standing == standing {
+            whole = built.structure
+        } else {
+            guard let described = device.makeBuffer(bytes: instances, length: instances.count * MemoryLayout<MTLAccelerationStructureInstanceDescriptor>.stride) else { return nil }
+            let descriptor = MTLInstanceAccelerationStructureDescriptor()
+            descriptor.instancedAccelerationStructures = structures
+            descriptor.instanceCount = instances.count
+            descriptor.instanceDescriptorBuffer = described
+            guard let fresh = SceneGeometry.build(descriptor, on: queue) else { return nil }
+            built = (standing, fresh)
+            whole = fresh
+        }
         return (pipeline, whole, made, structures + draws.map(\.part.geometry.corners))
     }
+
+    /// One thing as rays find it: which triangles, and where.
+    private struct Standing: Equatable {
+        var geometry: ObjectIdentifier
+        var model: simd_float4x4
+    }
+
+    /// The structure rays were last sent through, and what stood in it.
+    private var built: (standing: [Standing], structure: MTLAccelerationStructure)?
 
     /// Must match `TracedInstance` in the source.
     struct TracedInstance {
