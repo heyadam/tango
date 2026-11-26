@@ -214,7 +214,10 @@ public final class AgentServer {
     `presentationDetents` that stays on its screen is the Sheet template (Sheet Height is the \
     detent), where a sheet that is a destination of its own is a screen shown with Modal; \
     `VideoPlayer` or an `AVPlayerLayer` is a `video` (its URL in `video`, `player.rate` in `playbackRate`, \
-    a seek is a change to `time`). Gestures are patches on the view: `.onTapGesture` or `TapGesture` \
+    a seek is a change to `time`); a `Model3D`, a `RealityView` or a SceneKit `SceneView` is a `scene` (each entity an \
+    object: a `MeshResource` box, sphere or plane the shape of that name, a `SimpleMaterial` or \
+    `PhysicallyBasedMaterial` its `color`, `metalness` and `roughness`; a model file is named in the report, \
+    since only the person can add one). Gestures are patches on the view: `.onTapGesture` or `TapGesture` \
     is `tap` (`count` is `taps`), `LongPressGesture` is `longPress` (`minimumDuration` is `duration`), \
     `DragGesture` is `pan` (`value.translation` is `translation`; its `minimumDistance` of 10 is the \
     slop a pan already has), `MagnifyGesture` is `pinch` (`magnification` is `scale`), `RotateGesture` \
@@ -226,6 +229,8 @@ public final class AgentServer {
     `spacing`, `alignItems` is `alignment`, `justifyContent` is `distribution`, `flex: 1` is Grow); \
     `position: "absolute"` is `absolute`; `Text` is `text`; `borderRadius` is `cornerRadius`; \
     `Pressable` is an `interaction` patch on the view; `expo-video`'s `VideoView` is a `video`; \
+    a react-three-fiber `Canvas` or an expo-gl scene is a `scene` (each `mesh` an object, a \
+    `meshStandardMaterial` its `color`, `metalness` and `roughness`); \
     `Switch`, `Alert.alert`, `ActionSheetIOS`, `ActivityIndicator`, `TextInput` and a navigator's \
     header and tab bar are the prebuilt components of those names, as in the SwiftUI list above. \
     React Native Gesture Handler's `Gesture.Tap()` (`numberOfTaps` is `taps`), `LongPress()` \

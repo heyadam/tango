@@ -209,6 +209,22 @@ public struct AssistantToolbox {
                 out["needs_extension"] = missing
             }
         }
+        if let scene = layer.scene {
+            // The scene's own inputs, and every object with what is set on it. In `connect`
+            // an input goes by its name: "Camera Yaw", "<object> Rotation Y".
+            out["scene"] = [
+                "inputs": Dictionary(uniqueKeysWithValues: SceneUse.inputs.map { ($0.id, Self.plain(scene.value($0.id))) }),
+                "objects": scene.objects.map { object -> [String: Any] in
+                    var described: [String: Any] = ["name": object.name, "shape": object.shape.rawValue]
+                    if let model = object.model { described["model"] = model }
+                    for input in SceneObject.inputs { described[input.id] = Self.plain(object.value(input.id)) }
+                    if object.shape == .model, let problem = SceneSections.problem(with: object, store: store) { described["shape_error"] = problem }
+                    return described
+                },
+            ] as [String: Any]
+            out["in"] = SceneUse.inputs.map { "\($0.name): \($0.type.rawValue)" }
+                + scene.objects.flatMap { object in SceneObject.inputs.map { "\(object.name) \($0.name): \($0.type.rawValue)" } }
+        }
         if let shader = layer.shader {
             out["shader"] = shader.source
             let uniforms = ShaderSource.uniforms(of: shader)
@@ -651,6 +667,8 @@ public struct AssistantToolbox {
     private func port(_ key: String, in ports: [PaperEngine.Port], of node: PatchNode, _ what: String) throws -> PaperEngine.Port {
         let wanted = key.lowercased()
         if let match = ports.first(where: { $0.id.lowercased() == wanted }) ?? ports.first(where: { $0.name.lowercased() == wanted })
+            // A scene's input may be written without its spaces: "cameraYaw".
+            ?? ports.first(where: { SceneUse.key(port: $0.id) != nil && $0.name.lowercased().filter { !$0.isWhitespace } == wanted.filter { !$0.isWhitespace } })
             // A shader's input goes by the name its source gives it.
             ?? ports.first(where: { ShaderUse.inputName(port: $0.id)?.lowercased() == wanted })
             // As does an input of a view an extension draws.
@@ -860,13 +878,32 @@ public struct AssistantToolbox {
             var layer = Layer.new(type, name: (operation["name"] as? String) ?? store.uniqueLayerName(type.displayName))
             try set(operation["properties"], on: &layer)
             layer.source = operation["source"] as? String
-            if operation["shader"] != nil || operation["inputs"] != nil, type != .shader {
+            if operation["shader"] != nil || (operation["inputs"] != nil && type != .scene), type != .shader {
                 throw Problem("Only a shader view has shader code and inputs. Use kind \"shader\".")
             }
+            if operation["objects"] != nil, type != .scene {
+                throw Problem("Only a scene view has objects. Use kind \"scene\".")
+            }
+            // A scene that is given its objects starts with only those.
+            if type == .scene, operation["objects"] != nil { layer.scene = SceneUse() }
             store.apply("Add \(type.displayName)") { $0.screen.insert(layer, into: parent) }
             made(layer: layer.id)
+            if type == .scene {
+                try setScene(operation, of: layer.id)
+                break
+            }
             if let source = operation["shader"] as? String { try setShader(source, of: layer.id) }
             try setShaderInputs(operation["inputs"], of: layer.id)
+
+        case "set_scene":
+            let id = try layerID(operation["view"], batch)
+            guard store.document.layer(id)?.scene != nil else {
+                throw Problem("That view is not a scene view. Make it one first: change_view with kind \"scene\".")
+            }
+            guard operation["objects"] != nil || operation["inputs"] != nil || operation["remove"] != nil else {
+                throw Problem("Missing \"objects\", \"inputs\" or \"remove\".")
+            }
+            try setScene(operation, of: id)
 
         case "set_shader":
             let id = try layerID(operation["view"], batch)
@@ -1222,6 +1259,77 @@ public struct AssistantToolbox {
         if let problem = Script.interface(of: script).error {
             throw Problem("The script does not run: \(problem)")
         }
+    }
+
+    /// Changes a scene from an operation's `inputs` (the scene's own, by id or name),
+    /// `objects` (each found by name and changed, or added) and `remove` (names).
+    private func setScene(_ operation: [String: Any], of id: LayerID) throws {
+        guard var scene = store.document.layer(id)?.scene else { return }
+        func find(_ key: String, in inputs: [SceneInput], of what: String) throws -> SceneInput {
+            let wanted = key.lowercased().filter { !$0.isWhitespace }
+            if let input = inputs.first(where: { $0.id.lowercased() == wanted || $0.name.lowercased().filter { !$0.isWhitespace } == wanted }) { return input }
+            throw Problem("\(what) has no input \"\(key)\". Its inputs: \(inputs.map { "\($0.id): \($0.type.rawValue)" }.joined(separator: ", ")).")
+        }
+        for (key, raw) in (operation["inputs"] as? [String: Any] ?? [:]).sorted(by: { $0.key < $1.key }) {
+            let input = try find(key, in: SceneUse.inputs, of: "A scene")
+            scene.set(try Self.value(raw, as: input.type, options: input.options), for: SceneUse.Key(input: input.id))
+        }
+        if let removed = operation["remove"] {
+            guard let names = removed as? [String] else { throw Problem("\"remove\" is a list of object names.") }
+            for name in names {
+                guard let object = scene.object(named: name) else { throw Problem("The scene has no object \"\(name)\".") }
+                scene.objects.removeAll { $0.id == object.id }
+            }
+        }
+        if let listed = operation["objects"] {
+            guard let objects = listed as? [[String: Any]] else { throw Problem("\"objects\" is a list of objects, each with a name and a shape.") }
+            guard scene.objects.count + objects.count <= 200 else { throw Problem("A scene holds at most 200 objects.") }
+            for described in objects {
+                let name = (described["name"] as? String)?.trimmingCharacters(in: .whitespaces)
+                var object: SceneObject
+                if let name, let known = scene.object(named: name) {
+                    object = known
+                } else {
+                    guard described["shape"] != nil || described["model"] != nil else {
+                        throw Problem("A new object needs a shape: \(SceneObject.Shape.builtIn.map(\.rawValue).joined(separator: ", ")), or a model.")
+                    }
+                    object = SceneObject(name: name?.isEmpty == false ? name : nil, shape: .box)
+                    if scene.objects.contains(where: { $0.name == object.name }) {
+                        var index = 2
+                        let base = object.name
+                        while scene.objects.contains(where: { $0.name == "\(base) \(index)" }) { index += 1 }
+                        object.name = "\(base) \(index)"
+                    }
+                }
+                if let shape = described["shape"] as? String {
+                    guard let known = SceneObject.Shape(named: shape) else {
+                        throw Problem("Unknown shape \"\(shape)\". Shapes: \(SceneObject.Shape.builtIn.map(\.rawValue).joined(separator: ", ")); a file is given as \"model\".")
+                    }
+                    object.shape = known
+                    if known != .model { object.model = nil }
+                }
+                if let model = described["model"] as? String {
+                    let files = store.assets.keys.filter { LayerRenderer.modelExtensions.contains(($0 as NSString).pathExtension.lowercased()) }.sorted()
+                    guard files.contains(model) else {
+                        throw Problem("There is no model file \"\(model)\" in the document. \(files.isEmpty ? "It has none: the person adds one in the Inspector (Add to Scene > Model from File). Use shapes meanwhile." : "Its model files: \(files.joined(separator: ", ")).")")
+                    }
+                    object.shape = .model
+                    object.model = model
+                }
+                guard object.shape != .model || object.model != nil else { throw Problem("A model needs \"model\": the name of a file in the document.") }
+                for (key, raw) in described.sorted(by: { $0.key < $1.key }) where !["name", "shape", "model"].contains(key) {
+                    let input = try find(key, in: SceneObject.inputs, of: "An object")
+                    object.values[input.id] = try Self.value(raw, as: input.type, options: input.options)
+                }
+                if let index = scene.objects.firstIndex(where: { $0.id == object.id }) {
+                    scene.objects[index] = object
+                } else {
+                    scene.objects.append(object)
+                }
+            }
+        }
+        let changed = scene
+        store.setScene(of: id) { $0 = changed }
     }
 
     /// Sets a shader view's code, and says so when Metal will not compile it.

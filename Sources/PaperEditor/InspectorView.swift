@@ -187,6 +187,9 @@ struct InspectorView: View {
                         }
                     }
                 }
+                if let scene = layer.scene {
+                    SceneSections(store: store, layer: layer, scene: scene)
+                }
                 if let shader = layer.shader {
                     Section {
                         ForEach(ShaderSource.uniforms(of: shader), id: \.name) { uniform in

@@ -54,6 +54,7 @@ public enum AssistantProgress {
         case "set_properties", "change_view": return "Styling" + named("view")
         case "set_inputs", "set_component_inputs": return "Setting inputs" + named("patch")
         case "set_shader": return "Writing a shader" + named("view")
+        case "set_scene": return "Arranging a scene" + named("view")
         case "set_script": return "Writing a script" + named("patch")
         case "rename_view", "rename_patch", "rename_port": return "Renaming"
         case "delete_view": return "Removing" + named("view")
