@@ -354,25 +354,29 @@ final class SceneRendering {
             // places on it.
             if (lit > 0.0) {
                 scene_frame(toLight, across, along);
+                // The places wind outwards in a spiral, turned by a different amount at each
+                // pixel: grain too fine to see, where the same places everywhere would band.
                 float arriving = 0.0;
-                for (int index = 0; index < 8; index++) {
-                    float turn = 2.0 * M_PI_F * scene_noise(in.position.xy, float(index));
-                    float out = sqrt((float(index) + 0.5) / 8.0) * 0.04;
+                float start = 2.0 * M_PI_F * scene_noise(in.position.xy, 0.0);
+                for (int index = 0; index < 24; index++) {
+                    float turn = start + float(index) * 2.3999632;
+                    float out = sqrt((float(index) + 0.5) / 24.0) * 0.045;
                     float3 toward = normalize(toLight + (across * cos(turn) + along * sin(turn)) * out);
                     arriving += scene_blocked(structure, from, toward, 1000.0) ? 0.0 : 1.0;
                 }
-                shade = arriving / 8.0;
+                shade = arriving / 24.0;
             }
             // Where things are close to one another less of the surroundings reaches them.
             scene_frame(normal, across, along);
             float closed = 0.0;
-            for (int index = 0; index < 8; index++) {
-                float ring = (float(index) + scene_noise(in.position.xy, float(index) + 11.0)) / 8.0;
-                float turn = 2.0 * M_PI_F * scene_noise(in.position.xy, float(index) + 23.0);
+            float begin = 2.0 * M_PI_F * scene_noise(in.position.xy, 11.0);
+            for (int index = 0; index < 16; index++) {
+                float ring = (float(index) + 0.5) / 16.0;
+                float turn = begin + float(index) * 2.3999632;
                 float3 toward = (across * cos(turn) + along * sin(turn)) * sqrt(ring) + normal * sqrt(1.0 - ring);
                 closed += scene_blocked(structure, from, toward, 0.6) ? 1.0 : 0.0;
             }
-            open = 1.0 - 0.85 * closed / 8.0;
+            open = 1.0 - 0.85 * closed / 16.0;
             // A shiny surface mirrors the other things in the scene, lit as they are.
             if (roughness < 0.6) {
                 float3 back = reflect(-toEye, normal);

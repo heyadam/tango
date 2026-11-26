@@ -750,6 +750,8 @@ public enum Gallery {
                     section: .showcase, fileName: "SnowReport") { SampleDocuments.snowReport().document },
         GalleryItem(id: "stocks", title: "Stock Picker", summary: "A two-screen watchlist and chart explorer: tapping a stock morphs the card into a live chart where you scrub the price curve and switch ranges.",
                     section: .showcase, fileName: "StockPicker") { SampleDocuments.stockPicker().document },
+        GalleryItem(id: "product", title: "Product in 3D", summary: "A speaker drawn in three dimensions with real light: drag to circle it and it springs back, and a swatch gives it another finish.",
+                    section: .showcase, fileName: "ProductScene") { SampleDocuments.productScene().document },
         GalleryItem(id: "card", title: "Card That Opens", summary: "One tap opens a story: one spring value moves its place, size, corners and the dimming together.",
                     section: .examples, fileName: "Card") { SampleDocuments.card().document },
         GalleryItem(id: "signin", title: "Typing a Name", summary: "What is typed drives a greeting, and wakes the button once there is a name.",
