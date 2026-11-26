@@ -19,6 +19,7 @@ extension ViewType {
         case .component: "puzzlepiece.extension"
         case .shader: "sparkles.rectangle.stack"
         case .custom: "paintbrush.pointed"
+        case .scene: "cube"
         }
     }
 }

@@ -119,6 +119,9 @@ public struct PatchNode: Codable, Identifiable, Hashable, Sendable {
     /// On the patch of a view an extension draws: which view of which extension, so the
     /// patch's inputs are known without the layer. Mirrors `CustomViewUse.kind`.
     public var custom: String?
+    /// On the patch of a scene view: the objects in the scene, each of which gives the
+    /// patch inputs. Mirrors `SceneUse.objects`.
+    public var scene: [SceneEntry]?
     /// The inputs a view patch shows besides those with a cable; nil shows its type's usual set.
     public var shownPorts: [String]?
     /// For a patch that is not a view and not attached to one: the view it is kept in. The

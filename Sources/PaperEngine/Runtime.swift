@@ -298,6 +298,8 @@ public final class Runtime {
     private var hasShaders = false
     /// Whether any view is drawn by an extension.
     private var hasCustomViews = false
+    /// Whether any view shows a scene.
+    private var hasScenes = false
     /// Runs the scripts of views that extensions draw.
     private let painter: ViewPainter
 
@@ -560,6 +562,7 @@ public final class Runtime {
         let shaders = layersByID.values.compactMap(\.shader)
         hasShaders = !shaders.isEmpty
         hasCustomViews = layersByID.values.contains { $0.custom != nil }
+        hasScenes = layersByID.values.contains { $0.scene != nil }
         hasVideos = layersByID.values.contains { $0.kind == .video }
         if !keepingState { navigation = Navigation() }
         navigation.settle(pages: expanded.screen.pages.map(\.id))
@@ -1386,6 +1389,10 @@ public final class Runtime {
                 }
             }
             tree.setCustomInputs(inputs)
+        }
+        if hasScenes {
+            let inputs = driven.mapValues { ports in ports.filter { SceneUse.key(port: $0.key) != nil } }
+            tree.setSceneInputs(inputs.filter { !$0.value.isEmpty })
         }
         resolved = tree.laidOut()
         // Morph blends the two screens view by view, from where layout put each.

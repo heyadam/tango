@@ -166,6 +166,7 @@ public enum ComponentExpansion {
             // A component's root may itself be drawn by a shader or an extension.
             result.shader = body.shader
             result.custom = body.custom
+            result.scene = body.scene
             for property in LayerProperty.instanceOwned {
                 result.properties[property] = layer.properties[property]
             }

@@ -113,7 +113,7 @@ func difference(_ a: PaperModel.Document, _ b: PaperModel.Document) -> String {
         }
         if x.children.map(\.id) != y.children.map(\.id) { out.append("\(x.name) children differ") }
         if x.kind != y.kind || x.name != y.name { out.append("\(x.name) kind/name differ") }
-        if x.component != y.component || x.shader != y.shader || x.custom != y.custom { out.append("\(x.name) settings differ") }
+        if x.component != y.component || x.shader != y.shader || x.custom != y.custom || x.scene != y.scene { out.append("\(x.name) settings differ") }
     }
     let na = Dictionary(a.graph.nodes.map { ($0.id, $0) }, uniquingKeysWith: { x, _ in x })
     let nb = Dictionary(b.graph.nodes.map { ($0.id, $0) }, uniquingKeysWith: { x, _ in x })

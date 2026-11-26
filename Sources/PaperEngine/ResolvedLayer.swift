@@ -23,6 +23,8 @@ public struct ResolvedLayer: Sendable, Hashable, Identifiable {
     public var shader: ResolvedShader?
     /// Set on a view an extension draws: which view, and what its inputs are this frame.
     public var custom: ResolvedCustom?
+    /// Set on a scene view: the scene as it is this frame, with what cables bring.
+    public var scene: SceneUse?
     /// What such a view drew this frame, once a `ViewPainter` has been over the tree.
     public var drawing: Drawing?
     /// Set on a video by the runtime: where it is this frame and whether it is moving.
@@ -45,6 +47,18 @@ public struct ResolvedLayer: Sendable, Hashable, Identifiable {
             custom = own
         }
         for index in children.indices { children[index].setCustomInputs(driven) }
+    }
+
+    /// Gives scene views the values cables bring to their inputs (`driven`: by layer, then
+    /// port id, one value per repetition).
+    public mutating func setSceneInputs(_ driven: [LayerID: [String: [Value]]]) {
+        if var own = scene {
+            for (port, loop) in driven[id] ?? [:] where !loop.isEmpty {
+                if let key = SceneUse.key(port: port) { own.set(loop[instance % loop.count], for: key) }
+            }
+            scene = own
+        }
+        for index in children.indices { children[index].setSceneInputs(driven) }
     }
 
     /// Gives shader views the values cables bring to their inputs (`driven`: by layer, then
@@ -118,6 +132,7 @@ public struct ResolvedLayer: Sendable, Hashable, Identifiable {
         stored = layer.properties
         shader = layer.shader.map { ResolvedShader(source: $0.source, values: $0.inputs) }
         custom = layer.custom.map { ResolvedCustom(kind: $0.kind, values: $0.inputs) }
+        scene = layer.scene
         self.overrides = overrides[layer.id] ?? [:]
         children = layer.children.map { ResolvedLayer($0, overrides: overrides) }.filter(\.isThere)
     }
@@ -143,6 +158,7 @@ public struct ResolvedLayer: Sendable, Hashable, Identifiable {
         stored = layer.properties
         shader = layer.shader.map { ResolvedShader(source: $0.source, values: $0.inputs) }
         custom = layer.custom.map { ResolvedCustom(kind: $0.kind, values: $0.inputs) }
+        scene = layer.scene
         var values: [LayerProperty: Value] = [:]
         var repeated = inherited || (repeats[layer.id] ?? 1) > 1
         for (property, loop) in loops[layer.id] ?? [:] where !loop.isEmpty {

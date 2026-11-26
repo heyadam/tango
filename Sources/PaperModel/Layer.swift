@@ -320,7 +320,7 @@ public enum LayerProperty: String, Codable, Sendable, CaseIterable, CodingKeyRep
         case .stack: return geometry + look + stackSettings + child
         case .scrollView: return geometry + look + stackSettings + [.pageSize] + child
         case .grid: return geometry + look + gridSettings + child
-        case .shader, .custom: return geometry + look + child
+        case .shader, .custom, .scene: return geometry + look + child
         case .ellipse: return properties(for: LayerKind.ellipse)
         case .text: return properties(for: LayerKind.text)
         case .image: return properties(for: LayerKind.image)
@@ -383,6 +383,8 @@ public enum ViewType: String, Sendable, CaseIterable {
     /// A view an extension draws: stored as a view with `Layer.custom` set. What it is
     /// called, and its inputs, come from the extension.
     case custom
+    /// A view that shows things in three dimensions: stored as a view with `Layer.scene` set.
+    case scene
 
     public var displayName: String {
         switch self {
@@ -401,6 +403,7 @@ public enum ViewType: String, Sendable, CaseIterable {
         case .component: "Component"
         case .shader: "Shader"
         case .custom: "Extension View"
+        case .scene: "Scene"
         }
     }
 
@@ -419,6 +422,7 @@ public enum ViewType: String, Sendable, CaseIterable {
         case .video: ["x", "y", "width", "height", "playing"]
         case .component: ["x", "y"]
         case .shader, .custom: ["x", "y", "width", "height"]
+        case .scene: ["x", "y", "width", "height"] + SceneUse.presetPorts
         }
     }
 }
@@ -563,6 +567,8 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
     public var shader: ShaderUse?
     /// Set on a view an extension draws: which of its views, and the values of its inputs.
     public var custom: CustomViewUse?
+    /// Set on a scene view: the things in it, its camera and its light.
+    public var scene: SceneUse?
     /// Set on a view directly in the root that is one of the prototype's screens: it
     /// fills the device, and only the one being shown is there while the prototype runs.
     /// A document with none has one screen, the root itself.
@@ -575,7 +581,7 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
     /// which is right for a stack, a grid and a component's root.
     public static let viewFill = ColorValue(white: 0.85)
 
-    private enum CodingKeys: String, CodingKey { case id, name, kind, properties, children, component, shader, custom, page, source }
+    private enum CodingKeys: String, CodingKey { case id, name, kind, properties, children, component, shader, custom, scene, page, source }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -587,6 +593,7 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
         component = try container.decodeIfPresent(ComponentUse.self, forKey: .component)
         shader = try container.decodeIfPresent(ShaderUse.self, forKey: .shader)
         custom = try container.decodeIfPresent(CustomViewUse.self, forKey: .custom)
+        scene = try container.decodeIfPresent(SceneUse.self, forKey: .scene)
         page = try container.decodeIfPresent(Bool.self, forKey: .page)
         source = try container.decodeIfPresent(String.self, forKey: .source)
         // A version 2 rectangle was gray unless told otherwise.
@@ -618,6 +625,7 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
             properties[.paddingVertical] = padding
         }
         for (property, value) in properties where !value.isFinite { properties[property] = nil }
+        scene?.settleStoredValues()
         for index in children.indices { children[index].settleStoredValues() }
     }
 
@@ -695,9 +703,13 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
         case .shader, .custom:
             kind = .view
             properties[.size] = .size(Size2(width: 200, height: 200))
+        case .scene:
+            kind = .view
+            properties[.size] = .size(Size2(width: 240, height: 240))
         }
         var layer = Layer(name: name ?? type.displayName, kind: kind, properties: properties)
         if type == .shader { layer.shader = ShaderUse(source: ShaderUse.template) }
+        if type == .scene { layer.scene = SceneUse.template }
         return layer
     }
 
@@ -728,7 +740,7 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
     public var type: ViewType {
         switch kind {
         case .screen: return .screen
-        case .view: return shader != nil ? .shader : (custom != nil ? .custom : arrangement)
+        case .view: return shader != nil ? .shader : (custom != nil ? .custom : (scene != nil ? .scene : arrangement))
         case .ellipse: return .ellipse
         case .text: return .text
         case .image: return .image
@@ -767,8 +779,8 @@ public struct Layer: Codable, Identifiable, Hashable, Sendable {
         // The device that holds screens only gives them its size, and shows its fill behind
         // them while they move.
         if kind == .screen, !pages.isEmpty { return [.size, .fill] }
-        // A screen, a shader view and a view an extension draws can arrange what is in them too.
-        guard kind == .screen || type == .shader || type == .custom else { return LayerProperty.properties(for: type) }
+        // A screen, a shader view, a scene view and a view an extension draws can arrange what is in them too.
+        guard kind == .screen || type == .shader || type == .custom || type == .scene else { return LayerProperty.properties(for: type) }
         let settings: [LayerProperty]
         switch arrangement {
         case .stack: settings = LayerProperty.stackSettings
