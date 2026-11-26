@@ -55,6 +55,18 @@ public enum LayerKind: String, Codable, Sendable, CaseIterable {
     }
 }
 
+extension LayerProperty {
+    /// Which case this is, as a number. A property is the key of every lookup layout and
+    /// the runtime make, thousands a frame; hashing and comparing its name each time,
+    /// which is what an enum with text for raw values does unless told otherwise, was a
+    /// large share of a frame.
+    @inline(__always) var ordinal: UInt8 { unsafeBitCast(self, to: UInt8.self) }
+
+    public func hash(into hasher: inout Hasher) { hasher.combine(ordinal) }
+
+    public static func == (a: LayerProperty, b: LayerProperty) -> Bool { a.ordinal == b.ordinal }
+}
+
 /// A configurable aspect of a layer. Every property can be set in the Inspector or driven
 /// by a cable through a layer property patch.
 ///

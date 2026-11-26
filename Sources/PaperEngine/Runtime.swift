@@ -344,13 +344,18 @@ public final class Runtime {
         case cable(node: Int, output: Int)
     }
 
-    private struct CompiledNode {
+    /// A patch as it runs. A class, and never changed once made: every frame reads each of
+    /// them, and a struct this size was copied field by field each time it was.
+    private final class CompiledNode {
         let id: NodeID
         let kind: String
         let valueType: PortType
         let role: Role
         let ports: NodePorts
         let sources: [Source]
+        /// For each input with no cable, its value as the one-row loop every frame gives
+        /// the patch; made once, so gathering inputs makes no array for it.
+        let literals: [[Value]?]
         let pulseOutputs: [Int]
         let script: String?
         /// Set on a component's published input fed by a cable: a loop arriving there
@@ -360,6 +365,23 @@ public final class Runtime {
         /// first of them (x, y, width, height follow in order). nil leaves them alone, so
         /// a view nobody reads costs nothing.
         let frameSlot: Int?
+
+        init(
+            id: NodeID, kind: String, valueType: PortType, role: Role, ports: NodePorts, sources: [Source],
+            pulseOutputs: [Int], script: String?, repeatsLayer: LayerID?, frameSlot: Int?
+        ) {
+            self.id = id
+            self.kind = kind
+            self.valueType = valueType
+            self.role = role
+            self.ports = ports
+            self.sources = sources
+            literals = sources.map { if case let .literal(value) = $0 { [value] } else { nil } }
+            self.pulseOutputs = pulseOutputs
+            self.script = script
+            self.repeatsLayer = repeatsLayer
+            self.frameSlot = frameSlot
+        }
     }
 
     /// Where layout put a view: its position in its parent and its size.
@@ -1627,8 +1649,8 @@ public final class Runtime {
         for (slot, source) in node.sources.enumerated() {
             let port = node.ports.inputs[slot]
             switch source {
-            case let .literal(value):
-                values.append([value])
+            case .literal:
+                values.append(node.literals[slot] ?? [])
             case let .cable(sourceNode, output):
                 values.append(outputs[sourceNode].map { $0[output].coerced(to: port.type) ?? port.defaultValue })
             }

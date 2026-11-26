@@ -267,8 +267,54 @@ public enum TextMeasurer {
         }
     }
 
+    /// What was asked for, and so what the answer depends on. The fonts known to Core Text
+    /// are part of it: a family whose file has arrived measures differently from then on.
+    private struct Asked: Hashable {
+        var text: String
+        var fontSize: Double
+        var weight: Double
+        var family: String
+        var italic: Bool
+        var maxWidth: Double?
+        var fonts: Int
+    }
+
+    private static let lock = NSLock()
+    /// Sizes already measured. Layout asks for every text's size every frame, and setting
+    /// type is by far the dearest thing it does, so a text is set once and remembered.
+    nonisolated(unsafe) private static var measured: [Asked: Size2] = [:]
+    /// The most sizes kept; past it they are all let go, since text that changes every
+    /// frame (a counter, an answer being written) would otherwise fill it for ever.
+    static let mostKept = 4096
+    /// How many sizes are kept now.
+    static var kept: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return measured.count
+    }
+
     public static func measure(
         _ text: String, fontSize: Double, weight: Double, family: String = "", italic: Bool = false, maxWidth: Double?
+    ) -> Size2 {
+        let asked = Asked(
+            text: text, fontSize: fontSize, weight: weight, family: family, italic: italic, maxWidth: maxWidth,
+            fonts: FontBook.generation
+        )
+        lock.lock()
+        let known = measured[asked]
+        lock.unlock()
+        if let known { return known }
+        let size = set(text, fontSize: fontSize, weight: weight, family: family, italic: italic, maxWidth: maxWidth)
+        lock.lock()
+        if measured.count >= mostKept { measured.removeAll(keepingCapacity: true) }
+        measured[asked] = size
+        lock.unlock()
+        return size
+    }
+
+    /// Sets the text with Core Text and reads its size: what `measure` remembers.
+    private static func set(
+        _ text: String, fontSize: Double, weight: Double, family: String, italic: Bool, maxWidth: Double?
     ) -> Size2 {
         let font = font(size: fontSize, weight: weight, family: family, italic: italic)
         let attributed = NSAttributedString(
