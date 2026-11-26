@@ -72,6 +72,36 @@ import PaperRender
         }
     }
 
+    @Test func aDocumentKeepsWhatItCameWithUntilItIsSeenToStopUsingIt() async throws {
+        try await Self.withFakeGoogle { _ in
+            // A glyph a script chose, which nothing stored names.
+            let carried = "web.material.star.default.svg"
+            let store = DocumentStore(package: DocumentPackage(document: Document(), assets: [carried: Data(Self.glyph.utf8)]))
+            store.keepsWebAssets = true
+            store.apply("Edit") { $0.screen.children.append(Layer.new(.view)) }
+            try? await Task.sleep(for: .milliseconds(50))
+            #expect(store.assets[carried] != nil)
+        }
+    }
+
+    @Test func anIconPatchIsKeptAtTheWeightOfTheViewItFeeds() async throws {
+        try await Self.withFakeGoogle { _ in
+            var document = Document()
+            var symbol = Layer.new(.symbol)
+            symbol.properties[.fontWeight] = .number(700)
+            document.screen.children.append(symbol)
+            document.normalize()
+            let icon = document.graph.add(PatchNode(kind: PatchKind.icon, inputs: ["set": .text("Material Symbols"), "name": .text("home")]))
+            let view = document.graph.nodes.first { $0.layerID == symbol.id }!
+            document.graph.connect(from: PortRef(node: icon, port: "symbol"), to: PortRef(node: view.id, port: "symbol"))
+            let store = DocumentStore(package: DocumentPackage(document: document))
+            store.keepsWebAssets = true
+            await Self.until { store.assets["web.material.home.wght700.svg"] != nil }
+            #expect(store.assets["web.material.home.wght700.svg"] != nil)
+            #expect(store.assets["web.material.home.default.svg"] == nil)
+        }
+    }
+
     @Test func whatTheViewerDrewIsKeptThoughNothingStoredNamesIt() async throws {
         try await Self.withFakeGoogle { _ in
             let store = DocumentStore(package: DocumentPackage(document: Document()))

@@ -143,6 +143,10 @@ public enum FontBook {
 
     /// Makes one font file known to Core Text. Registering it again does nothing; a font
     /// already known by its PostScript name (another copy, a newer version) keeps the first.
+    ///
+    /// A document's files are not trusted: a font is registered only when its asset names a
+    /// Google family and the font is that family, so no document can put its own face in
+    /// place of Georgia, or of SF Pro, for every document open in the app.
     @discardableResult
     public static func register(_ data: Data, named name: String) -> Bool {
         lock.lock()
@@ -151,12 +155,13 @@ public enum FontBook {
             return true
         }
         lock.unlock()
-        guard data.count < 30_000_000, let provider = CGDataProvider(data: data as CFData), let font = CGFont(provider) else {
-            return false
-        }
-        // False when a font of that PostScript name is already known: the first is kept.
-        let fresh = CTFontManagerRegisterGraphicsFont(font, nil)
+        guard data.count < 30_000_000, let expected = GoogleFonts.family(ofAsset: name),
+              let provider = CGDataProvider(data: data as CFData), let font = CGFont(provider)
+        else { return false }
         let family = (CTFontCreateWithGraphicsFont(font, 12, nil, nil)).familyName
+        guard family == expected.name, !systemFamilies.contains(family) else { return false }
+        // False when a font of that PostScript name is already known: the first is kept.
+        guard let fresh = registerFile(data, named: name) else { return false }
         lock.lock()
         registered[name] = data.count
         registeredFamilies.insert(family)
@@ -166,6 +171,28 @@ public enum FontBook {
         }
         lock.unlock()
         return true
+    }
+}
+
+extension FontBook {
+    /// Registers a font for this process from a file of its own, named by the asset and its
+    /// length, in the temporary folder: Core Text registers files, and the call that took
+    /// bytes is deprecated. True when it is new, false when a font of its PostScript name
+    /// was already known, nil when it could not be written or read.
+    static func registerFile(_ data: Data, named name: String) -> Bool? {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("TangoFonts", isDirectory: true)
+        let safe = String(name.map { $0.isLetter || $0.isNumber || $0 == "." || $0 == "_" ? $0 : "_" })
+        let file = folder.appendingPathComponent("\(data.count)-\(safe)")
+        do {
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            if (try? Data(contentsOf: file)) != data { try data.write(to: file, options: .atomic) }
+        } catch {
+            return nil
+        }
+        var error: Unmanaged<CFError>?
+        if CTFontManagerRegisterFontsForURL(file as CFURL, .process, &error) { return true }
+        let code = error.map { CFErrorGetCode($0.takeRetainedValue()) } ?? 0
+        return code == CTFontManagerError.alreadyRegistered.rawValue || code == CTFontManagerError.duplicatedName.rawValue ? false : nil
     }
 }
 
@@ -228,6 +255,17 @@ public enum GoogleFonts {
         let name = family.name.map { $0.isLetter || $0.isNumber ? $0 : "_" }
         return "\(WebAssetNames.prefix)font.\(String(name)).\(style).ttf"
     }
+
+    /// The family a font asset's name stands for, or nil when it names no Google family.
+    public static func family(ofAsset name: String) -> Family? {
+        guard isFontAsset(name) else { return nil }
+        let middle = name.dropFirst(WebAssetNames.prefix.count + "font.".count).dropLast(".ttf".count)
+        guard let dot = middle.lastIndex(of: ".") else { return nil }
+        return byAssetName[String(middle[..<dot])]
+    }
+    private static let byAssetName: [String: Family] = Dictionary(
+        families.map { (String($0.name.map { $0.isLetter || $0.isNumber ? $0 : "_" }), $0) }, uniquingKeysWith: { a, _ in a }
+    )
 
     public static func isFontAsset(_ name: String) -> Bool {
         name.hasPrefix(WebAssetNames.prefix + "font.") && name.hasSuffix(".ttf")

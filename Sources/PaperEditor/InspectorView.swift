@@ -56,7 +56,7 @@ let inspectorSections: [(title: String, symbol: String, rows: [InspectorRow])] =
     ]),
     ("Text", "textformat", [
         .one("text"), .one("placeholder"), .one("fontFamily"),
-        .group("Size", ["fontSize", "fontWeight"], ["pt", "wt"]), .one("italic"),
+        .group("Size & Weight", ["fontSize", "fontWeight"], ["pt", "wt"]), .one("italic"),
         .one("textColor"), .one("textAlignment"), .one("singleLine"), .one("padding"),
     ]),
     ("Image", "photo", [.one("image")]),

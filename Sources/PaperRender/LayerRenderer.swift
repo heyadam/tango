@@ -549,9 +549,11 @@ public final class LayerRenderer {
         case .image:
             let name = node.value(.image).textValue
             layer.contents = name.isEmpty ? nil : imageProvider?(name)
-            // Gray says there is no picture; one that is named but on its way (a fetched
-            // photo) leaves what is behind it showing, such as the photo's color.
-            layer.backgroundColor = name.isEmpty ? ColorValue(white: 0.9).cgColor : nil
+            // Gray says there is no picture. One that is on its way (a fetched photo, a
+            // picture an AI patch makes) leaves what is behind it showing, such as the
+            // photo's color; a missing asset is still gray.
+            let pending = name.hasPrefix("fetched:") || name.hasPrefix("ai:") || name.hasPrefix("capture:")
+            layer.backgroundColor = layer.contents == nil && !pending ? ColorValue(white: 0.9).cgColor : nil
             layer.contentsGravity = .resizeAspectFill
             layer.cornerRadius = cornerRadius
             layer.cornerCurve = .continuous
@@ -722,14 +724,29 @@ public final class LayerRenderer {
     private func font(of node: ResolvedLayer, size: Double) -> CTFont {
         let family = node.value(.fontFamily).textValue
         let weight = node.value(.fontWeight).numberValue, italic = node.value(.italic).boolValue
-        if !FontBook.isSystemDesign(family) { onFont?(family, weight, italic) }
+        if !FontBook.isSystemDesign(family), onFont != nil {
+            // Once per face, and again after fonts are registered (one may have failed).
+            if reportedGeneration != FontBook.generation {
+                reportedFonts.removeAll()
+                reportedGeneration = FontBook.generation
+            }
+            if reportedFonts.insert("\(family)|\(GoogleFonts.weight(weight))|\(italic)").inserted { onFont?(family, weight, italic) }
+        }
         return FontBook.font(family: family, size: size, weight: weight, italic: italic)
     }
 
     /// Hears every family other than the system's that text is set in, with its weight and
     /// slant, before it is set: the host makes sure a Google family is registered (or on its
     /// way) and the editor keeps its file in the document.
-    public var onFont: ((String, Double, Bool) -> Void)?
+    public var onFont: ((String, Double, Bool) -> Void)? {
+        didSet { reportedFonts.removeAll() }
+    }
+    private var reportedFonts: Set<String> = []
+    private var reportedGeneration = -1
+
+    /// Hears every face again on the next render: after a fetch failed, say, or when the
+    /// document's assets changed.
+    public func reportFontsAgain() { reportedFonts.removeAll() }
 
     /// Finds the glyphs of icon sets that are not shipped (Material Symbols): from the
     /// document's assets, or fetched. Nil, or nil for an icon, draws nothing until it is

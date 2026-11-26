@@ -253,12 +253,20 @@ public final class CanvasView: NSView, NSTextFieldDelegate {
         overlay.addSublayer(badge.layer)
         overlay.addSublayer(viewerPill.layer)
         // A font or an icon that arrived is laid out and drawn with at once.
-        arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { self?.webAssetArrived() }
+        arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] note in
+            let name = note.object as? String ?? ""
+            MainActor.assumeIsolated {
+                guard let self, self.store.usesWebAsset(name) else { return }
+                self.webAssetArrived()
+            }
         }
     }
 
     private var arrivalObserver: NSObjectProtocol?
+
+    isolated deinit {
+        if let arrivalObserver { NotificationCenter.default.removeObserver(arrivalObserver) }
+    }
 
     private func webAssetArrived() {
         resolved = CanvasView.resolve(shown, registry: store.runtimeRegistry, painter: painter)

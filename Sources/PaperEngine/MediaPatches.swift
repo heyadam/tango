@@ -89,7 +89,7 @@ extension StandardPatches {
             PortSpec("loading", "Loading", .bool),
             PortSpec("error", "Error", .text),
         ]
-    ) { ctx in Unsplash.evaluate(&ctx) }
+    ).wholeLoop { ctx in Unsplash.evaluate(&ctx) }
 }
 
 extension IconName {
@@ -141,7 +141,12 @@ public enum Unsplash {
         var pictures: [String: String] = [:]
         var pictureTokens: [Int: String] = [:]
         var reported: Set<String> = []
+        /// Photos whose picture could not be fetched, which are not asked for again.
+        var failed: Set<String> = []
     }
+
+    /// What a query value keeps unencoded: letters, digits and `-._~`.
+    static let queryValue = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
 
     /// The address a search asks; none of its words reach anywhere but Unsplash's API.
     static func searchURL(query: String, orientation: String) -> String {
@@ -161,7 +166,10 @@ public enum Unsplash {
             items.append(URLQueryItem(name: "query", value: String(query.prefix(200))))
             items.append(URLQueryItem(name: "per_page", value: String(perPage)))
         }
-        components.queryItems = items
+        // A `+` left as it is would be read as a space.
+        components.percentEncodedQueryItems = items.map {
+            URLQueryItem(name: $0.name, value: $0.value?.addingPercentEncoding(withAllowedCharacters: queryValue))
+        }
         return components.url?.absoluteString ?? ""
     }
 
@@ -198,9 +206,13 @@ public enum Unsplash {
         return address
     }
 
-    static func evaluate(_ ctx: inout EvalContext) {
+    /// The whole loop at once: one search however many photos are shown, each row a
+    /// photo chosen by its Index. Searching once per row would spend the key's hourly
+    /// limit as many times over.
+    static func evaluate(_ ctx: inout LoopContext) {
         var state = ctx.state as? State ?? State()
-        let query = ctx.text(0), orientation = ctx.text(1)
+        func first(_ port: Int) -> Value? { ctx.inputs[port].first }
+        let query = first(0)?.textValue ?? "", orientation = first(1)?.textValue ?? "Any"
         let asked = query + "\n" + orientation
 
         for reply in ctx.replies {
@@ -215,11 +227,14 @@ public enum Unsplash {
                     state.error = state.photos.isEmpty ? "No photos found." : ""
                     state.pictures = [:]
                     state.pictureTokens = [:]
+                    state.failed = []
                 }
             } else if let key = state.pictureTokens.removeValue(forKey: reply.token) {
                 if reply.response.error == nil, reply.response.status == 200 {
                     state.pictures[key] = NetworkRequest.pictureName(for: reply.id)
                 } else {
+                    // Not asked for again until another search or a restart.
+                    state.failed.insert(key)
                     state.error = reply.response.error ?? "The photo could not be loaded."
                 }
             }
@@ -235,43 +250,51 @@ public enum Unsplash {
                 headers: ["Accept-Version": "v1"], body: "", timeout: 20, service: service
             ))
         }
-        if ctx.pulse(3) { state.nextCount += 1 }
+        if first(3)?.pulseValue == true { state.nextCount += 1 }
 
-        var loading = state.searchToken != nil
-        if !state.photos.isEmpty {
-            let count = state.photos.count
-            let index = ((ctx.number(2).whole + state.nextCount) % count + count) % count
-            let photo = state.photos[index]
-            let size = sizes.contains(ctx.text(4)) ? ctx.text(4) : "Regular"
-            let key = photo.id + " " + size
-            if let picture = state.pictures[key] {
-                ctx.outputs[0] = .text(picture)
-            } else {
-                loading = true
-                if !state.pictureTokens.values.contains(key), let address = pictureURL(photo, size: size) {
-                    state.token += 1
-                    state.pictureTokens[state.token] = key
-                    ctx.requests.append(ScriptRequest(token: state.token, url: address, method: "GET", headers: [:], body: "", timeout: 30))
+        // One row per index; an empty loop of indexes shows none.
+        let indexes = ctx.inputs[2]
+        let count = ctx.inputs.contains(where: \.isEmpty) ? 0 : max(indexes.count, 1)
+        let size = sizes.contains(first(4)?.textValue ?? "") ? first(4)!.textValue : "Regular"
+        var rows: [[Value]] = []
+        for row in 0..<count {
+            var values: [Value] = [
+                .text(""), .text(""), .text(""), .text(""), .color(ColorValue(white: 0.85)),
+                .number(Double(state.photos.count)), .bool(state.searchToken != nil), .text(state.error),
+            ]
+            if !state.photos.isEmpty {
+                let total = state.photos.count
+                let index = ((indexes[row % indexes.count].numberValue.whole + state.nextCount) % total + total) % total
+                let photo = state.photos[index]
+                let key = photo.id + " " + size
+                if let picture = state.pictures[key] {
+                    values[0] = .text(picture)
+                } else if !state.failed.contains(key) {
+                    values[6] = .bool(true)
+                    if !state.pictureTokens.values.contains(key), let address = pictureURL(photo, size: size) {
+                        state.token += 1
+                        state.pictureTokens[state.token] = key
+                        ctx.requests.append(ScriptRequest(token: state.token, url: address, method: "GET", headers: [:], body: "", timeout: 30))
+                    }
                 }
+                // Unsplash asks to hear when a photo is used; once per photo, its answer unread.
+                if !state.reported.contains(photo.id), !photo.downloadLocation.isEmpty,
+                   URL(string: photo.downloadLocation)?.host == apiHost {
+                    state.reported.insert(photo.id)
+                    state.token += 1
+                    ctx.requests.append(ScriptRequest(
+                        token: state.token, url: photo.downloadLocation, method: "GET",
+                        headers: ["Accept-Version": "v1"], body: "", timeout: 20, service: service
+                    ))
+                }
+                values[1] = .text(photo.photographer)
+                values[2] = .text(photo.profile)
+                values[3] = .text(photo.description)
+                values[4] = .color(photo.color)
             }
-            // Unsplash asks to hear when a photo is used; once per photo, its answer unread.
-            if !state.reported.contains(photo.id), !photo.downloadLocation.isEmpty,
-               URL(string: photo.downloadLocation)?.host == apiHost {
-                state.reported.insert(photo.id)
-                state.token += 1
-                ctx.requests.append(ScriptRequest(
-                    token: state.token, url: photo.downloadLocation, method: "GET",
-                    headers: ["Accept-Version": "v1"], body: "", timeout: 20, service: service
-                ))
-            }
-            ctx.outputs[1] = .text(photo.photographer)
-            ctx.outputs[2] = .text(photo.profile)
-            ctx.outputs[3] = .text(photo.description)
-            ctx.outputs[4] = .color(photo.color)
+            rows.append(values)
         }
-        ctx.outputs[5] = .number(Double(state.photos.count))
-        ctx.outputs[6] = .bool(loading)
-        ctx.outputs[7] = .text(state.error)
+        ctx.outputs = rows
         ctx.state = state
     }
 

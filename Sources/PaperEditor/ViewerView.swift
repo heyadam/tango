@@ -70,9 +70,10 @@ public final class ViewerView: NSView {
             used: { [weak store] in store?.noteWebAsset($0) }
         ).attach(to: renderer)
         if sendsRequests {
-            arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] _ in
+            arrivalObserver = NotificationCenter.default.addObserver(forName: WebAssets.didArrive, object: nil, queue: .main) { [weak self] note in
+                let name = note.object as? String ?? ""
                 MainActor.assumeIsolated {
-                    guard let self else { return }
+                    guard let self, self.store.usesWebAsset(name) else { return }
                     self.runtime.setNeedsFrame()
                     self.wake()
                 }
@@ -186,6 +187,10 @@ public final class ViewerView: NSView {
 
     private var services: DeviceServices?
     private var arrivalObserver: NSObjectProtocol?
+
+    isolated deinit {
+        if let arrivalObserver { NotificationCenter.default.removeObserver(arrivalObserver) }
+    }
     /// Whether this Viewer may use the Mac's camera, microphone and so on. Off for
     /// snapshots and tests, which must not prompt for access.
     public var usesDevice = false {

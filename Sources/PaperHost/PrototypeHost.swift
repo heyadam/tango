@@ -29,6 +29,10 @@ public final class PrototypeHost {
 
     private var restartToken: Int
     private var arrivalObserver: NSObjectProtocol?
+
+    isolated deinit {
+        if let arrivalObserver { NotificationCenter.default.removeObserver(arrivalObserver) }
+    }
     /// What the screen was last fitted into, and its size then.
     private var fitted: (bounds: CGRect, fills: Bool, backingScale: CGFloat, screen: CGSize)?
     /// The scale and corner the screen is shown at, in the layer's coordinates (y-down).

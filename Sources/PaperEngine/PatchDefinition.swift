@@ -158,6 +158,11 @@ public struct LoopContext {
     public let time: Double
     public let valueType: PortType
     public var wantsNextFrame = false
+    /// Requests the patch makes, as an ordinary patch's (`EvalContext.requests`), once for
+    /// the whole loop.
+    public var requests: [ScriptRequest] = []
+    /// Answers to its earlier requests.
+    public var replies: [ScriptReply] = []
 
     public init(inputs: [[Value]], outputs: [[Value]], state: (any Sendable)?, dt: Double, time: Double, valueType: PortType) {
         self.inputs = inputs

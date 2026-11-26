@@ -286,6 +286,55 @@ import PaperModel
         #expect(!runtime.needsAnotherFrame)
     }
 
+    @Test func aLoopOfPhotosIsOneSearch() throws {
+        var document = Document()
+        let photo = document.graph.add(PatchNode(kind: PatchKind.unsplashPhoto, inputs: ["query": .text("c++ code")]))
+        let loop = document.graph.add(PatchNode(kind: "loop", inputs: ["count": .number(3)]))
+        document.graph.connect(from: PortRef(node: loop, port: "index"), to: PortRef(node: photo, port: "index"))
+        let runtime = Runtime(document: document)
+        var sent: [NetworkRequest] = []
+        runtime.requestHandler = { sent.append($0) }
+        runtime.advance(seconds: 0.1)
+        #expect(sent.count == 1)
+        // A `+` is sent encoded, not read as a space.
+        #expect(sent.first?.url.contains("query=c%2B%2B%20code") == true)
+        runtime.complete(sent[0].id, with: NetworkResponse(status: 200, body: Data(Self.listing.utf8)))
+        runtime.advance(seconds: 0.1)
+        let photographers = runtime.outputValues(PortRef(node: photo, port: "photographer"))
+        #expect(photographers == [.text("Ada Lens"), .text("Bo"), .text("Ada Lens")])
+        // One picture for the photo two rows show, and none from a server that is not Unsplash's.
+        #expect(sent.filter { $0.url.hasPrefix("https://images.unsplash.com/") }.count == 1)
+        #expect(sent.filter { $0.url.contains("search/photos") }.count == 1)
+    }
+
+    @Test func aPhotoThatFailsIsNotAskedForAgain() throws {
+        var document = Document()
+        let photo = document.graph.add(PatchNode(kind: PatchKind.unsplashPhoto, inputs: ["query": .text("boat")]))
+        let runtime = Runtime(document: document)
+        var sent: [NetworkRequest] = []
+        runtime.requestHandler = { sent.append($0) }
+        runtime.advance(seconds: 0.1)
+        runtime.complete(sent[0].id, with: NetworkResponse(status: 200, body: Data(Self.listing.utf8)))
+        runtime.advance(seconds: 0.1)
+        let picture = try #require(sent.first { $0.url.hasPrefix("https://images.unsplash.com/") })
+        runtime.complete(picture.id, with: NetworkResponse(status: 0, error: "offline"))
+        runtime.advance(seconds: 0.5)
+        #expect(sent.filter { $0.url.hasPrefix("https://images.unsplash.com/") }.count == 1)
+        #expect(runtime.outputValue(PortRef(node: photo, port: "error")) == .text("offline"))
+        #expect(runtime.outputValue(PortRef(node: photo, port: "loading")) == .bool(false))
+        #expect(!runtime.needsAnotherFrame)
+    }
+
+    @Test func aDocumentsFontIsRegisteredOnlyAsTheGoogleFamilyItsNameSays() throws {
+        let data = try Data(contentsOf: Self.fixtures.appendingPathComponent("fonts/ABeeZee-400.ttf"))
+        // ABeeZee's file under Inter's name, or under a family Google does not have.
+        #expect(!FontBook.register(data, named: "web.font.Inter.400.ttf"))
+        #expect(!FontBook.register(data, named: "web.font.Georgia.400.ttf"))
+        #expect(!FontBook.register(data, named: "web.font..ttf"))
+        #expect(GoogleFonts.family(ofAsset: "web.font.Open_Sans.700i.ttf")?.name == "Open Sans")
+        #expect(FontBook.register(data, named: "web.font.ABeeZee.400.ttf"))
+    }
+
     @Test func theKeyGoesToUnsplashsAPIAndNowhereElse() {
         let good = NetworkRequest(url: "https://api.unsplash.com/search/photos?query=x")
         #expect(Unsplash.signed(good, key: "abc")?.headers["Authorization"] == "Client-ID abc")
