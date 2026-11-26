@@ -20,9 +20,15 @@ final class SceneRendering {
     static let shared: SceneRendering? = ShaderCompiler.shared.flatMap { SceneRendering(compiler: $0) }
 
     static let samples = 4
+    /// Off in a test that wants the picture a GPU without ray tracing makes.
+    nonisolated(unsafe) static var tracesRays = true
 
     let compiler: ShaderCompiler
     let pipeline: MTLRenderPipelineState
+    /// The same with rays: shadows, what a shiny thing mirrors of the others, and the
+    /// shade where things meet. nil on a GPU that traces no rays (the iOS Simulator's),
+    /// where a scene is drawn without them.
+    let traced: MTLRenderPipelineState?
     let depth: MTLDepthStencilState
     let sampler: MTLSamplerState
     /// What an object with no picture of its own is given to read: white.
@@ -32,8 +38,8 @@ final class SceneRendering {
     private init?(compiler: ShaderCompiler) {
         self.compiler = compiler
         let device = compiler.device
-        do {
-            let library = try device.makeLibrary(source: SceneRendering.source, options: nil)
+        func make(traced: Bool) throws -> MTLRenderPipelineState {
+            let library = try device.makeLibrary(source: "#define TANGO_TRACED \(traced ? 1 : 0)\n" + SceneRendering.source, options: nil)
             let descriptor = MTLRenderPipelineDescriptor()
             descriptor.vertexFunction = library.makeFunction(name: "scene_vertex")
             descriptor.fragmentFunction = library.makeFunction(name: "scene_fragment")
@@ -49,10 +55,19 @@ final class SceneRendering {
             vertex.attributes[2].offset = 24
             vertex.layouts[0].stride = SceneGeometry.stride
             descriptor.vertexDescriptor = vertex
-            pipeline = try device.makeRenderPipelineState(descriptor: descriptor)
+            return try device.makeRenderPipelineState(descriptor: descriptor)
+        }
+        do {
+            pipeline = try make(traced: false)
         } catch {
             assertionFailure("The scene shader does not compile: \(error)")
             return nil
+        }
+        do {
+            traced = SceneRendering.tracesRays && device.supportsRaytracing ? try make(traced: true) : nil
+        } catch {
+            assertionFailure("The scene shader does not compile with rays: \(error)")
+            traced = nil
         }
         let depthDescriptor = MTLDepthStencilDescriptor()
         depthDescriptor.depthCompareFunction = .less
@@ -111,10 +126,10 @@ final class SceneRendering {
             default:
                 // A studio: a large soft light above and to the left, a fill and a rim.
                 return Surroundings(
-                    zenith: SIMD3(0.72, 0.72, 0.76), horizon: SIMD3(0.5, 0.5, 0.52), ground: SIMD3(0.22, 0.22, 0.23),
+                    zenith: SIMD3(0.5, 0.5, 0.53), horizon: SIMD3(0.34, 0.34, 0.36), ground: SIMD3(0.14, 0.14, 0.15),
                     lamps: [
-                        (SIMD3(-0.5, 0.7, 0.6), SIMD3(6, 6, 6), 30), (SIMD3(0.8, 0.2, 0.5), SIMD3(2, 2, 2.1), 12),
-                        (SIMD3(0, 0.5, -1), SIMD3(3, 3, 3), 20),
+                        (SIMD3(-0.5, 0.7, 0.6), SIMD3(5, 5, 5), 30), (SIMD3(0.8, 0.2, 0.5), SIMD3(1.2, 1.2, 1.3), 12),
+                        (SIMD3(0, 0.5, -1), SIMD3(2.5, 2.5, 2.5), 20),
                     ]
                 )
             }
@@ -134,7 +149,7 @@ final class SceneRendering {
         var ground = SIMD4<Float>(repeating: 0)
         var lampDirection = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
         var lampColor = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
-        /// x: exposure.
+        /// x: exposure, y: 1 when rays are traced.
         var settings = SIMD4<Float>(repeating: 0)
 
         init(_ scene: SceneUse, aspect: Float) {
@@ -256,6 +271,48 @@ final class SceneRendering {
         return color;
     }
 
+    #if TANGO_TRACED
+    using namespace raytracing;
+
+    // What a ray finds out of the thing it hit: the instance's material and how its
+    // normals turn, and the normals at the corners of the triangle.
+    struct TracedInstance {
+        float4x4 normal;
+        float4 color;
+        float4 material;
+    };
+
+    struct TracedTriangle {
+        packed_float3 n0;
+        packed_float3 n1;
+        packed_float3 n2;
+    };
+
+    // A number from 0 to 1 that differs from pixel to pixel and from ray to ray, and is
+    // the same every time: a picture of a scene never changes between two takings.
+    static float scene_noise(float2 pixel, float index) {
+        float2 moved = pixel + index * float2(5.588238, 3.453712);
+        return fract(52.9829189 * fract(dot(moved, float2(0.06711056, 0.00583715))));
+    }
+
+    static void scene_frame(float3 normal, thread float3 &across, thread float3 &along) {
+        float3 up = abs(normal.y) < 0.99 ? float3(0.0, 1.0, 0.0) : float3(1.0, 0.0, 0.0);
+        across = normalize(cross(up, normal));
+        along = cross(normal, across);
+    }
+
+    static bool scene_blocked(instance_acceleration_structure structure, float3 origin, float3 direction, float reach) {
+        intersector<triangle_data, instancing> test;
+        test.accept_any_intersection(true);
+        ray probe;
+        probe.origin = origin;
+        probe.direction = direction;
+        probe.min_distance = 0.0;
+        probe.max_distance = reach;
+        return test.intersect(probe, structure, 0xFF).type != intersection_type::none;
+    }
+    #endif
+
     static float3 scene_tone(float3 color) {
         // ACES, fitted (Narkowicz), then the sRGB curve.
         color = saturate((color * (2.51 * color + 0.03)) / (color * (2.43 * color + 0.59) + 0.14));
@@ -267,6 +324,10 @@ final class SceneRendering {
     fragment float4 scene_fragment(SceneVertex in [[stage_in]], bool front [[front_facing]],
                                    constant SceneUniforms &scene [[buffer(1)]],
                                    constant ObjectUniforms &object [[buffer(2)]],
+    #if TANGO_TRACED
+                                   instance_acceleration_structure structure [[buffer(3)]],
+                                   const device TracedInstance *instances [[buffer(4)]],
+    #endif
                                    texture2d<float> picture [[texture(0)]],
                                    sampler pictureSampler [[sampler(0)]]) {
         float3 normal = normalize(in.normal);
@@ -279,9 +340,69 @@ final class SceneRendering {
         float3 matte = base * (1.0 - metalness);
         float facing = max(dot(normal, toEye), 1e-4);
 
-        // The one light, by Cook and Torrance with the GGX distribution.
         float3 toLight = normalize(scene.lightDirection.xyz);
         float lit = saturate(dot(normal, toLight));
+        // How much of the light arrives, and how much of its surroundings a surface sees.
+        float shade = 1.0;
+        float open = 1.0;
+        float3 seen = scene_surroundings(scene, reflect(-toEye, normal), roughness);
+    #if TANGO_TRACED
+        if (scene.settings.y > 0.5) {
+            float3 from = in.world + normal * 0.004;
+            float3 across, along;
+            // The light has a size, so a shadow is soft at its edge: several rays to
+            // places on it.
+            if (lit > 0.0) {
+                scene_frame(toLight, across, along);
+                float arriving = 0.0;
+                for (int index = 0; index < 8; index++) {
+                    float turn = 2.0 * M_PI_F * scene_noise(in.position.xy, float(index));
+                    float out = sqrt((float(index) + 0.5) / 8.0) * 0.04;
+                    float3 toward = normalize(toLight + (across * cos(turn) + along * sin(turn)) * out);
+                    arriving += scene_blocked(structure, from, toward, 1000.0) ? 0.0 : 1.0;
+                }
+                shade = arriving / 8.0;
+            }
+            // Where things are close to one another less of the surroundings reaches them.
+            scene_frame(normal, across, along);
+            float closed = 0.0;
+            for (int index = 0; index < 8; index++) {
+                float ring = (float(index) + scene_noise(in.position.xy, float(index) + 11.0)) / 8.0;
+                float turn = 2.0 * M_PI_F * scene_noise(in.position.xy, float(index) + 23.0);
+                float3 toward = (across * cos(turn) + along * sin(turn)) * sqrt(ring) + normal * sqrt(1.0 - ring);
+                closed += scene_blocked(structure, from, toward, 0.6) ? 1.0 : 0.0;
+            }
+            open = 1.0 - 0.85 * closed / 8.0;
+            // A shiny surface mirrors the other things in the scene, lit as they are.
+            if (roughness < 0.6) {
+                float3 back = reflect(-toEye, normal);
+                intersector<triangle_data, instancing> finder;
+                ray probe;
+                probe.origin = from;
+                probe.direction = back;
+                probe.min_distance = 0.0;
+                probe.max_distance = 1000.0;
+                intersection_result<triangle_data, instancing> hit = finder.intersect(probe, structure, 0xFF);
+                if (hit.type != intersection_type::none) {
+                    TracedInstance other = instances[hit.instance_id];
+                    TracedTriangle corners = *(const device TracedTriangle *)hit.primitive_data;
+                    float2 weight = hit.triangle_barycentric_coord;
+                    float3 own = float3(corners.n0) * (1.0 - weight.x - weight.y) + float3(corners.n1) * weight.x + float3(corners.n2) * weight.y;
+                    float3 there = normalize((other.normal * float4(own, 0.0)).xyz);
+                    if (dot(there, back) > 0.0) { there = -there; }
+                    float otherMetal = saturate(other.material.x);
+                    float otherRough = clamp(other.material.y, 0.045, 1.0);
+                    float3 place = from + back * hit.distance;
+                    float otherLit = saturate(dot(there, toLight));
+                    if (otherLit > 0.0 && scene_blocked(structure, place + there * 0.004, toLight, 1000.0)) { otherLit = 0.0; }
+                    float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F)
+                        + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(back, there), otherRough);
+                    seen = mix(found, seen, smoothstep(0.3, 0.6, roughness));
+                }
+            }
+        }
+    #endif
+        // The one light, by Cook and Torrance with the GGX distribution.
         float3 direct = float3(0.0);
         if (lit > 0.0) {
             float3 half_ = normalize(toEye + toLight);
@@ -291,7 +412,7 @@ final class SceneRendering {
             float distribution = a2 / (M_PI_F * spread * spread);
             float visible = 0.5 / (lit * sqrt(facing * facing * (1.0 - a2) + a2) + facing * sqrt(lit * lit * (1.0 - a2) + a2));
             float3 fresnel = mirror + (1.0 - mirror) * pow(1.0 - saturate(dot(toEye, half_)), 5.0);
-            direct = (matte / M_PI_F + distribution * visible * fresnel) * scene.lightColor.rgb * lit;
+            direct = (matte / M_PI_F + distribution * visible * fresnel) * scene.lightColor.rgb * lit * shade;
         }
 
         // The surroundings: what a matte surface gathers, and what a shiny one mirrors,
@@ -299,8 +420,8 @@ final class SceneRendering {
         float4 fit = roughness * float4(-1.0, -0.0275, -0.572, 0.022) + float4(1.0, 0.0425, 1.04, -0.04);
         float bend = min(fit.x * fit.x, exp2(-9.28 * facing)) * fit.x + fit.y;
         float2 weigh = float2(-1.04, 1.04) * bend + fit.zw;
-        float3 gathered = scene_surroundings(scene, normal, 1.0) * matte;
-        float3 mirrored = scene_surroundings(scene, reflect(-toEye, normal), roughness) * (mirror * weigh.x + weigh.y);
+        float3 gathered = scene_surroundings(scene, normal, 1.0) * matte * open;
+        float3 mirrored = seen * (mirror * weigh.x + weigh.y) * mix(1.0, open, roughness);
 
         float3 color = (direct + gathered + mirrored) * scene.settings.x;
         return float4(scene_tone(color), 1.0);
@@ -317,6 +438,42 @@ final class SceneGeometry {
     let vertices: MTLBuffer
     let indices: MTLBuffer
     let indexCount: Int
+    /// For each triangle, the normals at its corners: what a ray reads where it lands.
+    let corners: MTLBuffer
+    static let cornersStride = 36
+    private var built: MTLAccelerationStructure?
+
+    /// The triangles as rays find them, built the first time a scene with them is traced.
+    func structure(on queue: MTLCommandQueue) -> MTLAccelerationStructure? {
+        if let built { return built }
+        let triangles = MTLAccelerationStructureTriangleGeometryDescriptor()
+        triangles.vertexBuffer = vertices
+        triangles.vertexStride = SceneGeometry.stride
+        triangles.vertexFormat = .float3
+        triangles.indexBuffer = indices
+        triangles.indexType = .uint32
+        triangles.triangleCount = indexCount / 3
+        triangles.primitiveDataBuffer = corners
+        triangles.primitiveDataStride = SceneGeometry.cornersStride
+        triangles.primitiveDataElementSize = SceneGeometry.cornersStride
+        let descriptor = MTLPrimitiveAccelerationStructureDescriptor()
+        descriptor.geometryDescriptors = [triangles]
+        built = SceneGeometry.build(descriptor, on: queue)
+        return built
+    }
+
+    static func build(_ descriptor: MTLAccelerationStructureDescriptor, on queue: MTLCommandQueue) -> MTLAccelerationStructure? {
+        let device = queue.device
+        let sizes = device.accelerationStructureSizes(descriptor: descriptor)
+        guard sizes.accelerationStructureSize > 0,
+              let structure = device.makeAccelerationStructure(size: sizes.accelerationStructureSize),
+              let scratch = device.makeBuffer(length: max(sizes.buildScratchBufferSize, 16), options: .storageModePrivate),
+              let buffer = queue.makeCommandBuffer(), let encoder = buffer.makeAccelerationStructureCommandEncoder() else { return nil }
+        encoder.build(accelerationStructure: structure, descriptor: descriptor, scratchBuffer: scratch, scratchBufferOffset: 0)
+        encoder.endEncoding()
+        buffer.commit()
+        return structure
+    }
 
     init?(_ mesh: SceneMesh, device: MTLDevice) {
         guard mesh.isSound, !mesh.indices.isEmpty else { return nil }
@@ -325,11 +482,18 @@ final class SceneGeometry {
             let position = mesh.positions[index], normal = mesh.normals[index], uv = mesh.uvs[index]
             packed.replaceSubrange(index * 8..<index * 8 + 8, with: [position.x, position.y, position.z, normal.x, normal.y, normal.z, uv.x, uv.y])
         }
+        var normals = [Float](repeating: 0, count: mesh.indices.count * 3)
+        for (place, index) in mesh.indices.enumerated() {
+            let normal = mesh.normals[Int(index)]
+            normals.replaceSubrange(place * 3..<place * 3 + 3, with: [normal.x, normal.y, normal.z])
+        }
         guard let vertices = device.makeBuffer(bytes: packed, length: packed.count * MemoryLayout<Float>.stride),
-              let indices = device.makeBuffer(bytes: mesh.indices, length: mesh.indices.count * MemoryLayout<UInt32>.stride)
+              let indices = device.makeBuffer(bytes: mesh.indices, length: mesh.indices.count * MemoryLayout<UInt32>.stride),
+              let corners = device.makeBuffer(bytes: normals, length: normals.count * MemoryLayout<Float>.stride)
         else { return nil }
         self.vertices = vertices
         self.indices = indices
+        self.corners = corners
         indexCount = mesh.indices.count
     }
 }
@@ -396,17 +560,8 @@ final class SceneSurface {
         pass.depthAttachment.loadAction = .clear
         pass.depthAttachment.clearDepth = 1
         pass.depthAttachment.storeAction = .dontCare
-        guard let buffer = rendering.compiler.queue.makeCommandBuffer(),
-              let encoder = buffer.makeRenderCommandEncoder(descriptor: pass) else { return }
-        encoder.setRenderPipelineState(rendering.pipeline)
-        encoder.setDepthStencilState(rendering.depth)
-        encoder.setCullMode(.none)
-        encoder.setFrontFacing(.counterClockwise)
-        encoder.setFragmentSamplerState(rendering.sampler, index: 0)
         var uniforms = SceneRendering.SceneUniforms(scene, aspect: Float(size.width / max(size.height, 0.0001)))
-        encoder.setVertexBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
-        encoder.setFragmentBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
-
+        var draws: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms)] = []
         for object in scene.objects where object.value("visible").boolValue {
             let placement = SceneMath.placement(of: object)
             let made: [ScenePart]
@@ -424,21 +579,42 @@ final class SceneSurface {
                     ?? part.metalness ?? SceneRendering.clamp(object.number("metalness"), 0, 1)
                 let roughness = object.values["roughness"].map { SceneRendering.clamp($0.numberValue, 0, 1) }
                     ?? part.roughness ?? SceneRendering.clamp(object.number("roughness"), 0, 1)
-                var own = SceneRendering.ObjectUniforms(
+                let own = SceneRendering.ObjectUniforms(
                     model: model, normal: model.inverse.transpose,
                     color: SIMD4(color, 1), material: SIMD4(metalness, roughness, 0, 0)
                 )
                 // A size of nothing has no inverse: there is nothing to draw of it either.
-                guard (0..<4).allSatisfy({ column in (0..<4).allSatisfy { own.normal[column][$0].isFinite } }) else { continue }
-                encoder.setVertexBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
-                encoder.setFragmentBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
-                encoder.setFragmentTexture(part.picture ?? rendering.white, index: 0)
-                encoder.setVertexBuffer(part.geometry.vertices, offset: 0, index: 0)
-                encoder.drawIndexedPrimitives(
-                    type: .triangle, indexCount: part.geometry.indexCount, indexType: .uint32,
-                    indexBuffer: part.geometry.indices, indexBufferOffset: 0
-                )
+                guard (0..<4).allSatisfy({ column in (0..<4).allSatisfy { own.normal[column][$0].isFinite && own.model[column][$0].isFinite } }) else { continue }
+                draws.append((part, own))
             }
+        }
+
+        let rays = scene.value("rayTracing").boolValue ? trace(draws) : nil
+        uniforms.settings.y = rays == nil ? 0 : 1
+        guard let buffer = rendering.compiler.queue.makeCommandBuffer(),
+              let encoder = buffer.makeRenderCommandEncoder(descriptor: pass) else { return }
+        encoder.setRenderPipelineState(rays?.pipeline ?? rendering.pipeline)
+        encoder.setDepthStencilState(rendering.depth)
+        encoder.setCullMode(.none)
+        encoder.setFrontFacing(.counterClockwise)
+        encoder.setFragmentSamplerState(rendering.sampler, index: 0)
+        encoder.setVertexBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
+        encoder.setFragmentBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
+        if let rays {
+            encoder.setFragmentAccelerationStructure(rays.structure, bufferIndex: 3)
+            encoder.setFragmentBuffer(rays.instances, offset: 0, index: 4)
+            encoder.useResources(rays.used, usage: .read, stages: .fragment)
+        }
+        for draw in draws {
+            var own = draw.uniforms
+            encoder.setVertexBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
+            encoder.setFragmentBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
+            encoder.setFragmentTexture(draw.part.picture ?? rendering.white, index: 0)
+            encoder.setVertexBuffer(draw.part.geometry.vertices, offset: 0, index: 0)
+            encoder.drawIndexedPrimitives(
+                type: .triangle, indexCount: draw.part.geometry.indexCount, indexType: .uint32,
+                indexBuffer: draw.part.geometry.indices, indexBufferOffset: 0
+            )
         }
         encoder.endEncoding()
         buffer.commit()
@@ -450,6 +626,56 @@ final class SceneSurface {
         display.contents = output.surface
         CATransaction.commit()
         shown = (scene, size, scale, models)
+    }
+
+    /// What the shader needs to send rays through the scene: every part as an instance of
+    /// its triangles, and beside it what each instance is made of. nil when rays are not
+    /// traced here, or there is nothing to hit.
+    private func trace(_ draws: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms)]) -> (
+        pipeline: MTLRenderPipelineState, structure: MTLAccelerationStructure, instances: MTLBuffer, used: [MTLResource]
+    )? {
+        guard let pipeline = rendering.traced, !draws.isEmpty else { return nil }
+        let queue = rendering.compiler.queue
+        var structures: [MTLAccelerationStructure] = []
+        var places: [ObjectIdentifier: Int] = [:]
+        var instances: [MTLAccelerationStructureInstanceDescriptor] = []
+        var materials: [SceneSurface.TracedInstance] = []
+        for draw in draws {
+            guard let structure = draw.part.geometry.structure(on: queue) else { return nil }
+            let key = ObjectIdentifier(draw.part.geometry)
+            let place = places[key] ?? structures.count
+            if places[key] == nil {
+                places[key] = place
+                structures.append(structure)
+            }
+            var instance = MTLAccelerationStructureInstanceDescriptor()
+            let model = draw.uniforms.model
+            func column(_ value: SIMD4<Float>) -> MTLPackedFloat3 { MTLPackedFloat3Make(value.x, value.y, value.z) }
+            instance.transformationMatrix = MTLPackedFloat4x3(columns: (
+                column(model.columns.0), column(model.columns.1), column(model.columns.2), column(model.columns.3)
+            ))
+            instance.mask = 0xFF
+            instance.options = .opaque
+            instance.accelerationStructureIndex = UInt32(place)
+            instances.append(instance)
+            materials.append(TracedInstance(normal: draw.uniforms.normal, color: draw.uniforms.color, material: draw.uniforms.material))
+        }
+        let device = queue.device
+        guard let described = device.makeBuffer(bytes: instances, length: instances.count * MemoryLayout<MTLAccelerationStructureInstanceDescriptor>.stride),
+              let made = device.makeBuffer(bytes: materials, length: materials.count * MemoryLayout<TracedInstance>.stride) else { return nil }
+        let descriptor = MTLInstanceAccelerationStructureDescriptor()
+        descriptor.instancedAccelerationStructures = structures
+        descriptor.instanceCount = instances.count
+        descriptor.instanceDescriptorBuffer = described
+        guard let whole = SceneGeometry.build(descriptor, on: queue) else { return nil }
+        return (pipeline, whole, made, structures + draws.map(\.part.geometry.corners))
+    }
+
+    /// Must match `TracedInstance` in the source.
+    struct TracedInstance {
+        var normal: simd_float4x4
+        var color: SIMD4<Float>
+        var material: SIMD4<Float>
     }
 
     private func resize(width: Int, height: Int) -> Bool {

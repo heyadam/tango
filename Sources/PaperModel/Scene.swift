@@ -141,6 +141,7 @@ public struct SceneUse: Codable, Hashable, Sendable {
         SceneInput("lightColor", "Light Color", .color(.white)),
         SceneInput("environment", "Environment", .text("Studio"), options: environments),
         SceneInput("exposure", "Exposure", .number(1)),
+        SceneInput("rayTracing", "Ray Tracing", .bool(true)),
     ]
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }

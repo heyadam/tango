@@ -179,6 +179,11 @@ public final class LayerRenderer {
 
     // MARK: Scenes
 
+    /// Whether scenes are drawn at all here, and whether with rays (shadows, mirrors): a
+    /// GPU that traces none, such as the iOS Simulator's, draws them without.
+    public static var drawsScenes: Bool { SceneRendering.shared != nil }
+    public static var tracesRays: Bool { SceneRendering.shared?.traced != nil }
+
     private func draw(_ scene: SceneUse, on surface: SceneSurface, size: CGSize) {
         surface.draw(scene, size: size, scale: contentsScale)
     }

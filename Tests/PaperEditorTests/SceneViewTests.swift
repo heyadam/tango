@@ -166,4 +166,59 @@ import simd
         let document = Self.document([odd, huge], values: ["cameraDistance": .number(0), "fieldOfView": .number(-4), "exposure": .number(1e30)])
         #expect(ViewerSnapshot.bitmap(of: document) != nil)
     }
+
+    // MARK: Rays
+
+    /// A white floor with a ball over it, lit from straight above and seen from above.
+    static func ballOverFloor(rays: Bool) -> PaperModel.Document {
+        let floor = SceneObject(id: "floor", shape: .plane, values: ["scale": .number(3), "y": .number(-0.5), "color": .color(.white), "roughness": .number(1)])
+        let ball = SceneObject(id: "ball", shape: .sphere, values: ["scale": .number(0.5), "x": .number(0.6), "color": .color(red)])
+        return document([floor, ball], values: [
+            "cameraPitch": .number(60), "lightPitch": .number(89), "lightYaw": .number(0), "rayTracing": .bool(rays), "exposure": .number(0.5),
+        ])
+    }
+
+    @Test func aThingCastsAShadowWhenRaysAreTraced() throws {
+        try #require(LayerRenderer.tracesRays)
+        // Under the ball, on the floor: beside it the same floor in the light.
+        let under = SIMD3<Float>(0.6, -0.5, 0.15), beside = SIMD3<Float>(-0.6, -0.5, 0.15)
+        let traced = Self.ballOverFloor(rays: true)
+        let picture = ViewerSnapshot.bitmap(of: traced)
+        Self.keep(picture, "shadow")
+        let shaded = try Self.color(picture, at: under, in: traced), open = try Self.color(picture, at: beside, in: traced)
+        #expect(shaded[0] + 20 < open[0], "\(shaded) against \(open)")
+
+        let plain = Self.ballOverFloor(rays: false)
+        let flat = ViewerSnapshot.bitmap(of: plain)
+        Self.keep(flat, "shadow-none")
+        let unshaded = try Self.color(flat, at: under, in: plain)
+        #expect(ShaderViewTests.near(unshaded, try Self.color(flat, at: beside, in: plain)))
+    }
+
+    @Test func aMirrorShowsTheThingBesideItWhenRaysAreTraced() throws {
+        try #require(LayerRenderer.tracesRays)
+        func document(rays: Bool) -> PaperModel.Document {
+            let mirror = SceneObject(id: "mirror", shape: .sphere, values: [
+                "x": .number(-0.35), "scale": .number(0.7), "metalness": .number(1), "roughness": .number(0.05), "color": .color(.white),
+            ])
+            let ball = SceneObject(id: "ball", shape: .sphere, values: ["x": .number(0.45), "scale": .number(0.6), "color": .color(Self.red)])
+            return Self.document([mirror, ball], values: ["rayTracing": .bool(rays), "cameraDistance": .number(2.4)])
+        }
+        // The side of the mirror that faces the red ball.
+        let spot = SIMD3<Float>(-0.35 + 0.35 * 0.8, 0, 0.35 * 0.6)
+        let traced = document(rays: true)
+        let picture = ViewerSnapshot.bitmap(of: traced)
+        Self.keep(picture, "mirror")
+        #expect(Self.isMostly(0, try Self.color(picture, at: spot, in: traced)))
+        let plain = document(rays: false)
+        #expect(!Self.isMostly(0, try Self.color(ViewerSnapshot.bitmap(of: plain), at: spot, in: plain)))
+    }
+
+    @Test func theSamePictureEveryTime() throws {
+        try #require(ShaderCompiler.shared != nil)
+        let document = Self.ballOverFloor(rays: true)
+        let first = ViewerSnapshot.bitmap(of: document)?.representation(using: .png, properties: [:])
+        let second = ViewerSnapshot.bitmap(of: document)?.representation(using: .png, properties: [:])
+        #expect(first != nil && first == second)
+    }
 }
