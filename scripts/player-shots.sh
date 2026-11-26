@@ -25,7 +25,7 @@ xcrun simctl bootstatus $device -b >/dev/null
 xcrun simctl install $device build/Build/Products/Debug-iphonesimulator/TangoPlayer.app
 
 for id in $ids; do
-  xcrun simctl launch --terminate-running-process $device com.tango.player -example $id >/dev/null
+  xcrun simctl launch --terminate-running-process $device com.heyadam.tango.player -example $id >/dev/null
   sleep 4
   xcrun simctl io $device screenshot $out/$id.ios.png 2>/dev/null
   swift run papertool viewer $id $out/$id.mac.png 2>/dev/null | tail -1

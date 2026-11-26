@@ -43,7 +43,7 @@ if [[ -z "$REFERENCE_KEEP" ]]; then
   xcrun simctl status_bar $device override --time "9:41" --batteryState discharging --batteryLevel 100 --cellularBars 4 --wifiBars 3
   xcrun simctl install $device $out/PaperReference.app
   for id in $cases; do
-    xcrun simctl launch --terminate-running-process $device com.tango.reference -case $id >/dev/null
+    xcrun simctl launch --terminate-running-process $device com.heyadam.tango.reference -case $id >/dev/null
     if [[ -n "$REFERENCE_MOTION" ]]; then
       # The app makes its change 5 seconds after it opens (`MotionCase`). A recording takes
       # a second or two to start and may catch the end of the launch; the clip begins at the
@@ -63,7 +63,7 @@ if [[ -z "$REFERENCE_KEEP" ]]; then
       echo "took $id"
     fi
   done
-  xcrun simctl terminate $device com.tango.reference 2>/dev/null || true
+  xcrun simctl terminate $device com.heyadam.tango.reference 2>/dev/null || true
   xcrun simctl ui $device appearance light
 fi
 
