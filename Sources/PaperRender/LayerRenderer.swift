@@ -69,6 +69,11 @@ public final class LayerRenderer {
     /// How far past a shader view the picture of what is behind it reaches, so glass can
     /// bend what is beside it into view.
     static let behindMargin: CGFloat = 32
+    /// The most pixels per point the picture of what is behind a shader view is taken at.
+    /// It is drawn on the CPU on every frame, for each such view, and its cost grows with
+    /// its pixels: at the screen's two it was most of a frame for a screen with four panes
+    /// of glass, which blur what they show by 24 points anyway.
+    static let behindScale: CGFloat = 1
 
     /// Pixels per point for text and shapes; set to backing scale × zoom.
     public var contentsScale: CGFloat = 2
@@ -160,7 +165,7 @@ public final class LayerRenderer {
         for item in blurred { drawBackdrop(item.backdrop, behind: item.view, radius: item.radius) }
         // Sync visits a view before the views in it, so the reverse of innermost first is back to front.
         for item in glass.reversed() {
-            let scale = min(max(contentsScale.isFinite ? contentsScale : 1, 0.25), 2)
+            let scale = min(max(contentsScale.isFinite ? contentsScale : 1, 0.25), LayerRenderer.behindScale)
             let texture = picture(behind: item.view, margin: LayerRenderer.behindMargin, scale: scale).flatMap { taken in
                 ShaderCompiler.shared?.texture(from: taken.context)
             }
@@ -195,6 +200,9 @@ public final class LayerRenderer {
             includesItself = false
             current = parent
         }
+        // Drawing a tree on the CPU costs every layer in it, wherever it is, so what lies
+        // wholly outside the picture is left out too.
+        cull(rootLayer, outside: place, into: &hidden)
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         // The root is drawn top down into the bitmap, so its own coordinates place the picture.
@@ -204,6 +212,28 @@ public final class LayerRenderer {
         for layer in hidden { layer.isHidden = false }
         CATransaction.commit()
         return (context, place)
+    }
+
+    /// Hides the layers in `layer` that draw nothing inside `place` (in the root's
+    /// coordinates), adding them to `hidden`. A layer that clips is left out whole when it
+    /// is outside; one that does not is looked into, since what is in it may reach further.
+    private func cull(_ layer: CALayer, outside place: CGRect, into hidden: inout [CALayer]) {
+        for child in layer.sublayers ?? [] where !child.isHidden {
+            var reach = child.borderWidth
+            if child.shadowOpacity > 0 {
+                reach += child.shadowRadius * 2 + max(abs(child.shadowOffset.width), abs(child.shadowOffset.height))
+            }
+            reach *= zoom(of: child)
+            let box = child.convert(child.bounds, to: rootLayer).insetBy(dx: -reach, dy: -reach)
+            guard box.width.isFinite, box.height.isFinite else { continue }
+            let leaf = child.sublayers?.isEmpty ?? true
+            if !box.intersects(place), leaf || child.masksToBounds {
+                child.isHidden = true
+                hidden.append(child)
+            } else if !leaf {
+                cull(child, outside: place, into: &hidden)
+            }
+        }
     }
 
     /// What is behind a view where it stands and `margin` of its own points around it, off
