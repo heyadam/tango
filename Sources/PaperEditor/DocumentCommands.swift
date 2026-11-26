@@ -147,6 +147,10 @@ extension DocumentStore {
         guard let layer = document.layer(id), layer.kind == .view, layer.type != type,
               DocumentStore.convertibleTypes.contains(type) else { return }
         apply("Change to \(type.displayName)") { document in
+            // A patch whose ports were chosen shows a new scene's usual ports too.
+            if type == .scene, let patch = document.graph.viewNode(layer: id), let shown = patch.shownPorts {
+                document.graph.update(patch.id) { $0.shownPorts = shown + SceneUse.presetPorts.filter { !shown.contains($0) } }
+            }
             document.screen.update(id) { view in
                 // What an extension drew there goes; the view and what is in it stay.
                 view.custom = nil

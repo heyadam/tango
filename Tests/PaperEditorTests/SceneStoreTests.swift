@@ -191,4 +191,29 @@ import Testing
         let chair = ((read["scene"] as? [String: Any])?["objects"] as? [[String: Any]])?.first { $0["name"] as? String == "Chair" }
         #expect(chair?["shape_error"] != nil)
     }
+
+    @Test func aViewWhosePortsWereChosenShowsTheCameraOnceItIsAScene() throws {
+        let store = DocumentStore()
+        let box = store.addView(.stack)
+        store.setPort(ViewInput(.opacity), of: box, shown: true)
+        store.convert(box, to: .scene)
+        let shown = store.visiblePorts(for: try #require(store.viewNode(for: box))).inputs.map(\.id)
+        #expect(SceneUse.presetPorts.allSatisfy(shown.contains))
+        #expect(shown.contains("opacity"))
+    }
+
+    @Test func whatChangedInASceneIsCarriedBackToCode() throws {
+        let store = DocumentStore()
+        let id = store.addView(.scene)
+        let box = try #require(store.document.layer(id)?.scene?.objects.first)
+        store.markBaseline()
+        store.setSceneInput(SceneUse.Key(input: "cameraPitch"), of: id, to: .number(30))
+        store.setSceneInput(SceneUse.Key(object: box.id, input: "metalness"), of: id, to: .number(1))
+        store.addSceneObject(.torus, to: id)
+        let report = AssistantToolbox(store: store).call("get_changes", input: [:]).text
+        #expect(report.contains("scene_inputs") && report.contains("cameraPitch"))
+        #expect(report.contains("scene_objects") && report.contains("metalness") && report.contains("torus"))
+        store.removeSceneObject(box.id, from: id)
+        #expect(AssistantToolbox(store: store).call("get_changes", input: [:]).text.contains("scene_removed"))
+    }
 }

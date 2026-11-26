@@ -20,8 +20,6 @@ final class SceneRendering {
     static let shared: SceneRendering? = ShaderCompiler.shared.flatMap { SceneRendering(compiler: $0) }
 
     static let samples = 4
-    /// Off in a test that wants the picture a GPU without ray tracing makes.
-    nonisolated(unsafe) static var tracesRays = true
 
     let compiler: ShaderCompiler
     let pipeline: MTLRenderPipelineState
@@ -34,6 +32,9 @@ final class SceneRendering {
     /// What an object with no picture of its own is given to read: white.
     let white: MTLTexture
     private var shapes: [SceneObject.Shape: SceneGeometry] = [:]
+    /// What reads model files, for every renderer: a file is read once however many
+    /// views, screens and windows show it.
+    private(set) lazy var models = SceneModels(device: compiler.device)
 
     private init?(compiler: ShaderCompiler) {
         self.compiler = compiler
@@ -64,7 +65,7 @@ final class SceneRendering {
             return nil
         }
         do {
-            traced = SceneRendering.tracesRays && device.supportsRaytracing ? try make(traced: true) : nil
+            traced = device.supportsRaytracing ? try make(traced: true) : nil
         } catch {
             assertionFailure("The scene shader does not compile with rays: \(error)")
             traced = nil
@@ -348,7 +349,10 @@ final class SceneRendering {
         float3 seen = scene_surroundings(scene, reflect(-toEye, normal), roughness);
     #if TANGO_TRACED
         if (scene.settings.y > 0.5) {
-            float3 from = in.world + normal * 0.004;
+            // A ray starts a little off the surface, by more the further away it is seen
+            // from, so that at any size it does not land on the surface it left.
+            float lift = 0.0015 * max(distance(scene.camera.xyz, in.world), 0.05);
+            float3 from = in.world + normal * lift;
             float3 across, along;
             // The light has a size, so a shadow is soft at its edge: several rays to
             // places on it.
@@ -398,7 +402,7 @@ final class SceneRendering {
                     float otherRough = clamp(other.material.y, 0.045, 1.0);
                     float3 place = from + back * hit.distance;
                     float otherLit = saturate(dot(there, toLight));
-                    if (otherLit > 0.0 && scene_blocked(structure, place + there * 0.004, toLight, 1000.0)) { otherLit = 0.0; }
+                    if (otherLit > 0.0 && scene_blocked(structure, place + there * lift, toLight, 1000.0)) { otherLit = 0.0; }
                     float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F)
                         + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(back, there), otherRough);
                     seen = mix(found, seen, smoothstep(0.3, 0.6, roughness));

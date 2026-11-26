@@ -17,6 +17,8 @@ import simd
 final class SceneModels {
     static let mostBytes = 256 * 1024 * 1024
     static let mostTriangles = 4_000_000
+    /// The most points all the parts of a model hold together.
+    static let mostPoints = 8_000_000
     /// The extensions of the files a scene can show.
     static let extensions: Set<String> = ["usdz", "usd", "usda", "usdc", "obj"]
 
@@ -66,6 +68,7 @@ final class SceneModels {
 
         var read: [(mesh: SceneMesh, transform: simd_float4x4, material: MDLMaterial?)] = []
         var triangles = 0
+        var points = 0
         for mesh in meshes {
             let named = (mesh.vertexDescriptor.attributes as? [MDLVertexAttribute])?.map(\.name) ?? []
             if !named.contains(MDLVertexAttributeNormal) {
@@ -93,9 +96,25 @@ final class SceneModels {
                 guard indexCount > 0, indices.length >= indexCount * 4 else { continue }
                 triangles += indexCount / 3
                 guard triangles <= SceneModels.mostTriangles else { return Model(problem: "The model has too many triangles for a scene.") }
-                var part = base
-                let numbers = indices.map().bytes.assumingMemoryBound(to: UInt32.self)
-                part.indices = Array(UnsafeBufferPointer(start: numbers, count: indexCount))
+                // A part holds only the points its own triangles use: a mesh cut into many
+                // parts is not copied whole into each.
+                let numbers = UnsafeBufferPointer(start: indices.map().bytes.assumingMemoryBound(to: UInt32.self), count: indexCount)
+                guard numbers.allSatisfy({ Int($0) < count }) else { continue }
+                var part = SceneMesh()
+                var moved: [UInt32: UInt32] = [:]
+                part.indices.reserveCapacity(indexCount)
+                for index in numbers {
+                    if let known = moved[index] {
+                        part.indices.append(known)
+                    } else {
+                        let place = Int(index)
+                        let new = part.add(base.positions[place], base.normals[place], base.uvs[place])
+                        moved[index] = new
+                        part.indices.append(new)
+                    }
+                }
+                points += part.positions.count
+                guard points <= SceneModels.mostPoints else { return Model(problem: "The model has too many points for a scene.") }
                 guard part.isSound else { continue }
                 read.append((part, transform, submesh.material))
             }

@@ -109,4 +109,30 @@ import simd
         let open = try SceneViewTests.color(picture, at: SIMD3(-0.6, -0.5, 0.2), in: document)
         #expect(shaded[0] + 20 < open[0], "\(shaded) against \(open)")
     }
+
+    @Test func aModelsPictureIsTheRightWayUpOnIt() throws {
+        try #require(LayerRenderer.drawsScenes)
+        // A card facing the camera whose picture is red above (blue in its top left corner) and green below.
+        let data = try Data(contentsOf: URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Fixtures/models/label.usdz"))
+        let document = Self.document(model: "label.usdz")
+        let picture = ViewerSnapshot.bitmap(of: document, assets: ["label.usdz": data])
+        SceneViewTests.keep(picture, "model-picture")
+        #expect(SceneViewTests.isMostly(0, try SceneViewTests.color(picture, at: SIMD3(0.25, 0.3, 0), in: document)))
+        #expect(SceneViewTests.isMostly(2, try SceneViewTests.color(picture, at: SIMD3(-0.4, 0.3, 0), in: document)))
+        #expect(SceneViewTests.isMostly(1, try SceneViewTests.color(picture, at: SIMD3(0, -0.3, 0), in: document)))
+    }
+
+    @Test func aMeshCutIntoPartsIsNotCopiedWholeIntoEach() throws {
+        try #require(LayerRenderer.drawsScenes)
+        // Two hundred separate triangles, each its own group: every part should hold three points.
+        var text = ""
+        for index in 0..<200 {
+            let x = Double(index % 20), y = Double(index / 20)
+            text += "v \(x) \(y) 0\nv \(x + 0.8) \(y) 0\nv \(x) \(y + 0.8) 0\ng part\(index)\nusemtl m\(index)\nf \(index * 3 + 1) \(index * 3 + 2) \(index * 3 + 3)\n"
+        }
+        let document = Self.document(model: "parts.obj", values: ["color": .color(SceneViewTests.red)])
+        let picture = ViewerSnapshot.bitmap(of: document, assets: ["parts.obj": Data(text.utf8)])
+        #expect(Self.drawn(picture) > 100)
+    }
 }

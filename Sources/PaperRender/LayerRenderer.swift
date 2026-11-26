@@ -187,8 +187,8 @@ public final class LayerRenderer {
     public static var drawsScenes: Bool { SceneRendering.shared != nil }
     public static var tracesRays: Bool { SceneRendering.shared?.traced != nil }
 
-    /// What reads model files, for every scene this renderer draws.
-    private lazy var models: SceneModels? = ShaderCompiler.shared.map { SceneModels(device: $0.device) }
+    /// What reads model files: one for the device, so a file is read once.
+    private var models: SceneModels? { SceneRendering.shared?.models }
 
     private func draw(_ scene: SceneUse, on surface: SceneSurface, size: CGSize) {
         // Where each model's file is now: another file under the same name is another picture.
@@ -385,6 +385,7 @@ public final class LayerRenderer {
             // The view's fill and the views in it go into a picture; the layer on screen
             // shows what the shader makes of it, and keeps the corners, border and shadow.
             clippers[key] = nil
+            scenes[key] = nil
             let children = node.children.map { sync($0, seen: &seen) }
             let current = surface.content.sublayers ?? []
             if current.count != children.count || !zip(current, children).allSatisfy({ $0 === $1 }) {
@@ -403,6 +404,7 @@ public final class LayerRenderer {
 
         // A Camera view's only sublayer is the live camera picture, managed in `apply`.
         // A text field's sublayers are its text and caret, managed there too.
+        if node.kind != .view { scenes[key] = nil }
         if node.kind == .camera || node.kind == .textField { return layer }
         if node.kind == .video {
             showVideo(node, key: key, in: layer)

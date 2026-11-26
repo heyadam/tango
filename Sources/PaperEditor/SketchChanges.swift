@@ -170,6 +170,25 @@ struct SketchChanges {
                 if before.custom?.kind != custom.kind { entry["extension_view"] = custom.kind }
                 if before.custom?.inputs != custom.inputs { entry["extension_inputs"] = custom.inputs.mapValues(AssistantToolbox.plain) }
             }
+            if before.scene != layer.scene, let scene = layer.scene {
+                let was = before.scene
+                var inputs: [String: Any] = [:]
+                for input in SceneUse.inputs where was?.value(input.id) != scene.value(input.id) {
+                    inputs[input.id] = AssistantToolbox.plain(scene.value(input.id))
+                }
+                if !inputs.isEmpty { entry["scene_inputs"] = inputs }
+                // Each object that is new or differs, with everything set on it; and the names of those that went.
+                let changed = scene.objects.filter { $0 != was?.object($0.id) }.map { object -> [String: Any] in
+                    var described: [String: Any] = ["name": object.name, "shape": object.shape.rawValue]
+                    if let model = object.model { described["model"] = model }
+                    if was?.object(object.id) == nil { described["added"] = true }
+                    for (key, value) in object.values { described[key] = AssistantToolbox.plain(value) }
+                    return described
+                }
+                if !changed.isEmpty { entry["scene_objects"] = changed }
+                let gone = (was?.objects ?? []).filter { scene.object($0.id) == nil }.map(\.name)
+                if !gone.isEmpty { entry["scene_removed"] = gone }
+            }
             if before.shader != layer.shader, let shader = layer.shader {
                 if before.shader?.source != shader.source { entry["shader"] = shader.source }
                 if before.shader?.inputs != shader.inputs { entry["shader_inputs"] = shader.inputs.mapValues(AssistantToolbox.plain) }
