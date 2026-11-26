@@ -42,7 +42,7 @@ swift run papertool extension export-component <doc> <component> <folder> | wind
 
 Every command takes `--extensions <folder>`, which keeps installed extensions there instead of in the app's own folder. Use it whenever you install one to try something: without it `extension install` changes what the person's app has.
 
-`<doc>` is a `.tango` path, `empty`, or a gallery id (`Gallery.items`): `card`, `signin`, `search`, `people`, `live`, `controls`, `camera`, `sheet`, `list`, `header`, `swipe`, `pinch`, `hover`, `aurora`, `lens`, `carousels`, `photos`, `video`, `flow`, `morph`, `kit`, `chat`.
+`<doc>` is a `.tango` path, `empty`, or a gallery id (`Gallery.items`): `card`, `signin`, `search`, `people`, `live`, `controls`, `camera`, `sheet`, `list`, `header`, `swipe`, `pinch`, `hover`, `aurora`, `lens`, `carousels`, `photos`, `video`, `flow`, `morph`, `kit`, `chat`, `snow`, `stocks`.
 
 ## Layout
 
