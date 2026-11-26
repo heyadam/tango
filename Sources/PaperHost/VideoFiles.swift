@@ -27,6 +27,11 @@ public enum VideoFiles {
         a.withUnsafeBytes { first in b.withUnsafeBytes { second in first.baseAddress == second.baseAddress } }
     }
 
+    /// The file of an asset, and never a web address: for what is only read from the document.
+    public static func assetURL(for name: String, assets: [String: Data]) -> URL? {
+        assets[name].flatMap { file(named: name, data: $0) }
+    }
+
     private static func file(named name: String, data: Data) -> URL? {
         // Asked every frame while a video plays: the same bytes in memory are known at once,
         // without comparing a whole movie.

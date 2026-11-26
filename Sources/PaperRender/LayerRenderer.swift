@@ -84,6 +84,9 @@ public final class LayerRenderer {
     /// Finds the file or web address a Video view's `video` names. Without one, or for a
     /// name it does not know, the view shows a placeholder.
     public var videoURL: ((String) -> URL?)?
+    /// Finds the file of a model a scene shows, by the name of its asset. Without one a
+    /// model draws nothing.
+    public var modelURL: ((String) -> URL?)?
     /// Whether videos are played, with sound, as in the Viewer. Otherwise each frame shows
     /// the picture at the playhead, made at once from the file, and a video from the web
     /// shows a placeholder: pictures made this way are the same every time and never
@@ -184,9 +187,34 @@ public final class LayerRenderer {
     public static var drawsScenes: Bool { SceneRendering.shared != nil }
     public static var tracesRays: Bool { SceneRendering.shared?.traced != nil }
 
+    /// What reads model files, for every scene this renderer draws.
+    private lazy var models: SceneModels? = ShaderCompiler.shared.map { SceneModels(device: $0.device) }
+
     private func draw(_ scene: SceneUse, on surface: SceneSurface, size: CGSize) {
-        surface.draw(scene, size: size, scale: contentsScale)
+        // Where each model's file is now: another file under the same name is another picture.
+        var files: [String: URL] = [:]
+        var stamp = Hasher()
+        for object in scene.objects where object.shape == .model {
+            guard let name = object.model, let url = modelURL?(name) else { continue }
+            files[object.id] = url
+            stamp.combine(object.id)
+            stamp.combine(url)
+        }
+        surface.draw(scene, size: size, scale: contentsScale, models: stamp.finalize()) { [models] object in
+            files[object.id].flatMap { models?.model(at: $0).parts } ?? []
+        }
     }
+
+    /// Why a model's file shows nothing in a scene, in words for the person, or nil when
+    /// it can be drawn. `name` is the asset's name.
+    public func modelProblem(_ name: String) -> String? {
+        guard let url = modelURL?(name) else { return "There is no file called “\(name)” in the document." }
+        guard let models else { return nil }
+        return models.model(at: url).problem
+    }
+
+    /// The extensions of the model files a scene can show.
+    public static var modelExtensions: Set<String> { SceneModels.extensions }
 
     // MARK: What is behind a view
 

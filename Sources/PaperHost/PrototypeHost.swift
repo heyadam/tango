@@ -44,7 +44,7 @@ public final class PrototypeHost {
     /// prototype wrongly.
     public static let kinds: String = {
         let names = PatchRegistry.standard.library.map(\.kind).sorted() + LayerKind.allCases.map(\.rawValue)
-            + ["document \(Document.currentVersion)"]
+            + ViewType.allCases.map { "view \($0.rawValue)" } + ["document \(Document.currentVersion)"]
         return SHA256.hash(data: Data(names.joined(separator: "\n").utf8)).prefix(8).map { String(format: "%02x", $0) }.joined()
     }()
 
@@ -81,6 +81,7 @@ public final class PrototypeHost {
             pictures.picture(named: name, assets: self?.assets ?? [:], registry: self?.registry)
         }
         renderer.videoURL = { [weak self] source in VideoFiles.url(for: source, assets: self?.assets ?? [:]) }
+        renderer.modelURL = { [weak self] name in VideoFiles.assetURL(for: name, assets: self?.assets ?? [:]) }
         // Fonts and Material glyphs come with the document; one a cable names that it does
         // not carry is fetched, as on the Mac.
         FontBook.register(assets: assets)

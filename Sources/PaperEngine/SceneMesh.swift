@@ -35,7 +35,7 @@ public struct SceneMesh: Sendable, Hashable {
     }
 
     @discardableResult
-    mutating func add(_ position: SIMD3<Float>, _ normal: SIMD3<Float>, _ uv: SIMD2<Float>) -> UInt32 {
+    public mutating func add(_ position: SIMD3<Float>, _ normal: SIMD3<Float>, _ uv: SIMD2<Float>) -> UInt32 {
         positions.append(position)
         normals.append(normal)
         uvs.append(uv)
