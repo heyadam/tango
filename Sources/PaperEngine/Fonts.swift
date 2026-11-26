@@ -154,8 +154,8 @@ public enum FontBook {
         guard data.count < 30_000_000, let provider = CGDataProvider(data: data as CFData), let font = CGFont(provider) else {
             return false
         }
-        var error: Unmanaged<CFError>?
-        let fresh = CTFontManagerRegisterGraphicsFont(font, &error)
+        // False when a font of that PostScript name is already known: the first is kept.
+        let fresh = CTFontManagerRegisterGraphicsFont(font, nil)
         let family = (CTFontCreateWithGraphicsFont(font, 12, nil, nil)).familyName
         lock.lock()
         registered[name] = data.count

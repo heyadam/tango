@@ -979,7 +979,7 @@ public struct PatchGuide: Sendable {
         ),
         "unsplashPhoto": PatchGuide(
             "Finds photos on Unsplash, by search or at random, and gives one as an Image for an Image view, with its photographer's name and profile link to credit, its description and its average color. Photos are always loaded from Unsplash while the prototype runs, as Unsplash's terms ask, and never kept in the document. It needs a free Unsplash access key in Settings > AI; pictures of the prototype and the iPhone player send nothing.",
-            tip: "Color into the Image view's Fill shows the photo's color while it loads. Photographer into a small caption, as Unsplash asks.",
+            tip: "Color into the Fill of a view behind the Image view shows the photo's color while it loads. Photographer into a small caption, as Unsplash asks.",
             inputs: [
                 "query": "What to search for. Empty picks random photos.",
                 "orientation": "Any, Landscape, Portrait or Squarish.",

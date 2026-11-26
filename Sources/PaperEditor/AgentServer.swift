@@ -129,7 +129,10 @@ public final class AgentServer {
     and check interactions with `view_prototype` or `interact_prototype`. \
     The person sees the graph one view at a time, so build with containers that hold their own \
     views and patches, and pipe values in and out of a container through ports it publishes \
-    (`publish_port`). The app is also a scratch pad for a screen that lives in code: build the \
+    (`publish_port`). For icons, type and photos use what the app brings in (Lucide and Material \
+    Symbols icons, Google Fonts and Apple's families, Unsplash photos; see "Icons, fonts and \
+    photos" in the reference) rather than drawing icons from shapes or leaving everything in \
+    the system font. The app is also a scratch pad for a screen that lives in code: build the \
     screen here from the code and call `mark_baseline`; when the person has played with it, \
     `get_changes` says what they changed so you can write it into the code. `get_reference` \
     explains both under "Sketching from code".
@@ -230,6 +233,22 @@ public final class AgentServer {
     `translation`, `activeOffsetX` alone is `direction` Horizontal), `Pinch()` and `Rotation()` \
     (radians there, degrees here) are the patches of those names; `Gesture.Simultaneous` of the last \
     three is what they do on one view.
+    - Icons, fonts and images in code keep their source. SwiftUI's `Image(systemName:)` is an SF \
+    Symbol; `lucide-react-native` / `lucide-react` (`<Heart />`, `<ShoppingCart />`) is `lucide:` \
+    with the name in kebab case (`lucide:shopping-cart`), its `strokeWidth` times 200 the view's \
+    `fontWeight` and its `size` the view's width and height; `@expo/vector-icons` or \
+    `react-native-vector-icons` `MaterialIcons` / `MaterialCommunityIcons` and Jetpack's \
+    `Icons.Rounded.Favorite` are `material-rounded:` (or `material:` for Outlined and Filled, \
+    `material-sharp:` for Sharp) with the name in snake case, `.fill` for a filled one. An icon from \
+    another set (Feather is close to Lucide; Ionicons, FontAwesome, Phosphor) is the nearest Lucide \
+    or Material icon: say so to the person. `.font(.custom("Inter", size: 17))`, \
+    `fontFamily: "Inter_600SemiBold"` from `@expo-google-fonts` or a `useFonts` map is `fontFamily` \
+    "Inter" with the weight in `fontWeight`; `.font(.system(.body, design: .rounded))` is "SF Pro \
+    Rounded", `.serif` "New York", `.monospaced` "SF Mono"; `.italic()` or `fontStyle: "italic"` is \
+    `italic`. A font the app has not got (a licensed brand font) is the nearest Google family: say \
+    which. Images in an asset catalog or `require("./photo.jpg")` are placeholders here: an \
+    `unsplashPhoto` with a search for what the picture shows, or, when the person attaches the real \
+    file, that file.
     - Check your work against the real thing. Get a picture of the real screen (a simulator screenshot, \
     a preview, a test render) and call `compare_prototype` with its path: it returns the picture and \
     the prototype side by side. Fix what differs and compare again, for each state worth checking \

@@ -549,7 +549,9 @@ public final class LayerRenderer {
         case .image:
             let name = node.value(.image).textValue
             layer.contents = name.isEmpty ? nil : imageProvider?(name)
-            layer.backgroundColor = layer.contents == nil ? ColorValue(white: 0.9).cgColor : nil
+            // Gray says there is no picture; one that is named but on its way (a fetched
+            // photo) leaves what is behind it showing, such as the photo's color.
+            layer.backgroundColor = name.isEmpty ? ColorValue(white: 0.9).cgColor : nil
             layer.contentsGravity = .resizeAspectFill
             layer.cornerRadius = cornerRadius
             layer.cornerCurve = .continuous

@@ -335,6 +335,8 @@ public enum AssistantPrompt {
         A glow over everything that brightens while the card is open:
         \(shaderExample)
 
+        \(assets())
+
         # Views and their properties
 
         \(layers())
@@ -448,6 +450,74 @@ public enum AssistantPrompt {
      {"op":"connect","from":"Open","output":"on","to":"glow","input":"amount"}]
     """#
 
+    /// Icons, fonts and photos from outside the app, and which are shipped or fetched.
+    static func assets() -> String {
+        let systemFamilies = FontBook.systemFamilies.joined(separator: ", ")
+        let popular = GoogleFonts.families.prefix(24).map(\.name).joined(separator: ", ")
+        return """
+        # Icons, fonts and photos
+
+        Use these instead of drawing icons from shapes, leaving everything in the system font, or \
+        filling image views with flat color. Real icons, type and photos make a prototype read as real.
+
+        - Icons. A `symbol` view's `symbol` names one, from any of these sets: an SF Symbol by \
+        name (`heart.fill`, `chevron.right`); Lucide, `lucide:<name>` (\(LucideIcons.names.count) \
+        line icons, such as `lucide:heart`, `lucide:shopping-cart`, `lucide:arrow-right`); or Google's \
+        Material Symbols, `material:<name>`, `material-rounded:<name>` or `material-sharp:<name>` \
+        (\(MaterialSymbols.icons.count) icons with underscores, such as `material-rounded:home`, \
+        `material:shopping_cart`), with `.fill` for the filled glyph (`material-rounded:favorite.fill`). \
+        The view's `fill` is the icon's color and `fontWeight` its weight (Lucide's line width: 400 is \
+        Lucide's own 2-point line; Material 100 to 700). An SF Symbol is sized by the view's height; \
+        Lucide and Material fill the view's frame, so give the view the icon's size, usually 24 by 24. \
+        Pick one set for a prototype and keep to it. SF Symbols suit an iOS design; Lucide or Material \
+        a design that is not Apple's or one that comes from web or Android code. The `icon` patch \
+        names one from a Set, a Name and Filled, for a Symbol view's `symbol` input, which is how \
+        to swap icons with state (Filled from a `switch`).
+        - Type. A `text` or `textField` has `fontFamily` and `italic` beside `fontSize` and \
+        `fontWeight`. Empty is the system font, SF Pro. Apple families every Mac and iPhone has: \
+        \(systemFamilies) (the first four are designs of the system font). Any of Google Fonts' \
+        \(GoogleFonts.families.count) families can be named as well, as Google spells it; the most \
+        used are \(popular). The `font` patch names one for a cable (and says where it comes from). \
+        A Google family is fetched the first time it is used, so the first picture you take may still \
+        show the system font: look again a moment later before changing anything. Pick one or two \
+        families for a prototype, as a designer would.
+        - Photos. An `unsplashPhoto` patch finds photos on Unsplash (`query`, or empty for random; \
+        `orientation`; `index`, which takes a loop for a grid of photos) and gives `image` for an \
+        `image` view's `image` input, with `photographer` to credit in a caption, as Unsplash asks, and \
+        `color`, the photo's average color, for the `fill` of a view of the same frame behind the \
+        image, which shows while the photo loads. It needs the \
+        person's Unsplash access key in Settings > AI, and pictures you take of the prototype never \
+        load photos (`loading` stays on), so check a photo's layout by its frame; the person sees the \
+        photos in the Viewer. Use it for real-looking content: profile pictures, feeds, cards.
+        - Which is kept where: Lucide ships with tango. Material glyphs and Google Fonts are fetched \
+        from Google once and kept in the document, so they show offline and on the iPhone player. \
+        Apple's fonts are on every device and are never copied. Unsplash photos are always loaded \
+        live and never kept.
+
+        A like button with a Material heart that fills when tapped, a heading in a Google font, and a \
+        photo with its credit:
+        \(assetsExample)
+        """
+    }
+
+    static let assetsExample = #"""
+    [{"op":"add_view","kind":"text","name":"Title","ref":"title","properties":{"x":24,"y":80,"width":354,"height":44,"text":"Weekend in Lisbon","fontFamily":"Playfair Display","fontSize":34,"fontWeight":700}},
+     {"op":"add_view","kind":"view","name":"Photo Back","ref":"back","properties":{"x":24,"y":140,"width":354,"height":240,"cornerRadius":20}},
+     {"op":"add_view","kind":"image","name":"Photo","ref":"photo","properties":{"x":24,"y":140,"width":354,"height":240,"cornerRadius":20}},
+     {"op":"add_view","kind":"text","name":"Credit","ref":"credit","properties":{"x":24,"y":388,"width":354,"height":18,"fontSize":12,"textColor":"#8E8E93"}},
+     {"op":"add_patch","kind":"unsplashPhoto","name":"Lisbon Photo","ref":"unsplash","inputs":{"query":"lisbon street","orientation":"Landscape"}},
+     {"op":"connect","from":"unsplash","output":"image","to":"photo","input":"image"},
+     {"op":"connect","from":"unsplash","output":"color","to":"back","input":"fill"},
+     {"op":"connect","from":"unsplash","output":"photographer","to":"credit","input":"text"},
+     {"op":"add_view","kind":"symbol","name":"Like","ref":"like","properties":{"x":338,"y":156,"width":28,"height":28,"fill":"#FFFFFF"}},
+     {"op":"add_patch","kind":"tap","view":"like","ref":"likeTap"},
+     {"op":"add_patch","kind":"switch","name":"Liked","ref":"liked"},
+     {"op":"connect","from":"likeTap","output":"tapped","to":"liked","input":"flip"},
+     {"op":"add_patch","kind":"icon","name":"Heart","ref":"heart","inputs":{"set":"Material Symbols Rounded","name":"favorite"}},
+     {"op":"connect","from":"liked","output":"on","to":"heart","input":"filled"},
+     {"op":"connect","from":"heart","output":"symbol","to":"like","input":"symbol"}]
+    """#
+
     static func layers() -> String {
         var lines: [String] = []
         func ids(_ properties: [LayerProperty]) -> String {
@@ -470,7 +540,7 @@ public enum AssistantPrompt {
                 let options = property.options.isEmpty ? "" : " (\(property.options.joined(separator: " | ")))"
                 return "\(property.rawValue): \(property.type.rawValue)\(options)"
             }.joined(separator: "; "))
-        lines.append("`symbol` is an SF Symbol name. `fontWeight` runs 100 to 900. `rotation` is in degrees.")
+        lines.append("`symbol` is an SF Symbol name, or `lucide:`, `material:`, `material-rounded:` or `material-sharp:` and a name (see Icons, fonts and photos). `fontFamily` is empty for SF Pro, or a family's name. `fontWeight` runs 100 to 900. `rotation` is in degrees.")
         lines.append("`paddingTop`, `paddingBottom`, `paddingLeft` and `paddingRight` each follow `paddingVertical` or `paddingHorizontal` until set. A view whose `visible` is false is not there: not drawn, no room in a stack, no touches. Drive it with a bool to show and hide a view.")
         return lines.joined(separator: "\n")
     }
