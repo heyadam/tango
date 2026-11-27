@@ -38,6 +38,13 @@ final class SceneRendering {
     /// Emitters: many copies in one draw, lit as other things are but without rays.
     let particles: MTLRenderPipelineState
     let particlesBlended: MTLRenderPipelineState
+    /// Clouds: rays marched through their boxes, blended over what is behind.
+    let clouds: MTLRenderPipelineState
+    /// The noise clouds are worn by: 64 by 64 by 64, made once on the GPU, wrapping round.
+    let cloudNoise: MTLTexture
+    static let cloudNoiseSize = 64
+    /// Reads the noise between its texels and round its edges.
+    let noiseSampler: MTLSamplerState
     /// The passes after a scene is drawn: the brightest light picked out at a quarter of the
     /// size, blurred along one direction, and everything toned into the picture shown.
     let bright: MTLRenderPipelineState
@@ -62,12 +69,12 @@ final class SceneRendering {
         self.compiler = compiler
         let device = compiler.device
         var libraries: [Bool: MTLLibrary] = [:]
-        func make(traced: Bool, blending: Bool = false, vertex: String = "scene_vertex") throws -> MTLRenderPipelineState {
+        func make(traced: Bool, blending: Bool = false, vertex: String = "scene_vertex", fragment: String = "scene_fragment") throws -> MTLRenderPipelineState {
             let library = try libraries[traced] ?? device.makeLibrary(source: "#define TANGO_TRACED \(traced ? 1 : 0)\n" + SceneRendering.source, options: nil)
             libraries[traced] = library
             let descriptor = MTLRenderPipelineDescriptor()
             descriptor.vertexFunction = library.makeFunction(name: vertex)
-            descriptor.fragmentFunction = library.makeFunction(name: "scene_fragment")
+            descriptor.fragmentFunction = library.makeFunction(name: fragment)
             descriptor.colorAttachments[0].pixelFormat = SceneRendering.lightFormat
             if blending {
                 // Light times coverage over what is behind: premultiplied.
@@ -103,6 +110,9 @@ final class SceneRendering {
             blended = try make(traced: false, blending: true)
             particles = try make(traced: false, vertex: "particle_vertex")
             particlesBlended = try make(traced: false, blending: true, vertex: "particle_vertex")
+            clouds = try make(traced: false, blending: true, fragment: "cloud_fragment")
+            guard let noise = try SceneRendering.makeCloudNoise(library: libraries[false]!, compiler: compiler) else { return nil }
+            cloudNoise = noise
             let passes = try device.makeLibrary(source: SceneRendering.postSource, options: nil)
             bright = try post("post_bright", SceneRendering.lightFormat, in: passes)
             blur = try post("post_blur", SceneRendering.lightFormat, in: passes)
@@ -134,6 +144,12 @@ final class SceneRendering {
         clampedDescriptor.sAddressMode = .clampToZero
         clampedDescriptor.tAddressMode = .clampToZero
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 1, height: 1, mipmapped: false)
+        let noiseDescriptor = MTLSamplerDescriptor()
+        noiseDescriptor.minFilter = .linear
+        noiseDescriptor.magFilter = .linear
+        noiseDescriptor.sAddressMode = .repeat
+        noiseDescriptor.tAddressMode = .repeat
+        noiseDescriptor.rAddressMode = .repeat
         let keptDescriptor = MTLDepthStencilDescriptor()
         keptDescriptor.depthCompareFunction = .less
         keptDescriptor.isDepthWriteEnabled = false
@@ -141,6 +157,7 @@ final class SceneRendering {
               let depthKept = device.makeDepthStencilState(descriptor: keptDescriptor),
               let sampler = device.makeSamplerState(descriptor: samplerDescriptor),
               let clampedSampler = device.makeSamplerState(descriptor: clampedDescriptor),
+              let noiseSampler = device.makeSamplerState(descriptor: noiseDescriptor),
               let white = device.makeTexture(descriptor: textureDescriptor) else { return nil }
         var pixel: [UInt8] = [255, 255, 255, 255]
         white.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: &pixel, bytesPerRow: 4)
@@ -148,7 +165,34 @@ final class SceneRendering {
         self.depthKept = depthKept
         self.sampler = sampler
         self.clampedSampler = clampedSampler
+        self.noiseSampler = noiseSampler
         self.white = white
+    }
+
+    /// Makes the noise clouds are worn by, on the GPU, once: the same texture every time.
+    private static func makeCloudNoise(library: MTLLibrary, compiler: ShaderCompiler) throws -> MTLTexture? {
+        let device = compiler.device
+        guard let function = library.makeFunction(name: "cloud_noise") else { return nil }
+        let pipeline = try device.makeComputePipelineState(function: function)
+        let descriptor = MTLTextureDescriptor()
+        descriptor.textureType = .type3D
+        descriptor.pixelFormat = .rgba8Unorm
+        descriptor.width = cloudNoiseSize
+        descriptor.height = cloudNoiseSize
+        descriptor.depth = cloudNoiseSize
+        descriptor.usage = [.shaderRead, .shaderWrite]
+        descriptor.storageMode = .private
+        guard let texture = device.makeTexture(descriptor: descriptor),
+              let buffer = compiler.queue.makeCommandBuffer(), let encoder = buffer.makeComputeCommandEncoder() else { return nil }
+        encoder.setComputePipelineState(pipeline)
+        encoder.setTexture(texture, index: 0)
+        let group = MTLSize(width: 4, height: 4, depth: 4)
+        let groups = MTLSize(width: cloudNoiseSize / 4, height: cloudNoiseSize / 4, depth: cloudNoiseSize / 4)
+        encoder.dispatchThreadgroups(groups, threadsPerThreadgroup: group)
+        encoder.endEncoding()
+        buffer.commit()
+        buffer.waitUntilCompleted()
+        return texture
     }
 
     /// A shape made in code, as the GPU holds it; made once.
@@ -296,8 +340,10 @@ final class SceneRendering {
         var material: SIMD4<Float>
         /// Its own light, linear red, green, blue, already times its strength.
         var emission = SIMD4<Float>(repeating: 0)
-        /// x: index of refraction, y: softness.
+        /// x: index of refraction, y: softness, z: a cloud's seed.
         var surface = SIMD4<Float>(1.45, 0, 0, 0)
+        /// A cloud's density, coverage, fluffiness and drift.
+        var volume = SIMD4<Float>(repeating: 0)
 
         /// Whether it hides what is behind it wholly: it is drawn first, and rays stop at it.
         var isSolid: Bool { material.z >= 0.999 && material.w <= 0.001 && surface.y <= 0.001 }
@@ -344,7 +390,8 @@ final class SceneRendering {
         float4 color;
         float4 material;   // metalness, roughness, opacity, transmission
         float4 emission;
-        float4 surface;    // index of refraction, softness
+        float4 surface;    // index of refraction, softness, seed
+        float4 volume;     // a cloud's density, coverage, fluffiness, drift
     };
 
     struct SceneVertexIn {
@@ -555,6 +602,198 @@ final class SceneRendering {
             sum += scene.glowColor[index].rgb * saturate(facing) * reach;
         }
         return sum;
+    }
+
+
+    // MARK: Clouds
+
+    // A cloud: vapor in the object's box (from -0.5 to 0.5 each way), marched through
+    // along each ray. Its density is a cumulus (a long base and three billows over it,
+    // flattened beneath) worn away by noise read from a small 3D texture made once.
+    static float cloud_sdf(float3 p) {
+        // A long base, and over it billows of different sizes, the largest in the middle,
+        // joined with small fillets so each reads as its own.
+        float3 b = p - float3(0.0, -0.19, 0.0);
+        float3 a = float3(-0.27, 0.0, 0.0), c = float3(0.27, 0.0, 0.0);
+        float h = saturate(dot(b - a, c - a) / dot(c - a, c - a));
+        float d = length((b - (a + (c - a) * h)) * float3(1.0, 1.15, 1.0)) - 0.15;
+        float3 lobes[5] = { float3(-0.2, -0.05, 0.03), float3(-0.04, 0.08, -0.03), float3(0.13, 0.13, 0.02),
+                            float3(0.29, -0.04, 0.0), float3(0.03, -0.02, 0.17) };
+        float sizes[5] = { 0.16, 0.2, 0.19, 0.13, 0.14 };
+        for (int index = 0; index < 5; index++) {
+            float e = length(p - lobes[index]) - sizes[index];
+            float k = 0.06;
+            float m = saturate(0.5 + 0.5 * (e - d) / k);
+            d = mix(e, d, m) - k * m * (1.0 - m);
+        }
+        // Flatter underneath, as a cloud's base is.
+        return max(d, -(p.y + 0.3) * 1.5);
+    }
+
+    // How thick the vapor is at a point of the box, from 0. `detail` adds the small billows
+    // and wisps; the light march leaves them out. `depth` is how far inside the shape it is.
+    static float cloud_density(float3 p, constant ObjectUniforms &object, texture3d<float> noise, sampler pick, bool detail) {
+        float coverage = object.volume.y, fluffiness = object.volume.z, drift = object.volume.w, seed = object.surface.z;
+        float inside = -cloud_sdf(p) + (coverage - 0.5) * 0.22;
+        float shape = saturate(inside * 5.5 + 0.35);
+        if (shape <= 0.0) { return 0.0; }
+        float3 moved = float3(drift, drift * 0.12, seed * 0.37);
+        // Large billows: the cauliflower of a cumulus.
+        // The noise sits mostly between 0.55 and 0.9: spread to the whole range.
+        float low = saturate((noise.sample(pick, p * 2.3 + moved).r - 0.55) / 0.35);
+        float wear = (1.0 - low) * mix(0.45, 0.9, fluffiness);
+        float d = saturate((shape - wear) / max(1.0 - wear, 0.05));
+        if (detail && d > 0.0 && d < 0.95) {
+            // Small billows and wisps, only at the edge, where the vapor is thin.
+            float4 fine = noise.sample(pick, p * 4.6 + moved * 1.6 + float3(0.0, -drift * 0.25, 0.0));
+            float wisps = saturate((fine.g * 0.6 + fine.b * 0.3 + fine.a * 0.1 - 0.45) / 0.4);
+            float below = saturate(0.45 - (p.y + 0.5) * 1.4);
+            wisps = mix(wisps, 1.0 - wisps, below);
+            d = saturate(d - wisps * (1.0 - d) * mix(0.2, 0.6, fluffiness));
+        }
+        return d * smoothstep(0.0, 0.16, saturate(p.y + 0.5));
+    }
+
+    static float cloud_phase(float cosine, float g) {
+        float g2 = g * g;
+        return (1.0 - g2) / (4.0 * M_PI_F * pow(max(1.0 + g2 - 2.0 * g * cosine, 1e-4), 1.5));
+    }
+
+    static uint cloud_hash(uint x) {
+        x ^= x >> 16; x *= 0x7feb352du; x ^= x >> 15; x *= 0x846ca68bu; x ^= x >> 16;
+        return x;
+    }
+
+    fragment float4 cloud_fragment(SceneVertex in [[stage_in]],
+                                   constant SceneUniforms &scene [[buffer(1)]],
+                                   constant ObjectUniforms &object [[buffer(2)]],
+                                   depth2d<float> solid [[texture(1)]],
+                                   texture3d<float> noise [[texture(2)]],
+                                   sampler pick [[sampler(1)]]) {
+        // In the box's own space: from the eye, through this point of its near face.
+        float4x4 toBox = transpose(object.normal);
+        float3 eye = (toBox * float4(scene.camera.xyz, 1.0)).xyz;
+        float3 entry = (toBox * float4(in.world, 1.0)).xyz;
+        float3 way = normalize(entry - eye);
+        float3 inverse_ = 1.0 / way;
+        float3 near = (-0.5 - eye) * inverse_, far = (0.5 - eye) * inverse_;
+        float3 lowest = min(near, far), highest = max(near, far);
+        float enter = max(max(max(lowest.x, lowest.y), lowest.z), 0.0);
+        float leave = min(min(highest.x, highest.y), highest.z);
+        if (leave <= enter) { discard_fragment(); }
+        // How far a solid thing in front stops the march: its depth here.
+        float stop = solid.read(uint2(in.position.xy));
+
+        const int steps = 56;
+        float step_ = (leave - enter) / float(steps);
+        // Each pixel starts a different share of a step in, the same every time: no bands.
+        float jitter = float(cloud_hash(uint(in.position.x) * 1973u + uint(in.position.y) * 9277u) & 0xFFFFu) / 65536.0;
+        float3 worldWay = (object.model * float4(way, 0.0)).xyz;
+        float worldStep = length(worldWay) * step_;
+        float3 toLight = normalize(scene.lightDirection.xyz);
+        float3 lightWay = normalize((toBox * float4(toLight, 0.0)).xyz);
+        float lightStep = 0.035;
+        float lightWorld = length((object.model * float4(lightWay, 0.0)).xyz) * lightStep;
+        float cosine = dot(normalize(worldWay), toLight);
+        // Forward scattering for the silver lining, a little backward for the lit side.
+        float phase = mix(cloud_phase(cosine, 0.65), cloud_phase(cosine, -0.2), 0.35);
+        float sigma = 22.0 * max(object.volume.x, 0.0);
+        float3 sky = scene_surroundings(scene, float3(0.0, 1.0, 0.0), 1.0);
+        float3 ground = scene_surroundings(scene, float3(0.0, -1.0, 0.0), 1.0);
+        float3 albedo = object.color.rgb;
+
+        float through = 1.0;
+        float3 light = float3(0.0);
+        for (int index = 0; index < steps; index++) {
+            float t = enter + (float(index) + jitter) * step_;
+            float3 p = eye + way * t;
+            float4 world = object.model * float4(p, 1.0);
+            float4 clip = scene.viewProjection * world;
+            if (clip.z / clip.w > stop) { break; }
+            float d = cloud_density(p, object, noise, pick, true);
+            if (d <= 0.001) { continue; }
+            // The light that reaches this point through the cloud toward the light: six hops,
+            // each longer than the last, so it sees across the whole cloud.
+            float toward = 0.0, reach = 0.0;
+            for (int hop = 1; hop <= 6; hop++) {
+                float length_ = lightStep * float(hop);
+                reach += length_;
+                toward += cloud_density(p + lightWay * reach, object, noise, pick, false) * length_;
+            }
+            float reaching = exp(-sigma * toward * lightWorld / lightStep);
+            // Dark edges where light has had little cloud to scatter in (the powder effect).
+            float powder = 1.0 - exp(-sigma * d * 0.25);
+            float3 sun = scene.lightColor.rgb * reaching * phase * mix(1.0, powder * 2.0, 0.5) * 7.0;
+            // The sky above lights the top, the ground the base, and deeper inside less of
+            // either reaches: a blue-gray base under a bright top.
+            float height = saturate(p.y + 0.5);
+            float depthIn = saturate(-cloud_sdf(p) * 5.0);
+            float3 ambient = mix(mix(ground, sky, 0.65) * 0.22, sky * 0.8, smoothstep(0.1, 0.95, height)) * (1.0 - 0.65 * depthIn);
+            // Glowing things in the scene (lightning) light it from inside.
+            float3 glow = float3(0.0);
+            int count = int(scene.settings.z);
+            for (int g = 0; g < 4; g++) {
+                if (g >= count) { break; }
+                float3 to = scene.glowPlace[g].xyz - world.xyz;
+                float size = max(scene.glowPlace[g].w, 0.001);
+                glow += scene.glowColor[g].rgb * size * size / (dot(to, to) + size * size * 0.25);
+            }
+            float3 lit = (sun + ambient + glow) * albedo + object.emission.rgb;
+            float passing = exp(-sigma * d * worldStep);
+            light += through * lit * (1.0 - passing);
+            through *= passing;
+            if (through < 0.01) { through = 0.0; break; }
+        }
+        return float4(light * scene.settings.x, 1.0 - through);
+    }
+
+    // MARK: The noise clouds are worn by
+
+    static float3 noise_point(int3 cell, int period) {
+        int3 c = ((cell % period) + period) % period;
+        uint h = cloud_hash(uint(c.x) * 73856093u ^ uint(c.y) * 19349663u ^ uint(c.z) * 83492791u);
+        return float3(float(h & 1023u), float((h >> 10) & 1023u), float((h >> 20) & 1023u)) / 1023.0;
+    }
+
+    // Worley: near a scattered point is 1, far from every one 0. Wraps round its period.
+    static float noise_worley(float3 p, int period) {
+        float3 cell = floor(p);
+        float best = 9.0;
+        for (int z = -1; z <= 1; z++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int x = -1; x <= 1; x++) {
+                    int3 c = int3(cell) + int3(x, y, z);
+                    float3 at = float3(c) + noise_point(c, period);
+                    float3 o = p - at;
+                    best = min(best, dot(o, o));
+                }
+            }
+        }
+        return 1.0 - saturate(sqrt(best));
+    }
+
+    // Smooth value noise that wraps round its period.
+    static float noise_value(float3 p, int period) {
+        float3 cell = floor(p), f = fract(p);
+        float3 u = f * f * (3.0 - 2.0 * f);
+        int3 c = int3(cell);
+        float v000 = noise_point(c, period).x, v100 = noise_point(c + int3(1, 0, 0), period).x;
+        float v010 = noise_point(c + int3(0, 1, 0), period).x, v110 = noise_point(c + int3(1, 1, 0), period).x;
+        float v001 = noise_point(c + int3(0, 0, 1), period).x, v101 = noise_point(c + int3(1, 0, 1), period).x;
+        float v011 = noise_point(c + int3(0, 1, 1), period).x, v111 = noise_point(c + int3(1, 1, 1), period).x;
+        return mix(mix(mix(v000, v100, u.x), mix(v010, v110, u.x), u.y), mix(mix(v001, v101, u.x), mix(v011, v111, u.x), u.y), u.z);
+    }
+
+    // Red: Perlin-Worley, value noise shaped by billowing Worley; green, blue, alpha:
+    // Worley at three finer sizes. All wrap round the texture.
+    kernel void cloud_noise(texture3d<float, access::write> out [[texture(0)]], uint3 id [[thread_position_in_grid]]) {
+        if (id.x >= out.get_width() || id.y >= out.get_height() || id.z >= out.get_depth()) { return; }
+        float3 at = (float3(id) + 0.5) / float(out.get_width());
+        float value = noise_value(at * 4.0, 4) * 0.5 + noise_value(at * 8.0, 8) * 0.3 + noise_value(at * 16.0, 16) * 0.2;
+        float w1 = noise_worley(at * 4.0, 4), w2 = noise_worley(at * 8.0, 8), w3 = noise_worley(at * 16.0, 16);
+        float billows = w1 * 0.625 + w2 * 0.25 + w3 * 0.125;
+        float shaped = saturate((value - (billows - 1.0)) / (1.0 - (billows - 1.0)));
+        out.write(float4(shaped, w2, w3, noise_worley(at * 32.0, 32)), id);
     }
 
     #if TANGO_TRACED
@@ -938,6 +1177,8 @@ final class SceneSurface {
     private var samples: MTLTexture?
     private var light: MTLTexture?
     private var depth: MTLTexture?
+    /// The solid things' depth, one sample a pixel, for clouds to stop at.
+    private var solidDepth: MTLTexture?
     /// The glow: the brightest light at a quarter of the size and at an eighth, each with a
     /// second texture to blur through, and a black one standing in when there is no bloom.
     private var near: (MTLTexture, MTLTexture)?
@@ -993,6 +1234,8 @@ final class SceneSurface {
         var draws: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms)] = []
         // Emitters, drawn many times over and not seen by rays.
         var emitters: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms, particles: SceneRendering.ParticleUniforms, count: Int)] = []
+        // Clouds: their boxes, marched through, not seen by rays.
+        var clouds: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms)] = []
         var glows: [(place: SIMD3<Float>, size: Float, light: SIMD3<Float>)] = []
         for object in scene.objects where object.value("visible").boolValue {
             let placement = SceneMath.placement(of: object)
@@ -1002,6 +1245,8 @@ final class SceneSurface {
             let count = object.shape == .particles ? SceneRendering.ParticleUniforms.count(of: object) : 0
             if object.shape == .model || (object.shape == .particles && object.model != nil) {
                 made = parts(object)
+            } else if object.shape == .cloud {
+                made = rendering.geometry(for: .box).map { [ScenePart(geometry: $0)] } ?? []
             } else if object.shape == .particles {
                 let shape = SceneObject.Shape(named: object.value("particle").textValue).flatMap { SceneObject.Shape.particleShapes.contains($0) ? $0 : nil } ?? .sphere
                 made = rendering.geometry(for: shape).map { [ScenePart(geometry: $0)] } ?? []
@@ -1035,6 +1280,17 @@ final class SceneSurface {
                 if object.values["color"] != nil { part.picture = nil }
                 if object.shape == .particles {
                     if count > 0 { emitters.append((part, own, SceneRendering.ParticleUniforms(object), count)) }
+                } else if object.shape == .cloud {
+                    var own = own
+                    own.surface.z = Float(object.number("seed").whole & 0xFFFF)
+                    own.volume = SIMD4(
+                        SceneRendering.clamp(object.number("density"), 0, 100), SceneRendering.clamp(object.number("coverage"), 0, 1),
+                        SceneRendering.clamp(object.number("fluffiness"), 0, 1),
+                        Float(object.number("drift").isFinite ? object.number("drift").truncatingRemainder(dividingBy: 10_000) : 0)
+                    )
+                    // Drawn with the clear things, whatever its opacity.
+                    own.surface.y = max(own.surface.y, 1)
+                    clouds.append((part, own))
                 } else {
                     draws.append((part, own))
                 }
@@ -1051,20 +1307,35 @@ final class SceneSurface {
         let rays = scene.value("rayTracing").boolValue ? trace(draws) : nil
         uniforms.settings.y = rays == nil ? 0 : 1
         uniforms.settings.w = draws.contains { !$0.uniforms.isSolid } ? 1 : 0
-        guard let buffer = rendering.compiler.queue.makeCommandBuffer(),
-              let encoder = buffer.makeRenderCommandEncoder(descriptor: pass) else { return }
-        encoder.setRenderPipelineState(rays?.pipeline ?? rendering.pipeline)
-        encoder.setDepthStencilState(rendering.depth)
-        encoder.setCullMode(.none)
-        encoder.setFrontFacing(.counterClockwise)
-        encoder.setFragmentSamplerState(rendering.sampler, index: 0)
-        encoder.setVertexBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
-        encoder.setFragmentBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
-        if let rays {
-            encoder.setFragmentAccelerationStructure(rays.structure, bufferIndex: 3)
-            encoder.setFragmentBuffer(rays.instances, offset: 0, index: 4)
-            encoder.useResources(rays.used, usage: .read, stages: .fragment)
+        guard let buffer = rendering.compiler.queue.makeCommandBuffer(), let solidDepth else { return }
+        // With clouds the solid things are drawn in a pass of their own, whose depth is kept
+        // one sample a pixel for the clouds to stop at; the rest are drawn in a second.
+        let split = !clouds.isEmpty
+        if split {
+            pass.colorAttachments[0].resolveTexture = nil
+            pass.colorAttachments[0].storeAction = .store
+            pass.depthAttachment.storeAction = .storeAndMultisampleResolve
+            pass.depthAttachment.resolveTexture = solidDepth
+            pass.depthAttachment.depthResolveFilter = .sample0
         }
+        func open(_ descriptor: MTLRenderPassDescriptor) -> MTLRenderCommandEncoder? {
+            guard let encoder = buffer.makeRenderCommandEncoder(descriptor: descriptor) else { return nil }
+            encoder.setRenderPipelineState(rays?.pipeline ?? rendering.pipeline)
+            encoder.setDepthStencilState(rendering.depth)
+            encoder.setCullMode(.none)
+            encoder.setFrontFacing(.counterClockwise)
+            encoder.setFragmentSamplerState(rendering.sampler, index: 0)
+            encoder.setFragmentSamplerState(rendering.noiseSampler, index: 1)
+            encoder.setVertexBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<SceneRendering.SceneUniforms>.stride, index: 1)
+            if let rays {
+                encoder.setFragmentAccelerationStructure(rays.structure, bufferIndex: 3)
+                encoder.setFragmentBuffer(rays.instances, offset: 0, index: 4)
+                encoder.useResources(rays.used, usage: .read, stages: .fragment)
+            }
+            return encoder
+        }
+        guard var encoder = open(pass) else { return }
         // The nearest first: what is hidden behind it then fails the depth test before it is
         // shaded, and with rays shading is most of the cost.
         let eye = SIMD3(uniforms.camera.x, uniforms.camera.y, uniforms.camera.z)
@@ -1072,22 +1343,41 @@ final class SceneSurface {
             let place = draw.uniforms.model.columns.3
             return simd_distance_squared(eye, SIMD3(place.x, place.y, place.z))
         }
-        // Solid things first, the nearest first; then clear and soft ones over them, the
-        // furthest first, testing depth but not writing it.
-        typealias Item = (part: ScenePart, uniforms: SceneRendering.ObjectUniforms, particles: SceneRendering.ParticleUniforms?, count: Int)
-        let items: [Item] = draws.map { ($0.part, $0.uniforms, nil, 1) } + emitters.map { ($0.part, $0.uniforms, $0.particles, $0.count) }
+        // Solid things first, the nearest first; then clear and soft ones, emitters and
+        // clouds over them, the furthest first, testing depth but not writing it.
+        typealias Item = (part: ScenePart, uniforms: SceneRendering.ObjectUniforms, particles: SceneRendering.ParticleUniforms?, count: Int, cloud: Bool)
+        let items: [Item] = draws.map { ($0.part, $0.uniforms, nil, 1, false) }
+            + emitters.map { ($0.part, $0.uniforms, $0.particles, $0.count, false) }
+            + clouds.map { ($0.part, $0.uniforms, nil, 1, true) }
         func far(_ item: Item) -> Float { distance((item.part, item.uniforms)) }
         let solid = items.filter(\.uniforms.isSolid).sorted { far($0) < far($1) }
         let clear = items.filter { !$0.uniforms.isSolid }.sorted { far($0) > far($1) }
         for (index, item) in (solid + clear).enumerated() {
             let over = index >= solid.count
             if index == solid.count {
+                if split {
+                    encoder.endEncoding()
+                    let second = MTLRenderPassDescriptor()
+                    second.colorAttachments[0].texture = samples
+                    second.colorAttachments[0].resolveTexture = light
+                    second.colorAttachments[0].loadAction = .load
+                    second.colorAttachments[0].storeAction = .multisampleResolve
+                    second.depthAttachment.texture = depth
+                    second.depthAttachment.loadAction = .load
+                    second.depthAttachment.storeAction = .dontCare
+                    guard let next = open(second) else { return }
+                    encoder = next
+                    encoder.setFragmentTexture(solidDepth, index: 1)
+                    encoder.setFragmentTexture(rendering.cloudNoise, index: 2)
+                }
                 encoder.setDepthStencilState(rendering.depthKept)
                 // Of a clear or soft thing only the side toward the eye is drawn: its far side
                 // would be shaded again for little, and blend over its near side out of order.
                 encoder.setCullMode(.back)
             }
-            if var particles = item.particles {
+            if item.cloud {
+                encoder.setRenderPipelineState(rendering.clouds)
+            } else if var particles = item.particles {
                 encoder.setRenderPipelineState(over ? rendering.particlesBlended : rendering.particles)
                 encoder.setVertexBytes(&particles, length: MemoryLayout<SceneRendering.ParticleUniforms>.stride, index: 3)
             } else if over {
@@ -1245,13 +1535,18 @@ final class SceneSurface {
         deep.sampleCount = SceneRendering.samples
         deep.usage = .renderTarget
         deep.storageMode = .private
+        let single = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: width, height: height, mipmapped: false)
+        single.usage = [.renderTarget, .shaderRead]
+        single.storageMode = .private
         guard let samples = device.makeTexture(descriptor: color), let depth = device.makeTexture(descriptor: deep),
+              let solidDepth = device.makeTexture(descriptor: single),
               let light = plain(width, height),
               let near0 = plain((width + 3) / 4, (height + 3) / 4), let near1 = plain((width + 3) / 4, (height + 3) / 4),
               let wide0 = plain((width + 7) / 8, (height + 7) / 8), let wide1 = plain((width + 7) / 8, (height + 7) / 8),
               let dark = SceneSurface.black(device: device) else { return false }
         outputs = [first, second]
         self.light = light
+        self.solidDepth = solidDepth
         near = (near0, near1)
         wide = (wide0, wide1)
         self.dark = dark

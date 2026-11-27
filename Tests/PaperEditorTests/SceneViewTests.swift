@@ -471,4 +471,49 @@ import simd
         let lined = try Self.color(ViewerSnapshot.bitmap(of: soft), at: rim, in: soft)
         #expect(Self.brightness(lined) > Self.brightness(firm) + 60, "\(lined) against \(firm)")
     }
+
+    // MARK: Clouds
+
+    static func cloud(_ values: [String: Value] = [:], with others: [SceneObject] = []) -> PaperModel.Document {
+        let puff = SceneObject(id: "puff", name: "Puff", shape: .cloud, values: [
+            "scaleX": .number(1.6), "scaleY": .number(1.1), "scaleZ": .number(1), "color": .color(.white), "coverage": .number(0.65),
+        ].merging(values) { _, new in new })
+        var document = dark(others + [puff], values: ["environment": .text("Daylight")])
+        document.screen.children[0].properties[.fill] = .color(ColorValue(red: 0.1, green: 0.2, blue: 0.6))
+        return document
+    }
+
+    static let sky = [26, 51, 153]
+
+    @Test func aCloudFillsItsMiddleAndNotItsBox() throws {
+        try #require(ShaderCompiler.shared != nil)
+        let document = Self.cloud()
+        let picture = ViewerSnapshot.bitmap(of: document)
+        Self.keep(picture, "cloud")
+        // Its middle is bright vapor; the corners of its box are the sky behind.
+        #expect(Self.brightness(try Self.color(picture, at: SIMD3(0, 0, 0.3), in: document)) > 400)
+        #expect(ShaderViewTests.near(try Self.color(picture, at: SIMD3(-0.78, 0.53, 0.5), in: document), Self.sky))
+        #expect(ShaderViewTests.near(try Self.color(picture, at: SIMD3(0.78, -0.53, 0.5), in: document), Self.sky))
+        // The same picture every time, and with rays or without (rays do not see clouds).
+        let png = { (bitmap: NSBitmapImageRep?) in bitmap?.representation(using: .png, properties: [:]) }
+        #expect(png(picture) == png(ViewerSnapshot.bitmap(of: document)))
+        var untraced = document
+        untraced.screen.children[0].scene?.values["rayTracing"] = .bool(false)
+        #expect(png(picture) == png(ViewerSnapshot.bitmap(of: untraced)))
+        // Drift moves the vapor through it.
+        #expect(png(picture) != png(ViewerSnapshot.bitmap(of: Self.cloud(["drift": .number(0.4)]))))
+    }
+
+    @Test func aCloudGoesBehindWhatIsInFrontOfItEvenInsideItsBox() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // A red ball inside the cloud's box, near its front: the part of it nearer than the
+        // vapor shows, where a box drawn over everything would hide it.
+        let ball = SceneObject(id: "ball", name: "Ball", shape: .sphere, values: [
+            "z": .number(0.45), "scale": .number(0.25), "color": .color(Self.red), "emission": .number(1),
+        ])
+        let document = Self.cloud(["coverage": .number(0.7)], with: [ball])
+        let picture = ViewerSnapshot.bitmap(of: document)
+        Self.keep(picture, "cloud-ball")
+        #expect(Self.isMostly(0, try Self.color(picture, at: SIMD3(0, 0, 0.58), in: document)))
+    }
 }

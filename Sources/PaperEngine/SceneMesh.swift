@@ -81,7 +81,7 @@ public struct SceneMesh: Sendable, Hashable {
         case .cone: return cylinder(top: 0)
         case .torus: return torus()
         case .plane: return plane()
-        case .model, .particles: return nil
+        case .model, .particles, .cloud: return nil
         }
     }
 

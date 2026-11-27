@@ -490,6 +490,13 @@ public enum AssistantPrompt {
         - Vapor rather than a surface (clouds, smoke, foam): `softness` 0 to 1. Light wraps \
         round a soft thing, glows through its rim when it comes from behind, and its edge \
         thins out unevenly. Build a cloud from a few soft spheres (squashed with `scaleY`).
+        - Real clouds: an object with shape `cloud` is vapor filling its box (size it with \
+        `scaleX`, `scaleY`, `scaleZ`, wider than tall): a cumulus worn into billows and wisps, \
+        lit through its depth, bright on its sunlit side and blue-gray underneath. `density` \
+        (how much light it stops), `coverage` (0.3 a few puffs, 0.8 a heavy mass), \
+        `fluffiness` (how worn its edge is), `drift` (cable a slow clock to make it billow), \
+        `seed` for another cloud, `color` (white, gray for rain, dark for a storm). A glowing \
+        thing inside it (lightning) lights it from within. Rays do not see clouds.
         - Many small things at once (rain, snow, sparks, bubbles, confetti): an object with \
         shape `particles` draws `count` copies (up to 20,000) of the shape named by `particle` \
         (or of its `model`) in a box `spreadX` by `spreadY` by `spreadZ` round where it stands. \

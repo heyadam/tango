@@ -47,7 +47,7 @@ struct SceneSections: View {
                     store.removeSceneObject(object.id, from: layer.id)
                 }
             } header: {
-                Label(object.name, systemImage: object.shape == .model ? "shippingbox" : object.shape == .particles ? "sparkles" : "cube")
+                Label(object.name, systemImage: object.shape == .model ? "shippingbox" : object.shape == .particles ? "sparkles" : object.shape == .cloud ? "cloud" : "cube")
             } footer: {
                 if object.shape == .model, let problem = SceneSections.problem(with: object, store: store) {
                     Label(problem, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)

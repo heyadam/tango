@@ -30,6 +30,9 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         /// An emitter: many copies of a shape (its `particle` input) or of a model file,
         /// spread through a box and moving through it with time.
         case particles
+        /// A cloud of vapor filling its box: a cumulus shape worn away by noise, drawn by
+        /// marching rays through it, lit through its depth.
+        case cloud
 
         public var displayName: String {
             switch self {
@@ -43,13 +46,14 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
             case .plane: "Plane"
             case .model: "Model"
             case .particles: "Particles"
+            case .cloud: "Cloud"
             }
         }
 
         /// The shapes made in code, which need no file.
         public static let builtIn: [Shape] = allCases.filter { $0 != .model }
         /// What a particle can be: a shape made in code.
-        public static let particleShapes: [Shape] = builtIn.filter { $0 != .particles }
+        public static let particleShapes: [Shape] = builtIn.filter { $0 != .particles && $0 != .cloud }
 
         public init?(named name: String) {
             let wanted = name.lowercased().filter { $0.isLetter }
@@ -112,7 +116,7 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("softness", "Softness", .number(0)),
         SceneInput("emission", "Emission", .number(0)),
         SceneInput("emissionColor", "Emission Color", .color(ColorValue(white: 0.8))),
-    ] + particleInputs
+    ] + particleInputs + cloudInputs
 
     /// What only an emitter has. Each copy is placed by a hash of its number in a box
     /// `spread` across (the object's own space, so x, y, z, its turn and scale move and size
@@ -136,13 +140,32 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("seed", "Seed", .number(0)),
     ]
 
+    /// What only a cloud has (with `seed`, which picks another cloud of the same kind).
+    /// Its box is the object's size: `scaleX`, `scaleY`, `scaleZ`.
+    public static let cloudInputs: [SceneInput] = [
+        // How thick the vapor is: how much light it stops.
+        SceneInput("density", "Density", .number(1)),
+        // How much of the box it fills, from a few puffs to a heavy mass.
+        SceneInput("coverage", "Coverage", .number(0.5)),
+        // How much its edge is worn into billows and wisps.
+        SceneInput("fluffiness", "Fluffiness", .number(0.6)),
+        // Moves the noise through it: cable a slow clock to make it billow.
+        SceneInput("drift", "Drift", .number(0)),
+    ]
+
     /// The most copies an emitter draws.
     public static let mostParticles = 20_000
 
     /// The inputs that mean something for an object of this shape: an emitter's own only
     /// for an emitter.
     public static func inputs(for shape: Shape) -> [SceneInput] {
-        shape == .particles ? inputs : inputs.filter { input in !particleInputs.contains { $0.id == input.id } }
+        let own: [SceneInput] = switch shape {
+        case .particles: particleInputs
+        case .cloud: cloudInputs + particleInputs.filter { $0.id == "seed" }
+        default: []
+        }
+        let others = Set((particleInputs + cloudInputs).map(\.id)).subtracting(own.map(\.id))
+        return inputs.filter { !others.contains($0.id) }
     }
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }

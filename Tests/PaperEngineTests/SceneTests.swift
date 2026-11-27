@@ -261,4 +261,18 @@ import simd
         // It has no mesh of its own: it draws copies of another shape.
         #expect(SceneMesh.shape(.particles) == nil)
     }
+
+    @Test func aCloudHasInputsOfItsOwn() throws {
+        let cloud = SceneObject(id: "puff", name: "Puff", shape: .cloud)
+        #expect(SceneObject.Shape(named: "Cloud") == .cloud && SceneMesh.shape(.cloud) == nil)
+        #expect(!SceneObject.Shape.particleShapes.contains(.cloud))
+        let own = Set(SceneObject.inputs(for: .cloud).map(\.id))
+        #expect(own.isSuperset(of: ["density", "coverage", "fluffiness", "drift", "seed", "scaleX", "color"]))
+        #expect(!own.contains("count") && !SceneObject.inputs(for: .sphere).contains { $0.id == "coverage" })
+        #expect(!SceneObject.inputs(for: .particles).contains { $0.id == "fluffiness" })
+        #expect(cloud.number("density") == 1 && cloud.number("coverage") == 0.5)
+        let (document, view) = document(SceneUse(objects: [cloud]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        #expect(PatchRegistry.standard.ports(for: node).input("scene.puff.drift")?.name == "Puff Drift")
+    }
 }
