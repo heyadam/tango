@@ -19,9 +19,8 @@ extension SampleDocuments {
         public let weather: NodeID
 
         /// The ids of the things in the scene, which name their ports.
-        public static let sun = "sun", cloud = "cloud", backCloud = "back", frontCloud = "front", bolt = "bolt"
-        public static let drops = (0..<18).map { "drop\($0)" }
-        public static let flakes = (0..<12).map { "flake\($0)" }
+        public static let sun = "sun", corona = "corona", cloud = "cloud", backCloud = "back", frontCloud = "front"
+        public static let bolt = "bolt", rain = "rain", snow = "snow"
 
         public struct Day: Sendable {
             public let name: String, symbol: String, condition: String, temperature: Int, high: Int, low: Int
@@ -34,26 +33,26 @@ extension SampleDocuments {
             Day(name: "Sun", symbol: "cloud.bolt.rain.fill", condition: "Thunderstorms", temperature: 63, high: 66, low: 49),
             Day(name: "Mon", symbol: "cloud.snow.fill", condition: "Snow", temperature: 31, high: 34, low: 22),
         ]
-        /// Where a falling drop or flake is gone: it shrinks to nothing on its way here, just
-        /// above the forecast card, so nothing reaches the glass.
-        public static let fallsTo = -1.12
-        /// How far above `fallsTo` a drop or flake starts to shrink.
-        public static let fades = 0.42
-        /// Where one waits while it is not falling: above the picture.
-        public static let parked = 6.0
         /// How far up the middle of the scene view the weather stands.
         public static let lift = 0.3
+        /// The box rain and snow fall through: from inside the cloud's base down to just
+        /// above the forecast card, where the emitter shrinks them away (`top` and `bottom`
+        /// in the scene, below the weather's own lift).
+        public static let fallTop = 0.05, fallBottom = -1.18
+        /// How many raindrops and snowflakes the emitters draw at the most.
+        public static let raindrops = 1100, snowflakes = 800
     }
 
     /// A weather app with the weather itself in three dimensions, drawn by a scene view
-    /// with real light: a sun, puffy clouds, glossy raindrops, snowflakes and a lightning
-    /// bolt (`WeatherModels` makes the cloud, the drop and the bolt in code). A tap on a
-    /// day of the forecast changes the weather: one script eases everything from one sky
-    /// to the next (the sun sinking away, clouds gathering and darkening, the light, the
-    /// sky's colors) and runs the rain and snow, asking for frames only while something
-    /// moves. The sky behind is a shader that the same script drives: drifting cloud
-    /// layers, sun rays, distant rain and snow, and the flash of lightning. A drag turns the
-    /// scene round and it springs back.
+    /// with real light: a sun that glows and blooms behind a halo, soft clouds of vapor
+    /// (`WeatherModels` makes the cloud and the bolt in code), rain and snow as emitters of
+    /// a thousand glassy streaks or drifting flakes, and lightning that is white-hot, blooms
+    /// and lights the cloud from inside. A tap on a day of the forecast changes the weather:
+    /// one script eases everything from one sky to the next (the sun sinking away, clouds
+    /// gathering and darkening, the light swinging round, the bloom, the sky's colors) and
+    /// gives the emitters the clock as their time, asking for frames only while something
+    /// moves. The sky behind is a shader the same script drives: its gradient, haze and the
+    /// distant weather. A drag turns the scene round and it springs back.
     public static func weatherScene() -> WeatherScene {
         typealias S = ExampleStyle
         typealias W = WeatherScene
@@ -64,43 +63,55 @@ extension SampleDocuments {
 
         // MARK: The scene
 
-        let cloudScale = 1.75
-        let drops = W.drops.enumerated().map { index, id in
-            SceneObject(id: id, name: "Drop \(index + 1)", shape: .model, model: WeatherModels.dropName, values: [
-                "x": .number(dropX[index]), "y": .number(W.parked), "z": .number(dropZ[index]), "scale": .number(0),
-                "color": .color(ColorValue(hex: "#62B6FF")!), "roughness": .number(0.05),
-            ])
-        }
-        let flakes = W.flakes.enumerated().map { index, id in
-            SceneObject(id: id, name: "Flake \(index + 1)", shape: .sphere, values: [
-                "x": .number(dropX[index] * 0.9), "y": .number(W.parked), "z": .number(dropZ[index]), "scale": .number(0),
-                "color": .color(white), "roughness": .number(0.65),
+        let fallMiddle = W.lift + (W.fallTop + W.fallBottom) / 2, fallHeight = W.fallTop - W.fallBottom
+        func cloud(_ id: String, _ name: String, x: Double, y: Double, z: Double, scale: Double) -> SceneObject {
+            SceneObject(id: id, name: name, shape: .model, model: WeatherModels.cloudName, values: [
+                "x": .number(x), "y": .number(W.lift + y), "z": .number(z), "scale": .number(scale),
+                "color": .color(white), "roughness": .number(1), "softness": .number(0.85),
             ])
         }
         let scene = SceneUse(objects: [
+            // The sun glows: its light is far brighter than white, so it blooms, and it
+            // lights the clouds in front of it.
             SceneObject(id: W.sun, name: "Sun", shape: .sphere, values: [
-                "x": .number(0.42), "y": .number(W.lift + 0.32), "z": .number(-0.5), "scale": .number(0.9),
-                "color": .color(ColorValue(hex: "#FFB21C")!), "roughness": .number(0.22),
+                "x": .number(0.44), "y": .number(W.lift + 0.34), "z": .number(-0.5), "scale": .number(0.9),
+                "color": .color(ColorValue(hex: "#FFB21C")!), "roughness": .number(0.4),
+                "emission": .number(3.2), "emissionColor": .color(ColorValue(hex: "#FFB43C")!),
             ]),
-            SceneObject(id: W.backCloud, name: "Far Cloud", shape: .model, model: WeatherModels.cloudName, values: [
-                "x": .number(0.8), "y": .number(W.lift - 0.34), "z": .number(-0.7), "scale": .number(0.85),
-                "color": .color(white), "roughness": .number(0.9),
+            // A soft, faint halo round it.
+            SceneObject(id: W.corona, name: "Corona", shape: .sphere, values: [
+                "x": .number(0.44), "y": .number(W.lift + 0.34), "z": .number(-0.6), "scale": .number(1.45),
+                "color": .color(ColorValue(hex: "#FFD27A")!), "softness": .number(1), "opacity": .number(0.18),
+                "emission": .number(0.5),
             ]),
-            SceneObject(id: W.cloud, name: "Cloud", shape: .model, model: WeatherModels.cloudName, values: [
-                "x": .number(-0.2), "y": .number(W.lift), "scale": .number(cloudScale),
-                "color": .color(white), "roughness": .number(0.95),
-            ]),
-            SceneObject(id: W.frontCloud, name: "Near Cloud", shape: .model, model: WeatherModels.cloudName, values: [
-                "x": .number(-0.78), "y": .number(W.lift - 0.5), "z": .number(0.55), "scale": .number(0.62),
-                "color": .color(white), "roughness": .number(0.95),
-            ]),
+            cloud(W.backCloud, "Far Cloud", x: 0.95, y: -0.32, z: -0.8, scale: 0.8),
+            cloud(W.cloud, "Cloud", x: -0.12, y: -0.02, z: 0, scale: 1.75),
+            cloud(W.frontCloud, "Near Cloud", x: -0.82, y: -0.5, z: 0.55, scale: 0.6),
+            // Lightning: white-hot, so it blooms and lights the cloud it comes from.
             SceneObject(id: W.bolt, name: "Bolt", shape: .model, model: WeatherModels.boltName, values: [
-                "x": .number(0.08), "y": .number(W.lift - 0.5), "z": .number(0.35), "scale": .number(0),
-                "color": .color(ColorValue(hex: "#FFE25A")!), "roughness": .number(0.15),
+                "x": .number(0.08), "y": .number(W.lift - 0.72), "z": .number(0.35), "scale": .number(0), "scaleX": .number(0),
+                "color": .color(ColorValue(hex: "#FFF3B8")!), "emission": .number(4.5),
+                "emissionColor": .color(ColorValue(hex: "#E8EEFF")!),
             ]),
-        ] + drops + flakes, values: [
+            // Rain: glassy streaks, stretched along the way they fall.
+            SceneObject(id: W.rain, name: "Rain", shape: .particles, values: [
+                "y": .number(fallMiddle), "particle": .text("Sphere"), "count": .number(0),
+                "spreadX": .number(2.2), "spreadY": .number(fallHeight), "spreadZ": .number(1.1),
+                "velocityX": .number(-0.35), "velocityY": .number(-5.5), "size": .number(0.016), "sizeRange": .number(0.5),
+                "stretch": .number(8), "color": .color(ColorValue(hex: "#CFE6FF")!), "roughness": .number(0.05),
+                "opacity": .number(0.45), "seed": .number(3),
+            ]),
+            // Snow: small soft flakes drifting down and sideways.
+            SceneObject(id: W.snow, name: "Snow", shape: .particles, values: [
+                "y": .number(fallMiddle), "particle": .text("Sphere"), "count": .number(0),
+                "spreadX": .number(2.6), "spreadY": .number(fallHeight), "spreadZ": .number(1.3),
+                "velocityY": .number(-0.42), "size": .number(0.034), "sizeRange": .number(0.6), "sway": .number(0.09),
+                "color": .color(white), "roughness": .number(0.9), "softness": .number(0.6), "emission": .number(0.12),
+                "seed": .number(7),
+            ]),
+        ], values: [
             "cameraPitch": .number(6), "cameraDistance": .number(4.2), "environment": .text("Daylight"),
-            "lightYaw": .number(-35), "lightPitch": .number(40), "lightIntensity": .number(3.2),
+            "lightYaw": .number(38), "lightPitch": .number(34), "lightIntensity": .number(3.5), "bloom": .number(0.9),
         ])
         var stage = Layer.new(.scene, name: "Weather")
         stage.scene = scene
@@ -208,74 +219,64 @@ extension SampleDocuments {
             b.attach(PatchKind.tap, to: day.id, at: Point2(x: 48, y: 1032 + Double(index) * 192))
         }
         let clock = b.add("time", at: Point2(x: 336, y: 840), name: "Clock")
-        let fit = WeatherModels.fit(WeatherModels.cloud, scale: 1)
         let forecastJSON = W.forecast.map {
             "{\"condition\": \"\($0.condition)\", \"temperature\": \($0.temperature), \"high\": \($0.high), \"low\": \($0.low)}"
         }.joined(separator: ",\n              ")
-        let objectOutputs = W.drops.flatMap { ["\($0): \(W.parked)", "\($0)Size: 0"] }
-            + W.flakes.flatMap { ["\($0): \(W.parked)", "\($0)X: 0", "\($0)Size: 0"] }
         let weather = b.document.graph.add(PatchNode(
             kind: PatchKind.javascript, position: PatchGrid.snap(Point2(x: 624, y: 840)), name: "Weather",
             script: """
             // The weather of the chosen day. Each sky is a set of numbers and colors; every
             // frame they ease toward the chosen sky's, so one sky turns into the next and the
-            // light swings round as it does. Rain and snow start inside the cloud, fall, and
-            // shrink away above the card; a drop starts again only while it rains hard
-            // enough for it. In a storm, lightning flashes: the bolt shows, the light jumps
-            // up under the clouds and the sky lights. Moving runs the clock, and is off
-            // once all is still.
+            // light swings round as it does. Rain and snow are emitters whose time is the
+            // clock; how much falls eases in and out with the weather. In a storm, lightning
+            // flashes: the bolt and the cloud's heart glow, the light jumps, the sky lights.
+            // Moving runs the clock, and is off once all is still.
             inputs = { clock: 0, day0: pulse(), day1: pulse(), day2: pulse(), day3: pulse(), day4: pulse() };
             outputs = { moving: false, temperature: "", condition: "", range: "", pillX: \(cardX + 8),
                         skyTop: color("#3A86D6"), skyBottom: color("#A3CBEF"), glow: 0, sunPoint: point(261, 360),
                         rays: 0, haze: 0, skyRain: 0, skySnow: 0, flash: 0, skyClock: 0, cardTint: color("#10203D33"),
-                        surroundings: "Daylight", lightYaw: -35, lightPitch: 40, intensity: 3.2, exposure: 1,
-                        lightColor: color("#FFFFFF"), sunX: 0, sunY: 0, sunScale: 0, cloudX: 0, cloudY: 0,
-                        cloudScale: 0, cloudColor: color("#FFFFFF"), backX: 0, backY: 0, backScale: 0,
-                        backColor: color("#FFFFFF"), frontX: 0, frontY: 0, frontScale: 0, frontColor: color("#FFFFFF"),
-                        boltScale: 0, boltY: 0,
-                        \(objectOutputs.joined(separator: ", ")) };
+                        surroundings: "Daylight", lightYaw: 38, lightPitch: 34, intensity: 3.5, exposure: 1, bloom: 0.9,
+                        lightColor: color("#FFFFFF"), sunX: 0, sunY: 0, sunScale: 0, sunGlow: 0, coronaScale: 0,
+                        cloudX: 0, cloudY: 0, cloudScale: 0, cloudColor: color("#FFFFFF"), cloudGlow: 0,
+                        backX: 0, backY: 0, backScale: 0, backColor: color("#FFFFFF"),
+                        frontX: 0, frontY: 0, frontScale: 0, frontColor: color("#FFFFFF"),
+                        boltScale: 0, rainCount: 0, rainSize: 0, snowCount: 0, snowSize: 0, fallTime: 0 };
 
             const days = [
               \(forecastJSON)
             ];
             // Each sky: where the sun and the three clouds are and how large, their colors,
             // how hard it rains or snows, the sky shader's colors, glow, rays and haze, the
-            // card's tint, and the light: its direction, strength, color, the surroundings
-            // and the exposure.
+            // card's tint, the bloom, and the light: its direction, strength, color, the
+            // surroundings and the exposure.
             const skies = {
-              Sunny:           { sunX: 0, sunY: 0.06, sunScale: 1.2, cloudX: -1.4, cloudY: -0.2, cloudScale: 0, cloud: "#FFFFFF",
-                                 backX: 1.3, backY: -0.6, backScale: 0, back: "#FFFFFF", frontX: -1.3, frontY: -0.6, frontScale: 0, front: "#FFFFFF",
-                                 rain: 0, snow: 0, storm: 0, top: "#0F5FD6", bottom: "#78BDFF", glow: 1.15, rays: 1, haze: 0.12,
-                                 card: "#0B2A5A40", yaw: -42, pitch: 28, intensity: 3.8, exposure: 1.12, lamp: "#FFE7BE", surroundings: "Daylight" },
-              "Partly Cloudy": { sunX: 0.44, sunY: 0.34, sunScale: 0.9, cloudX: -0.12, cloudY: -0.02, cloudScale: 1.75, cloud: "#FFFFFF",
-                                 backX: 0.95, backY: -0.32, backScale: 0.8, back: "#EAF3FF", frontX: -0.82, frontY: -0.5, frontScale: 0.6, front: "#FFFFFF",
-                                 rain: 0, snow: 0, storm: 0, top: "#2C78D0", bottom: "#9DC9F2", glow: 0.75, rays: 0.45, haze: 0.4,
-                                 card: "#0E2B5238", yaw: 38, pitch: 34, intensity: 3.5, exposure: 1.05, lamp: "#FFF0D2", surroundings: "Daylight" },
-              Rain:            { sunX: 0.5, sunY: 0.7, sunScale: 0, cloudX: 0.02, cloudY: 0.1, cloudScale: 1.9, cloud: "#E3E9F0",
-                                 backX: 0.78, backY: 0.44, backScale: 1.15, back: "#AEB9C8", frontX: -0.72, frontY: -0.14, frontScale: 0.8, front: "#D3DBE5",
-                                 rain: 0.85, snow: 0, storm: 0, top: "#3E4B60", bottom: "#7F8EA3", glow: 0, rays: 0, haze: 0.9,
-                                 card: "#1A253866", yaw: -8, pitch: 68, intensity: 2.7, exposure: 1.08, lamp: "#DCE6F5", surroundings: "Studio" },
-              Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, cloudX: 0.02, cloudY: 0.12, cloudScale: 2.02, cloud: "#757A88",
-                                 backX: 0.8, backY: 0.48, backScale: 1.25, back: "#4A4E5C", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: "#5A5F6E",
-                                 rain: 1, snow: 0, storm: 1, top: "#11141F", bottom: "#2E3446", glow: 0, rays: 0, haze: 1,
-                                 card: "#0A0E1A80", yaw: 18, pitch: 72, intensity: 2.2, exposure: 1.3, lamp: "#A8B8E8", surroundings: "Night" },
-              Snow:            { sunX: 0.5, sunY: 0.7, sunScale: 0, cloudX: 0, cloudY: 0.1, cloudScale: 1.9, cloud: "#FAFCFF",
-                                 backX: -0.8, backY: 0.46, backScale: 1.05, back: "#D6E0EC", frontX: 0.74, frontY: -0.14, frontScale: 0.76, front: "#F2F6FB",
-                                 rain: 0, snow: 1, storm: 0, top: "#5F7898", bottom: "#B4C4D8", glow: 0.15, rays: 0, haze: 0.7,
-                                 card: "#21354F55", yaw: -24, pitch: 46, intensity: 3.1, exposure: 1.2, lamp: "#F3F7FF", surroundings: "Studio" },
+              Sunny:           { sunX: 0, sunY: 0.04, sunScale: 1.05, sunGlow: 2.4, cloudX: -1.5, cloudY: -0.2, cloudScale: 0, cloud: "#FFFFFF",
+                                 backX: 1.4, backY: -0.6, backScale: 0, back: "#FFFFFF", frontX: -1.4, frontY: -0.6, frontScale: 0, front: "#FFFFFF",
+                                 rain: 0, snow: 0, storm: 0, top: "#0D5BD3", bottom: "#76BBFF", glow: 0.9, rays: 0.9, haze: 0.1,
+                                 card: "#0B2A5A40", bloom: 0.8, yaw: -40, pitch: 30, intensity: 3.6, exposure: 1.08, lamp: "#FFE9C4", surroundings: "Daylight" },
+              "Partly Cloudy": { sunX: 0.46, sunY: 0.26, sunScale: 0.82, sunGlow: 2.2, cloudX: -0.12, cloudY: -0.02, cloudScale: 1.75, cloud: "#FFFFFF",
+                                 backX: 0.95, backY: -0.32, backScale: 0.8, back: "#EEF5FF", frontX: -0.82, frontY: -0.5, frontScale: 0.6, front: "#FFFFFF",
+                                 rain: 0, snow: 0, storm: 0, top: "#2A76CF", bottom: "#9CC8F2", glow: 0.55, rays: 0.35, haze: 0.35,
+                                 card: "#0E2B5238", bloom: 0.6, yaw: 38, pitch: 34, intensity: 3.5, exposure: 1.02, lamp: "#FFF0D2", surroundings: "Daylight" },
+              Rain:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.1, cloudScale: 1.9, cloud: "#DCE3EC",
+                                 backX: 0.78, backY: 0.44, backScale: 1.15, back: "#A9B5C5", frontX: -0.72, frontY: -0.14, frontScale: 0.8, front: "#C9D2DE",
+                                 rain: 0.75, snow: 0, storm: 0, top: "#3B485D", bottom: "#7C8BA0", glow: 0, rays: 0, haze: 0.8,
+                                 card: "#1A253866", bloom: 0.5, yaw: -10, pitch: 66, intensity: 2.8, exposure: 1.1, lamp: "#DCE6F5", surroundings: "Studio" },
+              Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.12, cloudScale: 2.02, cloud: "#6E7486",
+                                 backX: 0.8, backY: 0.48, backScale: 1.25, back: "#474B5A", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: "#585D6C",
+                                 rain: 1, snow: 0, storm: 1, top: "#10131D", bottom: "#2B3142", glow: 0, rays: 0, haze: 0.9,
+                                 card: "#0A0E1A80", bloom: 0.7, yaw: 18, pitch: 70, intensity: 2.2, exposure: 1.3, lamp: "#A8B8E8", surroundings: "Night" },
+              Snow:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0, cloudY: 0.1, cloudScale: 1.9, cloud: "#FAFCFF",
+                                 backX: -0.8, backY: 0.46, backScale: 1.05, back: "#D4DEEA", frontX: 0.74, frontY: -0.14, frontScale: 0.76, front: "#F2F6FB",
+                                 rain: 0, snow: 1, storm: 0, top: "#5D7696", bottom: "#B2C2D6", glow: 0.1, rays: 0, haze: 0.6,
+                                 card: "#21354F55", bloom: 0.6, yaw: -24, pitch: 46, intensity: 3.1, exposure: 1.18, lamp: "#F3F7FF", surroundings: "Studio" },
             };
-            const numbers = ["sunX", "sunY", "sunScale", "cloudX", "cloudY", "cloudScale", "backX", "backY", "backScale",
-                             "frontX", "frontY", "frontScale", "rain", "snow", "storm", "glow", "rays", "haze",
+            const numbers = ["sunX", "sunY", "sunScale", "sunGlow", "cloudX", "cloudY", "cloudScale", "backX", "backY", "backScale",
+                             "frontX", "frontY", "frontScale", "rain", "snow", "storm", "glow", "rays", "haze", "bloom",
                              "yaw", "pitch", "intensity", "exposure"];
             const colors = ["cloud", "back", "front", "top", "bottom", "lamp", "card"];
-
-            // Where each drop falls, and how near.
-            const dropX = [\(dropX.map { "\($0)" }.joined(separator: ", "))];
-            const dropZ = [\(dropZ.map { "\($0)" }.joined(separator: ", "))];
-            const below = \(fit.below);   // the cloud's base, below its middle, per unit of scale
-            const fallsTo = \(W.fallsTo), fades = \(W.fades), parked = \(W.parked);
-            // The weather stands a little above the middle of the scene view.
             const lift = \(W.lift);
+            const raindrops = \(W.raindrops), snowflakes = \(W.snowflakes);
 
             function rgb(hex) {
               const c = [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16));
@@ -284,8 +285,6 @@ extension SampleDocuments {
             function hex(c) { return "#" + c.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0")).join(""); }
 
             let chosen = 0, now = null, last = null;
-            let drops = dropX.map(() => ({ y: parked, wait: -1 }));
-            let flakes = dropX.slice(0, \(W.flakes.count)).map(() => ({ y: parked, wait: -1 }));
 
             function evaluate(inputs, outputs) {
               [inputs.day0, inputs.day1, inputs.day2, inputs.day3, inputs.day4].forEach((tapped, i) => { if (tapped) chosen = i; });
@@ -297,7 +296,7 @@ extension SampleDocuments {
               const dt = last === null ? 0 : Math.max(0, Math.min(0.1, inputs.clock - last));
               last = inputs.clock;
               // Ease every number and color a share of the way, so they arrive together.
-              const share = 1 - Math.exp(-3.6 * dt);
+              const share = 1 - Math.exp(-3.4 * dt);
               let still = true;
               numbers.forEach(k => {
                 now[k] += (target[k] - now[k]) * share;
@@ -309,37 +308,14 @@ extension SampleDocuments {
               });
               now.pill += (chosen - now.pill) * (1 - Math.exp(-14 * dt));
               if (Math.abs(chosen - now.pill) > 0.001) still = false; else now.pill = chosen;
+              // While anything falls, the clock must run.
+              if (now.rain > 0.001 || now.snow > 0.001 || now.storm > 0.001) still = false;
 
-              // Rain and snow start inside the cloud's base, fall, and shrink away above the card.
-              const base = lift + now.cloudY - below * now.cloudScale * 0.6;
-              function fall(items, amount, speed) {
-                items.forEach((item, i) => {
-                  const wanted = amount > (i + 0.5) / items.length * 0.95;
-                  if (item.y === parked) {
-                    if (!wanted) return;
-                    if (item.wait < 0) item.wait = (i * 0.37) % 1;
-                    item.wait -= dt * speed / (base - fallsTo);
-                    if (item.wait <= 0) { item.y = base; item.wait = -1; }
-                  } else {
-                    item.y -= speed * dt;
-                    if (item.y < fallsTo) item.y = wanted ? base + (item.y - fallsTo) : parked;
-                  }
-                  if (item.y !== parked || item.wait >= 0) still = false;
-                });
-              }
-              function size(y, full) {
-                if (y === parked) return 0;
-                const t = Math.max(0, Math.min(1, (y - fallsTo) / fades));
-                return full * t * t * (3 - 2 * t);
-              }
-              fall(drops, now.rain, 2.5 + 0.9 * now.storm);
-              fall(flakes, now.snow, 0.5);
-
-              // Lightning: a double flash every few seconds while it storms, fading out fast.
-              const beat = inputs.clock % 2.8;
+              // Lightning: a double flash every few seconds once the storm has set in, fading
+              // out fast. The first comes a little after the storm is chosen, not at once.
+              const beat = (inputs.clock + 1.3) % 2.8;
               const pulse = (at, length) => beat > at && beat < at + length ? 1 - (beat - at) / length : 0;
-              const flash = now.storm > 0.5 ? Math.max(pulse(0, 0.16), pulse(0.24, 0.22)) : 0;
-              if (now.storm > 0.001) still = false;
+              const flash = now.storm > 0.85 ? Math.max(pulse(0, 0.16), pulse(0.24, 0.22)) : 0;
 
               outputs.moving = !still;
               outputs.temperature = day.temperature + "°";
@@ -347,13 +323,14 @@ extension SampleDocuments {
               outputs.range = "H:" + day.high + "°  L:" + day.low + "°";
               outputs.pillX = \(cardX + 8) + now.pill * \(tileWidth);
               const lit = (c, by) => color(hex(c.map(v => v + (205 - v) * by)));
-              outputs.skyTop = lit(now.top, flash * 0.35);
-              outputs.skyBottom = lit(now.bottom, flash * 0.25);
+              outputs.skyTop = lit(now.top, flash * 0.3);
+              outputs.skyBottom = lit(now.bottom, flash * 0.2);
               outputs.glow = now.glow;
               outputs.rays = now.rays;
               outputs.haze = now.haze;
-              outputs.skyRain = now.rain;
-              outputs.skySnow = now.snow;
+              // The sky's own distant rain and snow, behind the emitters, a little.
+              outputs.skyRain = now.rain * 0.6;
+              outputs.skySnow = now.snow * 0.6;
               outputs.flash = flash;
               outputs.skyClock = inputs.clock;
               outputs.cardTint = color(hex(now.card));
@@ -363,24 +340,28 @@ extension SampleDocuments {
               // A flash lights the clouds from low in front, bright and cold.
               outputs.lightYaw = now.yaw;
               outputs.lightPitch = now.pitch + (-30 - now.pitch) * flash;
-              outputs.intensity = now.intensity + 7 * flash;
-              outputs.exposure = now.exposure + 0.35 * flash;
+              outputs.intensity = now.intensity + 3.5 * flash;
+              outputs.exposure = now.exposure + 0.15 * flash;
+              outputs.bloom = now.bloom;
               outputs.lightColor = color(hex(now.lamp.map(v => v + (235 - v) * flash)));
               outputs.sunX = now.sunX; outputs.sunY = lift + now.sunY; outputs.sunScale = now.sunScale;
+              outputs.sunGlow = now.sunGlow;
+              outputs.coronaScale = now.sunScale * 1.3;
               outputs.cloudX = now.cloudX; outputs.cloudY = lift + now.cloudY; outputs.cloudScale = now.cloudScale;
               outputs.cloudColor = color(hex(now.cloud));
+              // The cloud's heart glows with the flash.
+              outputs.cloudGlow = 0.3 * flash;
               outputs.backX = now.backX; outputs.backY = lift + now.backY; outputs.backScale = now.backScale;
               outputs.backColor = color(hex(now.back));
               outputs.frontX = now.frontX; outputs.frontY = lift + now.frontY; outputs.frontScale = now.frontScale;
               outputs.frontColor = color(hex(now.front));
-              outputs.boltScale = 0.95 * (flash > 0.3 ? 1 : 0);
-              outputs.boltY = lift - 0.72;
-              drops.forEach((d, i) => { outputs["drop" + i] = d.y; outputs["drop" + i + "Size"] = size(d.y, 0.17); });
-              flakes.forEach((f, i) => {
-                outputs["flake" + i] = f.y;
-                outputs["flake" + i + "X"] = dropX[i] * 0.95 + 0.08 * Math.sin(inputs.clock * 1.3 + i * 1.7);
-                outputs["flake" + i + "Size"] = size(f.y, 0.1 + 0.05 * ((i * 7) % 3));
-              });
+              outputs.boltScale = flash > 0.3 ? 0.95 : 0;
+              // How much falls: more drops, and each fuller, as the rain sets in.
+              outputs.rainCount = now.rain > 0.005 ? Math.round(raindrops * Math.min(1, now.rain)) : 0;
+              outputs.rainSize = 0.016 * Math.min(1, now.rain * 1.6);
+              outputs.snowCount = now.snow > 0.005 ? Math.round(snowflakes * Math.min(1, now.snow)) : 0;
+              outputs.snowSize = 0.034 * Math.min(1, now.snow * 1.6);
+              outputs.fallTime = inputs.clock;
             }
             """
         ))
@@ -392,17 +373,20 @@ extension SampleDocuments {
         // The scene's own inputs, and each object's.
         let sceneInputs: [(String, String)] = [
             ("surroundings", "environment"), ("lightYaw", "lightYaw"), ("lightPitch", "lightPitch"),
-            ("intensity", "lightIntensity"), ("lightColor", "lightColor"), ("exposure", "exposure"),
+            ("intensity", "lightIntensity"), ("lightColor", "lightColor"), ("exposure", "exposure"), ("bloom", "bloom"),
         ]
         for (output, input) in sceneInputs { b.connect(weather, output, to: view, scenePort(input)) }
         let objectInputs: [(String, String, String)] = [
-            ("sunX", W.sun, "x"), ("sunY", W.sun, "y"), ("sunScale", W.sun, "scale"),
+            ("sunX", W.sun, "x"), ("sunY", W.sun, "y"), ("sunScale", W.sun, "scale"), ("sunGlow", W.sun, "emission"),
+            ("sunX", W.corona, "x"), ("sunY", W.corona, "y"), ("coronaScale", W.corona, "scale"),
+            ("cloudGlow", W.cloud, "emission"),
             ("cloudX", W.cloud, "x"), ("cloudY", W.cloud, "y"), ("cloudScale", W.cloud, "scale"), ("cloudColor", W.cloud, "color"),
             ("backX", W.backCloud, "x"), ("backY", W.backCloud, "y"), ("backScale", W.backCloud, "scale"), ("backColor", W.backCloud, "color"),
             ("frontX", W.frontCloud, "x"), ("frontY", W.frontCloud, "y"), ("frontScale", W.frontCloud, "scale"), ("frontColor", W.frontCloud, "color"),
-            ("boltScale", W.bolt, "scale"), ("boltY", W.bolt, "y"),
-        ] + W.drops.flatMap { [($0, $0, "y"), ($0 + "Size", $0, "scale")] }
-            + W.flakes.flatMap { [($0, $0, "y"), ($0 + "X", $0, "x"), ($0 + "Size", $0, "scale")] }
+            ("boltScale", W.bolt, "scale"), ("boltScale", W.bolt, "scaleX"),
+            ("rainCount", W.rain, "count"), ("rainSize", W.rain, "size"), ("fallTime", W.rain, "time"),
+            ("snowCount", W.snow, "count"), ("snowSize", W.snow, "size"), ("fallTime", W.snow, "time"),
+        ]
         for (output, object, input) in objectInputs { b.connect(weather, output, to: view, objectPort(object, input)) }
         // The sky, the words and the pill.
         b.connect(weather, "skyTop", to: skyView, ShaderUse.portID("top"))
@@ -426,10 +410,6 @@ extension SampleDocuments {
             temperature: temperature.id, condition: condition.id, range: range.id, weather: weather
         )
     }
-
-    /// Where the drops and flakes fall across the cloud, and how near.
-    private static let dropX = [-0.7, -0.5, -0.32, -0.12, 0.06, 0.24, 0.42, 0.6, 0.76, -0.2, 0.33, -0.6, 0.15, 0.68, -0.42, 0.5, -0.02, 0.86]
-    private static let dropZ = [0.05, -0.1, 0.14, -0.05, 0.12, -0.12, 0.02, 0.15, -0.08, 0.2, -0.15, 0.18, -0.02, 0.1, 0.25, 0.22, 0.28, -0.04]
 
     /// The sky: a gradient from top to bottom; a warm glow and slow rays round the sun;
     /// soft cloud layers that drift; distant rain streaks and snow, which make the weather

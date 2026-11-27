@@ -393,18 +393,29 @@ import simd
 
     @Test func anEmitterScattersCopiesThroughItsBoxAsAFunctionOfTime() throws {
         try #require(ShaderCompiler.shared != nil)
-        // The first time a process draws a crowded scene, a few pixels where things overlap
-        // come out a level apart from every later picture of it (so it was before emitters,
-        // too): draw it once first.
-        _ = ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0))
         let first = ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0))
         Self.keep(first, "particles")
         // Copies all over the box, not one lump.
         #expect(Self.redPixels(first) > 300)
-        // The same time is the same picture; another time moves them.
-        let png = { (bitmap: NSBitmapImageRep?) in bitmap?.representation(using: .png, properties: [:]) }
-        #expect(png(first) == png(ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0))))
-        #expect(png(first) != png(ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0.3))))
+        // The same time is the same picture; another time moves them. Where many copies
+        // overlap, the GPU can resolve a near tie between two of them differently from one
+        // drawing to the next (as it could before emitters, for any crowded scene): a few
+        // pixels a level or two apart. So: the same but for those, and far from another time.
+        func apart(_ a: NSBitmapImageRep?, _ b: NSBitmapImageRep?) -> (pixels: Int, most: Int) {
+            var pixels = 0, most = 0
+            for x in 0..<200 {
+                for y in 0..<200 {
+                    let one = ShaderViewTests.color(a, x, y), two = ShaderViewTests.color(b, x, y)
+                    guard one != two else { continue }
+                    pixels += 1
+                    most = max(most, zip(one, two).map { abs($0 - $1) }.max() ?? 0)
+                }
+            }
+            return (pixels, most)
+        }
+        let again = apart(first, ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0)))
+        #expect(again.pixels < 40 && again.most <= 2, "\(again)")
+        #expect(apart(first, ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0.3))).pixels > 1000)
         // None draws nothing; a count past the limit is held to it.
         #expect(Self.redPixels(ViewerSnapshot.bitmap(of: Self.emitter(count: 0, time: 0))) == 0)
         #expect(Self.redPixels(ViewerSnapshot.bitmap(of: Self.emitter(count: 1e12, time: 0, values: ["size": .number(0.01)]))) >= 0)

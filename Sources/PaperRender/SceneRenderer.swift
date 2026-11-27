@@ -401,10 +401,13 @@ final class SceneRendering {
         float3 box = max(particles.spread.xyz, float3(1e-4));
         float time = particles.timing.x;
         float3 at = fract(start + particles.velocity.xyz * time / box);
+        // Shrunk near every face of the box, so it has no hard edge: most near where copies
+        // enter and leave, along the way they move, so wrapping round never pops.
         float fade = 1.0;
         for (int axis = 0; axis < 3; axis++) {
-            if (abs(particles.velocity[axis]) > 1e-6 && particles.spread[axis] > 1e-4) {
-                fade = min(fade, smoothstep(0.0, 0.12, min(at[axis], 1.0 - at[axis])));
+            if (particles.spread[axis] > 1e-4) {
+                float edge = min(at[axis], 1.0 - at[axis]);
+                fade = min(fade, smoothstep(0.0, abs(particles.velocity[axis]) > 1e-6 ? 0.12 : 0.2, edge));
             }
         }
         float3 place = (at - 0.5) * particles.spread.xyz;
@@ -643,7 +646,10 @@ final class SceneRendering {
                 // Most of a picture is wholly in the light or wholly out of it. Six of the
                 // places, from the middle to the rim, are asked first; only where they
                 // disagree, at a shadow's edge, are the other eighteen.
-                float arriving = 0.0;
+                // Through clear and soft things light arrives in part, so the six agree when
+                // they are within a little of one another, not only when all or none arrive.
+                // A soft thing needs no sharper shadow than they give.
+                float arriving = 0.0, least = 1.0, most = 0.0;
                 float start = 2.0 * M_PI_F * scene_noise(in.position.xy, 0.0);
                 for (int pass = 0; pass < 2; pass++) {
                     for (int index = 0; index < 24; index++) {
@@ -652,10 +658,13 @@ final class SceneRendering {
                         float turn = start + float(index) * 2.3999632;
                         float out = sqrt((float(index) + 0.5) / 24.0) * 0.045;
                         float3 toward = normalize(toLight + (across * cos(turn) + along * sin(turn)) * out);
-                        arriving += scene_passing(structure, instances, from, toward, 1000.0, clear);
+                        float passing = scene_passing(structure, instances, from, toward, 1000.0, clear);
+                        arriving += passing;
+                        least = min(least, passing);
+                        most = max(most, passing);
                     }
                     if (pass == 0) {
-                        if (arriving == 0.0 || arriving == 6.0) {
+                        if (most - least < 0.08 || softness > 0.5) {
                             shade = arriving / 6.0;
                             break;
                         }
@@ -664,9 +673,11 @@ final class SceneRendering {
                     }
                 }
             }
-            // Where things are close to one another less of the surroundings reaches them.
+            // Where things are close to one another less of the surroundings reaches them;
+            // hardly so for a soft thing, which is not asked.
             scene_frame(normal, across, along);
             float closed = 0.0;
+            if (softness <= 0.5) {
             float begin = 2.0 * M_PI_F * scene_noise(in.position.xy, 11.0);
             // Likewise: where five rays spread over the sky above a point find nothing
             // near, the other eleven are not sent.
@@ -680,6 +691,7 @@ final class SceneRendering {
                     closed += scene_blocked(structure, from, toward, 0.6) ? 1.0 : 0.0;
                 }
                 if (pass == 0 && closed == 0.0) { break; }
+            }
             }
             open = 1.0 - 0.85 * closed / 16.0;
             // A shiny surface mirrors the other things in the scene, lit as they are.
@@ -698,7 +710,7 @@ final class SceneRendering {
     #endif
         // The one light, by Cook and Torrance with the GGX distribution: what a matte
         // surface spreads, and what a shiny one mirrors of it.
-        float3 directMatte = float3(0.0), directShine = float3(0.0);
+        float3 directMatte = float3(0.0), directShine = float3(0.0), lining = float3(0.0);
         if (lit > 0.0) {
             float3 half_ = normalize(toEye + toLight);
             float a = roughness * roughness, a2 = a * a;
@@ -716,7 +728,7 @@ final class SceneRendering {
             directMatte = matte / M_PI_F * scene.lightColor.rgb * mix(lit * shade, wrapped * mix(shade, 1.0, 0.45), softness);
             float behind = pow(saturate(dot(-toEye, toLight)), 3.0);
             float rim = pow(1.0 - facing, 2.0);
-            directMatte += base * scene.lightColor.rgb * behind * rim * softness * 0.9 * (0.6 + 0.8 * fluff);
+            lining = base * scene.lightColor.rgb * behind * rim * softness * 0.9 * (0.6 + 0.8 * fluff);
             open = mix(open, 1.0, softness * 0.7);
         }
 
@@ -742,6 +754,10 @@ final class SceneRendering {
         // through it; what it mirrors is added over whatever shows through.
         float cover = opacity * (1.0 - transmission);
         float3 color = (directMatte + gathered + glowing) * cover + (directShine + mirrored + object.emission.rgb) * opacity;
+        // The silver lining is light through the thin rim: added over it, not thinned with
+        // it, and covering what is behind as much as it shines.
+        color += lining * saturate(object.material.z);
+        cover = saturate(cover + max(lining.r, max(lining.g, lining.b)) * 0.6 * saturate(object.material.z));
         float entering = 1.0 - (0.04 + 0.96 * pow(1.0 - facing, 5.0));
         color += through * transmission * opacity * entering;
         cover = saturate(cover + transmission * opacity * throughCover * entering);
@@ -1065,7 +1081,12 @@ final class SceneSurface {
         let clear = items.filter { !$0.uniforms.isSolid }.sorted { far($0) > far($1) }
         for (index, item) in (solid + clear).enumerated() {
             let over = index >= solid.count
-            if index == solid.count { encoder.setDepthStencilState(rendering.depthKept) }
+            if index == solid.count {
+                encoder.setDepthStencilState(rendering.depthKept)
+                // Of a clear or soft thing only the side toward the eye is drawn: its far side
+                // would be shaded again for little, and blend over its near side out of order.
+                encoder.setCullMode(.back)
+            }
             if var particles = item.particles {
                 encoder.setRenderPipelineState(over ? rendering.particlesBlended : rendering.particles)
                 encoder.setVertexBytes(&particles, length: MemoryLayout<SceneRendering.ParticleUniforms>.stride, index: 3)

@@ -3,7 +3,7 @@ import simd
 
 /// The things of the Weather in 3D example that the scene's own shapes cannot make, made
 /// in code as OBJ models a scene view reads like any model file: a puffy cloud, a
-/// raindrop and a lightning bolt. (The sun and the snowflakes are the scene's spheres.)
+/// lightning bolt. (The sun is the scene's sphere, and rain and snow are its emitters.)
 ///
 /// Each is a signed distance (below zero is inside) built from rounded shapes blended
 /// where they meet, turned into triangles by surface nets, with normals from the shape's
@@ -11,12 +11,11 @@ import simd
 /// middle, so `Fit` says how a model's own units land in the scene.
 public enum WeatherModels {
     public static let cloudName = "cloud.obj"
-    public static let dropName = "raindrop.obj"
     public static let boltName = "bolt.obj"
 
     /// The files, by asset name.
     public static var assets: [String: Data] {
-        [cloudName: Data(cloud.obj.utf8), dropName: Data(drop.obj.utf8), boltName: Data(bolt.obj.utf8)]
+        [cloudName: Data(cloud.obj.utf8), boltName: Data(bolt.obj.utf8)]
     }
 
     /// How one of the models lands in a scene when an object showing it has `scale`: its
@@ -62,16 +61,6 @@ public enum WeatherModels {
     /// Cuts `b` out of `a` with a rounded edge `k` wide.
     static func carve(_ a: Double, _ b: Double, _ k: Double) -> Double { -blend(-a, b, k) }
 
-    /// A cone with round ends: radius `r1` at the bottom, `r2` at the top, `h` apart along y.
-    static func roundCone(_ p: P, r1: Double, r2: Double, h: Double) -> Double {
-        let q = SIMD2(length(SIMD2(p.x, p.z)), p.y)
-        let b = (r1 - r2) / h, a = (1 - b * b).squareRoot()
-        let k = dot(q, SIMD2(-b, a))
-        if k < 0 { return length(q) - r1 }
-        if k > a * h { return length(q - SIMD2(0, h)) - r2 }
-        return dot(q, SIMD2(a, b)) - r1
-    }
-
     static func capsule2(_ p: Q, _ a: Q, _ b: Q, radius: Double) -> Double {
         let pa = p - a, ba = b - a
         let h = min(max(dot(pa, ba) / dot(ba, ba), 0), 1)
@@ -101,11 +90,6 @@ public enum WeatherModels {
         return carve(d, p.y + 0.2, 0.12)
     }
 
-    /// A raindrop, point up: a round belly drawn up into a tip.
-    static func raindrop(_ p: P) -> Double {
-        roundCone(p, r1: 0.3, r2: 0.03, h: 0.62)
-    }
-
     /// A lightning bolt: three strokes in a zigzag, thinning toward the tip, puffed up
     /// into a soft, rounded solid.
     static func lightning(_ p: P) -> Double {
@@ -117,7 +101,6 @@ public enum WeatherModels {
     }
 
     public static let cloud = Mesh.surface(of: cumulus, low: P(-0.9, -0.36, -0.48), high: P(0.9, 0.8, 0.48), step: 0.02)
-    public static let drop = Mesh.surface(of: raindrop, low: P(-0.36, -0.36, -0.36), high: P(0.36, 0.7, 0.36), step: 0.024)
     public static let bolt = Mesh.surface(of: lightning, low: P(-0.3, -0.68, -0.12), high: P(0.34, 0.7, 0.12), step: 0.014)
 
     // MARK: Triangles
