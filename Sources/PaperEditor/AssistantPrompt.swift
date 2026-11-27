@@ -470,9 +470,10 @@ public enum AssistantPrompt {
         - Shapes: \(SceneObject.Shape.builtIn.map { "`\($0.rawValue)`" }.joined(separator: ", ")). A `cylinder`, \
         `cone` and `capsule` stand upright; a `torus` and a `plane` lie flat (a plane under \
         things is a floor, scaled up). Build a thing out of several: a phone is a flattened \
-        look made from a `roundedBox`, a ring a `torus` turned with `rotationX` 90.
+        look made from a `roundedBox` with a small `scaleZ`, a ring a `torus` turned with `rotationX` 90.
         - An object: \(SceneObject.inputs.map { "`\($0.id)` (\($0.type.rawValue), \($0.defaultValue.summary))" }.joined(separator: ", ")). \
-        `scale` is one number: a shape keeps its proportions. `metalness` 1 with a low \
+        `scale` sizes it evenly; `scaleX`, `scaleY` and `scaleZ` follow it until set, so a \
+        sphere with `scaleY` 0.3 is a lens and a capsule with a large `scaleY` a rod. `metalness` 1 with a low \
         `roughness` is polished metal; 0 with a high one is matte plastic or clay.
         - The scene: \(SceneUse.inputs.map { "`\($0.id)` (\($0.options.isEmpty ? $0.defaultValue.summary : $0.options.joined(separator: " | ")))" }.joined(separator: ", ")). \
         The camera circles the middle of the scene: `cameraYaw` round it (90 looks from the \

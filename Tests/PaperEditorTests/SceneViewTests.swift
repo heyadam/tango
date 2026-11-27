@@ -287,4 +287,35 @@ import simd
         // Warm, as the lamp is.
         #expect(after.count == 3 && after[0] > after[2])
     }
+
+    // MARK: A size along each axis
+
+    @Test func aThingIsStretchedAlongEachOfItsAxes() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var ball = Self.ball("ball", Self.red, scale: 0.6)
+        ball.values["scaleX"] = .number(1.6)
+        ball.values["scaleY"] = .number(0.3)
+        let document = Self.document([ball])
+        let picture = ViewerSnapshot.bitmap(of: document)
+        Self.keep(picture, "stretched")
+        #expect(Self.isMostly(0, try Self.color(picture, at: SIMD3(0.65, 0, 0.1), in: document)))
+        #expect(ShaderViewTests.near(try Self.color(picture, at: SIMD3(0, 0.3, 0), in: document), Self.white))
+    }
+
+    @Test func aSquashedThingIsLitAsItsShapeIs() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // A ball flattened into a lens, seen from above, lit from straight above: its top is
+        // nearly flat, so it is lit almost as brightly away from the middle as in it.
+        var lens = Self.ball("lens", .white)
+        lens.values["scaleY"] = .number(0.2)
+        let document = Self.document([lens], values: [
+            "cameraPitch": .number(70), "lightPitch": .number(90), "environment": .text("Night"), "rayTracing": .bool(false),
+        ])
+        let picture = ViewerSnapshot.bitmap(of: document)
+        Self.keep(picture, "lens")
+        let middle = try Self.color(picture, at: SIMD3(0, 0.1, 0), in: document)
+        let aside = try Self.color(picture, at: SIMD3(0.35, 0.0714, 0), in: document)
+        #expect(Self.brightness(middle) > 300)
+        #expect(Double(Self.brightness(aside)) > Double(Self.brightness(middle)) * 0.8, "\(middle) \(aside)")
+    }
 }

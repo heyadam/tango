@@ -86,6 +86,10 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("rotationY", "Rotation Y", .number(0)),
         SceneInput("rotationZ", "Rotation Z", .number(0)),
         SceneInput("scale", "Scale", .number(1)),
+        // Each follows Scale until it is set: a ball squashed into a lens, a stretched drop.
+        SceneInput("scaleX", "Scale X", .number(1)),
+        SceneInput("scaleY", "Scale Y", .number(1)),
+        SceneInput("scaleZ", "Scale Z", .number(1)),
         SceneInput("color", "Color", .color(ColorValue(white: 0.8))),
         SceneInput("metalness", "Metalness", .number(0)),
         SceneInput("roughness", "Roughness", .number(0.45)),
@@ -102,6 +106,7 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
     /// stack's padding follows its horizontal or vertical padding.
     public static let follows: [String: String] = [
         "emissionColor": "color",
+        "scaleX": "scale", "scaleY": "scale", "scaleZ": "scale",
     ]
 
     public func value(_ input: String) -> Value {

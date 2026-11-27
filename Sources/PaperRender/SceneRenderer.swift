@@ -789,7 +789,7 @@ final class SceneSurface {
             // A glowing object lights the others, as a ball of light as large as it is.
             if strength > 0, draws.count > drawnBefore, let any = draws.last, any.uniforms.emission != .zero {
                 let middle = placement.columns.3
-                let size = SceneRendering.clamp(object.number("scale"), 0, 1e4) * 0.5
+                let size = simd_reduce_max(SceneMath.size(of: object)) * 0.5
                 glows.append((SIMD3(middle.x, middle.y, middle.z), max(size, 0.01), SIMD3(any.uniforms.emission.x, any.uniforms.emission.y, any.uniforms.emission.z)))
             }
         }

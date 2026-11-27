@@ -228,4 +228,21 @@ import simd
         let read = try JSONDecoder().decode(SceneUse.self, from: Data(old.utf8))
         #expect(read.number("bloom") == 0 && read.objects[0].number("emission") == 0)
     }
+
+    @Test func eachAxisFollowsTheScaleUntilItIsSet() throws {
+        var ball = SceneObject(id: "ball", name: "Ball", shape: .sphere, values: ["scale": .number(2)])
+        #expect(SceneMath.size(of: ball) == SIMD3(2, 2, 2))
+        ball.values["scaleY"] = .number(0.5)
+        #expect(SceneMath.size(of: ball) == SIMD3(2, 0.5, 2))
+        // Along its own axes: turned a quarter round z, its height lies along x.
+        ball.values["rotationZ"] = .number(90)
+        let top = SceneMath.placement(of: ball) * SIMD4<Float>(0, 0.5, 0, 1)
+        #expect(abs(top.x + 0.25) < 1e-5 && abs(top.y) < 1e-5)
+        // A size that is not a number is made safe, and each is a port.
+        ball.values["scaleX"] = .number(.infinity)
+        #expect(SceneMath.size(of: ball).x.isFinite)
+        let (document, view) = document(SceneUse(objects: [ball]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        #expect(PatchRegistry.standard.ports(for: node).input("scene.ball.scaleZ")?.name == "Ball Scale Z")
+    }
 }
