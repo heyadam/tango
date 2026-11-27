@@ -138,6 +138,8 @@ import PaperModel
         let data = try Data(contentsOf: Self.fixtures.appendingPathComponent("fonts/ABeeZee-400.ttf"))
         let asset = GoogleFonts.assetName(family: family, style: "400")
         #expect(asset == "web.font.ABeeZee.400.ttf")
+        // Registering is for the whole process, so another test may have done it already.
+        let registeredBefore = FontBook.isAvailable("ABeeZee")
         let measuredBefore = TextMeasurer.measure("Hello there", fontSize: 17, weight: 400, family: "ABeeZee", maxWidth: nil)
         FontBook.register(assets: [asset: data, "photo.png": Data([1, 2])])
         let after = FontBook.font(family: "ABeeZee", size: 17, weight: 400)
@@ -145,7 +147,7 @@ import PaperModel
         #expect(FontBook.isAvailable("ABeeZee"))
         _ = before
         let measured = TextMeasurer.measure("Hello there", fontSize: 17, weight: 400, family: "ABeeZee", maxWidth: nil)
-        #expect(measured != measuredBefore)
+        if !registeredBefore { #expect(measured != measuredBefore) }
         // A weight it does not have is set in the nearest it has.
         #expect(CTFontCopyFamilyName(FontBook.font(family: "ABeeZee", size: 17, weight: 800)) as String == "ABeeZee")
         // Registering again changes nothing; a file that is not a font is refused.

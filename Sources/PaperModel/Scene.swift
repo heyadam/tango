@@ -27,6 +27,12 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         case box, roundedBox, sphere, cylinder, cone, capsule, torus, plane
         /// A model file among the document's assets, named by `SceneObject.model`.
         case model
+        /// An emitter: many copies of a shape (its `particle` input) or of a model file,
+        /// spread through a box and moving through it with time.
+        case particles
+        /// A cloud of vapor filling its box: a cumulus shape worn away by noise, drawn by
+        /// marching rays through it, lit through its depth.
+        case cloud
 
         public var displayName: String {
             switch self {
@@ -39,11 +45,15 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
             case .torus: "Torus"
             case .plane: "Plane"
             case .model: "Model"
+            case .particles: "Particles"
+            case .cloud: "Cloud"
             }
         }
 
         /// The shapes made in code, which need no file.
         public static let builtIn: [Shape] = allCases.filter { $0 != .model }
+        /// What a particle can be: a shape made in code.
+        public static let particleShapes: [Shape] = builtIn.filter { $0 != .particles && $0 != .cloud }
 
         public init?(named name: String) {
             let wanted = name.lowercased().filter { $0.isLetter }
@@ -86,16 +96,91 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("rotationY", "Rotation Y", .number(0)),
         SceneInput("rotationZ", "Rotation Z", .number(0)),
         SceneInput("scale", "Scale", .number(1)),
+        // Each follows Scale until it is set: a ball squashed into a lens, a stretched drop.
+        SceneInput("scaleX", "Scale X", .number(1)),
+        SceneInput("scaleY", "Scale Y", .number(1)),
+        SceneInput("scaleZ", "Scale Z", .number(1)),
         SceneInput("color", "Color", .color(ColorValue(white: 0.8))),
         SceneInput("metalness", "Metalness", .number(0)),
         SceneInput("roughness", "Roughness", .number(0.45)),
         SceneInput("visible", "Visible", .bool(true)),
+        // Light of its own, added to what it reflects before the picture is toned: a lamp,
+        // the sun, lightning. With the scene's Bloom it glows, and it lights what is near.
+        // How much of it there is, and how much light passes through what there is, bent
+        // as it enters by the index of refraction: glass, water.
+        SceneInput("opacity", "Opacity", .number(1)),
+        SceneInput("transmission", "Transmission", .number(0)),
+        SceneInput("ior", "Index of Refraction", .number(1.45)),
+        // Vapor rather than a surface: light wraps round it and glows through its rim when
+        // it comes from behind, and its edge thins out, unevenly: clouds, smoke, foam.
+        SceneInput("softness", "Softness", .number(0)),
+        SceneInput("emission", "Emission", .number(0)),
+        SceneInput("emissionColor", "Emission Color", .color(ColorValue(white: 0.8))),
+    ] + particleInputs + cloudInputs
+
+    /// What only an emitter has. Each copy is placed by a hash of its number in a box
+    /// `spread` across (the object's own space, so x, y, z, its turn and scale move and size
+    /// the whole box), moves at `velocity` units a second, so that at `time` it is somewhere
+    /// else in the box, wrapping round, and shrinks away near where it enters and leaves.
+    /// The picture is a function of these alone: cable a Time patch into `time`.
+    public static let particleInputs: [SceneInput] = [
+        SceneInput("particle", "Particle", .text("Sphere"), options: Shape.particleShapes.map(\.displayName)),
+        SceneInput("count", "Count", .number(300)),
+        SceneInput("time", "Time", .number(0)),
+        SceneInput("spreadX", "Spread X", .number(2)),
+        SceneInput("spreadY", "Spread Y", .number(2)),
+        SceneInput("spreadZ", "Spread Z", .number(1)),
+        SceneInput("velocityX", "Velocity X", .number(0)),
+        SceneInput("velocityY", "Velocity Y", .number(-1)),
+        SceneInput("velocityZ", "Velocity Z", .number(0)),
+        SceneInput("size", "Size", .number(0.05)),
+        SceneInput("sizeRange", "Size Range", .number(0.5)),
+        SceneInput("stretch", "Stretch", .number(1)),
+        SceneInput("sway", "Sway", .number(0)),
+        SceneInput("seed", "Seed", .number(0)),
     ]
+
+    /// What only a cloud has (with `seed`, which picks another cloud of the same kind).
+    /// Its box is the object's size: `scaleX`, `scaleY`, `scaleZ`.
+    public static let cloudInputs: [SceneInput] = [
+        // How thick the vapor is: how much light it stops.
+        SceneInput("density", "Density", .number(1)),
+        // How much of the box it fills, from a few puffs to a heavy mass.
+        SceneInput("coverage", "Coverage", .number(0.5)),
+        // How much its edge is worn into billows and wisps.
+        SceneInput("fluffiness", "Fluffiness", .number(0.6)),
+        // Moves the noise through it: cable a slow clock to make it billow.
+        SceneInput("drift", "Drift", .number(0)),
+    ]
+
+    /// The most copies an emitter draws.
+    public static let mostParticles = 20_000
+
+    /// The inputs that mean something for an object of this shape: an emitter's own only
+    /// for an emitter.
+    public static func inputs(for shape: Shape) -> [SceneInput] {
+        let own: [SceneInput] = switch shape {
+        case .particles: particleInputs
+        case .cloud: cloudInputs + particleInputs.filter { $0.id == "seed" }
+        default: []
+        }
+        let others = Set((particleInputs + cloudInputs).map(\.id)).subtracting(own.map(\.id))
+        return inputs.filter { !others.contains($0.id) }
+    }
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }
 
+    /// Inputs that take another's value until they are stored themselves, as a side of a
+    /// stack's padding follows its horizontal or vertical padding.
+    public static let follows: [String: String] = [
+        "emissionColor": "color",
+        "scaleX": "scale", "scaleY": "scale", "scaleZ": "scale",
+    ]
+
     public func value(_ input: String) -> Value {
-        values[input] ?? SceneObject.input(input)?.defaultValue ?? .number(0)
+        if let stored = values[input] { return stored }
+        if let leader = SceneObject.follows[input] { return value(leader) }
+        return SceneObject.input(input)?.defaultValue ?? .number(0)
     }
 
     public func number(_ input: String) -> Double { value(input).numberValue }
@@ -142,6 +227,8 @@ public struct SceneUse: Codable, Hashable, Sendable {
         SceneInput("environment", "Environment", .text("Studio"), options: environments),
         SceneInput("exposure", "Exposure", .number(1)),
         SceneInput("rayTracing", "Ray Tracing", .bool(true)),
+        // How much of what is brighter than white spills round it as a glow.
+        SceneInput("bloom", "Bloom", .number(0)),
     ]
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }

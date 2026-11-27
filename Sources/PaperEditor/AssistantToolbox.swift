@@ -217,13 +217,13 @@ public struct AssistantToolbox {
                 "objects": scene.objects.map { object -> [String: Any] in
                     var described: [String: Any] = ["name": object.name, "shape": object.shape.rawValue]
                     if let model = object.model { described["model"] = model }
-                    for input in SceneObject.inputs { described[input.id] = Self.plain(object.value(input.id)) }
+                    for input in SceneObject.inputs(for: object.shape) { described[input.id] = Self.plain(object.value(input.id)) }
                     if object.shape == .model, let problem = SceneSections.problem(with: object, store: store) { described["shape_error"] = problem }
                     return described
                 },
             ] as [String: Any]
             out["in"] = SceneUse.inputs.map { "\($0.name): \($0.type.rawValue)" }
-                + scene.objects.flatMap { object in SceneObject.inputs.map { "\(object.name) \($0.name): \($0.type.rawValue)" } }
+                + scene.objects.flatMap { object in SceneObject.inputs(for: object.shape).map { "\(object.name) \($0.name): \($0.type.rawValue)" } }
         }
         if let shader = layer.shader {
             out["shader"] = shader.source

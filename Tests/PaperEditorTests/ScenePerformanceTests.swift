@@ -63,4 +63,58 @@ import Testing
         }
         #expect(plain < 50 && traced < 100 && crowded < 150)
     }
+
+    /// The whole Weather in 3D screen in a storm, its heaviest state: soft clouds, a
+    /// thousand raindrops, lightning, bloom, the sky shader and the glass card.
+    @Test func theWeatherInAStormIsDrawnInsideAFrame() throws {
+        try #require(LayerRenderer.drawsScenes)
+        let milliseconds = try Self.storm()
+        if ProcessInfo.processInfo.environment["SCENE_PERF"] != nil {
+            print("SCENE_PERF weather in a storm \(milliseconds) ms")
+            if ProcessInfo.processInfo.environment["SCENE_PERF_PARTS"] != nil {
+                let example = SampleDocuments.weatherScene()
+                func without(_ change: (inout PaperModel.Document) -> Void) throws -> Double {
+                    var document = example.document
+                    change(&document)
+                    return try Self.storm(document, example: example)
+                }
+                print("SCENE_PERF storm without rays", try without { $0.screen.update(example.stage) { $0.scene?.values["rayTracing"] = .bool(false) } })
+                print("SCENE_PERF storm without rain", try without { $0.screen.update(example.stage) { $0.scene?.objects.removeAll { $0.id == "rain" } } })
+                print("SCENE_PERF storm without clouds", try without { $0.screen.update(example.stage) { $0.scene?.objects.removeAll { $0.shape == .cloud } } })
+                print("SCENE_PERF storm without scene", try without { $0.screen.update(example.stage) { $0.scene?.objects.removeAll() } })
+                print("SCENE_PERF storm without card", try without { doc in doc.screen.children.removeAll { $0.name == "Forecast" } })
+                print("SCENE_PERF storm without sky", try without { doc in doc.screen.children.removeAll { $0.name == "Sky" } })
+            }
+        }
+        #expect(milliseconds < 150)
+    }
+
+    static func storm(_ document: PaperModel.Document? = nil, example given: SampleDocuments.WeatherScene? = nil) throws -> Double {
+        let example = given ?? SampleDocuments.weatherScene()
+        let runtime = Runtime(document: document ?? example.document)
+        let renderer = LayerRenderer()
+        renderer.contentsScale = 2
+        renderer.rootLayer.bounds = CGRect(x: 0, y: 0, width: 402, height: 874)
+        let models = WeatherModels.assets
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("weather-perf-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        for (name, data) in models { try data.write(to: folder.appendingPathComponent(name)) }
+        renderer.modelURL = { folder.appendingPathComponent($0) }
+        runtime.tick(dt: 1.0 / 60)
+        let sunday = try #require(runtime.resolved.find(example.days[3]))
+        let middle = Point2(x: sunday.position.x + sunday.size.width / 2, y: sunday.position.y + sunday.size.height / 2)
+        runtime.send(.touchDown(middle))
+        runtime.tick(dt: 1.0 / 60)
+        runtime.send(.touchUp(middle))
+        for _ in 0..<180 {
+            runtime.tick(dt: 1.0 / 60)
+            renderer.render(runtime.resolved)
+        }
+        let start = CACurrentMediaTime()
+        for _ in 0..<90 {
+            runtime.tick(dt: 1.0 / 60)
+            renderer.render(runtime.resolved)
+        }
+        return (CACurrentMediaTime() - start) / 90 * 1000
+    }
 }

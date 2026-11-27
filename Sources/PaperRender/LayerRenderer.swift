@@ -199,7 +199,7 @@ public final class LayerRenderer {
         // Where each model's file is now: another file under the same name is another picture.
         var files: [String: URL] = [:]
         var stamp = Hasher()
-        for object in scene.objects where object.shape == .model {
+        for object in scene.objects where object.shape == .model || (object.shape == .particles && object.model != nil) {
             guard let name = object.model, let url = modelURL?(name) else { continue }
             files[object.id] = url
             stamp.combine(object.id)

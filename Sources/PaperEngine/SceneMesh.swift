@@ -81,7 +81,7 @@ public struct SceneMesh: Sendable, Hashable {
         case .cone: return cylinder(top: 0)
         case .torus: return torus()
         case .plane: return plane()
-        case .model: return nil
+        case .model, .particles, .cloud: return nil
         }
     }
 
@@ -224,6 +224,10 @@ public enum SceneMath {
         return matrix
     }
 
+    public static func scale(_ by: SIMD3<Float>) -> simd_float4x4 {
+        simd_float4x4(diagonal: SIMD4(by.x, by.y, by.z, 1))
+    }
+
     public static func scale(_ by: Float) -> simd_float4x4 {
         simd_float4x4(diagonal: SIMD4(by, by, by, 1))
     }
@@ -276,16 +280,21 @@ public enum SceneMath {
         ])
     }
 
-    /// From an object's own space to the scene's: scaled, turned (round z, then x, then y)
-    /// and moved.
+    /// From an object's own space to the scene's: scaled (along each of its own axes, each
+    /// following `scale` until set), turned (round z, then x, then y) and moved.
     public static func placement(of object: SceneObject) -> simd_float4x4 {
         let move = SIMD3(finite(object.number("x")), finite(object.number("y")), finite(object.number("z")))
-        let size = min(max(finite(object.number("scale"), 1), 0), 1e4)
         return translation(move)
             * rotation(degrees: finite(object.number("rotationY")), axis: SIMD3(0, 1, 0))
             * rotation(degrees: finite(object.number("rotationX")), axis: SIMD3(1, 0, 0))
             * rotation(degrees: finite(object.number("rotationZ")), axis: SIMD3(0, 0, 1))
-            * scale(size)
+            * scale(size(of: object))
+    }
+
+    /// How large an object is along each of its own axes.
+    public static func size(of object: SceneObject) -> SIMD3<Float> {
+        func along(_ input: String) -> Float { min(max(finite(object.number(input), 1), 0), 1e4) }
+        return SIMD3(along("scaleX"), along("scaleY"), along("scaleZ"))
     }
 
     /// Where a point of the scene shows in a view of `size` points, from its top left; nil

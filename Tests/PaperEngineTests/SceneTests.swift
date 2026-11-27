@@ -139,7 +139,7 @@ import simd
     // MARK: Shapes and the camera
 
     @Test func everyShapeIsSoundAndFitsItsBox() throws {
-        for shape in SceneObject.Shape.builtIn {
+        for shape in SceneObject.Shape.particleShapes {
             let mesh = try #require(SceneMesh.shape(shape), "\(shape)")
             #expect(mesh.isSound, "\(shape)")
             #expect(mesh.triangleCount > 0 && mesh.triangleCount < 20_000, "\(shape)")
@@ -152,7 +152,7 @@ import simd
     }
 
     @Test func everyTriangleFacesTheWayItsNormalsDo() throws {
-        for shape in SceneObject.Shape.builtIn {
+        for shape in SceneObject.Shape.particleShapes {
             let mesh = try #require(SceneMesh.shape(shape))
             var wrong = 0, counted = 0
             for index in stride(from: 0, to: mesh.indices.count, by: 3) {
@@ -208,5 +208,71 @@ import simd
         #expect(abs(high.y - low.y - 1) < 1e-5)
         #expect(abs(low.x + 0.25) < 1e-5 && abs(high.z - 0.125) < 1e-5)
         #expect(SceneMesh.fitting(low: SIMD3(1, 1, 1), high: SIMD3(1, 1, 1)) == matrix_identity_float4x4)
+    }
+
+    @Test func lightOfItsOwnFollowsTheColorUntilItIsGivenOne() throws {
+        var ball = SceneObject(id: "ball", name: "Ball", shape: .sphere, values: ["color": .color(ColorValue(red: 1, green: 0, blue: 0))])
+        #expect(ball.number("emission") == 0)
+        #expect(ball.value("emissionColor") == .color(ColorValue(red: 1, green: 0, blue: 0)))
+        ball.values["emissionColor"] = .color(.white)
+        #expect(ball.value("emissionColor") == .color(.white))
+        // Both are ports, and so is the scene's bloom.
+        let (document, view) = document(SceneUse(objects: [ball]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        let ports = PatchRegistry.standard.ports(for: node)
+        #expect(ports.input("scene.ball.emission")?.type == .number)
+        #expect(ports.input("scene.ball.emissionColor")?.type == .color)
+        #expect(ports.input("scene.bloom")?.type == .number)
+        // A file from before has neither, and reads with the defaults.
+        let old = #"{"objects":[{"id":"ball","name":"Ball","shape":"sphere","values":{}}],"values":{}}"#
+        let read = try JSONDecoder().decode(SceneUse.self, from: Data(old.utf8))
+        #expect(read.number("bloom") == 0 && read.objects[0].number("emission") == 0)
+    }
+
+    @Test func eachAxisFollowsTheScaleUntilItIsSet() throws {
+        var ball = SceneObject(id: "ball", name: "Ball", shape: .sphere, values: ["scale": .number(2)])
+        #expect(SceneMath.size(of: ball) == SIMD3(2, 2, 2))
+        ball.values["scaleY"] = .number(0.5)
+        #expect(SceneMath.size(of: ball) == SIMD3(2, 0.5, 2))
+        // Along its own axes: turned a quarter round z, its height lies along x.
+        ball.values["rotationZ"] = .number(90)
+        let top = SceneMath.placement(of: ball) * SIMD4<Float>(0, 0.5, 0, 1)
+        #expect(abs(top.x + 0.25) < 1e-5 && abs(top.y) < 1e-5)
+        // A size that is not a number is made safe, and each is a port.
+        ball.values["scaleX"] = .number(.infinity)
+        #expect(SceneMath.size(of: ball).x.isFinite)
+        let (document, view) = document(SceneUse(objects: [ball]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        #expect(PatchRegistry.standard.ports(for: node).input("scene.ball.scaleZ")?.name == "Ball Scale Z")
+    }
+
+    @Test func anEmitterHasInputsOfItsOwnThatOtherThingsDoNot() throws {
+        let rain = SceneObject(id: "rain", name: "Rain", shape: .particles)
+        #expect(SceneObject.Shape(named: "Particles") == .particles)
+        #expect(SceneObject.Shape.builtIn.contains(.particles) && !SceneObject.Shape.particleShapes.contains(.particles))
+        let own = Set(SceneObject.inputs(for: .particles).map(\.id))
+        #expect(own.isSuperset(of: ["count", "time", "spreadX", "velocityY", "size", "stretch", "sway", "particle", "seed"]))
+        #expect(!SceneObject.inputs(for: .sphere).contains { $0.id == "count" })
+        #expect(rain.value("particle") == .text("Sphere") && rain.number("count") == 300)
+        // Its inputs are ports, so a Time patch can drive it.
+        let (document, view) = document(SceneUse(objects: [rain]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        #expect(PatchRegistry.standard.ports(for: node).input("scene.rain.time")?.name == "Rain Time")
+        // It has no mesh of its own: it draws copies of another shape.
+        #expect(SceneMesh.shape(.particles) == nil)
+    }
+
+    @Test func aCloudHasInputsOfItsOwn() throws {
+        let cloud = SceneObject(id: "puff", name: "Puff", shape: .cloud)
+        #expect(SceneObject.Shape(named: "Cloud") == .cloud && SceneMesh.shape(.cloud) == nil)
+        #expect(!SceneObject.Shape.particleShapes.contains(.cloud))
+        let own = Set(SceneObject.inputs(for: .cloud).map(\.id))
+        #expect(own.isSuperset(of: ["density", "coverage", "fluffiness", "drift", "seed", "scaleX", "color"]))
+        #expect(!own.contains("count") && !SceneObject.inputs(for: .sphere).contains { $0.id == "coverage" })
+        #expect(!SceneObject.inputs(for: .particles).contains { $0.id == "fluffiness" })
+        #expect(cloud.number("density") == 1 && cloud.number("coverage") == 0.5)
+        let (document, view) = document(SceneUse(objects: [cloud]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        #expect(PatchRegistry.standard.ports(for: node).input("scene.puff.drift")?.name == "Puff Drift")
     }
 }

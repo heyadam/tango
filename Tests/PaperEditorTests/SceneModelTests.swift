@@ -141,4 +141,18 @@ import simd
         let picture = ViewerSnapshot.bitmap(of: document, assets: ["parts.obj": Data(text.utf8)])
         #expect(Self.drawn(picture) > 100)
     }
+
+    @Test func anEmittersCopyOfAModelIsFittedAndStandsWhereItsBoxIs() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // One copy of a cube whose file is four units across and far from the origin: it is
+        // the size asked for, in the middle of the emitter, not thrown off by the file.
+        let one = SceneObject(id: "bits", name: "Bits", shape: .particles, model: "cube.obj", values: [
+            "count": .number(1), "spreadX": .number(0), "spreadY": .number(0.0001), "spreadZ": .number(0),
+            "size": .number(0.4), "sizeRange": .number(0), "color": .color(SceneViewTests.red),
+        ])
+        let document = SceneViewTests.document([one], values: ["rayTracing": .bool(false)])
+        let picture = ViewerSnapshot.bitmap(of: document, assets: ["cube.obj": try Self.cube])
+        #expect(SceneViewTests.isMostly(0, try SceneViewTests.color(picture, at: SIMD3(0, 0, 0.2), in: document)))
+        #expect(ShaderViewTests.near(try SceneViewTests.color(picture, at: SIMD3(0.4, 0, 0), in: document), SceneViewTests.white))
+    }
 }

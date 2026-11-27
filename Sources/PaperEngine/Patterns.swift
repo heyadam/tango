@@ -752,6 +752,8 @@ public enum Gallery {
                     section: .showcase, fileName: "StockPicker") { SampleDocuments.stockPicker().document },
         GalleryItem(id: "product", title: "Product in 3D", summary: "A speaker drawn in three dimensions with real light: drag to circle it and it springs back, and a swatch gives it another finish.",
                     section: .showcase, fileName: "ProductScene") { SampleDocuments.productScene().document },
+        GalleryItem(id: "forecast", title: "Weather in 3D", summary: "A forecast whose weather is three-dimensional: tap a day and the sun sinks away, clouds gather and darken, and rain, snow or a storm with lightning sets in.",
+                    section: .showcase, fileName: "WeatherScene", assets: { WeatherModels.assets }) { SampleDocuments.weatherScene().document },
         GalleryItem(id: "card", title: "Card That Opens", summary: "One tap opens a story: one spring value moves its place, size, corners and the dimming together.",
                     section: .examples, fileName: "Card") { SampleDocuments.card().document },
         GalleryItem(id: "signin", title: "Typing a Name", summary: "What is typed drives a greeting, and wakes the button once there is a name.",

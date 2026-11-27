@@ -470,15 +470,41 @@ public enum AssistantPrompt {
         - Shapes: \(SceneObject.Shape.builtIn.map { "`\($0.rawValue)`" }.joined(separator: ", ")). A `cylinder`, \
         `cone` and `capsule` stand upright; a `torus` and a `plane` lie flat (a plane under \
         things is a floor, scaled up). Build a thing out of several: a phone is a flattened \
-        look made from a `roundedBox`, a ring a `torus` turned with `rotationX` 90.
+        look made from a `roundedBox` with a small `scaleZ`, a ring a `torus` turned with `rotationX` 90.
         - An object: \(SceneObject.inputs.map { "`\($0.id)` (\($0.type.rawValue), \($0.defaultValue.summary))" }.joined(separator: ", ")). \
-        `scale` is one number: a shape keeps its proportions. `metalness` 1 with a low \
+        `scale` sizes it evenly; `scaleX`, `scaleY` and `scaleZ` follow it until set, so a \
+        sphere with `scaleY` 0.3 is a lens and a capsule with a large `scaleY` a rod. `metalness` 1 with a low \
         `roughness` is polished metal; 0 with a high one is matte plastic or clay.
         - The scene: \(SceneUse.inputs.map { "`\($0.id)` (\($0.options.isEmpty ? $0.defaultValue.summary : $0.options.joined(separator: " | ")))" }.joined(separator: ", ")). \
         The camera circles the middle of the scene: `cameraYaw` round it (90 looks from the \
         right), `cameraPitch` above the horizon, at `cameraDistance`. The light is a direction \
         given the same way. `environment` is what stands round the scene and shows in \
         anything shiny.
+        - Light of its own: an object's `emission` (0 is none, 1 to 10 glows) adds light in \
+        `emissionColor`, which is its `color` until you set one. A glowing object lights what \
+        is near it (the four brightest do), and the scene's `bloom` (0 to about 2) spills \
+        what is brighter than white round it as a glow: a sun, a lamp, lightning, a screen.
+        - Clear things: `opacity` below 1 lets what is behind show; `transmission` 1 with a \
+        low `roughness` is glass or water, which (with rays) bends and tints what is behind \
+        it by `ior` and still mirrors its surroundings. Clear things cast lighter shadows.
+        - Vapor rather than a surface (clouds, smoke, foam): `softness` 0 to 1. Light wraps \
+        round a soft thing, glows through its rim when it comes from behind, and its edge \
+        thins out unevenly. Build a cloud from a few soft spheres (squashed with `scaleY`).
+        - Real clouds: an object with shape `cloud` is vapor filling its box (size it with \
+        `scaleX`, `scaleY`, `scaleZ`, wider than tall): a cumulus worn into billows and wisps, \
+        lit through its depth, bright on its sunlit side and blue-gray underneath. `density` \
+        (how much light it stops), `coverage` (0.3 a few puffs, 0.8 a heavy mass), \
+        `fluffiness` (how worn its edge is), `drift` (cable a slow clock to make it billow), \
+        `seed` for another cloud, `color` (white, gray for rain, dark for a storm). A glowing \
+        thing inside it (lightning) lights it from within. Rays do not see clouds.
+        - Many small things at once (rain, snow, sparks, bubbles, confetti): an object with \
+        shape `particles` draws `count` copies (up to 20,000) of the shape named by `particle` \
+        (or of its `model`) in a box `spreadX` by `spreadY` by `spreadZ` round where it stands. \
+        Each moves at `velocityX/Y/Z` units a second, so cable a `time` patch into its `time` \
+        to make them move; they wrap round inside the box and shrink away at its ends, so it \
+        never empties. `size` (and `sizeRange` for variety), `stretch` (long along their way: \
+        rain), `sway` (drifting: snow), `seed` for another scatter. Color, opacity, emission \
+        and the rest are the object's. Copies are lit but not seen by rays (no shadows).
         - Ray tracing is on unless `rayTracing` is false: things cast soft shadows on one \
         another, and shiny things mirror the others. A device whose GPU traces no rays draws \
         the scene without them, so do not make a design depend on a shadow.
