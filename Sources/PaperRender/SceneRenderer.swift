@@ -517,6 +517,26 @@ final class SceneRendering {
     }
     #endif
 
+    // Smooth noise in space, from 0 to 1: what makes a soft thing's edge uneven.
+    static float scene_hash3(float3 p) {
+        p = fract(p * 0.3183099 + 0.1);
+        p *= 17.0;
+        return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+    }
+
+    static float scene_noise3(float3 p) {
+        float3 i = floor(p), f = fract(p);
+        float3 u = f * f * (3.0 - 2.0 * f);
+        return mix(mix(mix(scene_hash3(i), scene_hash3(i + float3(1, 0, 0)), u.x),
+                       mix(scene_hash3(i + float3(0, 1, 0)), scene_hash3(i + float3(1, 1, 0)), u.x), u.y),
+                   mix(mix(scene_hash3(i + float3(0, 0, 1)), scene_hash3(i + float3(1, 0, 1)), u.x),
+                       mix(scene_hash3(i + float3(0, 1, 1)), scene_hash3(i + float3(1, 1, 1)), u.x), u.y), u.z);
+    }
+
+    static float scene_fluff(float3 p) {
+        return scene_noise3(p) * 0.55 + scene_noise3(p * 2.17 + 3.1) * 0.3 + scene_noise3(p * 4.63 + 7.7) * 0.15;
+    }
+
     // The light of the scene's glowing objects on a surface: each a soft ball of light,
     // falling off with the square of the distance from its rim.
     static float3 scene_glows(constant SceneUniforms &scene, float3 world, float3 normal, float wrap) {
@@ -590,13 +610,18 @@ final class SceneRendering {
         // through, bent (transmission): glass, water.
         float opacity = saturate(object.material.z);
         float transmission = saturate(object.material.w);
-
+        float softness = saturate(object.surface.y);
+        // Where on a soft thing it is denser or thinner, in the object's own space, so it
+        // stays with the thing as it moves.
+        float fluff = softness > 0.0 ? scene_fluff(in.world * 3.2) : 0.5;
         float3 through = float3(0.0);
         float throughCover = 0.0;
 
         float3 toLight = normalize(scene.lightDirection.xyz);
         float lit = saturate(dot(normal, toLight));
-
+        // Light wraps round a soft thing, past where it would turn away from a hard one.
+        float wrap = softness * 0.85;
+        float wrapped = saturate((dot(normal, toLight) + wrap) / (1.0 + wrap));
         // How much of the light arrives, and how much of its surroundings a surface sees.
         float shade = 1.0;
         float open = 1.0;
@@ -683,9 +708,17 @@ final class SceneRendering {
             float visible = 0.5 / (lit * sqrt(facing * facing * (1.0 - a2) + a2) + facing * sqrt(lit * lit * (1.0 - a2) + a2));
             float3 fresnel = mirror + (1.0 - mirror) * pow(1.0 - saturate(dot(toEye, half_)), 5.0);
             directMatte = matte / M_PI_F * scene.lightColor.rgb * lit * shade;
-            directShine = distribution * visible * fresnel * scene.lightColor.rgb * lit * shade;
+            directShine = distribution * visible * fresnel * scene.lightColor.rgb * lit * shade * (1.0 - softness);
         }
-
+        if (softness > 0.0) {
+            // Soft: the light wraps round it, and where the light is behind it, its thin
+            // rim glows (the silver lining of a cloud).
+            directMatte = matte / M_PI_F * scene.lightColor.rgb * mix(lit * shade, wrapped * mix(shade, 1.0, 0.45), softness);
+            float behind = pow(saturate(dot(-toEye, toLight)), 3.0);
+            float rim = pow(1.0 - facing, 2.0);
+            directMatte += base * scene.lightColor.rgb * behind * rim * softness * 0.9 * (0.6 + 0.8 * fluff);
+            open = mix(open, 1.0, softness * 0.7);
+        }
 
         // The surroundings: what a matte surface gathers, and what a shiny one mirrors,
         // weighed by how much such a surface reflects at this angle (Karis's fit).
@@ -695,7 +728,16 @@ final class SceneRendering {
         float3 gathered = scene_surroundings(scene, normal, 1.0) * matte * open;
         float3 mirrored = seen * (mirror * weigh.x + weigh.y) * mix(1.0, open, roughness);
 
-        float3 glowing = matte * scene_glows(scene, in.world, normal, 0.0);
+        float3 glowing = matte * scene_glows(scene, in.world, normal, wrap);
+        if (softness > 0.0) {
+            // Denser and thinner places, a little lighter and darker.
+            float vary = mix(1.0, 0.82 + 0.36 * fluff, softness);
+            directMatte *= vary;
+            gathered *= vary;
+            // The edge thins out where the surface turns away, unevenly.
+            float edge = softness * 0.55 * (0.55 + 0.9 * fluff);
+            opacity *= smoothstep(0.0, max(edge, 1e-3), facing - edge * 0.15);
+        }
         // A clear thing covers what is behind it only as much as light does not pass
         // through it; what it mirrors is added over whatever shows through.
         float cover = opacity * (1.0 - transmission);
@@ -966,7 +1008,7 @@ final class SceneSurface {
                 let own = SceneRendering.ObjectUniforms(
                     model: model, normal: model.inverse.transpose,
                     color: SIMD4(color, 1), material: SIMD4(metalness, roughness, opacity, transmission), emission: SIMD4(glow, 0),
-                    surface: SIMD4(SceneRendering.clamp(object.number("ior"), 1, 3), 0, 0, 0)
+                    surface: SIMD4(SceneRendering.clamp(object.number("ior"), 1, 3), SceneRendering.clamp(object.number("softness"), 0, 1), 0, 0)
                 )
                 // Nothing of it shows: nothing to draw.
                 guard opacity > 0 else { continue }

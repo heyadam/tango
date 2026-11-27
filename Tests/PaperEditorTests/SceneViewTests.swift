@@ -421,4 +421,43 @@ import simd
         #expect(Self.isMostly(0, try Self.color(picture, at: SIMD3(0, 0.35, 0.05), in: one)))
         #expect(ShaderViewTests.near(try Self.color(picture, at: SIMD3(0.3, 0, 0), in: one), Self.white))
     }
+
+    // MARK: Soft things
+
+    @Test func aSoftThingThinsOutAtItsEdgeAndIsWholeInItsMiddle() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var cloud = Self.ball("cloud", Self.blue)
+        let hard = Self.document([cloud], values: ["rayTracing": .bool(false)])
+        cloud.values["softness"] = .number(1)
+        let soft = Self.document([cloud], values: ["rayTracing": .bool(false)])
+        let firm = ViewerSnapshot.bitmap(of: hard), fluffy = ViewerSnapshot.bitmap(of: soft)
+        Self.keep(fluffy, "soft")
+        // In the middle both are wholly there.
+        #expect(Self.isMostly(2, try Self.color(fluffy, at: SIMD3(0, 0, 0.5), in: soft)))
+        // Near the rim the soft one lets more of the white behind through, on average.
+        var firmer = 0, softer = 0
+        for step in 0..<24 {
+            let angle = Float(step) / 24 * 2 * .pi
+            let rim = SIMD3<Float>(cos(angle) * 0.47, sin(angle) * 0.47, 0.1)
+            firmer += Self.brightness(try Self.color(firm, at: rim, in: hard))
+            softer += Self.brightness(try Self.color(fluffy, at: rim, in: soft))
+        }
+        #expect(softer > firmer + 24 * 40, "\(softer) against \(firmer)")
+    }
+
+    @Test func aSoftThingGlowsAtItsRimWhenLitFromBehind() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var cloud = Self.ball("cloud", .white, scale: 0.8)
+        cloud.values["roughness"] = .number(1)
+        let behind: [String: Value] = [
+            "lightYaw": .number(180), "lightPitch": .number(10), "environment": .text("Night"), "rayTracing": .bool(false),
+        ]
+        let hard = Self.dark([cloud], values: behind)
+        cloud.values["softness"] = .number(0.8)
+        let soft = Self.dark([cloud], values: behind)
+        let rim = SIMD3<Float>(0.36, 0, 0.1)
+        let firm = try Self.color(ViewerSnapshot.bitmap(of: hard), at: rim, in: hard)
+        let lined = try Self.color(ViewerSnapshot.bitmap(of: soft), at: rim, in: soft)
+        #expect(Self.brightness(lined) > Self.brightness(firm) + 60, "\(lined) against \(firm)")
+    }
 }

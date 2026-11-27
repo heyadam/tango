@@ -487,6 +487,9 @@ public enum AssistantPrompt {
         - Clear things: `opacity` below 1 lets what is behind show; `transmission` 1 with a \
         low `roughness` is glass or water, which (with rays) bends and tints what is behind \
         it by `ior` and still mirrors its surroundings. Clear things cast lighter shadows.
+        - Vapor rather than a surface (clouds, smoke, foam): `softness` 0 to 1. Light wraps \
+        round a soft thing, glows through its rim when it comes from behind, and its edge \
+        thins out unevenly. Build a cloud from a few soft spheres (squashed with `scaleY`).
         - Many small things at once (rain, snow, sparks, bubbles, confetti): an object with \
         shape `particles` draws `count` copies (up to 20,000) of the shape named by `particle` \
         (or of its `model`) in a box `spreadX` by `spreadY` by `spreadZ` round where it stands. \

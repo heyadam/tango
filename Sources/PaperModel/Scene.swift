@@ -107,6 +107,9 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("opacity", "Opacity", .number(1)),
         SceneInput("transmission", "Transmission", .number(0)),
         SceneInput("ior", "Index of Refraction", .number(1.45)),
+        // Vapor rather than a surface: light wraps round it and glows through its rim when
+        // it comes from behind, and its edge thins out, unevenly: clouds, smoke, foam.
+        SceneInput("softness", "Softness", .number(0)),
         SceneInput("emission", "Emission", .number(0)),
         SceneInput("emissionColor", "Emission Color", .color(ColorValue(white: 0.8))),
     ] + particleInputs
