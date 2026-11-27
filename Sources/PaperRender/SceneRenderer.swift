@@ -10,19 +10,33 @@ import simd
 /// What draws scene views: the pipeline, the shapes as the GPU holds them, and the looks
 /// of the surroundings. One for the device, made the first time a scene is drawn.
 ///
-/// A scene is drawn with depth and four samples a pixel: every object with one physically
-/// based material (color, metalness, roughness), lit by one light and by its surroundings,
-/// which are a function of direction rather than a picture, so nothing is shipped or loaded
-/// for them and a mirror shows them as sharp as the view is large.
+/// A scene is drawn with depth and four samples a pixel into a picture of light (16-bit
+/// floats, so what is brighter than white stays brighter): every object with one
+/// physically based material (color, metalness, roughness, and light of its own), lit by
+/// one light, by its surroundings, which are a function of direction rather than a picture,
+/// so nothing is shipped or loaded for them and a mirror shows them as sharp as the view
+/// is large, and by up to four of its own glowing objects. A last pass spills the
+/// brightest light round itself (bloom) and tones it into the picture shown.
 final class SceneRendering {
     /// nil where there is no GPU, or the pipeline could not be made: scene views are then
     /// ordinary views.
     static let shared: SceneRendering? = ShaderCompiler.shared.flatMap { SceneRendering(compiler: $0) }
 
     static let samples = 4
+    /// What a scene is drawn into before it is toned: light, which can be brighter than white.
+    static let lightFormat = MTLPixelFormat.rgba16Float
+    /// The most glowing objects that light the others.
+    static let mostGlows = 4
 
     let compiler: ShaderCompiler
     let pipeline: MTLRenderPipelineState
+    /// The passes after a scene is drawn: the brightest light picked out at a quarter of the
+    /// size, blurred along one direction, and everything toned into the picture shown.
+    let bright: MTLRenderPipelineState
+    let blur: MTLRenderPipelineState
+    let tone: MTLRenderPipelineState
+    /// Reads a picture of light between its pixels, and nothing past its edges.
+    let clampedSampler: MTLSamplerState
     /// The same with rays: shadows, what a shiny thing mirrors of the others, and the
     /// shade where things meet. nil on a GPU that traces no rays (the iOS Simulator's),
     /// where a scene is drawn without them.
@@ -44,7 +58,7 @@ final class SceneRendering {
             let descriptor = MTLRenderPipelineDescriptor()
             descriptor.vertexFunction = library.makeFunction(name: "scene_vertex")
             descriptor.fragmentFunction = library.makeFunction(name: "scene_fragment")
-            descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+            descriptor.colorAttachments[0].pixelFormat = SceneRendering.lightFormat
             descriptor.depthAttachmentPixelFormat = .depth32Float
             descriptor.rasterSampleCount = SceneRendering.samples
             let vertex = MTLVertexDescriptor()
@@ -58,8 +72,19 @@ final class SceneRendering {
             descriptor.vertexDescriptor = vertex
             return try device.makeRenderPipelineState(descriptor: descriptor)
         }
+        func post(_ function: String, _ format: MTLPixelFormat, in library: MTLLibrary) throws -> MTLRenderPipelineState {
+            let descriptor = MTLRenderPipelineDescriptor()
+            descriptor.vertexFunction = library.makeFunction(name: "post_vertex")
+            descriptor.fragmentFunction = library.makeFunction(name: function)
+            descriptor.colorAttachments[0].pixelFormat = format
+            return try device.makeRenderPipelineState(descriptor: descriptor)
+        }
         do {
             pipeline = try make(traced: false)
+            let passes = try device.makeLibrary(source: SceneRendering.postSource, options: nil)
+            bright = try post("post_bright", SceneRendering.lightFormat, in: passes)
+            blur = try post("post_blur", SceneRendering.lightFormat, in: passes)
+            tone = try post("post_tone", .bgra8Unorm, in: passes)
         } catch {
             assertionFailure("The scene shader does not compile: \(error)")
             return nil
@@ -79,14 +104,21 @@ final class SceneRendering {
         samplerDescriptor.mipFilter = .linear
         samplerDescriptor.sAddressMode = .repeat
         samplerDescriptor.tAddressMode = .repeat
+        let clampedDescriptor = MTLSamplerDescriptor()
+        clampedDescriptor.minFilter = .linear
+        clampedDescriptor.magFilter = .linear
+        clampedDescriptor.sAddressMode = .clampToZero
+        clampedDescriptor.tAddressMode = .clampToZero
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 1, height: 1, mipmapped: false)
         guard let depth = device.makeDepthStencilState(descriptor: depthDescriptor),
               let sampler = device.makeSamplerState(descriptor: samplerDescriptor),
+              let clampedSampler = device.makeSamplerState(descriptor: clampedDescriptor),
               let white = device.makeTexture(descriptor: textureDescriptor) else { return nil }
         var pixel: [UInt8] = [255, 255, 255, 255]
         white.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: &pixel, bytesPerRow: 4)
         self.depth = depth
         self.sampler = sampler
+        self.clampedSampler = clampedSampler
         self.white = white
     }
 
@@ -150,8 +182,28 @@ final class SceneRendering {
         var ground = SIMD4<Float>(repeating: 0)
         var lampDirection = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
         var lampColor = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
-        /// x: exposure, y: 1 when rays are traced.
+        /// x: exposure, y: 1 when rays are traced, z: how many glows light the scene.
         var settings = SIMD4<Float>(repeating: 0)
+        /// Glowing objects that light the others: where (xyz) and how large (w), and their
+        /// light (rgb).
+        var glowPlace = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
+        var glowColor = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
+
+        /// Gives the scene its glows: the brightest first, as many as the shader takes.
+        mutating func setGlows(_ glows: [(place: SIMD3<Float>, size: Float, light: SIMD3<Float>)]) {
+            let kept = glows.sorted { simd_reduce_max($0.light) * $0.size > simd_reduce_max($1.light) * $1.size }
+                .prefix(SceneRendering.mostGlows)
+            func at(_ index: Int) -> (SIMD4<Float>, SIMD4<Float>) {
+                guard index < kept.count else { return (SIMD4(repeating: 0), SIMD4(repeating: 0)) }
+                let glow = kept[kept.startIndex + index]
+                return (SIMD4(glow.place, glow.size), SIMD4(glow.light, 0))
+            }
+            (glowPlace.0, glowColor.0) = at(0)
+            (glowPlace.1, glowColor.1) = at(1)
+            (glowPlace.2, glowColor.2) = at(2)
+            (glowPlace.3, glowColor.3) = at(3)
+            settings.z = Float(kept.count)
+        }
 
         init(_ scene: SceneUse, aspect: Float) {
             viewProjection = SceneMath.projection(of: scene, aspect: aspect) * SceneMath.view(of: scene)
@@ -187,6 +239,8 @@ final class SceneRendering {
         var color: SIMD4<Float>
         /// x: metalness, y: roughness.
         var material: SIMD4<Float>
+        /// Its own light, linear red, green, blue, already times its strength.
+        var emission = SIMD4<Float>(repeating: 0)
     }
 
     static func clamp(_ value: Double, _ low: Float, _ high: Float) -> Float {
@@ -220,6 +274,8 @@ final class SceneRendering {
         float4 lampDirection[3];
         float4 lampColor[3];
         float4 settings;
+        float4 glowPlace[4];
+        float4 glowColor[4];
     };
 
     struct ObjectUniforms {
@@ -227,6 +283,7 @@ final class SceneRendering {
         float4x4 normal;
         float4 color;
         float4 material;
+        float4 emission;
     };
 
     struct SceneVertexIn {
@@ -281,6 +338,7 @@ final class SceneRendering {
         float4x4 normal;
         float4 color;
         float4 material;
+        float4 emission;
     };
 
     struct TracedTriangle {
@@ -314,12 +372,21 @@ final class SceneRendering {
     }
     #endif
 
-    static float3 scene_tone(float3 color) {
-        // ACES, fitted (Narkowicz), then the sRGB curve.
-        color = saturate((color * (2.51 * color + 0.03)) / (color * (2.43 * color + 0.59) + 0.14));
-        float3 low = color * 12.92;
-        float3 high = 1.055 * pow(color, float3(1.0 / 2.4)) - 0.055;
-        return mix(low, high, step(float3(0.0031308), color));
+    // The light of the scene's glowing objects on a surface: each a soft ball of light,
+    // falling off with the square of the distance from its rim.
+    static float3 scene_glows(constant SceneUniforms &scene, float3 world, float3 normal, float wrap) {
+        float3 sum = float3(0.0);
+        int count = int(scene.settings.z);
+        for (int index = 0; index < 4; index++) {
+            if (index >= count) { break; }
+            float3 toward = scene.glowPlace[index].xyz - world;
+            float far = length(toward);
+            float size = max(scene.glowPlace[index].w, 0.001);
+            float facing = (dot(normal, toward / max(far, 1e-4)) + wrap) / (1.0 + wrap);
+            float reach = size * size / (far * far + size * size * 0.25);
+            sum += scene.glowColor[index].rgb * saturate(facing) * reach;
+        }
+        return sum;
     }
 
     fragment float4 scene_fragment(SceneVertex in [[stage_in]], bool front [[front_facing]],
@@ -424,8 +491,10 @@ final class SceneRendering {
                     float3 place = from + back * hit.distance;
                     float otherLit = saturate(dot(there, toLight));
                     if (otherLit > 0.0 && scene_blocked(structure, place + there * lift, toLight, 1000.0)) { otherLit = 0.0; }
-                    float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F)
-                        + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(back, there), otherRough);
+                    float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F
+                            + scene_glows(scene, place, there, 0.0))
+                        + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(back, there), otherRough)
+                        + other.emission.rgb;
                     seen = mix(found, seen, smoothstep(0.25, 0.5, roughness));
                 }
             }
@@ -452,8 +521,87 @@ final class SceneRendering {
         float3 gathered = scene_surroundings(scene, normal, 1.0) * matte * open;
         float3 mirrored = seen * (mirror * weigh.x + weigh.y) * mix(1.0, open, roughness);
 
-        float3 color = (direct + gathered + mirrored) * scene.settings.x;
-        return float4(scene_tone(color), 1.0);
+        float3 glowing = matte * scene_glows(scene, in.world, normal, 0.0);
+        float3 color = (direct + gathered + mirrored + glowing + object.emission.rgb) * scene.settings.x;
+        return float4(color, 1.0);
+    }
+    """
+
+    /// The passes after the scene: the light brighter than white picked out at a smaller
+    /// size, blurred, and added back; then everything toned (ACES) and given the sRGB curve.
+    /// What is drawn has its light times its coverage (premultiplied), so a glow can spill
+    /// onto the clear pixels round a thing, where it is drawn as light over what is behind.
+    static let postSource = """
+    #include <metal_stdlib>
+    using namespace metal;
+
+    struct PostVertex {
+        float4 position [[position]];
+        float2 uv;
+    };
+
+    // One triangle that covers the picture.
+    vertex PostVertex post_vertex(uint index [[vertex_id]]) {
+        float2 corner = float2((index << 1) & 2, index & 2);
+        PostVertex out;
+        out.position = float4(corner * 2.0 - 1.0, 0.0, 1.0);
+        out.uv = float2(corner.x, 1.0 - corner.y);
+        return out;
+    }
+
+    struct PostSettings {
+        float2 step;      // one source pixel, as a share of the picture, for the blur
+        float bloom;      // how strong the glow is
+        float threshold;  // what is picked out: light over this much
+    };
+
+    // The light brighter than the threshold, averaged over four by four pixels of the scene
+    // (or two by two of a glow, read again at half its size with no threshold).
+    fragment float4 post_bright(PostVertex in [[stage_in]], texture2d<float> light [[texture(0)]],
+                                sampler pick [[sampler(0)]], constant PostSettings &settings [[buffer(0)]]) {
+        float3 sum = float3(0.0);
+        for (int x = -1; x <= 1; x += 2) {
+            for (int y = -1; y <= 1; y += 2) {
+                float3 c = light.sample(pick, in.uv + float2(x, y) * settings.step).rgb;
+                float most = max(c.r, max(c.g, c.b));
+                sum += c * max(most - settings.threshold, 0.0) / max(most, 1e-4);
+            }
+        }
+        return float4(sum * 0.25, 0.0);
+    }
+
+    // A Gaussian blur along one direction, thirteen taps read as seven between pixels.
+    fragment float4 post_blur(PostVertex in [[stage_in]], texture2d<float> light [[texture(0)]],
+                              sampler pick [[sampler(0)]], constant PostSettings &settings [[buffer(0)]]) {
+        const float offsets[4] = { 0.0, 1.4117647, 3.2941176, 5.1764706 };
+        const float weights[4] = { 0.1964825502, 0.2969069647, 0.0944703979, 0.0103813624 };
+        float3 sum = light.sample(pick, in.uv).rgb * weights[0];
+        for (int index = 1; index < 4; index++) {
+            sum += light.sample(pick, in.uv + settings.step * offsets[index]).rgb * weights[index];
+            sum += light.sample(pick, in.uv - settings.step * offsets[index]).rgb * weights[index];
+        }
+        return float4(sum, 0.0);
+    }
+
+    static float3 post_curve(float3 color) {
+        // ACES, fitted (Narkowicz), then the sRGB curve.
+        color = saturate((color * (2.51 * color + 0.03)) / (color * (2.43 * color + 0.59) + 0.14));
+        float3 low = color * 12.92;
+        float3 high = 1.055 * pow(color, float3(1.0 / 2.4)) - 0.055;
+        return mix(low, high, step(float3(0.0031308), color));
+    }
+
+    fragment float4 post_tone(PostVertex in [[stage_in]], texture2d<float> light [[texture(0)]],
+                              texture2d<float> near [[texture(1)]], texture2d<float> wide [[texture(2)]],
+                              sampler pick [[sampler(0)]], constant PostSettings &settings [[buffer(0)]]) {
+        float4 drawn = light.sample(pick, in.uv);
+        float cover = saturate(drawn.a);
+        float3 own = cover > 0.0 ? drawn.rgb / cover : float3(0.0);
+        float3 glow = (near.sample(pick, in.uv).rgb * 0.6 + wide.sample(pick, in.uv).rgb * 0.4) * settings.bloom;
+        float3 inside = post_curve(own + glow);
+        float3 outside = post_curve(glow);
+        float spill = saturate(max(outside.r, max(outside.g, outside.b)));
+        return float4(inside * cover + outside * (1.0 - cover), cover + spill * (1.0 - cover));
     }
     """
 }
@@ -548,8 +696,15 @@ final class SceneSurface {
     private let rendering: SceneRendering
     /// Two results, drawn into in turn, as a shader view's are.
     private var outputs: [(surface: IOSurface, texture: MTLTexture)] = []
+    /// The scene's light, four samples a pixel, and resolved to one.
     private var samples: MTLTexture?
+    private var light: MTLTexture?
     private var depth: MTLTexture?
+    /// The glow: the brightest light at a quarter of the size and at an eighth, each with a
+    /// second texture to blur through, and a black one standing in when there is no bloom.
+    private var near: (MTLTexture, MTLTexture)?
+    private var wide: (MTLTexture, MTLTexture)?
+    private var dark: MTLTexture?
     private var turn = 0
     private var pixels = (width: 0, height: 0)
     /// The most pixels a point a scene is drawn with while rays are traced.
@@ -585,9 +740,10 @@ final class SceneSurface {
         turn = 1 - turn
         let output = outputs[turn]
 
+        guard let light, let near, let wide, let dark else { return }
         let pass = MTLRenderPassDescriptor()
         pass.colorAttachments[0].texture = samples
-        pass.colorAttachments[0].resolveTexture = output.texture
+        pass.colorAttachments[0].resolveTexture = light
         pass.colorAttachments[0].loadAction = .clear
         pass.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
         pass.colorAttachments[0].storeAction = .multisampleResolve
@@ -597,8 +753,11 @@ final class SceneSurface {
         pass.depthAttachment.storeAction = .dontCare
         var uniforms = SceneRendering.SceneUniforms(scene, aspect: Float(size.width / max(size.height, 0.0001)))
         var draws: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms)] = []
+        var glows: [(place: SIMD3<Float>, size: Float, light: SIMD3<Float>)] = []
         for object in scene.objects where object.value("visible").boolValue {
             let placement = SceneMath.placement(of: object)
+            let strength = SceneRendering.clamp(object.number("emission"), 0, 1000)
+            let drawnBefore = draws.count
             let made: [ScenePart]
             if object.shape == .model {
                 made = parts(object)
@@ -614,9 +773,11 @@ final class SceneSurface {
                     ?? part.metalness ?? SceneRendering.clamp(object.number("metalness"), 0, 1)
                 let roughness = object.values["roughness"].map { SceneRendering.clamp($0.numberValue, 0, 1) }
                     ?? part.roughness ?? SceneRendering.clamp(object.number("roughness"), 0, 1)
+                // Its own light is in the color it is given, or in the color it is.
+                let glow = (object.values["emissionColor"].map { SceneRendering.linear($0.colorValue) } ?? color) * strength
                 let own = SceneRendering.ObjectUniforms(
                     model: model, normal: model.inverse.transpose,
-                    color: SIMD4(color, 1), material: SIMD4(metalness, roughness, 0, 0)
+                    color: SIMD4(color, 1), material: SIMD4(metalness, roughness, 0, 0), emission: SIMD4(glow, 0)
                 )
                 // A size of nothing has no inverse: there is nothing to draw of it either.
                 guard (0..<4).allSatisfy({ column in (0..<4).allSatisfy { own.normal[column][$0].isFinite && own.model[column][$0].isFinite } }) else { continue }
@@ -625,7 +786,14 @@ final class SceneSurface {
                 if object.values["color"] != nil { part.picture = nil }
                 draws.append((part, own))
             }
+            // A glowing object lights the others, as a ball of light as large as it is.
+            if strength > 0, draws.count > drawnBefore, let any = draws.last, any.uniforms.emission != .zero {
+                let middle = placement.columns.3
+                let size = SceneRendering.clamp(object.number("scale"), 0, 1e4) * 0.5
+                glows.append((SIMD3(middle.x, middle.y, middle.z), max(size, 0.01), SIMD3(any.uniforms.emission.x, any.uniforms.emission.y, any.uniforms.emission.z)))
+            }
         }
+        uniforms.setGlows(glows)
 
         let rays = scene.value("rayTracing").boolValue ? trace(draws) : nil
         uniforms.settings.y = rays == nil ? 0 : 1
@@ -662,6 +830,36 @@ final class SceneSurface {
             )
         }
         encoder.endEncoding()
+
+        // The glow: the brightest light at a quarter of the size, blurred, then at an eighth,
+        // blurred again; then everything toned into the picture shown.
+        let bloom = SceneRendering.clamp(scene.number("bloom"), 0, 10)
+        func post(_ pipeline: MTLRenderPipelineState, into target: MTLTexture, reading textures: [MTLTexture], step: SIMD2<Float>, threshold: Float = 0) {
+            let into = MTLRenderPassDescriptor()
+            into.colorAttachments[0].texture = target
+            into.colorAttachments[0].loadAction = .dontCare
+            into.colorAttachments[0].storeAction = .store
+            guard let encoder = buffer.makeRenderCommandEncoder(descriptor: into) else { return }
+            var settings = SIMD4<Float>(step.x, step.y, bloom, threshold)
+            encoder.setRenderPipelineState(pipeline)
+            for (index, texture) in textures.enumerated() { encoder.setFragmentTexture(texture, index: index) }
+            encoder.setFragmentSamplerState(rendering.clampedSampler, index: 0)
+            encoder.setFragmentBytes(&settings, length: MemoryLayout<SIMD4<Float>>.stride, index: 0)
+            encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+            encoder.endEncoding()
+        }
+        func pixel(_ texture: MTLTexture) -> SIMD2<Float> { SIMD2(1 / Float(texture.width), 1 / Float(texture.height)) }
+        if bloom > 0 {
+            post(rendering.bright, into: near.0, reading: [light], step: pixel(light), threshold: 1)
+            post(rendering.blur, into: near.1, reading: [near.0], step: SIMD2(pixel(near.0).x, 0))
+            post(rendering.blur, into: near.0, reading: [near.1], step: SIMD2(0, pixel(near.1).y))
+            post(rendering.bright, into: wide.0, reading: [near.0], step: pixel(near.0) * 0.5)
+            post(rendering.blur, into: wide.1, reading: [wide.0], step: SIMD2(pixel(wide.0).x, 0))
+            post(rendering.blur, into: wide.0, reading: [wide.1], step: SIMD2(0, pixel(wide.1).y))
+            post(rendering.tone, into: output.texture, reading: [light, near.0, wide.0], step: .zero)
+        } else {
+            post(rendering.tone, into: output.texture, reading: [light, dark, dark], step: .zero)
+        }
         buffer.commit()
         // Pictures and recordings are taken right after a frame, so the result has to be there.
         buffer.waitUntilCompleted()
@@ -703,7 +901,9 @@ final class SceneSurface {
             instance.options = .opaque
             instance.accelerationStructureIndex = UInt32(place)
             instances.append(instance)
-            materials.append(TracedInstance(normal: draw.uniforms.normal, color: draw.uniforms.color, material: draw.uniforms.material))
+            materials.append(TracedInstance(
+                normal: draw.uniforms.normal, color: draw.uniforms.color, material: draw.uniforms.material, emission: draw.uniforms.emission
+            ))
         }
         let device = queue.device
         guard let made = device.makeBuffer(bytes: materials, length: materials.count * MemoryLayout<TracedInstance>.stride) else { return nil }
@@ -740,6 +940,7 @@ final class SceneSurface {
         var normal: simd_float4x4
         var color: SIMD4<Float>
         var material: SIMD4<Float>
+        var emission: SIMD4<Float>
     }
 
     private func resize(width: Int, height: Int) -> Bool {
@@ -747,22 +948,48 @@ final class SceneSurface {
         let device = rendering.compiler.device
         guard let first = SceneSurface.makeOutput(width: width, height: height, device: device),
               let second = SceneSurface.makeOutput(width: width, height: height, device: device) else { return false }
-        let color = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm, width: width, height: height, mipmapped: false)
+        let color = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: SceneRendering.lightFormat, width: width, height: height, mipmapped: false)
         color.textureType = .type2DMultisample
         color.sampleCount = SceneRendering.samples
         color.usage = .renderTarget
         color.storageMode = .private
+        func plain(_ width: Int, _ height: Int) -> MTLTexture? {
+            let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+                pixelFormat: SceneRendering.lightFormat, width: max(width, 1), height: max(height, 1), mipmapped: false
+            )
+            descriptor.usage = [.renderTarget, .shaderRead]
+            descriptor.storageMode = .private
+            return device.makeTexture(descriptor: descriptor)
+        }
         let deep = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: width, height: height, mipmapped: false)
         deep.textureType = .type2DMultisample
         deep.sampleCount = SceneRendering.samples
         deep.usage = .renderTarget
         deep.storageMode = .private
-        guard let samples = device.makeTexture(descriptor: color), let depth = device.makeTexture(descriptor: deep) else { return false }
+        guard let samples = device.makeTexture(descriptor: color), let depth = device.makeTexture(descriptor: deep),
+              let light = plain(width, height),
+              let near0 = plain((width + 3) / 4, (height + 3) / 4), let near1 = plain((width + 3) / 4, (height + 3) / 4),
+              let wide0 = plain((width + 7) / 8, (height + 7) / 8), let wide1 = plain((width + 7) / 8, (height + 7) / 8),
+              let dark = SceneSurface.black(device: device) else { return false }
         outputs = [first, second]
+        self.light = light
+        near = (near0, near1)
+        wide = (wide0, wide1)
+        self.dark = dark
         self.samples = samples
         self.depth = depth
         pixels = (width, height)
         return true
+    }
+
+    /// One pixel of no light, read where there is no glow.
+    static func black(device: MTLDevice) -> MTLTexture? {
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: SceneRendering.lightFormat, width: 1, height: 1, mipmapped: false)
+        descriptor.usage = .shaderRead
+        guard let texture = device.makeTexture(descriptor: descriptor) else { return nil }
+        var nothing = [UInt16](repeating: 0, count: 4)
+        texture.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: &nothing, bytesPerRow: 8)
+        return texture
     }
 
     /// A texture a layer can show: it is backed by an IOSurface, as a shader view's result is.

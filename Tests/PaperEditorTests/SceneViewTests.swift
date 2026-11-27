@@ -221,4 +221,70 @@ import simd
         let second = ViewerSnapshot.bitmap(of: document)?.representation(using: .png, properties: [:])
         #expect(first != nil && first == second)
     }
+
+    // MARK: Light of its own, and bloom
+
+    /// The scene view on black, so light that spills off a thing can be seen.
+    static func dark(_ objects: [SceneObject], values: [String: Value] = [:]) -> PaperModel.Document {
+        var document = Self.document(objects, values: values)
+        document.screen.children[0].properties[.fill] = .color(.black)
+        return document
+    }
+
+    static func brightness(_ color: [Int]) -> Int { color.reduce(0, +) }
+
+    @Test func aThingWithLightOfItsOwnIsBrighterThanItsColor() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var ball = Self.ball("ball", ColorValue(red: 0.7, green: 0.12, blue: 0.08))
+        let unlit = Self.dark([ball], values: ["environment": .text("Night"), "lightIntensity": .number(0)])
+        ball.values["emission"] = .number(3)
+        let lit = Self.dark([ball], values: ["environment": .text("Night"), "lightIntensity": .number(0)])
+        let before = try Self.color(ViewerSnapshot.bitmap(of: unlit), at: SIMD3(0, 0, 0.5), in: unlit)
+        let after = try Self.color(ViewerSnapshot.bitmap(of: lit), at: SIMD3(0, 0, 0.5), in: lit)
+        #expect(Self.brightness(after) > Self.brightness(before) + 150, "\(before) \(after)")
+        // Its light is in its own color: still mostly red.
+        #expect(Self.isMostly(0, after))
+        // A color of its own for the light wins over its color.
+        ball.values["emissionColor"] = .color(Self.blue)
+        let blue = Self.dark([ball], values: ["environment": .text("Night"), "lightIntensity": .number(0)])
+        #expect(Self.isMostly(2, try Self.color(ViewerSnapshot.bitmap(of: blue), at: SIMD3(0, 0, 0.5), in: blue)))
+    }
+
+    @Test func bloomSpillsBrightLightOntoWhatIsRoundItOnlyWhenAsked() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var ball = Self.ball("ball", ColorValue(red: 1, green: 0.8, blue: 0.4), scale: 0.5)
+        ball.values["emission"] = .number(6)
+        let plain = Self.dark([ball])
+        let blooming = Self.dark([ball], values: ["bloom": .number(1.5)])
+        let still = ViewerSnapshot.bitmap(of: plain), glowing = ViewerSnapshot.bitmap(of: blooming)
+        Self.keep(glowing, "bloom")
+        // Just outside the ball: black without bloom, lit with it.
+        let beside = SIMD3<Float>(0, 0.38, 0)
+        #expect(Self.brightness(try Self.color(still, at: beside, in: plain)) < 30)
+        #expect(Self.brightness(try Self.color(glowing, at: beside, in: blooming)) > 90)
+        // Far away it is still dark.
+        #expect(Self.brightness(ShaderViewTests.color(glowing, 23, 33)) < 30)
+        // The same picture every time.
+        let again = ViewerSnapshot.bitmap(of: blooming)
+        #expect(glowing?.representation(using: .png, properties: [:]) == again?.representation(using: .png, properties: [:]))
+    }
+
+    @Test func aGlowingThingLightsWhatIsNearIt() throws {
+        try #require(ShaderCompiler.shared != nil)
+        let wall = SceneObject(id: "wall", name: "Wall", shape: .box, values: [
+            "x": .number(0.3), "scale": .number(0.5), "color": .color(.white), "rotationY": .number(0),
+        ])
+        var lamp = Self.ball("lamp", ColorValue(red: 1, green: 0.6, blue: 0.2), at: SIMD3(-0.25, 0, 0.6), scale: 0.2)
+        let values: [String: Value] = ["environment": .text("Night"), "lightIntensity": .number(0), "rayTracing": .bool(false)]
+        let dim = Self.dark([wall, lamp], values: values)
+        lamp.values["emission"] = .number(8)
+        let bright = Self.dark([wall, lamp], values: values)
+        // The front of the wall, which faces the camera and the lamp in front of it.
+        let face = SIMD3<Float>(0.2, -0.12, 0.25)
+        let before = try Self.color(ViewerSnapshot.bitmap(of: dim), at: face, in: dim)
+        let after = try Self.color(ViewerSnapshot.bitmap(of: bright), at: face, in: bright)
+        #expect(Self.brightness(after) > Self.brightness(before) + 60, "\(before) \(after)")
+        // Warm, as the lamp is.
+        #expect(after.count == 3 && after[0] > after[2])
+    }
 }

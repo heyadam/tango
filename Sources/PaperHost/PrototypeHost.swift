@@ -45,6 +45,8 @@ public final class PrototypeHost {
     public static let kinds: String = {
         let names = PatchRegistry.standard.library.map(\.kind).sorted() + LayerKind.allCases.map(\.rawValue)
             + ViewType.allCases.map { "view \($0.rawValue)" } + ["document \(Document.currentVersion)"]
+            + SceneObject.Shape.allCases.map { "scene shape \($0.rawValue)" }
+            + SceneObject.inputs.map { "scene object \($0.id)" } + SceneUse.inputs.map { "scene \($0.id)" }
         return SHA256.hash(data: Data(names.joined(separator: "\n").utf8)).prefix(8).map { String(format: "%02x", $0) }.joined()
     }()
 

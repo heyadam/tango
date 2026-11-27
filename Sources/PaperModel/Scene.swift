@@ -90,12 +90,24 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("metalness", "Metalness", .number(0)),
         SceneInput("roughness", "Roughness", .number(0.45)),
         SceneInput("visible", "Visible", .bool(true)),
+        // Light of its own, added to what it reflects before the picture is toned: a lamp,
+        // the sun, lightning. With the scene's Bloom it glows, and it lights what is near.
+        SceneInput("emission", "Emission", .number(0)),
+        SceneInput("emissionColor", "Emission Color", .color(ColorValue(white: 0.8))),
     ]
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }
 
+    /// Inputs that take another's value until they are stored themselves, as a side of a
+    /// stack's padding follows its horizontal or vertical padding.
+    public static let follows: [String: String] = [
+        "emissionColor": "color",
+    ]
+
     public func value(_ input: String) -> Value {
-        values[input] ?? SceneObject.input(input)?.defaultValue ?? .number(0)
+        if let stored = values[input] { return stored }
+        if let leader = SceneObject.follows[input] { return value(leader) }
+        return SceneObject.input(input)?.defaultValue ?? .number(0)
     }
 
     public func number(_ input: String) -> Double { value(input).numberValue }
@@ -142,6 +154,8 @@ public struct SceneUse: Codable, Hashable, Sendable {
         SceneInput("environment", "Environment", .text("Studio"), options: environments),
         SceneInput("exposure", "Exposure", .number(1)),
         SceneInput("rayTracing", "Ray Tracing", .bool(true)),
+        // How much of what is brighter than white spills round it as a glow.
+        SceneInput("bloom", "Bloom", .number(0)),
     ]
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }

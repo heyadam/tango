@@ -209,4 +209,23 @@ import simd
         #expect(abs(low.x + 0.25) < 1e-5 && abs(high.z - 0.125) < 1e-5)
         #expect(SceneMesh.fitting(low: SIMD3(1, 1, 1), high: SIMD3(1, 1, 1)) == matrix_identity_float4x4)
     }
+
+    @Test func lightOfItsOwnFollowsTheColorUntilItIsGivenOne() throws {
+        var ball = SceneObject(id: "ball", name: "Ball", shape: .sphere, values: ["color": .color(ColorValue(red: 1, green: 0, blue: 0))])
+        #expect(ball.number("emission") == 0)
+        #expect(ball.value("emissionColor") == .color(ColorValue(red: 1, green: 0, blue: 0)))
+        ball.values["emissionColor"] = .color(.white)
+        #expect(ball.value("emissionColor") == .color(.white))
+        // Both are ports, and so is the scene's bloom.
+        let (document, view) = document(SceneUse(objects: [ball]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        let ports = PatchRegistry.standard.ports(for: node)
+        #expect(ports.input("scene.ball.emission")?.type == .number)
+        #expect(ports.input("scene.ball.emissionColor")?.type == .color)
+        #expect(ports.input("scene.bloom")?.type == .number)
+        // A file from before has neither, and reads with the defaults.
+        let old = #"{"objects":[{"id":"ball","name":"Ball","shape":"sphere","values":{}}],"values":{}}"#
+        let read = try JSONDecoder().decode(SceneUse.self, from: Data(old.utf8))
+        #expect(read.number("bloom") == 0 && read.objects[0].number("emission") == 0)
+    }
 }
