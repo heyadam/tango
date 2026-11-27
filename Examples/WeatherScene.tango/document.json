@@ -5,7 +5,7 @@
   "graph" : {
     "comments" : [
       {
-        "id" : "10F13136-D2B5-4EAE-802A-61EA25CB1C3F",
+        "id" : "9CB38951-F9E7-48D8-B2FD-4BF566A11B48",
         "origin" : {
           "x" : 24,
           "y" : 48
@@ -17,13 +17,13 @@
         "text" : "Orbit · A drag turns the weather"
       },
       {
-        "id" : "2B991664-DAF6-4EC3-A297-D2FF5C864962",
+        "id" : "C6EB48CA-3114-4F8F-BC3F-15B14EB8CFB2",
         "origin" : {
           "x" : 24,
           "y" : 792
         },
         "size" : {
-          "height" : 1380,
+          "height" : 1692,
           "width" : 816
         },
         "text" : "Weather · A day sets the sky"
@@ -32,788 +32,968 @@
     "connections" : [
       {
         "from" : {
-          "node" : "89D73085-3B20-4719-A01C-0615F534B665",
+          "node" : "12CB77D9-67AA-4DFD-9ADD-43658DE27124",
           "port" : "translation"
         },
         "to" : {
-          "node" : "3EB09F20-AD0F-401C-9241-E874FA6D46F7",
+          "node" : "A9EEE809-CF19-497A-924C-3B5472E6AB8B",
           "port" : "point"
         }
       },
       {
         "from" : {
-          "node" : "3EB09F20-AD0F-401C-9241-E874FA6D46F7",
+          "node" : "A9EEE809-CF19-497A-924C-3B5472E6AB8B",
           "port" : "x"
         },
         "to" : {
-          "node" : "765C3D61-8886-46BC-928D-75E076326CF9",
+          "node" : "2ACE6DDA-6C55-4CE4-9106-43EB3B793C4A",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "765C3D61-8886-46BC-928D-75E076326CF9",
+          "node" : "2ACE6DDA-6C55-4CE4-9106-43EB3B793C4A",
           "port" : "value"
         },
         "to" : {
-          "node" : "CBAA51E1-9E96-4516-A62A-55465CFC36A8",
+          "node" : "350427B7-39F5-4232-BBED-69C5ACA6A7AD",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "CBAA51E1-9E96-4516-A62A-55465CFC36A8",
+          "node" : "350427B7-39F5-4232-BBED-69C5ACA6A7AD",
           "port" : "result"
         },
         "to" : {
-          "node" : "6F6635C0-9255-4EF8-AD58-77C5D7DF694D",
+          "node" : "21C0F4B1-9400-45BF-B399-435684D71FD3",
           "port" : "held"
         }
       },
       {
         "from" : {
-          "node" : "89D73085-3B20-4719-A01C-0615F534B665",
+          "node" : "12CB77D9-67AA-4DFD-9ADD-43658DE27124",
           "port" : "panning"
         },
         "to" : {
-          "node" : "6F6635C0-9255-4EF8-AD58-77C5D7DF694D",
+          "node" : "21C0F4B1-9400-45BF-B399-435684D71FD3",
           "port" : "hold"
         }
       },
       {
         "from" : {
-          "node" : "3EB09F20-AD0F-401C-9241-E874FA6D46F7",
+          "node" : "A9EEE809-CF19-497A-924C-3B5472E6AB8B",
           "port" : "y"
         },
         "to" : {
-          "node" : "D301787F-FCFE-4B6E-BE7C-2A0E3912C1C6",
+          "node" : "6E3E9CD2-5293-4F17-B4A0-A7A255418D3E",
           "port" : "progress"
         }
       },
       {
         "from" : {
-          "node" : "D301787F-FCFE-4B6E-BE7C-2A0E3912C1C6",
+          "node" : "6E3E9CD2-5293-4F17-B4A0-A7A255418D3E",
           "port" : "value"
         },
         "to" : {
-          "node" : "B1D358D3-A9CB-434F-85C2-EAEC28EF0E4A",
+          "node" : "CFF8E13A-5EFD-4B76-B98E-96810278191D",
           "port" : "value"
         }
       },
       {
         "from" : {
-          "node" : "B1D358D3-A9CB-434F-85C2-EAEC28EF0E4A",
+          "node" : "CFF8E13A-5EFD-4B76-B98E-96810278191D",
           "port" : "result"
         },
         "to" : {
-          "node" : "3C4AF226-4050-4998-BBE6-7138DB86ED5E",
+          "node" : "32BD9B60-C886-41C8-AF4D-B32118D2B6DA",
           "port" : "held"
         }
       },
       {
         "from" : {
-          "node" : "89D73085-3B20-4719-A01C-0615F534B665",
+          "node" : "12CB77D9-67AA-4DFD-9ADD-43658DE27124",
           "port" : "panning"
         },
         "to" : {
-          "node" : "3C4AF226-4050-4998-BBE6-7138DB86ED5E",
+          "node" : "32BD9B60-C886-41C8-AF4D-B32118D2B6DA",
           "port" : "hold"
         }
       },
       {
         "from" : {
-          "node" : "6F6635C0-9255-4EF8-AD58-77C5D7DF694D",
+          "node" : "21C0F4B1-9400-45BF-B399-435684D71FD3",
           "port" : "value"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.cameraYaw"
         }
       },
       {
         "from" : {
-          "node" : "3C4AF226-4050-4998-BBE6-7138DB86ED5E",
+          "node" : "32BD9B60-C886-41C8-AF4D-B32118D2B6DA",
           "port" : "value"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.cameraPitch"
         }
       },
       {
         "from" : {
-          "node" : "58755D76-D666-4DE6-B14D-D97BCBBCE467",
+          "node" : "F92E0BF3-2BAD-4658-B4C1-CF81860B72D4",
           "port" : "tapped"
         },
         "to" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "day0"
         }
       },
       {
         "from" : {
-          "node" : "D7FDB3AB-D27A-42CA-BBAB-2098146BCE5D",
+          "node" : "795B363D-E60E-4B39-902E-932D6FD38776",
           "port" : "tapped"
         },
         "to" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "day1"
         }
       },
       {
         "from" : {
-          "node" : "6CF9D6B5-7A41-4D0C-A33B-3BF6B48F0F4F",
+          "node" : "F0E21060-8EAE-46D8-BE6E-195B69B19044",
           "port" : "tapped"
         },
         "to" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "day2"
         }
       },
       {
         "from" : {
-          "node" : "859F87EE-3428-4F32-829F-45676B51FB75",
+          "node" : "A2B133C1-9138-4760-B042-2F0209EEA856",
           "port" : "tapped"
         },
         "to" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "day3"
         }
       },
       {
         "from" : {
-          "node" : "56428356-0492-4EF1-BC04-342CB09B966F",
+          "node" : "C9B59952-63EC-4ACA-BF4C-333611D4DDC1",
           "port" : "tapped"
         },
         "to" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "day4"
         }
       },
       {
         "from" : {
-          "node" : "34D941DA-2EFA-4DB5-A860-76E541ED81C8",
+          "node" : "D17B4F15-D523-46D7-B139-50B1B55C21DA",
           "port" : "time"
         },
         "to" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "clock"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "moving"
         },
         "to" : {
-          "node" : "34D941DA-2EFA-4DB5-A860-76E541ED81C8",
+          "node" : "D17B4F15-D523-46D7-B139-50B1B55C21DA",
           "port" : "running"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "surroundings"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.environment"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "lightYaw"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.lightYaw"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "lightPitch"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.lightPitch"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "intensity"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.lightIntensity"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "lightColor"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.lightColor"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "exposure"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.exposure"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "bloom"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.bloom"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunX"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.sun.x"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunY"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.sun.y"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunScale"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.sun.scale"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunGlow"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.sun.emission"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunX"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.corona.x"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunY"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.corona.y"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "coronaScale"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.corona.scale"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "cloudGlow"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.cloud.emission"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "cloudX"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.cloud.x"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "cloudY"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.cloud.y"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
-          "port" : "cloudScale"
-        },
-        "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
-          "port" : "scene.cloud.scale"
-        }
-      },
-      {
-        "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "cloudColor"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.cloud.color"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "backX"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.back.x"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "backY"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.back.y"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
-          "port" : "backScale"
-        },
-        "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
-          "port" : "scene.back.scale"
-        }
-      },
-      {
-        "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "backColor"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.back.color"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "frontX"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.front.x"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "frontY"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.front.y"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
-          "port" : "frontScale"
-        },
-        "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
-          "port" : "scene.front.scale"
-        }
-      },
-      {
-        "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "frontColor"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.front.color"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "cloudSX"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.scaleX"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "cloudSY"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.scaleY"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "cloudSZ"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.scaleZ"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "coverage"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.coverage"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "density"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.density"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "fluffiness"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.fluffiness"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "drift"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.cloud.drift"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "backSX"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.scaleX"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "backSY"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.scaleY"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "backSZ"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.scaleZ"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "coverage"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.coverage"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "density"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.density"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "fluffiness"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.fluffiness"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "drift"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.back.drift"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "frontSX"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.scaleX"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "frontSY"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.scaleY"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "frontSZ"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.scaleZ"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "coverage"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.coverage"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "density"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.density"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "fluffiness"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.fluffiness"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
+          "port" : "drift"
+        },
+        "to" : {
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
+          "port" : "scene.front.drift"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "boltScale"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.bolt.scale"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "boltScale"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.bolt.scaleX"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "rainCount"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.rain.count"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "rainSize"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.rain.size"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "fallTime"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.rain.time"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "snowCount"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.snow.count"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "snowSize"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.snow.size"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "fallTime"
         },
         "to" : {
-          "node" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+          "node" : "68BA55A0-A062-4426-9743-8CCD59F76572",
           "port" : "scene.snow.time"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "skyTop"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.top"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "skyBottom"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.bottom"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "glow"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.glow"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "sunPoint"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.sun"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "rays"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.rays"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "haze"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.haze"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "skyRain"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.rain"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "skySnow"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.snow"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "flash"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.flash"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "skyClock"
         },
         "to" : {
-          "node" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+          "node" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
           "port" : "shader.clock"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "cardTint"
         },
         "to" : {
-          "node" : "ED142016-5333-4CCC-8118-757D6D56E837",
+          "node" : "3F55CC13-EF37-4238-9A50-95159237BD40",
           "port" : "shader.tint"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "skyTop"
         },
         "to" : {
-          "node" : "23E9A614-C88C-4A56-86B5-8606370C7B80",
+          "node" : "03599322-97EE-4D59-BD18-8D1C14172E47",
           "port" : "fill"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "temperature"
         },
         "to" : {
-          "node" : "5ED67CDA-498E-471C-A00C-E83175F17619",
+          "node" : "5D3AE047-3FF1-4EB3-8AC6-B41CA41DD090",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "condition"
         },
         "to" : {
-          "node" : "21995CC3-F757-4CED-BB3B-AC12EF255F64",
+          "node" : "4C0DD8D2-DB7D-42EF-9203-A2335E3E0D39",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "range"
         },
         "to" : {
-          "node" : "964E2927-C073-4B54-A5F4-E68A004D8A8B",
+          "node" : "2AF8E6AC-7C4A-481B-B305-98274F76E7C5",
           "port" : "text"
         }
       },
       {
         "from" : {
-          "node" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+          "node" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
           "port" : "pillX"
         },
         "to" : {
-          "node" : "1C41B66E-CA45-4245-BCEB-0BD22CD9DE6D",
+          "node" : "28C388F1-9747-49CF-A417-9E87CAA1CA78",
           "port" : "x"
         }
       }
     ],
     "nodes" : [
       {
-        "id" : "23E9A614-C88C-4A56-86B5-8606370C7B80",
+        "id" : "03599322-97EE-4D59-BD18-8D1C14172E47",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "1F1CDDB0-D193-41EB-AA76-1B415A10298C",
+        "layerID" : "3F11103B-7995-4A7E-B982-FE8D0109AF78",
         "position" : {
           "x" : 1488,
-          "y" : 2904
+          "y" : 1584
         }
       },
       {
-        "id" : "E97E4A32-4C82-4F7B-B951-243F95A179E8",
+        "id" : "906225A7-C6BC-4CD2-AD01-5D0F20501685",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "59CE7B7A-A929-4232-AE25-D98686CC96BA",
+        "layerID" : "0A834843-6697-4DDA-8EF8-F315BF85A8A6",
         "position" : {
           "x" : 1488,
-          "y" : 1272
+          "y" : 2904
         },
         "script" : "struct Inputs {\n    float4 top = float4(0.17, 0.47, 0.82, 1);\n    float4 bottom = float4(0.62, 0.79, 0.95, 1);\n    float glow = 0.6;\n    float2 sun = float2(261, 360);\n    float rays = 0.3;\n    float haze = 0.35;\n    float rain = 0;\n    float snow = 0;\n    float flash = 0;\n    float clock = 0;\n};\n\nfloat hash(float2 p) { return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }\n\nfloat noise(float2 p) {\n    float2 i = floor(p), f = fract(p);\n    float2 u = f * f * (3.0 - 2.0 * f);\n    return mix(mix(hash(i), hash(i + float2(1, 0)), u.x), mix(hash(i + float2(0, 1)), hash(i + float2(1, 1)), u.x), u.y);\n}\n\nfloat fbm(float2 p) {\n    float v = 0.0, a = 0.5;\n    for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }\n    return v;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 p = frame.position;\n    float t = clamp(p.y \/ max(frame.size.y, 1.0), 0.0, 1.0);\n    float3 color = mix(in.top.rgb, in.bottom.rgb, smoothstep(0.0, 1.0, t));\n\n    \/\/ The sun's glow, and rays turning slowly round it.\n    float2 toSun = p - in.sun;\n    float d = length(toSun) \/ 240.0;\n    float halo = exp(-d * d * 2.0) * in.glow;\n    float angle = atan2(toSun.y, toSun.x);\n    float beams = pow(0.5 + 0.5 * sin(angle * 9.0 + in.clock * 0.12), 8.0) * 0.6\n                + pow(0.5 + 0.5 * sin(angle * 5.0 - 1.3 - in.clock * 0.07), 10.0) * 0.5;\n    float rays = beams * exp(-d * 1.1) * in.rays;\n    color = mix(color, float3(1.0, 0.9, 0.66), clamp(halo * 0.6 + rays * 0.32, 0.0, 1.0));\n\n    \/\/ Soft cloud layers, thicker toward the top, drifting.\n    float2 q = p \/ float2(240.0, 120.0) + float2(in.clock * 0.025, 0.0);\n    float clouds = smoothstep(0.42, 0.85, fbm(q + fbm(q * 1.7 + 3.1) * 0.7));\n    float upper = smoothstep(1.0, 0.1, t);\n    color = mix(color, mix(in.bottom.rgb, float3(1.0), 0.3), clouds * in.haze * upper * 0.5);\n    color = mix(color, in.top.rgb * 0.7, (1.0 - clouds) * in.haze * upper * 0.12);\n\n    \/\/ Lightning lights the sky, brightest in the clouds.\n    color += float3(0.72, 0.78, 1.0) * in.flash * (0.18 + 0.65 * clouds * upper);\n\n    \/\/ Distant rain: thin streaks falling at a slant, in some columns.\n    if (in.rain > 0.001) {\n        float2 r = float2(p.x + p.y * 0.1, p.y);\n        float column = floor(r.x \/ 6.0);\n        float pick = hash(float2(column, 7.0));\n        float speed = 700.0 + 500.0 * hash(float2(column, 3.0));\n        float y = fract((r.y - in.clock * speed) \/ 210.0 + hash(float2(column, 1.0)));\n        float across = abs(fract(r.x \/ 6.0) - 0.5) * 6.0;\n        float streak = step(y, 0.12) * (y \/ 0.12) * smoothstep(0.9, 0.2, across) * step(pick, in.rain * 0.55);\n        color = mix(color, float3(0.85, 0.9, 1.0), streak * 0.28);\n    }\n\n    \/\/ Distant snow: small flakes drifting down and sideways.\n    if (in.snow > 0.001) {\n        for (int layer = 0; layer < 2; layer++) {\n            float size = layer == 0 ? 30.0 : 46.0;\n            float2 s = p + float2(sin(in.clock * 0.6 + p.y * 0.01 + float(layer)) * 10.0, -in.clock * (24.0 + 14.0 * float(layer)));\n            float2 cell = floor(s \/ size);\n            float2 spot = float2(hash(cell), hash(cell + 5.3)) * 0.7 + 0.15;\n            float flake = smoothstep(1.0 + float(layer), 0.2, length((fract(s \/ size) - spot) * size));\n            color = mix(color, float3(1.0), flake * step(hash(cell + 9.1), in.snow * 0.5) * (0.55 + 0.25 * float(layer)));\n        }\n    }\n\n    \/\/ A gentle vignette.\n    float2 v = (p \/ max(frame.size, float2(1.0)) - 0.5) * float2(0.9, 1.1);\n    color *= 1.0 - 0.22 * dot(v, v);\n    return float4(color, 1);\n}"
       },
       {
-        "id" : "2FF9398D-D23E-4601-AE70-6460F059881A",
+        "id" : "77C9BBD5-F3C6-4545-8BDE-8D4BE92F0AB5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "B3C76AB8-88C8-4770-B254-D89109FE361B",
+        "layerID" : "726BE655-EC31-44A4-8581-5A9F1DC9AE77",
         "position" : {
           "x" : 1488,
           "y" : 1704
         }
       },
       {
-        "id" : "8B53FB42-2018-4B70-94EF-D45DAB5CFA7D",
+        "id" : "DD339D25-C6B7-485C-B4CC-1ED765968EAA",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "08DD40EA-B0B4-4D94-BD1F-7062DD58D96C",
+        "layerID" : "E58154C8-73C5-4A9A-8046-1C0323D1AA01",
         "position" : {
           "x" : 1488,
           "y" : 1848
         }
       },
       {
-        "id" : "5ED67CDA-498E-471C-A00C-E83175F17619",
+        "id" : "5D3AE047-3FF1-4EB3-8AC6-B41CA41DD090",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "FAB52B15-9EC4-4838-B35B-6D08F936FDC3",
+        "layerID" : "3B3226B2-C6E8-4839-85BD-90D76E702E56",
         "position" : {
           "x" : 1200,
           "y" : 840
         }
       },
       {
-        "id" : "21995CC3-F757-4CED-BB3B-AC12EF255F64",
+        "id" : "4C0DD8D2-DB7D-42EF-9203-A2335E3E0D39",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "64773741-C1AE-4E0F-9F68-B3720D55E3F2",
+        "layerID" : "85C39683-3D3B-4A95-8D0D-0060B0C38F4E",
         "position" : {
           "x" : 1200,
           "y" : 1008
         }
       },
       {
-        "id" : "964E2927-C073-4B54-A5F4-E68A004D8A8B",
+        "id" : "2AF8E6AC-7C4A-481B-B305-98274F76E7C5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "530C80A4-9E89-43E7-BB33-CB4070667EA9",
+        "layerID" : "CB2B6472-6A52-46E9-8344-1001EFBB7BED",
         "position" : {
           "x" : 1200,
           "y" : 1176
         }
       },
       {
-        "id" : "BD4DD9C3-BFD6-4067-B22E-1E28E561245F",
+        "id" : "68BA55A0-A062-4426-9743-8CCD59F76572",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "558DD543-9492-486C-BCD1-103F6BB3D13D",
+        "layerID" : "2159A01A-FA03-410A-BE8B-7F9EB7C972AE",
         "position" : {
           "x" : 1488,
           "y" : 96
@@ -854,12 +1034,12 @@
         ]
       },
       {
-        "id" : "ED142016-5333-4CCC-8118-757D6D56E837",
+        "id" : "3F55CC13-EF37-4238-9A50-95159237BD40",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8E28DF57-1305-4451-A195-30204DDE1783",
+        "layerID" : "682D4ACD-C4FD-4B50-A1FC-CB955277602C",
         "position" : {
           "x" : 1200,
           "y" : 2088
@@ -867,343 +1047,343 @@
         "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
       },
       {
-        "id" : "FF0E8C95-09DE-4455-86F2-EB6E6B8DFDB5",
+        "id" : "D8413F23-4E7B-43DE-A225-B6CE0A4A9F3A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "5119EBD3-B4AF-49B4-B91C-F7B8DBB308F2",
+        "layerID" : "06C059C8-9E45-46BD-BD87-FA12FAF55F2A",
         "position" : {
           "x" : 1440,
           "y" : 1992
         }
       },
       {
-        "id" : "9FA5B4D8-DAF6-4037-8142-C9C5886521A8",
+        "id" : "F9C5531C-3A92-4BDE-9537-D5D04D332185",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "D0EBD2B2-55FF-4566-BB85-018B52E1963E",
+        "layerID" : "724E7927-47F5-44CC-8774-106DB7B8FF71",
         "position" : {
           "x" : 1440,
           "y" : 2136
         }
       },
       {
-        "id" : "1C41B66E-CA45-4245-BCEB-0BD22CD9DE6D",
+        "id" : "28C388F1-9747-49CF-A417-9E87CAA1CA78",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "246D4FFC-7AF3-4030-A7AC-A2609E40077B",
+        "layerID" : "0CD6FF05-767E-4607-9211-DF40DF0B3E52",
         "position" : {
           "x" : 1200,
           "y" : 1344
         }
       },
       {
-        "id" : "DFD4911F-2372-463F-BEF6-87C3FB95B4E7",
+        "id" : "B40B1D15-6FB6-40E4-A3FF-0C46673B0846",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "5818A171-ED81-4AA8-A72B-24F84CF76C2E",
+        "layerID" : "A0D9B014-A915-4EC9-866A-AC9D4EDEC23B",
         "position" : {
           "x" : 1200,
           "y" : 1896
         }
       },
       {
-        "id" : "3151EC4F-BE5F-434F-8EF6-71880A2D7A5F",
+        "id" : "84695583-ACB8-4CB8-B92F-387FD862F5BF",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "04D7B5A0-D53E-44E7-9839-418A4DA064F4",
+        "layerID" : "47C6BC2A-5560-4016-BFA5-9E2328AEF335",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "4B659092-A56A-4B67-927E-20C65BFDC0B1",
+        "id" : "C3BE59BA-D579-47EC-90E6-58324A5AD1E3",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "B7763A48-84BC-4101-BF29-A24083C2C04A",
+        "layerID" : "1904DD35-9FDD-45CE-B9AC-968128C37F5A",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "072D9129-C93D-41DC-8B72-A533D87B1649",
+        "id" : "9802E934-B42E-43ED-ACD9-88701E6FAD2E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "3965A411-54B8-4C99-A486-CB0F36424125",
+        "layerID" : "B265FD31-96C4-42B8-95DB-A40A25BF6312",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "3D1C8784-D230-4F61-8C50-237F203F8521",
+        "id" : "CCB53BBC-A554-4F63-8FC6-0AE4F613CE9E",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "9FB444F1-FB7F-48E7-9DD3-54EE6EEEB2C2",
+        "layerID" : "7A42702C-0A90-4100-B7FE-2351C57886ED",
         "position" : {
           "x" : 1440,
           "y" : 2328
         }
       },
       {
-        "id" : "7ABB614D-6B74-4F00-AAD3-E367DD639925",
+        "id" : "D219150D-C8A1-4F99-B416-4EA7A535B1CC",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "38781DF2-478C-4495-8975-3A596F98CBFB",
+        "layerID" : "47039B55-9693-4F00-97E5-1777D453785F",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "F1471B77-8EAF-4305-B559-08AAA3817B85",
+        "id" : "BB156C47-61D7-4903-84D8-B049CE2DCF6B",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C1761313-86ED-4CDB-A039-E7D6A84A176A",
+        "layerID" : "156B870B-08E3-4833-B47E-DC31E4130B1D",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "C5DC788D-660C-4933-89E9-6E1C7D51464D",
+        "id" : "9733E98E-F5B8-4AE3-A732-D82B08DBAB10",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6A12FF0A-893E-4128-9ED7-5B60919A6810",
+        "layerID" : "94F6AFBC-38CC-40DA-8AC9-1622F78F57F2",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "B3CDCF93-AB01-479E-9FD9-B34466972D50",
+        "id" : "FBC0A06D-9888-4830-AA93-923FD97E8F4F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "7EE729DB-950D-4800-97E6-F435DE846851",
+        "layerID" : "52A9CB57-FB58-4CC8-BD7B-0E13D7820C3B",
         "position" : {
           "x" : 1440,
           "y" : 2520
         }
       },
       {
-        "id" : "2976955B-559A-487A-8673-64B8B7E0BE4D",
+        "id" : "ED1D517E-9C96-42D5-A0EF-258A5B046E05",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "6855EC61-7276-4301-A05A-0C51A0BD6A92",
+        "layerID" : "D328FE77-C080-4DCF-86AD-D5D7B9844099",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "38CC6A61-B391-4318-B69C-E1D6E2A94C75",
+        "id" : "FFD2375F-04A7-43B0-8EAE-33A059655E57",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "CF2A8F08-4030-451D-995B-84BB718A1F88",
+        "layerID" : "5545EBEB-B7E9-479D-B896-F24DC12326AA",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "EF94D360-C8D2-429D-9253-D788D557CF47",
+        "id" : "1A2320A3-3533-431F-B761-E113AF2F2532",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "5075A0CA-E111-40E3-8900-E90EF01A6CFD",
+        "layerID" : "3200BB15-4220-4F9F-A566-0CEFE824E339",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "EC5F088A-B5D6-4D1A-A2A8-B64E8E2B923A",
+        "id" : "617922D2-1010-4015-87D2-40748A65A84D",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "285D5B9D-5485-4F8B-A4DD-E139524B46B6",
+        "layerID" : "8C998727-87B5-45A0-AA1D-331197DBDB2A",
         "position" : {
           "x" : 1440,
           "y" : 2712
         }
       },
       {
-        "id" : "F10EDBF0-4FE7-4613-A425-C3D7FE21EC68",
+        "id" : "084F7ACD-A63F-49CB-A632-F0BBBEABFE18",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "842405F4-AD29-4746-9DC8-88FEB56D372E",
+        "layerID" : "F47FDBD2-67A9-4A94-92B9-4791A459D0F3",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "72A175C8-1B00-4CE0-AF7D-403B20E88BE4",
+        "id" : "78AAA847-A8AB-4CEE-9DB1-8CBEAA7C6C0F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "4F8EB000-AF36-4DD6-9C53-0CF5F9AA7D1B",
+        "layerID" : "F1D3F1D3-83CD-4ADC-994F-CBC8CD41173B",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "BCE2C4A8-EE7A-4C10-8880-A593D6829C51",
+        "id" : "5CB0C5CC-D382-44D4-BD88-6481FD6CF48A",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "57F11387-3474-4E7F-9C52-43CF1E850779",
+        "layerID" : "DA7B472D-2FF8-4E1A-946B-E7E7B9A12F43",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "C795D44A-B9CF-40BA-B3A0-B33D8B230285",
+        "id" : "8A36CFFE-9A40-4F68-AF24-E9E850903FA5",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "3F0410A2-3B35-4A84-BD7E-CCC55B743068",
+        "layerID" : "633DC7A5-23A4-42F7-A899-33B99D922AAF",
         "position" : {
           "x" : 1680,
           "y" : 1992
         }
       },
       {
-        "id" : "DC70135C-7780-40ED-88C6-9E140F785B74",
+        "id" : "C6879D83-7CFE-4949-BAD6-983D2396A98F",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "69B759BE-4A71-4A45-A753-68729EAF7811",
+        "layerID" : "F11F5A6B-6D19-4289-AB42-5168CB0C70CF",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "81678107-B5F9-4A51-8629-A66086754DAB",
+        "id" : "5622CE92-8DAE-4C08-9862-5EF964BED6BF",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "8DC6D1E3-98C7-430F-842A-086CFBF76B58",
+        "layerID" : "2F7AE35F-5C5C-435B-AEFF-EEB46A33277E",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "5782C984-11FA-43F7-A82E-085AD9CEBEA4",
+        "id" : "972933A3-8A3C-47B5-B178-49DD6692F9F0",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "C1B7DF45-AB50-4156-8778-5AD67163C732",
+        "layerID" : "CCD60DF2-E731-4122-BC1E-8B0B788A2268",
         "position" : {
           "x" : 48,
           "y" : 336
         }
       },
       {
-        "id" : "860F1F0C-B3A4-4BA2-AEA7-BD0564FA47EF",
+        "id" : "28794D76-15F1-469E-B9BD-5EA90A0A4150",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "256E61C7-9398-4B95-BBA8-F239762530C9",
+        "layerID" : "F0492497-C713-4A13-B978-4D982C04462B",
         "position" : {
           "x" : 1680,
           "y" : 2184
         }
       },
       {
-        "id" : "8D0DCAEC-7274-4603-9EBB-6878F4B9F715",
+        "id" : "E9F8C0B9-4436-4D2A-8EBC-54DDF35C2E85",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "7D7DD4A5-DCC6-4197-9AA4-D4F5079E7FAD",
+        "layerID" : "DBF4CE4E-ED2B-4396-B20C-AA4D1EACC1BD",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "D1503A1B-BFB8-4BDA-AB71-6E046BA61D62",
+        "id" : "B907BB28-266B-4105-A3FE-F3035219BE43",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "F55893E9-7392-4F78-910A-B79317FCF27B",
+        "layerID" : "866188F0-1BCA-4C8B-B423-B642DD27AA8F",
         "position" : {
           "x" : 48,
           "y" : 48
         }
       },
       {
-        "id" : "771E6BB9-6F18-4C6E-B200-1DA3BA72F4A9",
+        "id" : "0DDD1056-71C6-4782-9608-B869936BFF09",
         "inputs" : {
 
         },
         "kind" : "view",
-        "layerID" : "E6D5E801-2039-4A74-9672-873FD15B1E42",
+        "layerID" : "456CDBC7-FD39-496C-B33A-F361523937EA",
         "position" : {
           "x" : 48,
           "y" : 192
         }
       },
       {
-        "id" : "89D73085-3B20-4719-A01C-0615F534B665",
+        "id" : "12CB77D9-67AA-4DFD-9ADD-43658DE27124",
         "inputs" : {
 
         },
         "kind" : "pan",
-        "layerID" : "558DD543-9492-486C-BCD1-103F6BB3D13D",
+        "layerID" : "2159A01A-FA03-410A-BE8B-7F9EB7C972AE",
         "position" : {
           "x" : 48,
           "y" : 96
         }
       },
       {
-        "id" : "3EB09F20-AD0F-401C-9241-E874FA6D46F7",
+        "id" : "A9EEE809-CF19-497A-924C-3B5472E6AB8B",
         "inputs" : {
 
         },
@@ -1214,7 +1394,7 @@
         }
       },
       {
-        "id" : "765C3D61-8886-46BC-928D-75E076326CF9",
+        "id" : "2ACE6DDA-6C55-4CE4-9106-43EB3B793C4A",
         "inputs" : {
           "end" : {
             "type" : "number",
@@ -1234,7 +1414,7 @@
         "valueType" : "number"
       },
       {
-        "id" : "CBAA51E1-9E96-4516-A62A-55465CFC36A8",
+        "id" : "350427B7-39F5-4232-BBED-69C5ACA6A7AD",
         "inputs" : {
           "max" : {
             "type" : "number",
@@ -1253,7 +1433,7 @@
         }
       },
       {
-        "id" : "6F6635C0-9255-4EF8-AD58-77C5D7DF694D",
+        "id" : "21C0F4B1-9400-45BF-B399-435684D71FD3",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -1272,7 +1452,7 @@
         }
       },
       {
-        "id" : "D301787F-FCFE-4B6E-BE7C-2A0E3912C1C6",
+        "id" : "6E3E9CD2-5293-4F17-B4A0-A7A255418D3E",
         "inputs" : {
           "end" : {
             "type" : "number",
@@ -1292,7 +1472,7 @@
         "valueType" : "number"
       },
       {
-        "id" : "B1D358D3-A9CB-434F-85C2-EAEC28EF0E4A",
+        "id" : "CFF8E13A-5EFD-4B76-B98E-96810278191D",
         "inputs" : {
           "max" : {
             "type" : "number",
@@ -1311,7 +1491,7 @@
         }
       },
       {
-        "id" : "3C4AF226-4050-4998-BBE6-7138DB86ED5E",
+        "id" : "32BD9B60-C886-41C8-AF4D-B32118D2B6DA",
         "inputs" : {
           "damping" : {
             "type" : "number",
@@ -1334,67 +1514,67 @@
         }
       },
       {
-        "id" : "58755D76-D666-4DE6-B14D-D97BCBBCE467",
+        "id" : "F92E0BF3-2BAD-4658-B4C1-CF81860B72D4",
         "inputs" : {
 
         },
         "kind" : "tap",
-        "layerID" : "5818A171-ED81-4AA8-A72B-24F84CF76C2E",
+        "layerID" : "A0D9B014-A915-4EC9-866A-AC9D4EDEC23B",
         "position" : {
           "x" : 48,
           "y" : 1032
         }
       },
       {
-        "id" : "D7FDB3AB-D27A-42CA-BBAB-2098146BCE5D",
+        "id" : "795B363D-E60E-4B39-902E-932D6FD38776",
         "inputs" : {
 
         },
         "kind" : "tap",
-        "layerID" : "9FB444F1-FB7F-48E7-9DD3-54EE6EEEB2C2",
+        "layerID" : "7A42702C-0A90-4100-B7FE-2351C57886ED",
         "position" : {
           "x" : 48,
           "y" : 1224
         }
       },
       {
-        "id" : "6CF9D6B5-7A41-4D0C-A33B-3BF6B48F0F4F",
+        "id" : "F0E21060-8EAE-46D8-BE6E-195B69B19044",
         "inputs" : {
 
         },
         "kind" : "tap",
-        "layerID" : "7EE729DB-950D-4800-97E6-F435DE846851",
+        "layerID" : "52A9CB57-FB58-4CC8-BD7B-0E13D7820C3B",
         "position" : {
           "x" : 48,
           "y" : 1416
         }
       },
       {
-        "id" : "859F87EE-3428-4F32-829F-45676B51FB75",
+        "id" : "A2B133C1-9138-4760-B042-2F0209EEA856",
         "inputs" : {
 
         },
         "kind" : "tap",
-        "layerID" : "285D5B9D-5485-4F8B-A4DD-E139524B46B6",
+        "layerID" : "8C998727-87B5-45A0-AA1D-331197DBDB2A",
         "position" : {
           "x" : 48,
           "y" : 1608
         }
       },
       {
-        "id" : "56428356-0492-4EF1-BC04-342CB09B966F",
+        "id" : "C9B59952-63EC-4ACA-BF4C-333611D4DDC1",
         "inputs" : {
 
         },
         "kind" : "tap",
-        "layerID" : "3F0410A2-3B35-4A84-BD7E-CCC55B743068",
+        "layerID" : "633DC7A5-23A4-42F7-A899-33B99D922AAF",
         "position" : {
           "x" : 48,
           "y" : 1800
         }
       },
       {
-        "id" : "34D941DA-2EFA-4DB5-A860-76E541ED81C8",
+        "id" : "D17B4F15-D523-46D7-B139-50B1B55C21DA",
         "inputs" : {
 
         },
@@ -1406,7 +1586,7 @@
         }
       },
       {
-        "id" : "7DA5C1BE-3232-47A3-B9E8-0E121F855E98",
+        "id" : "F9228CEB-AA28-44BD-92BD-E28243FBAD02",
         "inputs" : {
 
         },
@@ -1416,7 +1596,7 @@
           "x" : 624,
           "y" : 840
         },
-        "script" : "\/\/ The weather of the chosen day. Each sky is a set of numbers and colors; every\n\/\/ frame they ease toward the chosen sky's, so one sky turns into the next and the\n\/\/ light swings round as it does. Rain and snow are emitters whose time is the\n\/\/ clock; how much falls eases in and out with the weather. In a storm, lightning\n\/\/ flashes: the bolt and the cloud's heart glow, the light jumps, the sky lights.\n\/\/ Moving runs the clock, and is off once all is still.\ninputs = { clock: 0, day0: pulse(), day1: pulse(), day2: pulse(), day3: pulse(), day4: pulse() };\noutputs = { moving: false, temperature: \"\", condition: \"\", range: \"\", pillX: 24.0,\n            skyTop: color(\"#3A86D6\"), skyBottom: color(\"#A3CBEF\"), glow: 0, sunPoint: point(261, 360),\n            rays: 0, haze: 0, skyRain: 0, skySnow: 0, flash: 0, skyClock: 0, cardTint: color(\"#10203D33\"),\n            surroundings: \"Daylight\", lightYaw: 38, lightPitch: 34, intensity: 3.5, exposure: 1, bloom: 0.9,\n            lightColor: color(\"#FFFFFF\"), sunX: 0, sunY: 0, sunScale: 0, sunGlow: 0, coronaScale: 0,\n            cloudX: 0, cloudY: 0, cloudScale: 0, cloudColor: color(\"#FFFFFF\"), cloudGlow: 0,\n            backX: 0, backY: 0, backScale: 0, backColor: color(\"#FFFFFF\"),\n            frontX: 0, frontY: 0, frontScale: 0, frontColor: color(\"#FFFFFF\"),\n            boltScale: 0, rainCount: 0, rainSize: 0, snowCount: 0, snowSize: 0, fallTime: 0 };\n\nconst days = [\n  {\"condition\": \"Partly Cloudy\", \"temperature\": 72, \"high\": 76, \"low\": 54},\n              {\"condition\": \"Sunny\", \"temperature\": 78, \"high\": 81, \"low\": 55},\n              {\"condition\": \"Rain\", \"temperature\": 59, \"high\": 62, \"low\": 47},\n              {\"condition\": \"Thunderstorms\", \"temperature\": 63, \"high\": 66, \"low\": 49},\n              {\"condition\": \"Snow\", \"temperature\": 31, \"high\": 34, \"low\": 22}\n];\n\/\/ Each sky: where the sun and the three clouds are and how large, their colors,\n\/\/ how hard it rains or snows, the sky shader's colors, glow, rays and haze, the\n\/\/ card's tint, the bloom, and the light: its direction, strength, color, the\n\/\/ surroundings and the exposure.\nconst skies = {\n  Sunny:           { sunX: 0, sunY: 0.04, sunScale: 1.05, sunGlow: 2.4, cloudX: -1.5, cloudY: -0.2, cloudScale: 0, cloud: \"#FFFFFF\",\n                     backX: 1.4, backY: -0.6, backScale: 0, back: \"#FFFFFF\", frontX: -1.4, frontY: -0.6, frontScale: 0, front: \"#FFFFFF\",\n                     rain: 0, snow: 0, storm: 0, top: \"#0D5BD3\", bottom: \"#76BBFF\", glow: 0.9, rays: 0.9, haze: 0.1,\n                     card: \"#0B2A5A40\", bloom: 0.8, yaw: -40, pitch: 30, intensity: 3.6, exposure: 1.08, lamp: \"#FFE9C4\", surroundings: \"Daylight\" },\n  \"Partly Cloudy\": { sunX: 0.46, sunY: 0.26, sunScale: 0.82, sunGlow: 2.2, cloudX: -0.12, cloudY: -0.02, cloudScale: 1.75, cloud: \"#FFFFFF\",\n                     backX: 0.95, backY: -0.32, backScale: 0.8, back: \"#EEF5FF\", frontX: -0.82, frontY: -0.5, frontScale: 0.6, front: \"#FFFFFF\",\n                     rain: 0, snow: 0, storm: 0, top: \"#2A76CF\", bottom: \"#9CC8F2\", glow: 0.55, rays: 0.35, haze: 0.35,\n                     card: \"#0E2B5238\", bloom: 0.6, yaw: 38, pitch: 34, intensity: 3.5, exposure: 1.02, lamp: \"#FFF0D2\", surroundings: \"Daylight\" },\n  Rain:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.1, cloudScale: 1.9, cloud: \"#DCE3EC\",\n                     backX: 0.78, backY: 0.44, backScale: 1.15, back: \"#A9B5C5\", frontX: -0.72, frontY: -0.14, frontScale: 0.8, front: \"#C9D2DE\",\n                     rain: 0.75, snow: 0, storm: 0, top: \"#3B485D\", bottom: \"#7C8BA0\", glow: 0, rays: 0, haze: 0.8,\n                     card: \"#1A253866\", bloom: 0.5, yaw: -10, pitch: 66, intensity: 2.8, exposure: 1.1, lamp: \"#DCE6F5\", surroundings: \"Studio\" },\n  Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.12, cloudScale: 2.02, cloud: \"#6E7486\",\n                     backX: 0.8, backY: 0.48, backScale: 1.25, back: \"#474B5A\", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: \"#585D6C\",\n                     rain: 1, snow: 0, storm: 1, top: \"#10131D\", bottom: \"#2B3142\", glow: 0, rays: 0, haze: 0.9,\n                     card: \"#0A0E1A80\", bloom: 0.7, yaw: 18, pitch: 70, intensity: 2.2, exposure: 1.3, lamp: \"#A8B8E8\", surroundings: \"Night\" },\n  Snow:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0, cloudY: 0.1, cloudScale: 1.9, cloud: \"#FAFCFF\",\n                     backX: -0.8, backY: 0.46, backScale: 1.05, back: \"#D4DEEA\", frontX: 0.74, frontY: -0.14, frontScale: 0.76, front: \"#F2F6FB\",\n                     rain: 0, snow: 1, storm: 0, top: \"#5D7696\", bottom: \"#B2C2D6\", glow: 0.1, rays: 0, haze: 0.6,\n                     card: \"#21354F55\", bloom: 0.6, yaw: -24, pitch: 46, intensity: 3.1, exposure: 1.18, lamp: \"#F3F7FF\", surroundings: \"Studio\" },\n};\nconst numbers = [\"sunX\", \"sunY\", \"sunScale\", \"sunGlow\", \"cloudX\", \"cloudY\", \"cloudScale\", \"backX\", \"backY\", \"backScale\",\n                 \"frontX\", \"frontY\", \"frontScale\", \"rain\", \"snow\", \"storm\", \"glow\", \"rays\", \"haze\", \"bloom\",\n                 \"yaw\", \"pitch\", \"intensity\", \"exposure\"];\nconst colors = [\"cloud\", \"back\", \"front\", \"top\", \"bottom\", \"lamp\", \"card\"];\nconst lift = 0.3;\nconst raindrops = 1100, snowflakes = 800;\n\nfunction rgb(hex) {\n  const c = [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16));\n  return c.concat(hex.length > 7 ? [parseInt(hex.substr(7, 2), 16)] : []);\n}\nfunction hex(c) { return \"#\" + c.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, \"0\")).join(\"\"); }\n\nlet chosen = 0, now = null, last = null;\n\nfunction evaluate(inputs, outputs) {\n  [inputs.day0, inputs.day1, inputs.day2, inputs.day3, inputs.day4].forEach((tapped, i) => { if (tapped) chosen = i; });\n  const day = days[chosen], sky = skies[day.condition];\n  const target = {};\n  numbers.forEach(k => target[k] = sky[k]);\n  colors.forEach(k => target[k] = rgb(sky[k]));\n  if (now === null) { now = JSON.parse(JSON.stringify(target)); now.pill = chosen; }\n  const dt = last === null ? 0 : Math.max(0, Math.min(0.1, inputs.clock - last));\n  last = inputs.clock;\n  \/\/ Ease every number and color a share of the way, so they arrive together.\n  const share = 1 - Math.exp(-3.4 * dt);\n  let still = true;\n  numbers.forEach(k => {\n    now[k] += (target[k] - now[k]) * share;\n    if (Math.abs(target[k] - now[k]) > 0.001) still = false; else now[k] = target[k];\n  });\n  colors.forEach(k => {\n    now[k] = now[k].map((v, c) => v + (target[k][c] - v) * share);\n    if (now[k].some((v, c) => Math.abs(target[k][c] - v) > 0.5)) still = false; else now[k] = target[k].slice();\n  });\n  now.pill += (chosen - now.pill) * (1 - Math.exp(-14 * dt));\n  if (Math.abs(chosen - now.pill) > 0.001) still = false; else now.pill = chosen;\n  \/\/ While anything falls, the clock must run.\n  if (now.rain > 0.001 || now.snow > 0.001 || now.storm > 0.001) still = false;\n\n  \/\/ Lightning: a double flash every few seconds once the storm has set in, fading\n  \/\/ out fast. The first comes a little after the storm is chosen, not at once.\n  const beat = (inputs.clock + 1.3) % 2.8;\n  const pulse = (at, length) => beat > at && beat < at + length ? 1 - (beat - at) \/ length : 0;\n  const flash = now.storm > 0.85 ? Math.max(pulse(0, 0.16), pulse(0.24, 0.22)) : 0;\n\n  outputs.moving = !still;\n  outputs.temperature = day.temperature + \"°\";\n  outputs.condition = day.condition;\n  outputs.range = \"H:\" + day.high + \"°  L:\" + day.low + \"°\";\n  outputs.pillX = 24.0 + now.pill * 70.8;\n  const lit = (c, by) => color(hex(c.map(v => v + (205 - v) * by)));\n  outputs.skyTop = lit(now.top, flash * 0.3);\n  outputs.skyBottom = lit(now.bottom, flash * 0.2);\n  outputs.glow = now.glow;\n  outputs.rays = now.rays;\n  outputs.haze = now.haze;\n  \/\/ The sky's own distant rain and snow, behind the emitters, a little.\n  outputs.skyRain = now.rain * 0.6;\n  outputs.skySnow = now.snow * 0.6;\n  outputs.flash = flash;\n  outputs.skyClock = inputs.clock;\n  outputs.cardTint = color(hex(now.card));\n  \/\/ Where the sun is on the screen, so the sky glows and shines round it.\n  outputs.sunPoint = point(201 + now.sunX * 142, 451 - (lift + now.sunY) * 142);\n  outputs.surroundings = sky.surroundings;\n  \/\/ A flash lights the clouds from low in front, bright and cold.\n  outputs.lightYaw = now.yaw;\n  outputs.lightPitch = now.pitch + (-30 - now.pitch) * flash;\n  outputs.intensity = now.intensity + 3.5 * flash;\n  outputs.exposure = now.exposure + 0.15 * flash;\n  outputs.bloom = now.bloom;\n  outputs.lightColor = color(hex(now.lamp.map(v => v + (235 - v) * flash)));\n  outputs.sunX = now.sunX; outputs.sunY = lift + now.sunY; outputs.sunScale = now.sunScale;\n  outputs.sunGlow = now.sunGlow;\n  outputs.coronaScale = now.sunScale * 1.3;\n  outputs.cloudX = now.cloudX; outputs.cloudY = lift + now.cloudY; outputs.cloudScale = now.cloudScale;\n  outputs.cloudColor = color(hex(now.cloud));\n  \/\/ The cloud's heart glows with the flash.\n  outputs.cloudGlow = 0.3 * flash;\n  outputs.backX = now.backX; outputs.backY = lift + now.backY; outputs.backScale = now.backScale;\n  outputs.backColor = color(hex(now.back));\n  outputs.frontX = now.frontX; outputs.frontY = lift + now.frontY; outputs.frontScale = now.frontScale;\n  outputs.frontColor = color(hex(now.front));\n  outputs.boltScale = flash > 0.3 ? 0.95 : 0;\n  \/\/ How much falls: more drops, and each fuller, as the rain sets in.\n  outputs.rainCount = now.rain > 0.005 ? Math.round(raindrops * Math.min(1, now.rain)) : 0;\n  outputs.rainSize = 0.016 * Math.min(1, now.rain * 1.6);\n  outputs.snowCount = now.snow > 0.005 ? Math.round(snowflakes * Math.min(1, now.snow)) : 0;\n  outputs.snowSize = 0.034 * Math.min(1, now.snow * 1.6);\n  outputs.fallTime = inputs.clock;\n}"
+        "script" : "\/\/ The weather of the chosen day. Each sky is a set of numbers and colors; every\n\/\/ frame they ease toward the chosen sky's, so one sky turns into the next and the\n\/\/ light swings round as it does. Rain and snow are emitters whose time is the\n\/\/ clock; how much falls eases in and out with the weather. In a storm, lightning\n\/\/ flashes: the bolt and the cloud's heart glow, the light jumps, the sky lights.\n\/\/ Moving runs the clock, and is off once all is still.\ninputs = { clock: 0, day0: pulse(), day1: pulse(), day2: pulse(), day3: pulse(), day4: pulse() };\noutputs = { moving: false, temperature: \"\", condition: \"\", range: \"\", pillX: 24.0,\n            skyTop: color(\"#3A86D6\"), skyBottom: color(\"#A3CBEF\"), glow: 0, sunPoint: point(261, 360),\n            rays: 0, haze: 0, skyRain: 0, skySnow: 0, flash: 0, skyClock: 0, cardTint: color(\"#10203D33\"),\n            surroundings: \"Daylight\", lightYaw: 38, lightPitch: 34, intensity: 3.5, exposure: 1, bloom: 0.9,\n            lightColor: color(\"#FFFFFF\"), sunX: 0, sunY: 0, sunScale: 0, sunGlow: 0, coronaScale: 0,\n            cloudX: 0, cloudY: 0, cloudScale: 0, cloudColor: color(\"#FFFFFF\"), cloudGlow: 0,\n            backX: 0, backY: 0, backScale: 0, backColor: color(\"#FFFFFF\"),\n            frontX: 0, frontY: 0, frontScale: 0, frontColor: color(\"#FFFFFF\"),\n            cloudSX: 0, cloudSY: 0, cloudSZ: 0, backSX: 0, backSY: 0, backSZ: 0, frontSX: 0, frontSY: 0, frontSZ: 0,\n            coverage: 0.5, density: 1, fluffiness: 0.6, drift: 0,\n            boltScale: 0, rainCount: 0, rainSize: 0, snowCount: 0, snowSize: 0, fallTime: 0 };\n\nconst days = [\n  {\"condition\": \"Partly Cloudy\", \"temperature\": 72, \"high\": 76, \"low\": 54},\n              {\"condition\": \"Sunny\", \"temperature\": 78, \"high\": 81, \"low\": 55},\n              {\"condition\": \"Rain\", \"temperature\": 59, \"high\": 62, \"low\": 47},\n              {\"condition\": \"Thunderstorms\", \"temperature\": 63, \"high\": 66, \"low\": 49},\n              {\"condition\": \"Snow\", \"temperature\": 31, \"high\": 34, \"low\": 22}\n];\n\/\/ Each sky: where the sun and the three clouds are and how large, their colors,\n\/\/ how hard it rains or snows, the sky shader's colors, glow, rays and haze, the\n\/\/ card's tint, the bloom, and the light: its direction, strength, color, the\n\/\/ surroundings and the exposure.\nconst skies = {\n  Sunny:           { sunX: 0, sunY: 0.04, sunScale: 1.05, sunGlow: 2.4, cloudX: -1.5, cloudY: -0.2, cloudScale: 0, cloud: \"#FFFFFF\",\n                     backX: 1.4, backY: -0.6, backScale: 0, back: \"#FFFFFF\", frontX: -1.4, frontY: -0.6, frontScale: 0, front: \"#FFFFFF\",\n                     cover: 0.62, dens: 1.2, fluff: 0.65, tall: 0.7, rain: 0, snow: 0, storm: 0, top: \"#0D5BD3\", bottom: \"#76BBFF\", glow: 0.9, rays: 0.9, haze: 0.1,\n                     card: \"#0B2A5A40\", bloom: 0.8, yaw: -40, pitch: 30, intensity: 3.6, exposure: 1.08, lamp: \"#FFE9C4\", surroundings: \"Daylight\" },\n  \"Partly Cloudy\": { sunX: 0.46, sunY: 0.26, sunScale: 0.82, sunGlow: 2.2, cloudX: -0.12, cloudY: -0.02, cloudScale: 1.75, cloud: \"#FFFFFF\",\n                     backX: 0.95, backY: -0.32, backScale: 0.8, back: \"#EEF5FF\", frontX: -0.82, frontY: -0.5, frontScale: 0.6, front: \"#FFFFFF\",\n                     cover: 0.62, dens: 1.2, fluff: 0.65, tall: 0.7, rain: 0, snow: 0, storm: 0, top: \"#2A76CF\", bottom: \"#9CC8F2\", glow: 0.55, rays: 0.35, haze: 0.35,\n                     card: \"#0E2B5238\", bloom: 0.6, yaw: 38, pitch: 34, intensity: 3.5, exposure: 1.02, lamp: \"#FFF0D2\", surroundings: \"Daylight\" },\n  Rain:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.1, cloudScale: 1.9, cloud: \"#DCE3EC\",\n                     backX: 0.78, backY: 0.44, backScale: 1.15, back: \"#A9B5C5\", frontX: -0.72, frontY: -0.14, frontScale: 0.8, front: \"#C9D2DE\",\n                     cover: 0.78, dens: 1.5, fluff: 0.5, tall: 0.78, rain: 0.75, snow: 0, storm: 0, top: \"#3B485D\", bottom: \"#7C8BA0\", glow: 0, rays: 0, haze: 0.8,\n                     card: \"#1A253866\", bloom: 0.5, yaw: -10, pitch: 66, intensity: 2.8, exposure: 1.1, lamp: \"#DCE6F5\", surroundings: \"Studio\" },\n  Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.02, cloudScale: 1.95, cloud: \"#83807F\",\n                     backX: 0.8, backY: 0.48, backScale: 1.25, back: \"#55545A\", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: \"#66646A\",\n                     cover: 0.86, dens: 2.4, fluff: 0.45, tall: 0.8, rain: 1, snow: 0, storm: 1, top: \"#10131D\", bottom: \"#2B3142\", glow: 0, rays: 0, haze: 0.9,\n                     card: \"#0A0E1A80\", bloom: 0.7, yaw: 18, pitch: 70, intensity: 2.2, exposure: 1.3, lamp: \"#A8B8E8\", surroundings: \"Night\" },\n  Snow:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0, cloudY: 0.1, cloudScale: 1.9, cloud: \"#FAFCFF\",\n                     backX: -0.8, backY: 0.46, backScale: 1.05, back: \"#D4DEEA\", frontX: 0.74, frontY: -0.14, frontScale: 0.76, front: \"#F2F6FB\",\n                     cover: 0.72, dens: 1.1, fluff: 0.75, tall: 0.75, rain: 0, snow: 1, storm: 0, top: \"#5D7696\", bottom: \"#B2C2D6\", glow: 0.1, rays: 0, haze: 0.6,\n                     card: \"#21354F55\", bloom: 0.6, yaw: -24, pitch: 46, intensity: 3.1, exposure: 1.18, lamp: \"#F3F7FF\", surroundings: \"Studio\" },\n};\nconst numbers = [\"sunX\", \"sunY\", \"sunScale\", \"sunGlow\", \"cloudX\", \"cloudY\", \"cloudScale\", \"backX\", \"backY\", \"backScale\",\n                 \"frontX\", \"frontY\", \"frontScale\", \"cover\", \"dens\", \"fluff\", \"tall\", \"rain\", \"snow\", \"storm\", \"glow\", \"rays\", \"haze\", \"bloom\",\n                 \"yaw\", \"pitch\", \"intensity\", \"exposure\"];\nconst colors = [\"cloud\", \"back\", \"front\", \"top\", \"bottom\", \"lamp\", \"card\"];\nconst lift = 0.3;\nconst raindrops = 1100, snowflakes = 800;\n\nfunction rgb(hex) {\n  const c = [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16));\n  return c.concat(hex.length > 7 ? [parseInt(hex.substr(7, 2), 16)] : []);\n}\nfunction hex(c) { return \"#\" + c.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, \"0\")).join(\"\"); }\n\nlet chosen = 0, now = null, last = null;\n\nfunction evaluate(inputs, outputs) {\n  [inputs.day0, inputs.day1, inputs.day2, inputs.day3, inputs.day4].forEach((tapped, i) => { if (tapped) chosen = i; });\n  const day = days[chosen], sky = skies[day.condition];\n  const target = {};\n  numbers.forEach(k => target[k] = sky[k]);\n  colors.forEach(k => target[k] = rgb(sky[k]));\n  if (now === null) { now = JSON.parse(JSON.stringify(target)); now.pill = chosen; }\n  const dt = last === null ? 0 : Math.max(0, Math.min(0.1, inputs.clock - last));\n  last = inputs.clock;\n  \/\/ Ease every number and color a share of the way, so they arrive together.\n  const share = 1 - Math.exp(-3.4 * dt);\n  let still = true;\n  numbers.forEach(k => {\n    now[k] += (target[k] - now[k]) * share;\n    if (Math.abs(target[k] - now[k]) > 0.001) still = false; else now[k] = target[k];\n  });\n  colors.forEach(k => {\n    now[k] = now[k].map((v, c) => v + (target[k][c] - v) * share);\n    if (now[k].some((v, c) => Math.abs(target[k][c] - v) > 0.5)) still = false; else now[k] = target[k].slice();\n  });\n  now.pill += (chosen - now.pill) * (1 - Math.exp(-14 * dt));\n  if (Math.abs(chosen - now.pill) > 0.001) still = false; else now.pill = chosen;\n  \/\/ While anything falls, the clock must run.\n  if (now.rain > 0.001 || now.snow > 0.001 || now.storm > 0.001) still = false;\n\n  \/\/ Lightning: a double flash every few seconds once the storm has set in, fading\n  \/\/ out fast. The first comes a little after the storm is chosen, not at once.\n  const beat = (inputs.clock + 1.3) % 2.8;\n  const pulse = (at, length) => beat > at && beat < at + length ? 1 - (beat - at) \/ length : 0;\n  const flash = now.storm > 0.85 ? Math.max(pulse(0, 0.16), pulse(0.24, 0.22)) : 0;\n\n  outputs.moving = !still;\n  outputs.temperature = day.temperature + \"°\";\n  outputs.condition = day.condition;\n  outputs.range = \"H:\" + day.high + \"°  L:\" + day.low + \"°\";\n  outputs.pillX = 24.0 + now.pill * 70.8;\n  const lit = (c, by) => color(hex(c.map(v => v + (205 - v) * by)));\n  outputs.skyTop = lit(now.top, flash * 0.3);\n  outputs.skyBottom = lit(now.bottom, flash * 0.2);\n  outputs.glow = now.glow;\n  outputs.rays = now.rays;\n  outputs.haze = now.haze;\n  \/\/ The sky's own distant rain and snow, behind the emitters, a little.\n  outputs.skyRain = now.rain * 0.6;\n  outputs.skySnow = now.snow * 0.6;\n  outputs.flash = flash;\n  outputs.skyClock = inputs.clock;\n  outputs.cardTint = color(hex(now.card));\n  \/\/ Where the sun is on the screen, so the sky glows and shines round it.\n  outputs.sunPoint = point(201 + now.sunX * 142, 451 - (lift + now.sunY) * 142);\n  outputs.surroundings = sky.surroundings;\n  \/\/ A flash lights the clouds from low in front, bright and cold.\n  outputs.lightYaw = now.yaw;\n  outputs.lightPitch = now.pitch + (-30 - now.pitch) * flash;\n  outputs.intensity = now.intensity + 3.5 * flash;\n  outputs.exposure = now.exposure + 0.15 * flash;\n  outputs.bloom = now.bloom;\n  outputs.lightColor = color(hex(now.lamp.map(v => v + (235 - v) * flash)));\n  outputs.sunX = now.sunX; outputs.sunY = lift + now.sunY; outputs.sunScale = now.sunScale;\n  outputs.sunGlow = now.sunGlow;\n  outputs.coronaScale = now.sunScale * 1.3;\n  outputs.cloudX = now.cloudX; outputs.cloudY = lift + now.cloudY; outputs.cloudScale = now.cloudScale;\n  outputs.cloudColor = color(hex(now.cloud));\n  \/\/ The cloud's heart glows with the flash.\n  outputs.cloudGlow = 0.3 * flash;\n  outputs.backX = now.backX; outputs.backY = lift + now.backY; outputs.backScale = now.backScale;\n  outputs.backColor = color(hex(now.back));\n  outputs.frontX = now.frontX; outputs.frontY = lift + now.frontY; outputs.frontScale = now.frontScale;\n  outputs.frontColor = color(hex(now.front));\n  \/\/ Each cloud's box: as wide as the cloud, its height by how tall the weather piles it.\n  const box = (scale) => [scale * 1.1, scale * now.tall, scale * 0.75];\n  [outputs.cloudSX, outputs.cloudSY, outputs.cloudSZ] = box(now.cloudScale);\n  [outputs.backSX, outputs.backSY, outputs.backSZ] = box(now.backScale);\n  [outputs.frontSX, outputs.frontSY, outputs.frontSZ] = box(now.frontScale);\n  outputs.coverage = now.cover;\n  outputs.density = now.dens;\n  outputs.fluffiness = now.fluff;\n  \/\/ The vapor drifts while the clock runs, so a cloud billows as the weather changes.\n  outputs.drift = inputs.clock * 0.035;\n  outputs.boltScale = flash > 0.3 ? 0.95 : 0;\n  \/\/ How much falls: more drops, and each fuller, as the rain sets in.\n  outputs.rainCount = now.rain > 0.005 ? Math.round(raindrops * Math.min(1, now.rain)) : 0;\n  outputs.rainSize = 0.016 * Math.min(1, now.rain * 1.6);\n  outputs.snowCount = now.snow > 0.005 ? Math.round(snowflakes * Math.min(1, now.snow)) : 0;\n  outputs.snowSize = 0.034 * Math.min(1, now.snow * 1.6);\n  outputs.fallTime = inputs.clock;\n}"
       }
     ]
   },
@@ -1426,7 +1606,7 @@
         "children" : [
 
         ],
-        "id" : "59CE7B7A-A929-4232-AE25-D98686CC96BA",
+        "id" : "0A834843-6697-4DDA-8EF8-F315BF85A8A6",
         "kind" : "view",
         "name" : "Sky",
         "properties" : {
@@ -1485,7 +1665,7 @@
         "children" : [
 
         ],
-        "id" : "B3C76AB8-88C8-4770-B254-D89109FE361B",
+        "id" : "726BE655-EC31-44A4-8581-5A9F1DC9AE77",
         "kind" : "text",
         "name" : "Place",
         "properties" : {
@@ -1562,7 +1742,7 @@
         "children" : [
 
         ],
-        "id" : "08DD40EA-B0B4-4D94-BD1F-7062DD58D96C",
+        "id" : "E58154C8-73C5-4A9A-8046-1C0323D1AA01",
         "kind" : "text",
         "name" : "City",
         "properties" : {
@@ -1639,7 +1819,7 @@
         "children" : [
 
         ],
-        "id" : "FAB52B15-9EC4-4838-B35B-6D08F936FDC3",
+        "id" : "3B3226B2-C6E8-4839-85BD-90D76E702E56",
         "kind" : "text",
         "name" : "Temperature",
         "properties" : {
@@ -1716,7 +1896,7 @@
         "children" : [
 
         ],
-        "id" : "64773741-C1AE-4E0F-9F68-B3720D55E3F2",
+        "id" : "85C39683-3D3B-4A95-8D0D-0060B0C38F4E",
         "kind" : "text",
         "name" : "Condition",
         "properties" : {
@@ -1793,7 +1973,7 @@
         "children" : [
 
         ],
-        "id" : "530C80A4-9E89-43E7-BB33-CB4070667EA9",
+        "id" : "CB2B6472-6A52-46E9-8344-1001EFBB7BED",
         "kind" : "text",
         "name" : "Range",
         "properties" : {
@@ -1870,7 +2050,7 @@
         "children" : [
 
         ],
-        "id" : "558DD543-9492-486C-BCD1-103F6BB3D13D",
+        "id" : "2159A01A-FA03-410A-BE8B-7F9EB7C972AE",
         "kind" : "view",
         "name" : "Weather",
         "properties" : {
@@ -1995,9 +2175,8 @@
             },
             {
               "id" : "back",
-              "model" : "cloud.obj",
               "name" : "Far Cloud",
-              "shape" : "model",
+              "shape" : "cloud",
               "values" : {
                 "color" : {
                   "type" : "color",
@@ -2008,17 +2187,29 @@
                     "red" : 1
                   }
                 },
-                "roughness" : {
+                "coverage" : {
                   "type" : "number",
-                  "value" : 1
+                  "value" : 0.55
                 },
-                "scale" : {
+                "fluffiness" : {
                   "type" : "number",
-                  "value" : 0.8
+                  "value" : 0.65
                 },
-                "softness" : {
+                "scaleX" : {
                   "type" : "number",
-                  "value" : 0.85
+                  "value" : 0.8800000000000001
+                },
+                "scaleY" : {
+                  "type" : "number",
+                  "value" : 0.5599999999999999
+                },
+                "scaleZ" : {
+                  "type" : "number",
+                  "value" : 0.5599999999999999
+                },
+                "seed" : {
+                  "type" : "number",
+                  "value" : 5
                 },
                 "x" : {
                   "type" : "number",
@@ -2036,9 +2227,8 @@
             },
             {
               "id" : "cloud",
-              "model" : "cloud.obj",
               "name" : "Cloud",
-              "shape" : "model",
+              "shape" : "cloud",
               "values" : {
                 "color" : {
                   "type" : "color",
@@ -2049,17 +2239,29 @@
                     "red" : 1
                   }
                 },
-                "roughness" : {
+                "coverage" : {
+                  "type" : "number",
+                  "value" : 0.55
+                },
+                "fluffiness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scaleX" : {
+                  "type" : "number",
+                  "value" : 1.9250000000000003
+                },
+                "scaleY" : {
+                  "type" : "number",
+                  "value" : 1.2249999999999999
+                },
+                "scaleZ" : {
+                  "type" : "number",
+                  "value" : 1.2249999999999999
+                },
+                "seed" : {
                   "type" : "number",
                   "value" : 1
-                },
-                "scale" : {
-                  "type" : "number",
-                  "value" : 1.75
-                },
-                "softness" : {
-                  "type" : "number",
-                  "value" : 0.85
                 },
                 "x" : {
                   "type" : "number",
@@ -2077,9 +2279,8 @@
             },
             {
               "id" : "front",
-              "model" : "cloud.obj",
               "name" : "Near Cloud",
-              "shape" : "model",
+              "shape" : "cloud",
               "values" : {
                 "color" : {
                   "type" : "color",
@@ -2090,17 +2291,29 @@
                     "red" : 1
                   }
                 },
-                "roughness" : {
+                "coverage" : {
                   "type" : "number",
-                  "value" : 1
+                  "value" : 0.55
                 },
-                "scale" : {
+                "fluffiness" : {
                   "type" : "number",
-                  "value" : 0.6
+                  "value" : 0.65
                 },
-                "softness" : {
+                "scaleX" : {
                   "type" : "number",
-                  "value" : 0.85
+                  "value" : 0.66
+                },
+                "scaleY" : {
+                  "type" : "number",
+                  "value" : 0.42
+                },
+                "scaleZ" : {
+                  "type" : "number",
+                  "value" : 0.42
+                },
+                "seed" : {
+                  "type" : "number",
+                  "value" : 9
                 },
                 "x" : {
                   "type" : "number",
@@ -2347,7 +2560,7 @@
         "children" : [
 
         ],
-        "id" : "8E28DF57-1305-4451-A195-30204DDE1783",
+        "id" : "682D4ACD-C4FD-4B50-A1FC-CB955277602C",
         "kind" : "view",
         "name" : "Forecast",
         "properties" : {
@@ -2422,7 +2635,7 @@
         "children" : [
 
         ],
-        "id" : "5119EBD3-B4AF-49B4-B91C-F7B8DBB308F2",
+        "id" : "06C059C8-9E45-46BD-BD87-FA12FAF55F2A",
         "kind" : "text",
         "name" : "Heading",
         "properties" : {
@@ -2468,7 +2681,7 @@
         "children" : [
 
         ],
-        "id" : "D0EBD2B2-55FF-4566-BB85-018B52E1963E",
+        "id" : "724E7927-47F5-44CC-8774-106DB7B8FF71",
         "kind" : "view",
         "name" : "Rule",
         "properties" : {
@@ -2501,7 +2714,7 @@
         "children" : [
 
         ],
-        "id" : "246D4FFC-7AF3-4030-A7AC-A2609E40077B",
+        "id" : "0CD6FF05-767E-4607-9211-DF40DF0B3E52",
         "kind" : "view",
         "name" : "Chosen",
         "properties" : {
@@ -2540,7 +2753,7 @@
             "children" : [
 
             ],
-            "id" : "04D7B5A0-D53E-44E7-9839-418A4DA064F4",
+            "id" : "47C6BC2A-5560-4016-BFA5-9E2328AEF335",
             "kind" : "text",
             "name" : "Today Name",
             "properties" : {
@@ -2586,7 +2799,7 @@
             "children" : [
 
             ],
-            "id" : "B7763A48-84BC-4101-BF29-A24083C2C04A",
+            "id" : "1904DD35-9FDD-45CE-B9AC-968128C37F5A",
             "kind" : "symbol",
             "name" : "Today Symbol",
             "properties" : {
@@ -2623,7 +2836,7 @@
             "children" : [
 
             ],
-            "id" : "3965A411-54B8-4C99-A486-CB0F36424125",
+            "id" : "B265FD31-96C4-42B8-95DB-A40A25BF6312",
             "kind" : "text",
             "name" : "Today High",
             "properties" : {
@@ -2666,7 +2879,7 @@
             }
           }
         ],
-        "id" : "5818A171-ED81-4AA8-A72B-24F84CF76C2E",
+        "id" : "A0D9B014-A915-4EC9-866A-AC9D4EDEC23B",
         "kind" : "view",
         "name" : "Today",
         "properties" : {
@@ -2712,7 +2925,7 @@
             "children" : [
 
             ],
-            "id" : "38781DF2-478C-4495-8975-3A596F98CBFB",
+            "id" : "47039B55-9693-4F00-97E5-1777D453785F",
             "kind" : "text",
             "name" : "Fri Name",
             "properties" : {
@@ -2758,7 +2971,7 @@
             "children" : [
 
             ],
-            "id" : "C1761313-86ED-4CDB-A039-E7D6A84A176A",
+            "id" : "156B870B-08E3-4833-B47E-DC31E4130B1D",
             "kind" : "symbol",
             "name" : "Fri Symbol",
             "properties" : {
@@ -2795,7 +3008,7 @@
             "children" : [
 
             ],
-            "id" : "6A12FF0A-893E-4128-9ED7-5B60919A6810",
+            "id" : "94F6AFBC-38CC-40DA-8AC9-1622F78F57F2",
             "kind" : "text",
             "name" : "Fri High",
             "properties" : {
@@ -2838,7 +3051,7 @@
             }
           }
         ],
-        "id" : "9FB444F1-FB7F-48E7-9DD3-54EE6EEEB2C2",
+        "id" : "7A42702C-0A90-4100-B7FE-2351C57886ED",
         "kind" : "view",
         "name" : "Fri",
         "properties" : {
@@ -2884,7 +3097,7 @@
             "children" : [
 
             ],
-            "id" : "6855EC61-7276-4301-A05A-0C51A0BD6A92",
+            "id" : "D328FE77-C080-4DCF-86AD-D5D7B9844099",
             "kind" : "text",
             "name" : "Sat Name",
             "properties" : {
@@ -2930,7 +3143,7 @@
             "children" : [
 
             ],
-            "id" : "CF2A8F08-4030-451D-995B-84BB718A1F88",
+            "id" : "5545EBEB-B7E9-479D-B896-F24DC12326AA",
             "kind" : "symbol",
             "name" : "Sat Symbol",
             "properties" : {
@@ -2967,7 +3180,7 @@
             "children" : [
 
             ],
-            "id" : "5075A0CA-E111-40E3-8900-E90EF01A6CFD",
+            "id" : "3200BB15-4220-4F9F-A566-0CEFE824E339",
             "kind" : "text",
             "name" : "Sat High",
             "properties" : {
@@ -3010,7 +3223,7 @@
             }
           }
         ],
-        "id" : "7EE729DB-950D-4800-97E6-F435DE846851",
+        "id" : "52A9CB57-FB58-4CC8-BD7B-0E13D7820C3B",
         "kind" : "view",
         "name" : "Sat",
         "properties" : {
@@ -3056,7 +3269,7 @@
             "children" : [
 
             ],
-            "id" : "842405F4-AD29-4746-9DC8-88FEB56D372E",
+            "id" : "F47FDBD2-67A9-4A94-92B9-4791A459D0F3",
             "kind" : "text",
             "name" : "Sun Name",
             "properties" : {
@@ -3102,7 +3315,7 @@
             "children" : [
 
             ],
-            "id" : "4F8EB000-AF36-4DD6-9C53-0CF5F9AA7D1B",
+            "id" : "F1D3F1D3-83CD-4ADC-994F-CBC8CD41173B",
             "kind" : "symbol",
             "name" : "Sun Symbol",
             "properties" : {
@@ -3139,7 +3352,7 @@
             "children" : [
 
             ],
-            "id" : "57F11387-3474-4E7F-9C52-43CF1E850779",
+            "id" : "DA7B472D-2FF8-4E1A-946B-E7E7B9A12F43",
             "kind" : "text",
             "name" : "Sun High",
             "properties" : {
@@ -3182,7 +3395,7 @@
             }
           }
         ],
-        "id" : "285D5B9D-5485-4F8B-A4DD-E139524B46B6",
+        "id" : "8C998727-87B5-45A0-AA1D-331197DBDB2A",
         "kind" : "view",
         "name" : "Sun",
         "properties" : {
@@ -3228,7 +3441,7 @@
             "children" : [
 
             ],
-            "id" : "69B759BE-4A71-4A45-A753-68729EAF7811",
+            "id" : "F11F5A6B-6D19-4289-AB42-5168CB0C70CF",
             "kind" : "text",
             "name" : "Mon Name",
             "properties" : {
@@ -3274,7 +3487,7 @@
             "children" : [
 
             ],
-            "id" : "8DC6D1E3-98C7-430F-842A-086CFBF76B58",
+            "id" : "2F7AE35F-5C5C-435B-AEFF-EEB46A33277E",
             "kind" : "symbol",
             "name" : "Mon Symbol",
             "properties" : {
@@ -3311,7 +3524,7 @@
             "children" : [
 
             ],
-            "id" : "C1B7DF45-AB50-4156-8778-5AD67163C732",
+            "id" : "CCD60DF2-E731-4122-BC1E-8B0B788A2268",
             "kind" : "text",
             "name" : "Mon High",
             "properties" : {
@@ -3354,7 +3567,7 @@
             }
           }
         ],
-        "id" : "3F0410A2-3B35-4A84-BD7E-CCC55B743068",
+        "id" : "633DC7A5-23A4-42F7-A899-33B99D922AAF",
         "kind" : "view",
         "name" : "Mon",
         "properties" : {
@@ -3402,7 +3615,7 @@
                 "children" : [
 
                 ],
-                "id" : "F55893E9-7392-4F78-910A-B79317FCF27B",
+                "id" : "866188F0-1BCA-4C8B-B423-B642DD27AA8F",
                 "kind" : "symbol",
                 "name" : "Glyph",
                 "properties" : {
@@ -3439,7 +3652,7 @@
                 "children" : [
 
                 ],
-                "id" : "E6D5E801-2039-4A74-9672-873FD15B1E42",
+                "id" : "456CDBC7-FD39-496C-B33A-F361523937EA",
                 "kind" : "text",
                 "name" : "Words",
                 "properties" : {
@@ -3482,7 +3695,7 @@
                 }
               }
             ],
-            "id" : "7D7DD4A5-DCC6-4197-9AA4-D4F5079E7FAD",
+            "id" : "DBF4CE4E-ED2B-4396-B20C-AA4D1EACC1BD",
             "kind" : "view",
             "name" : "Pill",
             "properties" : {
@@ -3570,7 +3783,7 @@
             }
           }
         ],
-        "id" : "256E61C7-9398-4B95-BBA8-F239762530C9",
+        "id" : "F0492497-C713-4A13-B978-4D982C04462B",
         "kind" : "view",
         "name" : "Hint",
         "properties" : {
@@ -3607,7 +3820,7 @@
         }
       }
     ],
-    "id" : "1F1CDDB0-D193-41EB-AA76-1B415A10298C",
+    "id" : "3F11103B-7995-4A7E-B982-FE8D0109AF78",
     "kind" : "screen",
     "name" : "Screen",
     "properties" : {

@@ -1,65 +1,25 @@
 import Foundation
 import simd
 
-/// The things of the Weather in 3D example that the scene's own shapes cannot make, made
-/// in code as OBJ models a scene view reads like any model file: a puffy cloud, a
-/// lightning bolt. (The sun is the scene's sphere, and rain and snow are its emitters.)
+/// The one thing of the Weather in 3D example that the scene cannot make itself, made in
+/// code as an OBJ model a scene view reads like any model file: the lightning bolt. (The
+/// sun is a sphere, the clouds are cloud volumes, rain and snow are emitters.)
 ///
-/// Each is a signed distance (below zero is inside) built from rounded shapes blended
-/// where they meet, turned into triangles by surface nets, with normals from the shape's
-/// own slope so it shades smoothly. A scene fits every model into one unit round its
-/// middle, so `Fit` says how a model's own units land in the scene.
+/// It is a signed distance (below zero is inside): a zigzag outline puffed up into a soft
+/// solid, turned into triangles by surface nets, with normals from the shape's own slope
+/// so it shades smoothly.
 public enum WeatherModels {
-    public static let cloudName = "cloud.obj"
     public static let boltName = "bolt.obj"
 
     /// The files, by asset name.
     public static var assets: [String: Data] {
-        [cloudName: Data(cloud.obj.utf8), boltName: Data(bolt.obj.utf8)]
-    }
-
-    /// How one of the models lands in a scene when an object showing it has `scale`: its
-    /// box is `scale` along its longest side, centered on the object's position.
-    public struct Fit: Sendable {
-        /// The model's own units to the scene's.
-        public let unit: Double
-        /// Where the bottom of the model is, below the object's position.
-        public let below: Double
-        /// How far the model reaches each side of the object's position.
-        public let halfWidth: Double
-    }
-
-    public static func fit(_ mesh: Mesh, scale: Double) -> Fit {
-        let bounds = mesh.box
-        let unit = scale / bounds.longest
-        return Fit(unit: unit, below: (bounds.middle.y - bounds.low.y) * unit, halfWidth: (bounds.high.x - bounds.low.x) / 2 * unit)
+        [boltName: Data(bolt.obj.utf8)]
     }
 
     // MARK: The shapes (y up, x across, z toward the camera)
 
     typealias P = SIMD3<Double>
     typealias Q = SIMD2<Double>
-
-    static func capsule(_ p: P, _ a: P, _ b: P, radius: Double) -> Double {
-        let pa = p - a, ba = b - a
-        let h = min(max(dot(pa, ba) / dot(ba, ba), 0), 1)
-        return length(pa - ba * h) - radius
-    }
-
-    static func ellipsoid(_ p: P, center: P, radii: P) -> Double {
-        let q = (p - center) / radii
-        let k0 = length(q), k1 = length(q / radii)
-        return k1 > 0 ? k0 * (k0 - 1) / k1 : -min(radii.x, radii.y, radii.z)
-    }
-
-    /// The smooth minimum: two shapes joined with a fillet `k` wide.
-    static func blend(_ a: Double, _ b: Double, _ k: Double) -> Double {
-        let h = min(max(0.5 + 0.5 * (b - a) / k, 0), 1)
-        return b + (a - b) * h - k * h * (1 - h)
-    }
-
-    /// Cuts `b` out of `a` with a rounded edge `k` wide.
-    static func carve(_ a: Double, _ b: Double, _ k: Double) -> Double { -blend(-a, b, k) }
 
     static func capsule2(_ p: Q, _ a: Q, _ b: Q, radius: Double) -> Double {
         let pa = p - a, ba = b - a
@@ -79,17 +39,6 @@ public enum WeatherModels {
         return off > 0 ? off - (depth + front * u) : -off - depth
     }
 
-    /// A cumulus: a long round base, flattened underneath, with three puffs of different
-    /// sizes rising from it.
-    static func cumulus(_ p: P) -> Double {
-        var d = capsule(p, P(-0.52, 0, 0), P(0.52, 0, 0), radius: 0.3)
-        d = blend(d, ellipsoid(p, center: P(-0.32, 0.17, 0.02), radii: P(0.34, 0.32, 0.32)), 0.1)
-        d = blend(d, ellipsoid(p, center: P(0.1, 0.32, -0.02), radii: P(0.44, 0.42, 0.4)), 0.1)
-        d = blend(d, ellipsoid(p, center: P(0.52, 0.12, 0.03), radii: P(0.28, 0.27, 0.27)), 0.1)
-        // Flatter underneath, as a cloud's base is.
-        return carve(d, p.y + 0.2, 0.12)
-    }
-
     /// A lightning bolt: three strokes in a zigzag, thinning toward the tip, puffed up
     /// into a soft, rounded solid.
     static func lightning(_ p: P) -> Double {
@@ -100,7 +49,6 @@ public enum WeatherModels {
         return puff(outline, p.z, middle: 0, thickness: 0.07, round: 0.08)
     }
 
-    public static let cloud = Mesh.surface(of: cumulus, low: P(-0.9, -0.36, -0.48), high: P(0.9, 0.8, 0.48), step: 0.02)
     public static let bolt = Mesh.surface(of: lightning, low: P(-0.3, -0.68, -0.12), high: P(0.34, 0.7, 0.12), step: 0.014)
 
     // MARK: Triangles

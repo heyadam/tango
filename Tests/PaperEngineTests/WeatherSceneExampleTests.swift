@@ -40,7 +40,9 @@ import PaperModel
         #expect(stage.object(W.sun)!.number("scale") > 0.7)
         // The sun glows, and the picture blooms round it.
         #expect(stage.object(W.sun)!.number("emission") > 1 && stage.number("bloom") > 0)
-        #expect(stage.object(W.cloud)!.number("scale") > 1.5 && stage.object(W.cloud)!.number("softness") > 0.5)
+        // The clouds are vapor: cloud volumes, as wide as a cumulus.
+        #expect([W.cloud, W.backCloud, W.frontCloud].allSatisfy { stage.object($0)!.shape == .cloud })
+        #expect(stage.object(W.cloud)!.number("scaleX") > 1.5 && stage.object(W.cloud)!.number("coverage") > 0.4)
         #expect(stage.object(W.rain)!.number("count") == 0 && stage.object(W.snow)!.number("count") == 0)
     }
 
@@ -54,13 +56,20 @@ import PaperModel
             #expect(text(runtime, example.temperature) == .text("\(day.temperature)°"), "\(index)")
             #expect(text(runtime, example.range) == .text("H:\(day.high)°  L:\(day.low)°"), "\(index)")
             let stage = scene(runtime, example)
-            let sun = stage.object(W.sun)!.number("scale"), cloud = stage.object(W.cloud)!.number("scale")
+            let sun = stage.object(W.sun)!.number("scale"), cloud = stage.object(W.cloud)!.number("scaleX")
             let rain = stage.object(W.rain)!.number("count"), snow = stage.object(W.snow)!.number("count")
             switch day.condition {
             case "Sunny": #expect(sun > 1 && cloud < 0.01 && rain == 0)
             case "Partly Cloudy": #expect(sun > 0.7 && cloud > 1.5 && rain == 0 && snow == 0)
             case "Snow": #expect(sun < 0.01 && snow > 500 && rain == 0)
             default: #expect(sun < 0.01 && cloud > 1.8 && rain > 500 && snow == 0, "\(day.condition)")
+            }
+            // A storm piles the cloud up dense and dark; fair weather leaves it light.
+            let density = stage.object(W.cloud)!.number("density")
+            switch day.condition {
+            case "Thunderstorms": #expect(density > 2)
+            case "Partly Cloudy": #expect(density < 1.5)
+            default: break
             }
             // The pill comes to rest behind the day.
             let pill = runtime.resolved.find(example.pill)!.position.x
@@ -100,9 +109,10 @@ import PaperModel
             // The bottom of the box it falls through is on screen above the card's top.
             let bottom = try #require(SceneMath.screenPoint(SIMD3(0, Float(middle - half), 0), in: stage, size: size))
             #expect(262 + bottom.y < 620, "\(id) \(bottom)")
-            // Its top is inside the cloud's base, so drops come out of the cloud.
+            // Its top is inside the cloud's body, so drops come out of the cloud.
             let cloud = try #require(stage.object(W.cloud))
-            #expect(middle + half < cloud.number("y"))
+            #expect(middle + half < cloud.number("y") + cloud.number("scaleY") * 0.2)
+            #expect(middle + half > cloud.number("y") - cloud.number("scaleY") * 0.5)
         }
     }
 
@@ -156,7 +166,7 @@ import PaperModel
     }
 
     @Test func theModelsAreSoundAndTheExampleCarriesThem() throws {
-        for mesh in [WeatherModels.cloud, WeatherModels.bolt] {
+        for mesh in [WeatherModels.bolt] {
             #expect(mesh.triangles.count > 500)
             #expect(mesh.points.allSatisfy { $0.x.isFinite && $0.y.isFinite && $0.z.isFinite })
             #expect(mesh.triangles.allSatisfy { max($0.x, $0.y, $0.z) < mesh.points.count && min($0.x, $0.y, $0.z) >= 0 })

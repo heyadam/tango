@@ -64,10 +64,12 @@ extension SampleDocuments {
         // MARK: The scene
 
         let fallMiddle = W.lift + (W.fallTop + W.fallBottom) / 2, fallHeight = W.fallTop - W.fallBottom
-        func cloud(_ id: String, _ name: String, x: Double, y: Double, z: Double, scale: Double) -> SceneObject {
-            SceneObject(id: id, name: name, shape: .model, model: WeatherModels.cloudName, values: [
-                "x": .number(x), "y": .number(W.lift + y), "z": .number(z), "scale": .number(scale),
-                "color": .color(white), "roughness": .number(1), "softness": .number(0.85),
+        // Clouds are vapor: raymarched volumes, each in a box about twice as wide as tall.
+        func cloud(_ id: String, _ name: String, x: Double, y: Double, z: Double, scale: Double, seed: Double) -> SceneObject {
+            SceneObject(id: id, name: name, shape: .cloud, values: [
+                "x": .number(x), "y": .number(W.lift + y), "z": .number(z),
+                "scaleX": .number(scale * 1.1), "scaleY": .number(scale * 0.7), "scaleZ": .number(scale * 0.7),
+                "color": .color(white), "coverage": .number(0.55), "fluffiness": .number(0.65), "seed": .number(seed),
             ])
         }
         let scene = SceneUse(objects: [
@@ -84,9 +86,9 @@ extension SampleDocuments {
                 "color": .color(ColorValue(hex: "#FFD27A")!), "softness": .number(1), "opacity": .number(0.18),
                 "emission": .number(0.5),
             ]),
-            cloud(W.backCloud, "Far Cloud", x: 0.95, y: -0.32, z: -0.8, scale: 0.8),
-            cloud(W.cloud, "Cloud", x: -0.12, y: -0.02, z: 0, scale: 1.75),
-            cloud(W.frontCloud, "Near Cloud", x: -0.82, y: -0.5, z: 0.55, scale: 0.6),
+            cloud(W.backCloud, "Far Cloud", x: 0.95, y: -0.32, z: -0.8, scale: 0.8, seed: 5),
+            cloud(W.cloud, "Cloud", x: -0.12, y: -0.02, z: 0, scale: 1.75, seed: 1),
+            cloud(W.frontCloud, "Near Cloud", x: -0.82, y: -0.5, z: 0.55, scale: 0.6, seed: 9),
             // Lightning: white-hot, so it blooms and lights the cloud it comes from.
             SceneObject(id: W.bolt, name: "Bolt", shape: .model, model: WeatherModels.boltName, values: [
                 "x": .number(0.08), "y": .number(W.lift - 0.72), "z": .number(0.35), "scale": .number(0), "scaleX": .number(0),
@@ -240,6 +242,8 @@ extension SampleDocuments {
                         cloudX: 0, cloudY: 0, cloudScale: 0, cloudColor: color("#FFFFFF"), cloudGlow: 0,
                         backX: 0, backY: 0, backScale: 0, backColor: color("#FFFFFF"),
                         frontX: 0, frontY: 0, frontScale: 0, frontColor: color("#FFFFFF"),
+                        cloudSX: 0, cloudSY: 0, cloudSZ: 0, backSX: 0, backSY: 0, backSZ: 0, frontSX: 0, frontSY: 0, frontSZ: 0,
+                        coverage: 0.5, density: 1, fluffiness: 0.6, drift: 0,
                         boltScale: 0, rainCount: 0, rainSize: 0, snowCount: 0, snowSize: 0, fallTime: 0 };
 
             const days = [
@@ -252,27 +256,27 @@ extension SampleDocuments {
             const skies = {
               Sunny:           { sunX: 0, sunY: 0.04, sunScale: 1.05, sunGlow: 2.4, cloudX: -1.5, cloudY: -0.2, cloudScale: 0, cloud: "#FFFFFF",
                                  backX: 1.4, backY: -0.6, backScale: 0, back: "#FFFFFF", frontX: -1.4, frontY: -0.6, frontScale: 0, front: "#FFFFFF",
-                                 rain: 0, snow: 0, storm: 0, top: "#0D5BD3", bottom: "#76BBFF", glow: 0.9, rays: 0.9, haze: 0.1,
+                                 cover: 0.62, dens: 1.2, fluff: 0.65, tall: 0.7, rain: 0, snow: 0, storm: 0, top: "#0D5BD3", bottom: "#76BBFF", glow: 0.9, rays: 0.9, haze: 0.1,
                                  card: "#0B2A5A40", bloom: 0.8, yaw: -40, pitch: 30, intensity: 3.6, exposure: 1.08, lamp: "#FFE9C4", surroundings: "Daylight" },
               "Partly Cloudy": { sunX: 0.46, sunY: 0.26, sunScale: 0.82, sunGlow: 2.2, cloudX: -0.12, cloudY: -0.02, cloudScale: 1.75, cloud: "#FFFFFF",
                                  backX: 0.95, backY: -0.32, backScale: 0.8, back: "#EEF5FF", frontX: -0.82, frontY: -0.5, frontScale: 0.6, front: "#FFFFFF",
-                                 rain: 0, snow: 0, storm: 0, top: "#2A76CF", bottom: "#9CC8F2", glow: 0.55, rays: 0.35, haze: 0.35,
+                                 cover: 0.62, dens: 1.2, fluff: 0.65, tall: 0.7, rain: 0, snow: 0, storm: 0, top: "#2A76CF", bottom: "#9CC8F2", glow: 0.55, rays: 0.35, haze: 0.35,
                                  card: "#0E2B5238", bloom: 0.6, yaw: 38, pitch: 34, intensity: 3.5, exposure: 1.02, lamp: "#FFF0D2", surroundings: "Daylight" },
               Rain:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.1, cloudScale: 1.9, cloud: "#DCE3EC",
                                  backX: 0.78, backY: 0.44, backScale: 1.15, back: "#A9B5C5", frontX: -0.72, frontY: -0.14, frontScale: 0.8, front: "#C9D2DE",
-                                 rain: 0.75, snow: 0, storm: 0, top: "#3B485D", bottom: "#7C8BA0", glow: 0, rays: 0, haze: 0.8,
+                                 cover: 0.78, dens: 1.5, fluff: 0.5, tall: 0.78, rain: 0.75, snow: 0, storm: 0, top: "#3B485D", bottom: "#7C8BA0", glow: 0, rays: 0, haze: 0.8,
                                  card: "#1A253866", bloom: 0.5, yaw: -10, pitch: 66, intensity: 2.8, exposure: 1.1, lamp: "#DCE6F5", surroundings: "Studio" },
-              Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.12, cloudScale: 2.02, cloud: "#6E7486",
-                                 backX: 0.8, backY: 0.48, backScale: 1.25, back: "#474B5A", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: "#585D6C",
-                                 rain: 1, snow: 0, storm: 1, top: "#10131D", bottom: "#2B3142", glow: 0, rays: 0, haze: 0.9,
+              Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0.02, cloudY: 0.02, cloudScale: 1.95, cloud: "#83807F",
+                                 backX: 0.8, backY: 0.48, backScale: 1.25, back: "#55545A", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: "#66646A",
+                                 cover: 0.86, dens: 2.4, fluff: 0.45, tall: 0.8, rain: 1, snow: 0, storm: 1, top: "#10131D", bottom: "#2B3142", glow: 0, rays: 0, haze: 0.9,
                                  card: "#0A0E1A80", bloom: 0.7, yaw: 18, pitch: 70, intensity: 2.2, exposure: 1.3, lamp: "#A8B8E8", surroundings: "Night" },
               Snow:            { sunX: 0.5, sunY: 0.7, sunScale: 0, sunGlow: 0, cloudX: 0, cloudY: 0.1, cloudScale: 1.9, cloud: "#FAFCFF",
                                  backX: -0.8, backY: 0.46, backScale: 1.05, back: "#D4DEEA", frontX: 0.74, frontY: -0.14, frontScale: 0.76, front: "#F2F6FB",
-                                 rain: 0, snow: 1, storm: 0, top: "#5D7696", bottom: "#B2C2D6", glow: 0.1, rays: 0, haze: 0.6,
+                                 cover: 0.72, dens: 1.1, fluff: 0.75, tall: 0.75, rain: 0, snow: 1, storm: 0, top: "#5D7696", bottom: "#B2C2D6", glow: 0.1, rays: 0, haze: 0.6,
                                  card: "#21354F55", bloom: 0.6, yaw: -24, pitch: 46, intensity: 3.1, exposure: 1.18, lamp: "#F3F7FF", surroundings: "Studio" },
             };
             const numbers = ["sunX", "sunY", "sunScale", "sunGlow", "cloudX", "cloudY", "cloudScale", "backX", "backY", "backScale",
-                             "frontX", "frontY", "frontScale", "rain", "snow", "storm", "glow", "rays", "haze", "bloom",
+                             "frontX", "frontY", "frontScale", "cover", "dens", "fluff", "tall", "rain", "snow", "storm", "glow", "rays", "haze", "bloom",
                              "yaw", "pitch", "intensity", "exposure"];
             const colors = ["cloud", "back", "front", "top", "bottom", "lamp", "card"];
             const lift = \(W.lift);
@@ -355,6 +359,16 @@ extension SampleDocuments {
               outputs.backColor = color(hex(now.back));
               outputs.frontX = now.frontX; outputs.frontY = lift + now.frontY; outputs.frontScale = now.frontScale;
               outputs.frontColor = color(hex(now.front));
+              // Each cloud's box: as wide as the cloud, its height by how tall the weather piles it.
+              const box = (scale) => [scale * 1.1, scale * now.tall, scale * 0.75];
+              [outputs.cloudSX, outputs.cloudSY, outputs.cloudSZ] = box(now.cloudScale);
+              [outputs.backSX, outputs.backSY, outputs.backSZ] = box(now.backScale);
+              [outputs.frontSX, outputs.frontSY, outputs.frontSZ] = box(now.frontScale);
+              outputs.coverage = now.cover;
+              outputs.density = now.dens;
+              outputs.fluffiness = now.fluff;
+              // The vapor drifts while the clock runs, so a cloud billows as the weather changes.
+              outputs.drift = inputs.clock * 0.035;
               outputs.boltScale = flash > 0.3 ? 0.95 : 0;
               // How much falls: more drops, and each fuller, as the rain sets in.
               outputs.rainCount = now.rain > 0.005 ? Math.round(raindrops * Math.min(1, now.rain)) : 0;
@@ -380,9 +394,13 @@ extension SampleDocuments {
             ("sunX", W.sun, "x"), ("sunY", W.sun, "y"), ("sunScale", W.sun, "scale"), ("sunGlow", W.sun, "emission"),
             ("sunX", W.corona, "x"), ("sunY", W.corona, "y"), ("coronaScale", W.corona, "scale"),
             ("cloudGlow", W.cloud, "emission"),
-            ("cloudX", W.cloud, "x"), ("cloudY", W.cloud, "y"), ("cloudScale", W.cloud, "scale"), ("cloudColor", W.cloud, "color"),
-            ("backX", W.backCloud, "x"), ("backY", W.backCloud, "y"), ("backScale", W.backCloud, "scale"), ("backColor", W.backCloud, "color"),
-            ("frontX", W.frontCloud, "x"), ("frontY", W.frontCloud, "y"), ("frontScale", W.frontCloud, "scale"), ("frontColor", W.frontCloud, "color"),
+            ("cloudX", W.cloud, "x"), ("cloudY", W.cloud, "y"), ("cloudColor", W.cloud, "color"),
+            ("backX", W.backCloud, "x"), ("backY", W.backCloud, "y"), ("backColor", W.backCloud, "color"),
+            ("frontX", W.frontCloud, "x"), ("frontY", W.frontCloud, "y"), ("frontColor", W.frontCloud, "color"),
+        ] + [(W.cloud, "cloud"), (W.backCloud, "back"), (W.frontCloud, "front")].flatMap { id, name in
+            [("\(name)SX", id, "scaleX"), ("\(name)SY", id, "scaleY"), ("\(name)SZ", id, "scaleZ"),
+             ("coverage", id, "coverage"), ("density", id, "density"), ("fluffiness", id, "fluffiness"), ("drift", id, "drift")]
+        } + [
             ("boltScale", W.bolt, "scale"), ("boltScale", W.bolt, "scaleX"),
             ("rainCount", W.rain, "count"), ("rainSize", W.rain, "size"), ("fallTime", W.rain, "time"),
             ("snowCount", W.snow, "count"), ("snowSize", W.snow, "size"), ("fallTime", W.snow, "time"),
