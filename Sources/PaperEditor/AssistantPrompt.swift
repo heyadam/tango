@@ -484,6 +484,9 @@ public enum AssistantPrompt {
         `emissionColor`, which is its `color` until you set one. A glowing object lights what \
         is near it (the four brightest do), and the scene's `bloom` (0 to about 2) spills \
         what is brighter than white round it as a glow: a sun, a lamp, lightning, a screen.
+        - Clear things: `opacity` below 1 lets what is behind show; `transmission` 1 with a \
+        low `roughness` is glass or water, which (with rays) bends and tints what is behind \
+        it by `ior` and still mirrors its surroundings. Clear things cast lighter shadows.
         - Ray tracing is on unless `rayTracing` is false: things cast soft shadows on one \
         another, and shiny things mirror the others. A device whose GPU traces no rays draws \
         the scene without them, so do not make a design depend on a shadow.

@@ -318,4 +318,58 @@ import simd
         #expect(Self.brightness(middle) > 300)
         #expect(Double(Self.brightness(aside)) > Double(Self.brightness(middle)) * 0.8, "\(middle) \(aside)")
     }
+
+    // MARK: Clear things
+
+    @Test func aHalfClearThingShowsWhatIsBehindItAndNoneShowsNothing() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var ball = Self.ball("ball", Self.red)
+        ball.values["opacity"] = .number(0.5)
+        let half = Self.document([ball])
+        let color = try Self.color(ViewerSnapshot.bitmap(of: half), at: SIMD3(0, 0, 0.5), in: half)
+        // Red over the white screen: pink, not red and not white.
+        #expect(color.count == 3 && color[0] > 200 && color[1] > 70 && color[1] < 220, "\(color)")
+        ball.values["opacity"] = .number(0)
+        let none = Self.document([ball])
+        #expect(ShaderViewTests.near(try Self.color(ViewerSnapshot.bitmap(of: none), at: SIMD3(0, 0, 0.5), in: none), Self.white))
+    }
+
+    @Test func clearThingsAreDrawnFromTheBackWhateverTheirOrder() throws {
+        try #require(ShaderCompiler.shared != nil)
+        var near = Self.ball("near", Self.red, at: SIMD3(0, 0, 0.5), scale: 0.6)
+        var far = Self.ball("far", Self.green, at: SIMD3(0, 0, -0.5), scale: 0.9)
+        near.values["opacity"] = .number(0.7)
+        far.values["opacity"] = .number(0.7)
+        for objects in [[near, far], [far, near]] {
+            let document = Self.document(objects, values: ["rayTracing": .bool(false)])
+            let color = try Self.color(ViewerSnapshot.bitmap(of: document), at: SIMD3(0, 0, 0.8), in: document)
+            // The near one is over the far one: more red than green.
+            #expect(color.count == 3 && color[0] > color[1] + 40, "\(color)")
+        }
+    }
+
+    @Test func glassTintsAndBendsWhatIsBehindItWhenRaysAreTraced() throws {
+        try #require(LayerRenderer.tracesRays)
+        let back = SceneObject(id: "back", shape: .box, values: ["scale": .number(1.4), "z": .number(-1), "color": .color(.white), "roughness": .number(1)])
+        var glass = Self.ball("glass", ColorValue(red: 0.3, green: 0.5, blue: 1), at: SIMD3(0, 0, 0.4), scale: 0.7)
+        glass.values["transmission"] = .number(1)
+        glass.values["roughness"] = .number(0.05)
+        let document = Self.document([back, glass], values: ["environment": .text("Studio")])
+        let picture = ViewerSnapshot.bitmap(of: document)
+        Self.keep(picture, "glass")
+        // Through the glass the white box behind is tinted blue.
+        let seen = try Self.color(picture, at: SIMD3(0, -0.05, 0.75), in: document)
+        #expect(seen.count == 3 && seen[2] > seen[0] + 40, "\(seen)")
+    }
+
+    @Test func aClearThingCastsALighterShadowWhenRaysAreTraced() throws {
+        try #require(LayerRenderer.tracesRays)
+        let under = SIMD3<Float>(0.6, -0.5, 0.15)
+        let solid = Self.ballOverFloor(rays: true)
+        var clear = solid
+        clear.screen.children[0].scene?.objects[1].values["opacity"] = .number(0.4)
+        let dark = try Self.color(ViewerSnapshot.bitmap(of: solid), at: under, in: solid)
+        let light = try Self.color(ViewerSnapshot.bitmap(of: clear), at: under, in: clear)
+        #expect(light[0] > dark[0] + 15, "\(light) against \(dark)")
+    }
 }

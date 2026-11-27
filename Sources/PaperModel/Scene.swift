@@ -96,6 +96,11 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("visible", "Visible", .bool(true)),
         // Light of its own, added to what it reflects before the picture is toned: a lamp,
         // the sun, lightning. With the scene's Bloom it glows, and it lights what is near.
+        // How much of it there is, and how much light passes through what there is, bent
+        // as it enters by the index of refraction: glass, water.
+        SceneInput("opacity", "Opacity", .number(1)),
+        SceneInput("transmission", "Transmission", .number(0)),
+        SceneInput("ior", "Index of Refraction", .number(1.45)),
         SceneInput("emission", "Emission", .number(0)),
         SceneInput("emissionColor", "Emission Color", .color(ColorValue(white: 0.8))),
     ]

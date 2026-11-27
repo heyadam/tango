@@ -30,6 +30,11 @@ final class SceneRendering {
 
     let compiler: ShaderCompiler
     let pipeline: MTLRenderPipelineState
+    /// The same for what is drawn over what is behind it: clear and soft things.
+    let blended: MTLRenderPipelineState
+    let tracedBlended: MTLRenderPipelineState?
+    /// Depth is tested but not written for what is drawn over what is behind it.
+    let depthKept: MTLDepthStencilState
     /// The passes after a scene is drawn: the brightest light picked out at a quarter of the
     /// size, blurred along one direction, and everything toned into the picture shown.
     let bright: MTLRenderPipelineState
@@ -53,12 +58,21 @@ final class SceneRendering {
     private init?(compiler: ShaderCompiler) {
         self.compiler = compiler
         let device = compiler.device
-        func make(traced: Bool) throws -> MTLRenderPipelineState {
+        func make(traced: Bool, blending: Bool = false) throws -> MTLRenderPipelineState {
             let library = try device.makeLibrary(source: "#define TANGO_TRACED \(traced ? 1 : 0)\n" + SceneRendering.source, options: nil)
             let descriptor = MTLRenderPipelineDescriptor()
             descriptor.vertexFunction = library.makeFunction(name: "scene_vertex")
             descriptor.fragmentFunction = library.makeFunction(name: "scene_fragment")
             descriptor.colorAttachments[0].pixelFormat = SceneRendering.lightFormat
+            if blending {
+                // Light times coverage over what is behind: premultiplied.
+                let color = descriptor.colorAttachments[0]!
+                color.isBlendingEnabled = true
+                color.sourceRGBBlendFactor = .one
+                color.sourceAlphaBlendFactor = .one
+                color.destinationRGBBlendFactor = .oneMinusSourceAlpha
+                color.destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            }
             descriptor.depthAttachmentPixelFormat = .depth32Float
             descriptor.rasterSampleCount = SceneRendering.samples
             let vertex = MTLVertexDescriptor()
@@ -81,6 +95,7 @@ final class SceneRendering {
         }
         do {
             pipeline = try make(traced: false)
+            blended = try make(traced: false, blending: true)
             let passes = try device.makeLibrary(source: SceneRendering.postSource, options: nil)
             bright = try post("post_bright", SceneRendering.lightFormat, in: passes)
             blur = try post("post_blur", SceneRendering.lightFormat, in: passes)
@@ -89,12 +104,14 @@ final class SceneRendering {
             assertionFailure("The scene shader does not compile: \(error)")
             return nil
         }
+        var withRays: (MTLRenderPipelineState, MTLRenderPipelineState)?
         do {
-            traced = device.supportsRaytracing ? try make(traced: true) : nil
+            if device.supportsRaytracing { withRays = (try make(traced: true), try make(traced: true, blending: true)) }
         } catch {
             assertionFailure("The scene shader does not compile with rays: \(error)")
-            traced = nil
         }
+        traced = withRays?.0
+        tracedBlended = withRays?.1
         let depthDescriptor = MTLDepthStencilDescriptor()
         depthDescriptor.depthCompareFunction = .less
         depthDescriptor.isDepthWriteEnabled = true
@@ -110,13 +127,18 @@ final class SceneRendering {
         clampedDescriptor.sAddressMode = .clampToZero
         clampedDescriptor.tAddressMode = .clampToZero
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 1, height: 1, mipmapped: false)
+        let keptDescriptor = MTLDepthStencilDescriptor()
+        keptDescriptor.depthCompareFunction = .less
+        keptDescriptor.isDepthWriteEnabled = false
         guard let depth = device.makeDepthStencilState(descriptor: depthDescriptor),
+              let depthKept = device.makeDepthStencilState(descriptor: keptDescriptor),
               let sampler = device.makeSamplerState(descriptor: samplerDescriptor),
               let clampedSampler = device.makeSamplerState(descriptor: clampedDescriptor),
               let white = device.makeTexture(descriptor: textureDescriptor) else { return nil }
         var pixel: [UInt8] = [255, 255, 255, 255]
         white.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: &pixel, bytesPerRow: 4)
         self.depth = depth
+        self.depthKept = depthKept
         self.sampler = sampler
         self.clampedSampler = clampedSampler
         self.white = white
@@ -182,7 +204,8 @@ final class SceneRendering {
         var ground = SIMD4<Float>(repeating: 0)
         var lampDirection = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
         var lampColor = (SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0), SIMD4<Float>(repeating: 0))
-        /// x: exposure, y: 1 when rays are traced, z: how many glows light the scene.
+        /// x: exposure, y: 1 when rays are traced, z: how many glows light the scene, w: 1
+        /// when some of what rays find is clear or soft.
         var settings = SIMD4<Float>(repeating: 0)
         /// Glowing objects that light the others: where (xyz) and how large (w), and their
         /// light (rgb).
@@ -241,6 +264,11 @@ final class SceneRendering {
         var material: SIMD4<Float>
         /// Its own light, linear red, green, blue, already times its strength.
         var emission = SIMD4<Float>(repeating: 0)
+        /// x: index of refraction, y: softness.
+        var surface = SIMD4<Float>(1.45, 0, 0, 0)
+
+        /// Whether it hides what is behind it wholly: it is drawn first, and rays stop at it.
+        var isSolid: Bool { material.z >= 0.999 && material.w <= 0.001 && surface.y <= 0.001 }
     }
 
     static func clamp(_ value: Double, _ low: Float, _ high: Float) -> Float {
@@ -282,8 +310,9 @@ final class SceneRendering {
         float4x4 model;
         float4x4 normal;
         float4 color;
-        float4 material;
+        float4 material;   // metalness, roughness, opacity, transmission
         float4 emission;
+        float4 surface;    // index of refraction, softness
     };
 
     struct SceneVertexIn {
@@ -339,6 +368,7 @@ final class SceneRendering {
         float4 color;
         float4 material;
         float4 emission;
+        float4 surface;
     };
 
     struct TracedTriangle {
@@ -360,7 +390,8 @@ final class SceneRendering {
         along = cross(normal, across);
     }
 
-    static bool scene_blocked(instance_acceleration_structure structure, float3 origin, float3 direction, float reach) {
+    // Rays tell solid things (mask 1) from clear and soft ones (mask 2).
+    static bool scene_blocked(instance_acceleration_structure structure, float3 origin, float3 direction, float reach, uint mask = 1) {
         intersector<triangle_data, instancing> test;
         test.accept_any_intersection(true);
         ray probe;
@@ -368,7 +399,27 @@ final class SceneRendering {
         probe.direction = direction;
         probe.min_distance = 0.0;
         probe.max_distance = reach;
-        return test.intersect(probe, structure, 0xFF).type != intersection_type::none;
+        return test.intersect(probe, structure, mask).type != intersection_type::none;
+    }
+
+    // How much light gets through along a ray: none past a solid thing, some past a clear
+    // or soft one (the first it meets), as much as it lets through.
+    static float scene_passing(instance_acceleration_structure structure, const device TracedInstance *instances,
+                               float3 origin, float3 direction, float reach, bool clear) {
+        if (scene_blocked(structure, origin, direction, reach, 1)) { return 0.0; }
+        if (!clear) { return 1.0; }
+        intersector<triangle_data, instancing> test;
+        test.accept_any_intersection(true);
+        ray probe;
+        probe.origin = origin;
+        probe.direction = direction;
+        probe.min_distance = 0.0;
+        probe.max_distance = reach;
+        intersection_result<triangle_data, instancing> hit = test.intersect(probe, structure, 2);
+        if (hit.type == intersection_type::none) { return 1.0; }
+        TracedInstance other = instances[hit.instance_id];
+        float holds = saturate(other.material.z) * (1.0 - 0.7 * saturate(other.material.w)) * (1.0 - 0.5 * saturate(other.surface.y));
+        return 1.0 - 0.8 * holds;
     }
     #endif
 
@@ -389,6 +440,40 @@ final class SceneRendering {
         return sum;
     }
 
+    #if TANGO_TRACED
+    // What a ray finds first among the things it may see (`mask`), lit as it is there: its
+    // surroundings, the light unless something solid is in the way, the glows, a mirror of
+    // its surroundings, and its own light. w is 0 when it finds nothing.
+    static float4 scene_found(constant SceneUniforms &scene, instance_acceleration_structure structure,
+                              const device TracedInstance *instances, float3 from, float3 direction,
+                              float lift, float3 toLight, uint mask) {
+        intersector<triangle_data, instancing> finder;
+        ray probe;
+        probe.origin = from;
+        probe.direction = direction;
+        probe.min_distance = 0.0;
+        probe.max_distance = 1000.0;
+        intersection_result<triangle_data, instancing> hit = finder.intersect(probe, structure, mask);
+        if (hit.type == intersection_type::none) { return float4(0.0); }
+        TracedInstance other = instances[hit.instance_id];
+        TracedTriangle corners = *(const device TracedTriangle *)hit.primitive_data;
+        float2 weight = hit.triangle_barycentric_coord;
+        float3 own = float3(corners.n0) * (1.0 - weight.x - weight.y) + float3(corners.n1) * weight.x + float3(corners.n2) * weight.y;
+        float3 there = normalize((other.normal * float4(own, 0.0)).xyz);
+        if (dot(there, direction) > 0.0) { there = -there; }
+        float otherMetal = saturate(other.material.x);
+        float otherRough = clamp(other.material.y, 0.045, 1.0);
+        float3 place = from + direction * hit.distance;
+        float otherLit = saturate(dot(there, toLight));
+        if (otherLit > 0.0 && scene_blocked(structure, place + there * lift, toLight, 1000.0, 1)) { otherLit = 0.0; }
+        float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F
+                + scene_glows(scene, place, there, saturate(other.surface.y)))
+            + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(direction, there), otherRough)
+            + other.emission.rgb;
+        return float4(found, 1.0);
+    }
+    #endif
+
     fragment float4 scene_fragment(SceneVertex in [[stage_in]], bool front [[front_facing]],
                                    constant SceneUniforms &scene [[buffer(1)]],
                                    constant ObjectUniforms &object [[buffer(2)]],
@@ -407,6 +492,12 @@ final class SceneRendering {
         float3 mirror = mix(float3(0.04), base, metalness);
         float3 matte = base * (1.0 - metalness);
         float facing = max(dot(normal, toEye), 1e-4);
+        // How much of it is there (opacity), and how much of what is there light passes
+        // through, bent (transmission): glass, water.
+        float opacity = saturate(object.material.z);
+        float transmission = saturate(object.material.w);
+        float3 through = float3(0.0);
+        float throughCover = 0.0;
 
         float3 toLight = normalize(scene.lightDirection.xyz);
         float lit = saturate(dot(normal, toLight));
@@ -420,6 +511,7 @@ final class SceneRendering {
             // from, so that at any size it does not land on the surface it left.
             float lift = 0.0015 * max(distance(scene.camera.xyz, in.world), 0.05);
             float3 from = in.world + normal * lift;
+            bool clear = scene.settings.w > 0.5;
             float3 across, along;
             // The light has a size, so a shadow is soft at its edge: several rays to
             // places on it.
@@ -439,7 +531,7 @@ final class SceneRendering {
                         float turn = start + float(index) * 2.3999632;
                         float out = sqrt((float(index) + 0.5) / 24.0) * 0.045;
                         float3 toward = normalize(toLight + (across * cos(turn) + along * sin(turn)) * out);
-                        arriving += scene_blocked(structure, from, toward, 1000.0) ? 0.0 : 1.0;
+                        arriving += scene_passing(structure, instances, from, toward, 1000.0, clear);
                     }
                     if (pass == 0) {
                         if (arriving == 0.0 || arriving == 6.0) {
@@ -471,37 +563,21 @@ final class SceneRendering {
             open = 1.0 - 0.85 * closed / 16.0;
             // A shiny surface mirrors the other things in the scene, lit as they are.
             if (roughness < 0.5) {
-                float3 back = reflect(-toEye, normal);
-                intersector<triangle_data, instancing> finder;
-                ray probe;
-                probe.origin = from;
-                probe.direction = back;
-                probe.min_distance = 0.0;
-                probe.max_distance = 1000.0;
-                intersection_result<triangle_data, instancing> hit = finder.intersect(probe, structure, 0xFF);
-                if (hit.type != intersection_type::none) {
-                    TracedInstance other = instances[hit.instance_id];
-                    TracedTriangle corners = *(const device TracedTriangle *)hit.primitive_data;
-                    float2 weight = hit.triangle_barycentric_coord;
-                    float3 own = float3(corners.n0) * (1.0 - weight.x - weight.y) + float3(corners.n1) * weight.x + float3(corners.n2) * weight.y;
-                    float3 there = normalize((other.normal * float4(own, 0.0)).xyz);
-                    if (dot(there, back) > 0.0) { there = -there; }
-                    float otherMetal = saturate(other.material.x);
-                    float otherRough = clamp(other.material.y, 0.045, 1.0);
-                    float3 place = from + back * hit.distance;
-                    float otherLit = saturate(dot(there, toLight));
-                    if (otherLit > 0.0 && scene_blocked(structure, place + there * lift, toLight, 1000.0)) { otherLit = 0.0; }
-                    float3 found = other.color.rgb * (1.0 - otherMetal) * (scene_surroundings(scene, there, 1.0) + scene.lightColor.rgb * otherLit / M_PI_F
-                            + scene_glows(scene, place, there, 0.0))
-                        + mix(float3(0.04), other.color.rgb, otherMetal) * scene_surroundings(scene, reflect(back, there), otherRough)
-                        + other.emission.rgb;
-                    seen = mix(found, seen, smoothstep(0.25, 0.5, roughness));
-                }
+                float4 found = scene_found(scene, structure, instances, from, reflect(-toEye, normal), lift, toLight, 0xFF);
+                if (found.w > 0.0) { seen = mix(found.rgb, seen, smoothstep(0.25, 0.5, roughness)); }
+            }
+            // Through a clear thing, bent as it enters: the solid things behind it.
+            if (transmission > 0.0) {
+                float3 bent = refract(-toEye, normal, 1.0 / max(object.surface.x, 1.0));
+                if (dot(bent, bent) < 0.25) { bent = reflect(-toEye, normal); }
+                float4 found = scene_found(scene, structure, instances, in.world - normal * lift, normalize(bent), lift, toLight, 1);
+                if (found.w > 0.0) { through = found.rgb * base; throughCover = 1.0; }
             }
         }
     #endif
-        // The one light, by Cook and Torrance with the GGX distribution.
-        float3 direct = float3(0.0);
+        // The one light, by Cook and Torrance with the GGX distribution: what a matte
+        // surface spreads, and what a shiny one mirrors of it.
+        float3 directMatte = float3(0.0), directShine = float3(0.0);
         if (lit > 0.0) {
             float3 half_ = normalize(toEye + toLight);
             float a = roughness * roughness, a2 = a * a;
@@ -510,7 +586,8 @@ final class SceneRendering {
             float distribution = a2 / (M_PI_F * spread * spread);
             float visible = 0.5 / (lit * sqrt(facing * facing * (1.0 - a2) + a2) + facing * sqrt(lit * lit * (1.0 - a2) + a2));
             float3 fresnel = mirror + (1.0 - mirror) * pow(1.0 - saturate(dot(toEye, half_)), 5.0);
-            direct = (matte / M_PI_F + distribution * visible * fresnel) * scene.lightColor.rgb * lit * shade;
+            directMatte = matte / M_PI_F * scene.lightColor.rgb * lit * shade;
+            directShine = distribution * visible * fresnel * scene.lightColor.rgb * lit * shade;
         }
 
         // The surroundings: what a matte surface gathers, and what a shiny one mirrors,
@@ -522,8 +599,14 @@ final class SceneRendering {
         float3 mirrored = seen * (mirror * weigh.x + weigh.y) * mix(1.0, open, roughness);
 
         float3 glowing = matte * scene_glows(scene, in.world, normal, 0.0);
-        float3 color = (direct + gathered + mirrored + glowing + object.emission.rgb) * scene.settings.x;
-        return float4(color, 1.0);
+        // A clear thing covers what is behind it only as much as light does not pass
+        // through it; what it mirrors is added over whatever shows through.
+        float cover = opacity * (1.0 - transmission);
+        float3 color = (directMatte + gathered + glowing) * cover + (directShine + mirrored + object.emission.rgb) * opacity;
+        float entering = 1.0 - (0.04 + 0.96 * pow(1.0 - facing, 5.0));
+        color += through * transmission * opacity * entering;
+        cover = saturate(cover + transmission * opacity * throughCover * entering);
+        return float4(color * scene.settings.x, cover);
     }
     """
 
@@ -775,10 +858,15 @@ final class SceneSurface {
                     ?? part.roughness ?? SceneRendering.clamp(object.number("roughness"), 0, 1)
                 // Its own light is in the color it is given, or in the color it is.
                 let glow = (object.values["emissionColor"].map { SceneRendering.linear($0.colorValue) } ?? color) * strength
+                let opacity = SceneRendering.clamp(object.number("opacity"), 0, 1)
+                let transmission = SceneRendering.clamp(object.number("transmission"), 0, 1)
                 let own = SceneRendering.ObjectUniforms(
                     model: model, normal: model.inverse.transpose,
-                    color: SIMD4(color, 1), material: SIMD4(metalness, roughness, 0, 0), emission: SIMD4(glow, 0)
+                    color: SIMD4(color, 1), material: SIMD4(metalness, roughness, opacity, transmission), emission: SIMD4(glow, 0),
+                    surface: SIMD4(SceneRendering.clamp(object.number("ior"), 1, 3), 0, 0, 0)
                 )
+                // Nothing of it shows: nothing to draw.
+                guard opacity > 0 else { continue }
                 // A size of nothing has no inverse: there is nothing to draw of it either.
                 guard (0..<4).allSatisfy({ column in (0..<4).allSatisfy { own.normal[column][$0].isFinite && own.model[column][$0].isFinite } }) else { continue }
                 // A color set on the object replaces the file's, its picture included.
@@ -797,6 +885,7 @@ final class SceneSurface {
 
         let rays = scene.value("rayTracing").boolValue ? trace(draws) : nil
         uniforms.settings.y = rays == nil ? 0 : 1
+        uniforms.settings.w = draws.contains { !$0.uniforms.isSolid } ? 1 : 0
         guard let buffer = rendering.compiler.queue.makeCommandBuffer(),
               let encoder = buffer.makeRenderCommandEncoder(descriptor: pass) else { return }
         encoder.setRenderPipelineState(rays?.pipeline ?? rendering.pipeline)
@@ -818,7 +907,15 @@ final class SceneSurface {
             let place = draw.uniforms.model.columns.3
             return simd_distance_squared(eye, SIMD3(place.x, place.y, place.z))
         }
-        for draw in draws.sorted(by: { distance($0) < distance($1) }) {
+        // Solid things first, the nearest first; then clear and soft ones over them, the
+        // furthest first, testing depth but not writing it.
+        let solid = draws.filter(\.uniforms.isSolid).sorted { distance($0) < distance($1) }
+        let clear = draws.filter { !$0.uniforms.isSolid }.sorted { distance($0) > distance($1) }
+        for (index, draw) in (solid + clear).enumerated() {
+            if index == solid.count {
+                encoder.setRenderPipelineState(rays == nil ? rendering.blended : rendering.tracedBlended ?? rendering.blended)
+                encoder.setDepthStencilState(rendering.depthKept)
+            }
             var own = draw.uniforms
             encoder.setVertexBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
             encoder.setFragmentBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
@@ -897,12 +994,14 @@ final class SceneSurface {
             instance.transformationMatrix = MTLPackedFloat4x3(columns: (
                 column(model.columns.0), column(model.columns.1), column(model.columns.2), column(model.columns.3)
             ))
-            instance.mask = 0xFF
+            // Solid things stop rays; clear and soft ones are found apart, to dim light.
+            instance.mask = draw.uniforms.isSolid ? 1 : 2
             instance.options = .opaque
             instance.accelerationStructureIndex = UInt32(place)
             instances.append(instance)
             materials.append(TracedInstance(
-                normal: draw.uniforms.normal, color: draw.uniforms.color, material: draw.uniforms.material, emission: draw.uniforms.emission
+                normal: draw.uniforms.normal, color: draw.uniforms.color, material: draw.uniforms.material,
+                emission: draw.uniforms.emission, surface: draw.uniforms.surface
             ))
         }
         let device = queue.device
@@ -941,6 +1040,7 @@ final class SceneSurface {
         var color: SIMD4<Float>
         var material: SIMD4<Float>
         var emission: SIMD4<Float>
+        var surface: SIMD4<Float>
     }
 
     private func resize(width: Int, height: Int) -> Bool {
