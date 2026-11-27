@@ -516,4 +516,24 @@ import simd
         Self.keep(picture, "cloud-ball")
         #expect(Self.isMostly(0, try Self.color(picture, at: SIMD3(0, 0, 0.58), in: document)))
     }
+
+    @Test func aCloudIsThereWithTheEyeInsideItsBox() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // A box so large the camera stands in it: the vapor is still marched from the eye.
+        let document = Self.cloud(["scaleX": .number(12), "scaleY": .number(12), "scaleZ": .number(12), "coverage": .number(0.8)])
+        let picture = ViewerSnapshot.bitmap(of: document)
+        Self.keep(picture, "cloud-inside")
+        #expect(Self.brightness(try Self.color(picture, at: SIMD3(0, 0, 0), in: document)) > 350)
+    }
+
+    @Test func aClearPlaneIsSeenFromBelowToo() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // A plane has one face: half clear, it still shows when looked at from underneath.
+        let sheet = SceneObject(id: "sheet", name: "Sheet", shape: .plane, values: [
+            "scale": .number(1.5), "color": .color(Self.red), "opacity": .number(0.5),
+        ])
+        let document = Self.document([sheet], values: ["cameraPitch": .number(-40), "rayTracing": .bool(false)])
+        let color = try Self.color(ViewerSnapshot.bitmap(of: document), at: SIMD3(0, 0, 0), in: document)
+        #expect(color.count == 3 && color[0] > color[1] + 30, "\(color)")
+    }
 }

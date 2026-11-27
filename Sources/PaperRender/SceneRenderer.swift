@@ -57,6 +57,9 @@ final class SceneRendering {
     /// where a scene is drawn without them.
     let traced: MTLRenderPipelineState?
     let depth: MTLDepthStencilState
+    /// Depth is neither tested nor written for a cloud: its march stops at the solid things'
+    /// depth itself, so it is drawn from its box's far faces, wherever the eye is.
+    let depthIgnored: MTLDepthStencilState
     let sampler: MTLSamplerState
     /// What an object with no picture of its own is given to read: white.
     let white: MTLTexture
@@ -153,8 +156,12 @@ final class SceneRendering {
         let keptDescriptor = MTLDepthStencilDescriptor()
         keptDescriptor.depthCompareFunction = .less
         keptDescriptor.isDepthWriteEnabled = false
+        let ignoredDescriptor = MTLDepthStencilDescriptor()
+        ignoredDescriptor.depthCompareFunction = .always
+        ignoredDescriptor.isDepthWriteEnabled = false
         guard let depth = device.makeDepthStencilState(descriptor: depthDescriptor),
               let depthKept = device.makeDepthStencilState(descriptor: keptDescriptor),
+              let depthIgnored = device.makeDepthStencilState(descriptor: ignoredDescriptor),
               let sampler = device.makeSamplerState(descriptor: samplerDescriptor),
               let clampedSampler = device.makeSamplerState(descriptor: clampedDescriptor),
               let noiseSampler = device.makeSamplerState(descriptor: noiseDescriptor),
@@ -163,6 +170,7 @@ final class SceneRendering {
         white.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: &pixel, bytesPerRow: 4)
         self.depth = depth
         self.depthKept = depthKept
+        self.depthIgnored = depthIgnored
         self.sampler = sampler
         self.clampedSampler = clampedSampler
         self.noiseSampler = noiseSampler
@@ -853,9 +861,9 @@ final class SceneRendering {
         float opacity = saturate(object.material.z);
         float transmission = saturate(object.material.w);
         float softness = saturate(object.surface.y);
-        // Where on a soft thing it is denser or thinner, in the object's own space, so it
-        // stays with the thing as it moves.
-        float fluff = softness > 0.0 ? scene_fluff(in.world * 3.2) : 0.5;
+        // Where on a soft thing it is denser or thinner, counted from where the object
+        // stands, so it stays with the thing as it moves.
+        float fluff = softness > 0.0 ? scene_fluff((in.world - object.model[3].xyz) * 3.2) : 0.5;
         float3 through = float3(0.0);
         float throughCover = 0.0;
 
@@ -1163,6 +1171,8 @@ struct ScenePart {
     var metalness: Float?
     var roughness: Float?
     var picture: MTLTexture?
+    /// Whether it has one face only (a plane), so that its back is seen too.
+    var isOpen = false
 }
 
 /// The picture of one scene view: what the view's layer shows under the views inside it.
@@ -1249,9 +1259,9 @@ final class SceneSurface {
                 made = rendering.geometry(for: .box).map { [ScenePart(geometry: $0)] } ?? []
             } else if object.shape == .particles {
                 let shape = SceneObject.Shape(named: object.value("particle").textValue).flatMap { SceneObject.Shape.particleShapes.contains($0) ? $0 : nil } ?? .sphere
-                made = rendering.geometry(for: shape).map { [ScenePart(geometry: $0)] } ?? []
+                made = rendering.geometry(for: shape).map { [ScenePart(geometry: $0, isOpen: shape == .plane)] } ?? []
             } else {
-                made = rendering.geometry(for: object.shape).map { [ScenePart(geometry: $0)] } ?? []
+                made = rendering.geometry(for: object.shape).map { [ScenePart(geometry: $0, isOpen: object.shape == .plane)] } ?? []
             }
             for part in made {
                 let model = placement * part.transform
@@ -1370,10 +1380,14 @@ final class SceneSurface {
                     encoder.setFragmentTexture(solidDepth, index: 1)
                     encoder.setFragmentTexture(rendering.cloudNoise, index: 2)
                 }
-                encoder.setDepthStencilState(rendering.depthKept)
+            }
+            if over {
                 // Of a clear or soft thing only the side toward the eye is drawn: its far side
                 // would be shaded again for little, and blend over its near side out of order.
-                encoder.setCullMode(.back)
+                // A plane has one side, seen from either. A cloud is marched from its box's
+                // far side with no depth test, so it is there with the eye inside its box too.
+                encoder.setDepthStencilState(item.cloud ? rendering.depthIgnored : rendering.depthKept)
+                encoder.setCullMode(item.cloud ? .front : item.part.isOpen ? .none : .back)
             }
             if item.cloud {
                 encoder.setRenderPipelineState(rendering.clouds)
@@ -1477,7 +1491,7 @@ final class SceneSurface {
         guard let made = device.makeBuffer(bytes: materials, length: materials.count * MemoryLayout<TracedInstance>.stride) else { return nil }
         // Where things stand changes less often than how they are seen: while only the
         // camera, the light or a color moves, the structure over them is the last one built.
-        let standing = draws.map { Standing(geometry: ObjectIdentifier($0.part.geometry), model: $0.uniforms.model) }
+        let standing = draws.map { Standing(geometry: ObjectIdentifier($0.part.geometry), model: $0.uniforms.model, isSolid: $0.uniforms.isSolid) }
         let whole: MTLAccelerationStructure
         if let built, built.standing == standing {
             whole = built.structure
@@ -1498,6 +1512,8 @@ final class SceneSurface {
     private struct Standing: Equatable {
         var geometry: ObjectIdentifier
         var model: simd_float4x4
+        /// Which rays find it: baked into the structure as its mask.
+        var isSolid: Bool
     }
 
     /// The structure rays were last sent through, and what stood in it.
