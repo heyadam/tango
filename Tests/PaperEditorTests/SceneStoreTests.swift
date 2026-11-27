@@ -161,6 +161,40 @@ import Testing
         #expect((read["in"] as? [String])?.contains("Ball Rotation Y: number") == true)
     }
 
+    @Test func anAgentReachesGlowSizeClearnessSoftnessAndEmitters() throws {
+        let store = DocumentStore()
+        let made = edit(store, [
+            ["op": "add_view", "kind": "scene", "name": "Sky", "ref": "sky", "objects": [
+                ["name": "Sun", "shape": "sphere", "emission": 3, "Emission Color": "#FFAA00"],
+                ["name": "Cloud", "shape": "sphere", "softness": 0.8, "scaleY": 0.5],
+                ["name": "Rain", "shape": "particles", "count": 500, "particle": "Capsule", "stretch": 6, "opacity": 0.5],
+            ], "inputs": ["bloom": 1.2]],
+            ["op": "add_patch", "kind": "time", "ref": "clock"],
+            ["op": "connect", "from": "clock", "output": "time", "to": "sky", "input": "Rain Time"],
+        ])
+        #expect(made.errors == [], "\(made.errors)")
+        let scene = try #require(store.document.screen.flattened.first { $0.name == "Sky" }?.scene)
+        #expect(scene.object(named: "Sun")?.number("emission") == 3)
+        #expect(scene.object(named: "Sun")?.value("emissionColor") == .color(ColorValue(hex: "#FFAA00")!))
+        #expect(scene.object(named: "Cloud")?.number("scaleY") == 0.5 && scene.object(named: "Cloud")?.number("scaleX") == 1)
+        #expect(scene.object(named: "Rain")?.shape == .particles && scene.object(named: "Rain")?.number("count") == 500)
+        #expect(scene.number("bloom") == 1.2)
+        #expect(store.document.graph.connections.count == 1)
+
+        let read = try described(store, "Sky")
+        let objects = try #require((read["scene"] as? [String: Any])?["objects"] as? [[String: Any]])
+        // An emitter's own inputs are told for the emitter only.
+        #expect(objects.first { $0["name"] as? String == "Rain" }?["count"] as? Double == 500)
+        #expect(objects.first { $0["name"] as? String == "Cloud" }?["count"] == nil)
+        #expect(objects.first { $0["name"] as? String == "Cloud" }?["softness"] as? Double == 0.8)
+        #expect((read["in"] as? [String])?.contains("Rain Time: number") == true)
+        // And the reference tells agents about them.
+        let reference = AssistantPrompt.reference(registry: .standard, components: [])
+        for word in ["`emission`", "`bloom`", "`scaleY`", "`transmission`", "`softness`", "`particles`"] {
+            #expect(reference.contains(word), "\(word)")
+        }
+    }
+
     @Test func anAgentHearsWhatASceneCannotTake() throws {
         let store = DocumentStore()
         #expect(edit(store, [["op": "add_view", "kind": "scene", "name": "Stage"]]).errors == [])
