@@ -80,6 +80,8 @@ import Testing
                 }
                 print("SCENE_PERF storm without rays", try without { $0.screen.update(example.stage) { $0.scene?.values["rayTracing"] = .bool(false) } })
                 print("SCENE_PERF storm without rain", try without { $0.screen.update(example.stage) { $0.scene?.objects.removeAll { $0.id == "rain" } } })
+                print("SCENE_PERF storm without clouds", try without { $0.screen.update(example.stage) { $0.scene?.objects.removeAll { $0.shape == .cloud } } })
+                print("SCENE_PERF storm without scene", try without { $0.screen.update(example.stage) { $0.scene?.objects.removeAll() } })
                 print("SCENE_PERF storm without card", try without { doc in doc.screen.children.removeAll { $0.name == "Forecast" } })
                 print("SCENE_PERF storm without sky", try without { doc in doc.screen.children.removeAll { $0.name == "Sky" } })
             }

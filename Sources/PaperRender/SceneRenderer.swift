@@ -725,6 +725,14 @@ final class SceneRendering {
             float4 world = object.model * float4(p, 1.0);
             float4 clip = scene.viewProjection * world;
             if (clip.z / clip.w > stop) { break; }
+            // Outside the vapor the shape says how far off it is at least: the steps that
+            // would land in that empty room are passed over. They would have found nothing,
+            // so the picture is the same.
+            float away = cloud_sdf(p) - (0.064 + (object.volume.y - 0.5) * 0.22);
+            if (away > 0.0) {
+                index += int(min(away / (1.15 * max(step_, 1e-5)), float(steps)));
+                continue;
+            }
             float d = cloud_density(p, object, noise, pick, true);
             if (d <= 0.001) { continue; }
             // The light that reaches this point through the cloud toward the light: six hops,
