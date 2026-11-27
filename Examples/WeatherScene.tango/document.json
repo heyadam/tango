@@ -1,0 +1,5205 @@
+{
+  "components" : [
+
+  ],
+  "graph" : {
+    "comments" : [
+      {
+        "id" : "AAEFB16D-DDE5-400C-9AFA-E8F20F0FA89E",
+        "origin" : {
+          "x" : 24,
+          "y" : 48
+        },
+        "size" : {
+          "height" : 660,
+          "width" : 1392
+        },
+        "text" : "Orbit · A drag turns the weather"
+      },
+      {
+        "id" : "2B9CA432-AA6C-4497-B757-678BA9AE95B9",
+        "origin" : {
+          "x" : 24,
+          "y" : 792
+        },
+        "size" : {
+          "height" : 2916,
+          "width" : 816
+        },
+        "text" : "Weather · A day sets the sky"
+      }
+    ],
+    "connections" : [
+      {
+        "from" : {
+          "node" : "6B26E2EC-5D15-4E14-9A7D-EA8DE7F62E30",
+          "port" : "translation"
+        },
+        "to" : {
+          "node" : "914E24FE-D909-431D-8905-705BB47B36B2",
+          "port" : "point"
+        }
+      },
+      {
+        "from" : {
+          "node" : "914E24FE-D909-431D-8905-705BB47B36B2",
+          "port" : "x"
+        },
+        "to" : {
+          "node" : "68BFFBBD-0A88-4FA2-8D0D-E6E6CEDEBA85",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "68BFFBBD-0A88-4FA2-8D0D-E6E6CEDEBA85",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "55D1EE8D-A736-4A9B-85F1-8A603E0BA549",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "55D1EE8D-A736-4A9B-85F1-8A603E0BA549",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "9DA7EA30-8D39-4AB9-98ED-660011C282AE",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6B26E2EC-5D15-4E14-9A7D-EA8DE7F62E30",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "9DA7EA30-8D39-4AB9-98ED-660011C282AE",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "914E24FE-D909-431D-8905-705BB47B36B2",
+          "port" : "y"
+        },
+        "to" : {
+          "node" : "F37CDD74-8843-4624-9913-7185B8AE9422",
+          "port" : "progress"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F37CDD74-8843-4624-9913-7185B8AE9422",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "D5FF568C-DFDE-4E5D-A541-6FE8D798BB96",
+          "port" : "value"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D5FF568C-DFDE-4E5D-A541-6FE8D798BB96",
+          "port" : "result"
+        },
+        "to" : {
+          "node" : "A2155D70-319A-4ADC-91B9-28B4119BEA7B",
+          "port" : "held"
+        }
+      },
+      {
+        "from" : {
+          "node" : "6B26E2EC-5D15-4E14-9A7D-EA8DE7F62E30",
+          "port" : "panning"
+        },
+        "to" : {
+          "node" : "A2155D70-319A-4ADC-91B9-28B4119BEA7B",
+          "port" : "hold"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9DA7EA30-8D39-4AB9-98ED-660011C282AE",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.cameraYaw"
+        }
+      },
+      {
+        "from" : {
+          "node" : "A2155D70-319A-4ADC-91B9-28B4119BEA7B",
+          "port" : "value"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.cameraPitch"
+        }
+      },
+      {
+        "from" : {
+          "node" : "BF83F678-30AA-49F7-AF04-01E42C5E9810",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "day0"
+        }
+      },
+      {
+        "from" : {
+          "node" : "9E1741AC-61C7-4661-8F33-597A265AE5A7",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "day1"
+        }
+      },
+      {
+        "from" : {
+          "node" : "B7C79655-FF11-4D0A-8944-823B1697AECF",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "day2"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D34EA691-8B75-4056-B46D-0FEF4CA0E447",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "day3"
+        }
+      },
+      {
+        "from" : {
+          "node" : "F665D3D0-AE0B-48F8-97B8-D9A604078470",
+          "port" : "tapped"
+        },
+        "to" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "day4"
+        }
+      },
+      {
+        "from" : {
+          "node" : "D943F659-E226-44C2-AFAA-F5CD9CBDA60A",
+          "port" : "time"
+        },
+        "to" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "clock"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "moving"
+        },
+        "to" : {
+          "node" : "D943F659-E226-44C2-AFAA-F5CD9CBDA60A",
+          "port" : "running"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "surroundings"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.environment"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "lightYaw"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.lightYaw"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "lightPitch"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.lightPitch"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "intensity"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.lightIntensity"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "lightColor"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.lightColor"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "exposure"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.exposure"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "sunX"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.sun.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "sunY"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.sun.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "sunScale"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.sun.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "cloudX"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.cloud.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "cloudY"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.cloud.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "cloudScale"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.cloud.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "cloudColor"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.cloud.color"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "backX"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.back.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "backY"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.back.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "backScale"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.back.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "backColor"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.back.color"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "frontX"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.front.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "frontY"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.front.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "frontScale"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.front.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "frontColor"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.front.color"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "boltScale"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.bolt.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "boltY"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.bolt.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop0"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop0.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop0Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop0.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop1"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop1.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop1Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop1.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop2"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop2.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop2Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop2.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop3"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop3.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop3Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop3.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop4"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop4.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop4Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop4.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop5"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop5.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop5Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop5.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop6"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop6.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop6Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop6.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop7"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop7.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop7Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop7.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop8"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop8.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop8Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop8.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop9"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop9.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop9Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop9.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop10"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop10.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop10Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop10.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop11"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop11.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop11Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop11.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop12"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop12.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop12Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop12.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop13"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop13.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop13Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop13.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop14"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop14.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop14Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop14.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop15"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop15.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop15Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop15.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop16"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop16.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop16Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop16.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop17"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop17.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "drop17Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.drop17.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake0"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake0.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake0X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake0.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake0Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake0.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake1"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake1.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake1X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake1.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake1Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake1.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake2"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake2.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake2X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake2.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake2Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake2.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake3"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake3.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake3X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake3.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake3Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake3.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake4"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake4.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake4X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake4.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake4Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake4.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake5"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake5.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake5X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake5.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake5Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake5.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake6"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake6.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake6X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake6.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake6Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake6.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake7"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake7.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake7X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake7.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake7Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake7.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake8"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake8.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake8X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake8.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake8Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake8.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake9"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake9.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake9X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake9.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake9Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake9.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake10"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake10.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake10X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake10.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake10Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake10.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake11"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake11.y"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake11X"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake11.x"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flake11Size"
+        },
+        "to" : {
+          "node" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+          "port" : "scene.flake11.scale"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "skyTop"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.top"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "skyBottom"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.bottom"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "glow"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.glow"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "sunPoint"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.sun"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "rays"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.rays"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "haze"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.haze"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "skyRain"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.rain"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "skySnow"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.snow"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "flash"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.flash"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "skyClock"
+        },
+        "to" : {
+          "node" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+          "port" : "shader.clock"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "cardTint"
+        },
+        "to" : {
+          "node" : "CEE6D2D5-3041-4E53-8BCE-C74BCDECE7B8",
+          "port" : "shader.tint"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "skyTop"
+        },
+        "to" : {
+          "node" : "69F0AEF9-9DA6-4549-AE86-B41AFCC6B9A4",
+          "port" : "fill"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "temperature"
+        },
+        "to" : {
+          "node" : "D49C4BD6-0F0F-4E7F-80CE-51C39BEAA68F",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "condition"
+        },
+        "to" : {
+          "node" : "C68CB9A3-5AE1-4B7C-A669-1E8CFB0E66B2",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "range"
+        },
+        "to" : {
+          "node" : "3DBE63BD-4F50-4824-8484-46B26FB6874C",
+          "port" : "text"
+        }
+      },
+      {
+        "from" : {
+          "node" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+          "port" : "pillX"
+        },
+        "to" : {
+          "node" : "F83FF313-424C-401D-AD8B-2450A054DBBA",
+          "port" : "x"
+        }
+      }
+    ],
+    "nodes" : [
+      {
+        "id" : "69F0AEF9-9DA6-4549-AE86-B41AFCC6B9A4",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "695E08F5-7136-483A-82FA-540B48C173D0",
+        "position" : {
+          "x" : 1488,
+          "y" : 4080
+        }
+      },
+      {
+        "id" : "FD586A30-E0B7-490A-8F77-FB0E7F7E73FF",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A4DB2328-8494-463A-B50A-664DF12DCEE1",
+        "position" : {
+          "x" : 1488,
+          "y" : 3648
+        },
+        "script" : "struct Inputs {\n    float4 top = float4(0.17, 0.47, 0.82, 1);\n    float4 bottom = float4(0.62, 0.79, 0.95, 1);\n    float glow = 0.6;\n    float2 sun = float2(261, 360);\n    float rays = 0.3;\n    float haze = 0.35;\n    float rain = 0;\n    float snow = 0;\n    float flash = 0;\n    float clock = 0;\n};\n\nfloat hash(float2 p) { return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }\n\nfloat noise(float2 p) {\n    float2 i = floor(p), f = fract(p);\n    float2 u = f * f * (3.0 - 2.0 * f);\n    return mix(mix(hash(i), hash(i + float2(1, 0)), u.x), mix(hash(i + float2(0, 1)), hash(i + float2(1, 1)), u.x), u.y);\n}\n\nfloat fbm(float2 p) {\n    float v = 0.0, a = 0.5;\n    for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }\n    return v;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 p = frame.position;\n    float t = clamp(p.y \/ max(frame.size.y, 1.0), 0.0, 1.0);\n    float3 color = mix(in.top.rgb, in.bottom.rgb, smoothstep(0.0, 1.0, t));\n\n    \/\/ The sun's glow, and rays turning slowly round it.\n    float2 toSun = p - in.sun;\n    float d = length(toSun) \/ 240.0;\n    float halo = exp(-d * d * 2.0) * in.glow;\n    float angle = atan2(toSun.y, toSun.x);\n    float beams = pow(0.5 + 0.5 * sin(angle * 9.0 + in.clock * 0.12), 8.0) * 0.6\n                + pow(0.5 + 0.5 * sin(angle * 5.0 - 1.3 - in.clock * 0.07), 10.0) * 0.5;\n    float rays = beams * exp(-d * 1.1) * in.rays;\n    color = mix(color, float3(1.0, 0.9, 0.66), clamp(halo * 0.6 + rays * 0.32, 0.0, 1.0));\n\n    \/\/ Soft cloud layers, thicker toward the top, drifting.\n    float2 q = p \/ float2(240.0, 120.0) + float2(in.clock * 0.025, 0.0);\n    float clouds = smoothstep(0.42, 0.85, fbm(q + fbm(q * 1.7 + 3.1) * 0.7));\n    float upper = smoothstep(1.0, 0.1, t);\n    color = mix(color, mix(in.bottom.rgb, float3(1.0), 0.3), clouds * in.haze * upper * 0.5);\n    color = mix(color, in.top.rgb * 0.7, (1.0 - clouds) * in.haze * upper * 0.12);\n\n    \/\/ Lightning lights the sky, brightest in the clouds.\n    color += float3(0.72, 0.78, 1.0) * in.flash * (0.18 + 0.65 * clouds * upper);\n\n    \/\/ Distant rain: thin streaks falling at a slant, in some columns.\n    if (in.rain > 0.001) {\n        float2 r = float2(p.x + p.y * 0.1, p.y);\n        float column = floor(r.x \/ 6.0);\n        float pick = hash(float2(column, 7.0));\n        float speed = 700.0 + 500.0 * hash(float2(column, 3.0));\n        float y = fract((r.y - in.clock * speed) \/ 210.0 + hash(float2(column, 1.0)));\n        float across = abs(fract(r.x \/ 6.0) - 0.5) * 6.0;\n        float streak = step(y, 0.12) * (y \/ 0.12) * smoothstep(0.9, 0.2, across) * step(pick, in.rain * 0.55);\n        color = mix(color, float3(0.85, 0.9, 1.0), streak * 0.28);\n    }\n\n    \/\/ Distant snow: small flakes drifting down and sideways.\n    if (in.snow > 0.001) {\n        for (int layer = 0; layer < 2; layer++) {\n            float size = layer == 0 ? 30.0 : 46.0;\n            float2 s = p + float2(sin(in.clock * 0.6 + p.y * 0.01 + float(layer)) * 10.0, -in.clock * (24.0 + 14.0 * float(layer)));\n            float2 cell = floor(s \/ size);\n            float2 spot = float2(hash(cell), hash(cell + 5.3)) * 0.7 + 0.15;\n            float flake = smoothstep(1.0 + float(layer), 0.2, length((fract(s \/ size) - spot) * size));\n            color = mix(color, float3(1.0), flake * step(hash(cell + 9.1), in.snow * 0.5) * (0.55 + 0.25 * float(layer)));\n        }\n    }\n\n    \/\/ A gentle vignette.\n    float2 v = (p \/ max(frame.size, float2(1.0)) - 0.5) * float2(0.9, 1.1);\n    color *= 1.0 - 0.22 * dot(v, v);\n    return float4(color, 1);\n}"
+      },
+      {
+        "id" : "A8488D2D-38E4-48CC-8CE1-43591EBEC6CA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CD3B25E5-9B98-48E7-BA4C-659E9682164C",
+        "position" : {
+          "x" : 1488,
+          "y" : 2592
+        }
+      },
+      {
+        "id" : "2806B0BC-B440-4B12-95AC-621860DE1234",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "A419489A-D2C2-4172-9308-AFF2DAB3DBF5",
+        "position" : {
+          "x" : 1728,
+          "y" : 1272
+        }
+      },
+      {
+        "id" : "D49C4BD6-0F0F-4E7F-80CE-51C39BEAA68F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AC6553C5-930F-4E5A-995F-D40B0AEFE602",
+        "position" : {
+          "x" : 1200,
+          "y" : 840
+        }
+      },
+      {
+        "id" : "C68CB9A3-5AE1-4B7C-A669-1E8CFB0E66B2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "379E482C-D3BE-4337-A163-2864F7D5893D",
+        "position" : {
+          "x" : 1200,
+          "y" : 1008
+        }
+      },
+      {
+        "id" : "3DBE63BD-4F50-4824-8484-46B26FB6874C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "BF51B306-EEE0-4A88-B569-328C291A022B",
+        "position" : {
+          "x" : 1200,
+          "y" : 1176
+        }
+      },
+      {
+        "id" : "8940FB18-CF5A-4062-AD02-F895D6842086",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "8C4AC596-86FF-4BF3-B8A7-C4AA7E531B9E",
+        "position" : {
+          "x" : 1488,
+          "y" : 96
+        },
+        "scene" : [
+          {
+            "id" : "sun",
+            "name" : "Sun"
+          },
+          {
+            "id" : "back",
+            "name" : "Far Cloud"
+          },
+          {
+            "id" : "cloud",
+            "name" : "Cloud"
+          },
+          {
+            "id" : "front",
+            "name" : "Near Cloud"
+          },
+          {
+            "id" : "bolt",
+            "name" : "Bolt"
+          },
+          {
+            "id" : "drop0",
+            "name" : "Drop 1"
+          },
+          {
+            "id" : "drop1",
+            "name" : "Drop 2"
+          },
+          {
+            "id" : "drop2",
+            "name" : "Drop 3"
+          },
+          {
+            "id" : "drop3",
+            "name" : "Drop 4"
+          },
+          {
+            "id" : "drop4",
+            "name" : "Drop 5"
+          },
+          {
+            "id" : "drop5",
+            "name" : "Drop 6"
+          },
+          {
+            "id" : "drop6",
+            "name" : "Drop 7"
+          },
+          {
+            "id" : "drop7",
+            "name" : "Drop 8"
+          },
+          {
+            "id" : "drop8",
+            "name" : "Drop 9"
+          },
+          {
+            "id" : "drop9",
+            "name" : "Drop 10"
+          },
+          {
+            "id" : "drop10",
+            "name" : "Drop 11"
+          },
+          {
+            "id" : "drop11",
+            "name" : "Drop 12"
+          },
+          {
+            "id" : "drop12",
+            "name" : "Drop 13"
+          },
+          {
+            "id" : "drop13",
+            "name" : "Drop 14"
+          },
+          {
+            "id" : "drop14",
+            "name" : "Drop 15"
+          },
+          {
+            "id" : "drop15",
+            "name" : "Drop 16"
+          },
+          {
+            "id" : "drop16",
+            "name" : "Drop 17"
+          },
+          {
+            "id" : "drop17",
+            "name" : "Drop 18"
+          },
+          {
+            "id" : "flake0",
+            "name" : "Flake 1"
+          },
+          {
+            "id" : "flake1",
+            "name" : "Flake 2"
+          },
+          {
+            "id" : "flake2",
+            "name" : "Flake 3"
+          },
+          {
+            "id" : "flake3",
+            "name" : "Flake 4"
+          },
+          {
+            "id" : "flake4",
+            "name" : "Flake 5"
+          },
+          {
+            "id" : "flake5",
+            "name" : "Flake 6"
+          },
+          {
+            "id" : "flake6",
+            "name" : "Flake 7"
+          },
+          {
+            "id" : "flake7",
+            "name" : "Flake 8"
+          },
+          {
+            "id" : "flake8",
+            "name" : "Flake 9"
+          },
+          {
+            "id" : "flake9",
+            "name" : "Flake 10"
+          },
+          {
+            "id" : "flake10",
+            "name" : "Flake 11"
+          },
+          {
+            "id" : "flake11",
+            "name" : "Flake 12"
+          }
+        ]
+      },
+      {
+        "id" : "CEE6D2D5-3041-4E53-8BCE-C74BCDECE7B8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E1EE9A01-552B-46F6-94DB-F2C20F121EC8",
+        "position" : {
+          "x" : 1200,
+          "y" : 2088
+        },
+        "script" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+      },
+      {
+        "id" : "4FBA46D9-1EB5-489B-B6D4-AC7A244B3CB6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EBB332BD-44A3-45F3-B4AD-61B01886AA44",
+        "position" : {
+          "x" : 1440,
+          "y" : 2736
+        }
+      },
+      {
+        "id" : "4E80E5E8-7E5A-414B-B218-23E6643B7062",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "4B4102A4-F923-4E7D-8318-4467DB0E66DF",
+        "position" : {
+          "x" : 1440,
+          "y" : 2880
+        }
+      },
+      {
+        "id" : "F83FF313-424C-401D-AD8B-2450A054DBBA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "CD9AA359-9D25-4DBD-9BBF-9B09D6A3A0CB",
+        "position" : {
+          "x" : 1200,
+          "y" : 1344
+        }
+      },
+      {
+        "id" : "6CE84870-3261-4D5F-B4BB-A823D02A96A8",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "E10FDE29-3E46-44E5-AB75-673A6A1CBBB0",
+        "position" : {
+          "x" : 1200,
+          "y" : 1896
+        }
+      },
+      {
+        "id" : "D2E2E877-C613-48E1-AAD6-D944CAB37D29",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "AC853830-B81E-46CD-8821-DECE68DF82E8",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "F03B5DBA-0F4D-4972-B41F-FD673B834A30",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "14198FA1-94A9-494B-8F3D-D950944502C9",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "F7451A5D-D5FD-497C-8C8B-EEB846C2C917",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "11A5461D-94E7-4619-BCB3-A882E11FDCE9",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "968CD1C9-BD96-4DAE-BC79-73D58833B2A2",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C5744194-E355-4D69-A48A-89298350EDB6",
+        "position" : {
+          "x" : 1440,
+          "y" : 3072
+        }
+      },
+      {
+        "id" : "A15CE48A-F22C-42F1-960A-C669BECB52E3",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C5EA78EF-1B5E-4CD6-942A-D589F3B5F2A1",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "848BAC61-117F-4102-88A1-99FA74F26E35",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B36EE607-427F-40EB-BFDB-D5B62E4B917D",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "FA0A86F1-F63D-45B3-A2CB-D35B4E8D0A9E",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5863E0E0-E5EE-4E7E-AA11-AEF6C8C79C3C",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "76A02A2C-997A-45E7-8A14-B5DE400AC250",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "C7BFD816-457C-4E29-B3A9-BFA079465861",
+        "position" : {
+          "x" : 1440,
+          "y" : 3264
+        }
+      },
+      {
+        "id" : "30914C6F-F16C-4A48-9A9E-706C6E7EF4AE",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "2FE4D542-129D-4A55-BB55-315026518652",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "FF87EB37-F421-4B5E-AA18-3EEB9403F37A",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B7035927-A921-44C8-9944-04E526497373",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "208EF3B5-FDF2-4C5C-A7E1-CCD5C732D649",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "87A248C8-A0E0-4209-8DBB-D5B68487DCE1",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "B83F4A11-932C-41E9-910D-86C280AB69A6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "DAFC6D61-1BFF-4979-97EB-914FA91BFDA4",
+        "position" : {
+          "x" : 1440,
+          "y" : 3456
+        }
+      },
+      {
+        "id" : "40E3F32B-BE2F-4D70-B474-003732707084",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "B1C322CB-3942-4405-A7FA-A820A0035A09",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "DE79417B-8047-4A2A-897D-E62C47333B9C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "11EF0FEC-DB3F-487B-9C20-8BBC845C9C4B",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "757C1CCD-F8F8-4955-95F1-D290140D323C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "42E3D4D8-2932-4E8B-B1F5-A64608C143C5",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "8635C46D-9659-4B01-8C44-6C7E4D00D481",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "27FB9587-F1F4-415E-806B-293AC66F3007",
+        "position" : {
+          "x" : 1680,
+          "y" : 2736
+        }
+      },
+      {
+        "id" : "B9825F1D-50E0-4AA3-BAB3-3A8F0A32A0DA",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "EEA75C2F-4262-42BF-8B35-490D3D7D7DFE",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "98EE162B-4751-4A6F-A6DB-59C00202F60C",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "595F83D3-0894-4C30-A2BE-BA04E2400079",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "5DB5647B-398D-4F19-9F8F-4ABFE856441F",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "117C333F-BE3B-47FB-BED0-54E114F8374A",
+        "position" : {
+          "x" : 48,
+          "y" : 336
+        }
+      },
+      {
+        "id" : "B8F84F5E-EED8-44BE-AE3F-EB2FD6B0AAF6",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "202084EA-87B5-47E9-A993-155953D4DEC6",
+        "position" : {
+          "x" : 1680,
+          "y" : 2928
+        }
+      },
+      {
+        "id" : "F3FF2E25-2D58-4409-9F03-9A916704BD53",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "FCF0D2DD-0113-4235-B27F-44F39148D253",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "4988A05B-FB92-41E1-83F5-AF420E610867",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "5EC4B30C-0866-4A8F-A16E-E19EFBB5B7AA",
+        "position" : {
+          "x" : 48,
+          "y" : 48
+        }
+      },
+      {
+        "id" : "48CE76B3-4291-4082-A556-251114D79646",
+        "inputs" : {
+
+        },
+        "kind" : "view",
+        "layerID" : "0D98B466-A545-4CB8-A05E-001E5FBF0670",
+        "position" : {
+          "x" : 48,
+          "y" : 192
+        }
+      },
+      {
+        "id" : "6B26E2EC-5D15-4E14-9A7D-EA8DE7F62E30",
+        "inputs" : {
+
+        },
+        "kind" : "pan",
+        "layerID" : "8C4AC596-86FF-4BF3-B8A7-C4AA7E531B9E",
+        "position" : {
+          "x" : 48,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "914E24FE-D909-431D-8905-705BB47B36B2",
+        "inputs" : {
+
+        },
+        "kind" : "splitPoint",
+        "position" : {
+          "x" : 336,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "68BFFBBD-0A88-4FA2-8D0D-E6E6CEDEBA85",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : -0.4
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 0
+          }
+        },
+        "kind" : "transition",
+        "name" : "Turn Angle",
+        "position" : {
+          "x" : 624,
+          "y" : 96
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "55D1EE8D-A736-4A9B-85F1-8A603E0BA549",
+        "inputs" : {
+          "max" : {
+            "type" : "number",
+            "value" : 60
+          },
+          "min" : {
+            "type" : "number",
+            "value" : -60
+          }
+        },
+        "kind" : "clamp",
+        "name" : "Turn Limit",
+        "position" : {
+          "x" : 912,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "9DA7EA30-8D39-4AB9-98ED-660011C282AE",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.55
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.7
+          }
+        },
+        "kind" : "spring",
+        "name" : "Turn",
+        "position" : {
+          "x" : 1200,
+          "y" : 96
+        }
+      },
+      {
+        "id" : "F37CDD74-8843-4624-9913-7185B8AE9422",
+        "inputs" : {
+          "end" : {
+            "type" : "number",
+            "value" : 6.25
+          },
+          "start" : {
+            "type" : "number",
+            "value" : 6
+          }
+        },
+        "kind" : "transition",
+        "name" : "Tilt Angle",
+        "position" : {
+          "x" : 624,
+          "y" : 456
+        },
+        "valueType" : "number"
+      },
+      {
+        "id" : "D5FF568C-DFDE-4E5D-A541-6FE8D798BB96",
+        "inputs" : {
+          "max" : {
+            "type" : "number",
+            "value" : 40
+          },
+          "min" : {
+            "type" : "number",
+            "value" : -12
+          }
+        },
+        "kind" : "clamp",
+        "name" : "Tilt Limit",
+        "position" : {
+          "x" : 912,
+          "y" : 456
+        }
+      },
+      {
+        "id" : "A2155D70-319A-4ADC-91B9-28B4119BEA7B",
+        "inputs" : {
+          "damping" : {
+            "type" : "number",
+            "value" : 0.6
+          },
+          "response" : {
+            "type" : "number",
+            "value" : 0.7
+          },
+          "target" : {
+            "type" : "number",
+            "value" : 6
+          }
+        },
+        "kind" : "spring",
+        "name" : "Tilt",
+        "position" : {
+          "x" : 1200,
+          "y" : 456
+        }
+      },
+      {
+        "id" : "BF83F678-30AA-49F7-AF04-01E42C5E9810",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "E10FDE29-3E46-44E5-AB75-673A6A1CBBB0",
+        "position" : {
+          "x" : 48,
+          "y" : 1032
+        }
+      },
+      {
+        "id" : "9E1741AC-61C7-4661-8F33-597A265AE5A7",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "C5744194-E355-4D69-A48A-89298350EDB6",
+        "position" : {
+          "x" : 48,
+          "y" : 1224
+        }
+      },
+      {
+        "id" : "B7C79655-FF11-4D0A-8944-823B1697AECF",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "C7BFD816-457C-4E29-B3A9-BFA079465861",
+        "position" : {
+          "x" : 48,
+          "y" : 1416
+        }
+      },
+      {
+        "id" : "D34EA691-8B75-4056-B46D-0FEF4CA0E447",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "DAFC6D61-1BFF-4979-97EB-914FA91BFDA4",
+        "position" : {
+          "x" : 48,
+          "y" : 1608
+        }
+      },
+      {
+        "id" : "F665D3D0-AE0B-48F8-97B8-D9A604078470",
+        "inputs" : {
+
+        },
+        "kind" : "tap",
+        "layerID" : "27FB9587-F1F4-415E-806B-293AC66F3007",
+        "position" : {
+          "x" : 48,
+          "y" : 1800
+        }
+      },
+      {
+        "id" : "D943F659-E226-44C2-AFAA-F5CD9CBDA60A",
+        "inputs" : {
+
+        },
+        "kind" : "time",
+        "name" : "Clock",
+        "position" : {
+          "x" : 336,
+          "y" : 840
+        }
+      },
+      {
+        "id" : "387FD919-CC48-4B7C-8B00-9953D670BBF4",
+        "inputs" : {
+
+        },
+        "kind" : "javascript",
+        "name" : "Weather",
+        "position" : {
+          "x" : 624,
+          "y" : 840
+        },
+        "script" : "\/\/ The weather of the chosen day. Each sky is a set of numbers and colors; every\n\/\/ frame they ease toward the chosen sky's, so one sky turns into the next and the\n\/\/ light swings round as it does. Rain and snow start inside the cloud, fall, and\n\/\/ shrink away above the card; a drop starts again only while it rains hard\n\/\/ enough for it. In a storm, lightning flashes: the bolt shows, the light jumps\n\/\/ up under the clouds and the sky lights. Moving runs the clock, and is off\n\/\/ once all is still.\ninputs = { clock: 0, day0: pulse(), day1: pulse(), day2: pulse(), day3: pulse(), day4: pulse() };\noutputs = { moving: false, temperature: \"\", condition: \"\", range: \"\", pillX: 24.0,\n            skyTop: color(\"#3A86D6\"), skyBottom: color(\"#A3CBEF\"), glow: 0, sunPoint: point(261, 360),\n            rays: 0, haze: 0, skyRain: 0, skySnow: 0, flash: 0, skyClock: 0, cardTint: color(\"#10203D33\"),\n            surroundings: \"Daylight\", lightYaw: -35, lightPitch: 40, intensity: 3.2, exposure: 1,\n            lightColor: color(\"#FFFFFF\"), sunX: 0, sunY: 0, sunScale: 0, cloudX: 0, cloudY: 0,\n            cloudScale: 0, cloudColor: color(\"#FFFFFF\"), backX: 0, backY: 0, backScale: 0,\n            backColor: color(\"#FFFFFF\"), frontX: 0, frontY: 0, frontScale: 0, frontColor: color(\"#FFFFFF\"),\n            boltScale: 0, boltY: 0,\n            drop0: 6.0, drop0Size: 0, drop1: 6.0, drop1Size: 0, drop2: 6.0, drop2Size: 0, drop3: 6.0, drop3Size: 0, drop4: 6.0, drop4Size: 0, drop5: 6.0, drop5Size: 0, drop6: 6.0, drop6Size: 0, drop7: 6.0, drop7Size: 0, drop8: 6.0, drop8Size: 0, drop9: 6.0, drop9Size: 0, drop10: 6.0, drop10Size: 0, drop11: 6.0, drop11Size: 0, drop12: 6.0, drop12Size: 0, drop13: 6.0, drop13Size: 0, drop14: 6.0, drop14Size: 0, drop15: 6.0, drop15Size: 0, drop16: 6.0, drop16Size: 0, drop17: 6.0, drop17Size: 0, flake0: 6.0, flake0X: 0, flake0Size: 0, flake1: 6.0, flake1X: 0, flake1Size: 0, flake2: 6.0, flake2X: 0, flake2Size: 0, flake3: 6.0, flake3X: 0, flake3Size: 0, flake4: 6.0, flake4X: 0, flake4Size: 0, flake5: 6.0, flake5X: 0, flake5Size: 0, flake6: 6.0, flake6X: 0, flake6Size: 0, flake7: 6.0, flake7X: 0, flake7Size: 0, flake8: 6.0, flake8X: 0, flake8Size: 0, flake9: 6.0, flake9X: 0, flake9Size: 0, flake10: 6.0, flake10X: 0, flake10Size: 0, flake11: 6.0, flake11X: 0, flake11Size: 0 };\n\nconst days = [\n  {\"condition\": \"Partly Cloudy\", \"temperature\": 72, \"high\": 76, \"low\": 54},\n              {\"condition\": \"Sunny\", \"temperature\": 78, \"high\": 81, \"low\": 55},\n              {\"condition\": \"Rain\", \"temperature\": 59, \"high\": 62, \"low\": 47},\n              {\"condition\": \"Thunderstorms\", \"temperature\": 63, \"high\": 66, \"low\": 49},\n              {\"condition\": \"Snow\", \"temperature\": 31, \"high\": 34, \"low\": 22}\n];\n\/\/ Each sky: where the sun and the three clouds are and how large, their colors,\n\/\/ how hard it rains or snows, the sky shader's colors, glow, rays and haze, the\n\/\/ card's tint, and the light: its direction, strength, color, the surroundings\n\/\/ and the exposure.\nconst skies = {\n  Sunny:           { sunX: 0, sunY: 0.06, sunScale: 1.2, cloudX: -1.4, cloudY: -0.2, cloudScale: 0, cloud: \"#FFFFFF\",\n                     backX: 1.3, backY: -0.6, backScale: 0, back: \"#FFFFFF\", frontX: -1.3, frontY: -0.6, frontScale: 0, front: \"#FFFFFF\",\n                     rain: 0, snow: 0, storm: 0, top: \"#0F5FD6\", bottom: \"#78BDFF\", glow: 1.15, rays: 1, haze: 0.12,\n                     card: \"#0B2A5A40\", yaw: -42, pitch: 28, intensity: 3.8, exposure: 1.12, lamp: \"#FFE7BE\", surroundings: \"Daylight\" },\n  \"Partly Cloudy\": { sunX: 0.44, sunY: 0.34, sunScale: 0.9, cloudX: -0.12, cloudY: -0.02, cloudScale: 1.75, cloud: \"#FFFFFF\",\n                     backX: 0.95, backY: -0.32, backScale: 0.8, back: \"#EAF3FF\", frontX: -0.82, frontY: -0.5, frontScale: 0.6, front: \"#FFFFFF\",\n                     rain: 0, snow: 0, storm: 0, top: \"#2C78D0\", bottom: \"#9DC9F2\", glow: 0.75, rays: 0.45, haze: 0.4,\n                     card: \"#0E2B5238\", yaw: 38, pitch: 34, intensity: 3.5, exposure: 1.05, lamp: \"#FFF0D2\", surroundings: \"Daylight\" },\n  Rain:            { sunX: 0.5, sunY: 0.7, sunScale: 0, cloudX: 0.02, cloudY: 0.1, cloudScale: 1.9, cloud: \"#E3E9F0\",\n                     backX: 0.78, backY: 0.44, backScale: 1.15, back: \"#AEB9C8\", frontX: -0.72, frontY: -0.14, frontScale: 0.8, front: \"#D3DBE5\",\n                     rain: 0.85, snow: 0, storm: 0, top: \"#3E4B60\", bottom: \"#7F8EA3\", glow: 0, rays: 0, haze: 0.9,\n                     card: \"#1A253866\", yaw: -8, pitch: 68, intensity: 2.7, exposure: 1.08, lamp: \"#DCE6F5\", surroundings: \"Studio\" },\n  Thunderstorms:   { sunX: 0.5, sunY: 0.7, sunScale: 0, cloudX: 0.02, cloudY: 0.12, cloudScale: 2.02, cloud: \"#757A88\",\n                     backX: 0.8, backY: 0.48, backScale: 1.25, back: \"#4A4E5C\", frontX: -0.72, frontY: -0.12, frontScale: 0.82, front: \"#5A5F6E\",\n                     rain: 1, snow: 0, storm: 1, top: \"#11141F\", bottom: \"#2E3446\", glow: 0, rays: 0, haze: 1,\n                     card: \"#0A0E1A80\", yaw: 18, pitch: 72, intensity: 2.2, exposure: 1.3, lamp: \"#A8B8E8\", surroundings: \"Night\" },\n  Snow:            { sunX: 0.5, sunY: 0.7, sunScale: 0, cloudX: 0, cloudY: 0.1, cloudScale: 1.9, cloud: \"#FAFCFF\",\n                     backX: -0.8, backY: 0.46, backScale: 1.05, back: \"#D6E0EC\", frontX: 0.74, frontY: -0.14, frontScale: 0.76, front: \"#F2F6FB\",\n                     rain: 0, snow: 1, storm: 0, top: \"#5F7898\", bottom: \"#B4C4D8\", glow: 0.15, rays: 0, haze: 0.7,\n                     card: \"#21354F55\", yaw: -24, pitch: 46, intensity: 3.1, exposure: 1.2, lamp: \"#F3F7FF\", surroundings: \"Studio\" },\n};\nconst numbers = [\"sunX\", \"sunY\", \"sunScale\", \"cloudX\", \"cloudY\", \"cloudScale\", \"backX\", \"backY\", \"backScale\",\n                 \"frontX\", \"frontY\", \"frontScale\", \"rain\", \"snow\", \"storm\", \"glow\", \"rays\", \"haze\",\n                 \"yaw\", \"pitch\", \"intensity\", \"exposure\"];\nconst colors = [\"cloud\", \"back\", \"front\", \"top\", \"bottom\", \"lamp\", \"card\"];\n\n\/\/ Where each drop falls, and how near.\nconst dropX = [-0.7, -0.5, -0.32, -0.12, 0.06, 0.24, 0.42, 0.6, 0.76, -0.2, 0.33, -0.6, 0.15, 0.68, -0.42, 0.5, -0.02, 0.86];\nconst dropZ = [0.05, -0.1, 0.14, -0.05, 0.12, -0.12, 0.02, 0.15, -0.08, 0.2, -0.15, 0.18, -0.02, 0.1, 0.25, 0.22, 0.28, -0.04];\nconst below = 0.28460837052040394;   \/\/ the cloud's base, below its middle, per unit of scale\nconst fallsTo = -1.12, fades = 0.42, parked = 6.0;\n\/\/ The weather stands a little above the middle of the scene view.\nconst lift = 0.3;\n\nfunction rgb(hex) {\n  const c = [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16));\n  return c.concat(hex.length > 7 ? [parseInt(hex.substr(7, 2), 16)] : []);\n}\nfunction hex(c) { return \"#\" + c.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, \"0\")).join(\"\"); }\n\nlet chosen = 0, now = null, last = null;\nlet drops = dropX.map(() => ({ y: parked, wait: -1 }));\nlet flakes = dropX.slice(0, 12).map(() => ({ y: parked, wait: -1 }));\n\nfunction evaluate(inputs, outputs) {\n  [inputs.day0, inputs.day1, inputs.day2, inputs.day3, inputs.day4].forEach((tapped, i) => { if (tapped) chosen = i; });\n  const day = days[chosen], sky = skies[day.condition];\n  const target = {};\n  numbers.forEach(k => target[k] = sky[k]);\n  colors.forEach(k => target[k] = rgb(sky[k]));\n  if (now === null) { now = JSON.parse(JSON.stringify(target)); now.pill = chosen; }\n  const dt = last === null ? 0 : Math.max(0, Math.min(0.1, inputs.clock - last));\n  last = inputs.clock;\n  \/\/ Ease every number and color a share of the way, so they arrive together.\n  const share = 1 - Math.exp(-3.6 * dt);\n  let still = true;\n  numbers.forEach(k => {\n    now[k] += (target[k] - now[k]) * share;\n    if (Math.abs(target[k] - now[k]) > 0.001) still = false; else now[k] = target[k];\n  });\n  colors.forEach(k => {\n    now[k] = now[k].map((v, c) => v + (target[k][c] - v) * share);\n    if (now[k].some((v, c) => Math.abs(target[k][c] - v) > 0.5)) still = false; else now[k] = target[k].slice();\n  });\n  now.pill += (chosen - now.pill) * (1 - Math.exp(-14 * dt));\n  if (Math.abs(chosen - now.pill) > 0.001) still = false; else now.pill = chosen;\n\n  \/\/ Rain and snow start inside the cloud's base, fall, and shrink away above the card.\n  const base = lift + now.cloudY - below * now.cloudScale * 0.6;\n  function fall(items, amount, speed) {\n    items.forEach((item, i) => {\n      const wanted = amount > (i + 0.5) \/ items.length * 0.95;\n      if (item.y === parked) {\n        if (!wanted) return;\n        if (item.wait < 0) item.wait = (i * 0.37) % 1;\n        item.wait -= dt * speed \/ (base - fallsTo);\n        if (item.wait <= 0) { item.y = base; item.wait = -1; }\n      } else {\n        item.y -= speed * dt;\n        if (item.y < fallsTo) item.y = wanted ? base + (item.y - fallsTo) : parked;\n      }\n      if (item.y !== parked || item.wait >= 0) still = false;\n    });\n  }\n  function size(y, full) {\n    if (y === parked) return 0;\n    const t = Math.max(0, Math.min(1, (y - fallsTo) \/ fades));\n    return full * t * t * (3 - 2 * t);\n  }\n  fall(drops, now.rain, 2.5 + 0.9 * now.storm);\n  fall(flakes, now.snow, 0.5);\n\n  \/\/ Lightning: a double flash every few seconds while it storms, fading out fast.\n  const beat = inputs.clock % 2.8;\n  const pulse = (at, length) => beat > at && beat < at + length ? 1 - (beat - at) \/ length : 0;\n  const flash = now.storm > 0.5 ? Math.max(pulse(0, 0.16), pulse(0.24, 0.22)) : 0;\n  if (now.storm > 0.001) still = false;\n\n  outputs.moving = !still;\n  outputs.temperature = day.temperature + \"°\";\n  outputs.condition = day.condition;\n  outputs.range = \"H:\" + day.high + \"°  L:\" + day.low + \"°\";\n  outputs.pillX = 24.0 + now.pill * 70.8;\n  const lit = (c, by) => color(hex(c.map(v => v + (205 - v) * by)));\n  outputs.skyTop = lit(now.top, flash * 0.35);\n  outputs.skyBottom = lit(now.bottom, flash * 0.25);\n  outputs.glow = now.glow;\n  outputs.rays = now.rays;\n  outputs.haze = now.haze;\n  outputs.skyRain = now.rain;\n  outputs.skySnow = now.snow;\n  outputs.flash = flash;\n  outputs.skyClock = inputs.clock;\n  outputs.cardTint = color(hex(now.card));\n  \/\/ Where the sun is on the screen, so the sky glows and shines round it.\n  outputs.sunPoint = point(201 + now.sunX * 142, 451 - (lift + now.sunY) * 142);\n  outputs.surroundings = sky.surroundings;\n  \/\/ A flash lights the clouds from low in front, bright and cold.\n  outputs.lightYaw = now.yaw;\n  outputs.lightPitch = now.pitch + (-30 - now.pitch) * flash;\n  outputs.intensity = now.intensity + 7 * flash;\n  outputs.exposure = now.exposure + 0.35 * flash;\n  outputs.lightColor = color(hex(now.lamp.map(v => v + (235 - v) * flash)));\n  outputs.sunX = now.sunX; outputs.sunY = lift + now.sunY; outputs.sunScale = now.sunScale;\n  outputs.cloudX = now.cloudX; outputs.cloudY = lift + now.cloudY; outputs.cloudScale = now.cloudScale;\n  outputs.cloudColor = color(hex(now.cloud));\n  outputs.backX = now.backX; outputs.backY = lift + now.backY; outputs.backScale = now.backScale;\n  outputs.backColor = color(hex(now.back));\n  outputs.frontX = now.frontX; outputs.frontY = lift + now.frontY; outputs.frontScale = now.frontScale;\n  outputs.frontColor = color(hex(now.front));\n  outputs.boltScale = 0.95 * (flash > 0.3 ? 1 : 0);\n  outputs.boltY = lift - 0.72;\n  drops.forEach((d, i) => { outputs[\"drop\" + i] = d.y; outputs[\"drop\" + i + \"Size\"] = size(d.y, 0.17); });\n  flakes.forEach((f, i) => {\n    outputs[\"flake\" + i] = f.y;\n    outputs[\"flake\" + i + \"X\"] = dropX[i] * 0.95 + 0.08 * Math.sin(inputs.clock * 1.3 + i * 1.7);\n    outputs[\"flake\" + i + \"Size\"] = size(f.y, 0.1 + 0.05 * ((i * 7) % 3));\n  });\n}"
+      }
+    ]
+  },
+  "screen" : {
+    "children" : [
+      {
+        "children" : [
+
+        ],
+        "id" : "A4DB2328-8494-463A-B50A-664DF12DCEE1",
+        "kind" : "view",
+        "name" : "Sky",
+        "properties" : {
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 874,
+              "width" : 402
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "bottom" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 1,
+                "blue" : 0.9372549019607843,
+                "green" : 0.796078431372549,
+                "red" : 0.6392156862745098
+              }
+            },
+            "glow" : {
+              "type" : "number",
+              "value" : 0.6
+            },
+            "haze" : {
+              "type" : "number",
+              "value" : 0.35
+            },
+            "rays" : {
+              "type" : "number",
+              "value" : 0.3
+            },
+            "sun" : {
+              "type" : "point",
+              "value" : {
+                "x" : 261,
+                "y" : 360
+              }
+            },
+            "top" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 1,
+                "blue" : 0.8392156862745098,
+                "green" : 0.5254901960784314,
+                "red" : 0.22745098039215686
+              }
+            }
+          },
+          "source" : "struct Inputs {\n    float4 top = float4(0.17, 0.47, 0.82, 1);\n    float4 bottom = float4(0.62, 0.79, 0.95, 1);\n    float glow = 0.6;\n    float2 sun = float2(261, 360);\n    float rays = 0.3;\n    float haze = 0.35;\n    float rain = 0;\n    float snow = 0;\n    float flash = 0;\n    float clock = 0;\n};\n\nfloat hash(float2 p) { return fract(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }\n\nfloat noise(float2 p) {\n    float2 i = floor(p), f = fract(p);\n    float2 u = f * f * (3.0 - 2.0 * f);\n    return mix(mix(hash(i), hash(i + float2(1, 0)), u.x), mix(hash(i + float2(0, 1)), hash(i + float2(1, 1)), u.x), u.y);\n}\n\nfloat fbm(float2 p) {\n    float v = 0.0, a = 0.5;\n    for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }\n    return v;\n}\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 p = frame.position;\n    float t = clamp(p.y \/ max(frame.size.y, 1.0), 0.0, 1.0);\n    float3 color = mix(in.top.rgb, in.bottom.rgb, smoothstep(0.0, 1.0, t));\n\n    \/\/ The sun's glow, and rays turning slowly round it.\n    float2 toSun = p - in.sun;\n    float d = length(toSun) \/ 240.0;\n    float halo = exp(-d * d * 2.0) * in.glow;\n    float angle = atan2(toSun.y, toSun.x);\n    float beams = pow(0.5 + 0.5 * sin(angle * 9.0 + in.clock * 0.12), 8.0) * 0.6\n                + pow(0.5 + 0.5 * sin(angle * 5.0 - 1.3 - in.clock * 0.07), 10.0) * 0.5;\n    float rays = beams * exp(-d * 1.1) * in.rays;\n    color = mix(color, float3(1.0, 0.9, 0.66), clamp(halo * 0.6 + rays * 0.32, 0.0, 1.0));\n\n    \/\/ Soft cloud layers, thicker toward the top, drifting.\n    float2 q = p \/ float2(240.0, 120.0) + float2(in.clock * 0.025, 0.0);\n    float clouds = smoothstep(0.42, 0.85, fbm(q + fbm(q * 1.7 + 3.1) * 0.7));\n    float upper = smoothstep(1.0, 0.1, t);\n    color = mix(color, mix(in.bottom.rgb, float3(1.0), 0.3), clouds * in.haze * upper * 0.5);\n    color = mix(color, in.top.rgb * 0.7, (1.0 - clouds) * in.haze * upper * 0.12);\n\n    \/\/ Lightning lights the sky, brightest in the clouds.\n    color += float3(0.72, 0.78, 1.0) * in.flash * (0.18 + 0.65 * clouds * upper);\n\n    \/\/ Distant rain: thin streaks falling at a slant, in some columns.\n    if (in.rain > 0.001) {\n        float2 r = float2(p.x + p.y * 0.1, p.y);\n        float column = floor(r.x \/ 6.0);\n        float pick = hash(float2(column, 7.0));\n        float speed = 700.0 + 500.0 * hash(float2(column, 3.0));\n        float y = fract((r.y - in.clock * speed) \/ 210.0 + hash(float2(column, 1.0)));\n        float across = abs(fract(r.x \/ 6.0) - 0.5) * 6.0;\n        float streak = step(y, 0.12) * (y \/ 0.12) * smoothstep(0.9, 0.2, across) * step(pick, in.rain * 0.55);\n        color = mix(color, float3(0.85, 0.9, 1.0), streak * 0.28);\n    }\n\n    \/\/ Distant snow: small flakes drifting down and sideways.\n    if (in.snow > 0.001) {\n        for (int layer = 0; layer < 2; layer++) {\n            float size = layer == 0 ? 30.0 : 46.0;\n            float2 s = p + float2(sin(in.clock * 0.6 + p.y * 0.01 + float(layer)) * 10.0, -in.clock * (24.0 + 14.0 * float(layer)));\n            float2 cell = floor(s \/ size);\n            float2 spot = float2(hash(cell), hash(cell + 5.3)) * 0.7 + 0.15;\n            float flake = smoothstep(1.0 + float(layer), 0.2, length((fract(s \/ size) - spot) * size));\n            color = mix(color, float3(1.0), flake * step(hash(cell + 9.1), in.snow * 0.5) * (0.55 + 0.25 * float(layer)));\n        }\n    }\n\n    \/\/ A gentle vignette.\n    float2 v = (p \/ max(frame.size, float2(1.0)) - 0.5) * float2(0.9, 1.1);\n    color *= 1.0 - 0.22 * dot(v, v);\n    return float4(color, 1);\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "CD3B25E5-9B98-48E7-BA4C-659E9682164C",
+        "kind" : "text",
+        "name" : "Place",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 13
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 78
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.18,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 16.900000000000002,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "MY LOCATION"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.8,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "A419489A-D2C2-4172-9308-AFF2DAB3DBF5",
+        "kind" : "text",
+        "name" : "City",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 34
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 600
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 98
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.18,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 44.2,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Denver"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "AC6553C5-930F-4E5A-995F-D40B0AEFE602",
+        "kind" : "text",
+        "name" : "Temperature",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 96
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 200
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 134
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.18,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 112,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "72°"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "379E482C-D3BE-4337-A163-2864F7D5893D",
+        "kind" : "text",
+        "name" : "Condition",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 500
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 248
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.18,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 26,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "Partly Cloudy"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 1,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "BF51B306-EEE0-4A88-B569-328C291A022B",
+        "kind" : "text",
+        "name" : "Range",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 17
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 500
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 276
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.18,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 2
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 10
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 22.1,
+              "width" : 402
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "H:76°  L:54°"
+          },
+          "textAlignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.85,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Fixed"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "8C4AC596-86FF-4BF3-B8A7-C4AA7E531B9E",
+        "kind" : "view",
+        "name" : "Weather",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 262
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 378,
+              "width" : 402
+            }
+          }
+        },
+        "scene" : {
+          "objects" : [
+            {
+              "id" : "sun",
+              "name" : "Sun",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 0.10980392156862745,
+                    "green" : 0.6980392156862745,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.22
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0.9
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.42
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 0.62
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.5
+                }
+              }
+            },
+            {
+              "id" : "back",
+              "model" : "cloud.obj",
+              "name" : "Far Cloud",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.9
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0.85
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.8
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : -0.040000000000000036
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.7
+                }
+              }
+            },
+            {
+              "id" : "cloud",
+              "model" : "cloud.obj",
+              "name" : "Cloud",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.95
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 1.75
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.2
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 0.3
+                }
+              }
+            },
+            {
+              "id" : "front",
+              "model" : "cloud.obj",
+              "name" : "Near Cloud",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.95
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0.62
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.78
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : -0.2
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.55
+                }
+              }
+            },
+            {
+              "id" : "bolt",
+              "model" : "bolt.obj",
+              "name" : "Bolt",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 0.35294117647058826,
+                    "green" : 0.8862745098039215,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.15
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.08
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : -0.2
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.35
+                }
+              }
+            },
+            {
+              "id" : "drop0",
+              "model" : "raindrop.obj",
+              "name" : "Drop 1",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.7
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.05
+                }
+              }
+            },
+            {
+              "id" : "drop1",
+              "model" : "raindrop.obj",
+              "name" : "Drop 2",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.5
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.1
+                }
+              }
+            },
+            {
+              "id" : "drop2",
+              "model" : "raindrop.obj",
+              "name" : "Drop 3",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.32
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.14
+                }
+              }
+            },
+            {
+              "id" : "drop3",
+              "model" : "raindrop.obj",
+              "name" : "Drop 4",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.12
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.05
+                }
+              }
+            },
+            {
+              "id" : "drop4",
+              "model" : "raindrop.obj",
+              "name" : "Drop 5",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.06
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.12
+                }
+              }
+            },
+            {
+              "id" : "drop5",
+              "model" : "raindrop.obj",
+              "name" : "Drop 6",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.24
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.12
+                }
+              }
+            },
+            {
+              "id" : "drop6",
+              "model" : "raindrop.obj",
+              "name" : "Drop 7",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.42
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.02
+                }
+              }
+            },
+            {
+              "id" : "drop7",
+              "model" : "raindrop.obj",
+              "name" : "Drop 8",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.6
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.15
+                }
+              }
+            },
+            {
+              "id" : "drop8",
+              "model" : "raindrop.obj",
+              "name" : "Drop 9",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.76
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.08
+                }
+              }
+            },
+            {
+              "id" : "drop9",
+              "model" : "raindrop.obj",
+              "name" : "Drop 10",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.2
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.2
+                }
+              }
+            },
+            {
+              "id" : "drop10",
+              "model" : "raindrop.obj",
+              "name" : "Drop 11",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.33
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.15
+                }
+              }
+            },
+            {
+              "id" : "drop11",
+              "model" : "raindrop.obj",
+              "name" : "Drop 12",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.6
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.18
+                }
+              }
+            },
+            {
+              "id" : "drop12",
+              "model" : "raindrop.obj",
+              "name" : "Drop 13",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.15
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.02
+                }
+              }
+            },
+            {
+              "id" : "drop13",
+              "model" : "raindrop.obj",
+              "name" : "Drop 14",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.68
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.1
+                }
+              }
+            },
+            {
+              "id" : "drop14",
+              "model" : "raindrop.obj",
+              "name" : "Drop 15",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.42
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.25
+                }
+              }
+            },
+            {
+              "id" : "drop15",
+              "model" : "raindrop.obj",
+              "name" : "Drop 16",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.5
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.22
+                }
+              }
+            },
+            {
+              "id" : "drop16",
+              "model" : "raindrop.obj",
+              "name" : "Drop 17",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.02
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.28
+                }
+              }
+            },
+            {
+              "id" : "drop17",
+              "model" : "raindrop.obj",
+              "name" : "Drop 18",
+              "shape" : "model",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 0.7137254901960784,
+                    "red" : 0.3843137254901961
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.05
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.86
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.04
+                }
+              }
+            },
+            {
+              "id" : "flake0",
+              "name" : "Flake 1",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.63
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.05
+                }
+              }
+            },
+            {
+              "id" : "flake1",
+              "name" : "Flake 2",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.45
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.1
+                }
+              }
+            },
+            {
+              "id" : "flake2",
+              "name" : "Flake 3",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.28800000000000003
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.14
+                }
+              }
+            },
+            {
+              "id" : "flake3",
+              "name" : "Flake 4",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.108
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.05
+                }
+              }
+            },
+            {
+              "id" : "flake4",
+              "name" : "Flake 5",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.054
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.12
+                }
+              }
+            },
+            {
+              "id" : "flake5",
+              "name" : "Flake 6",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.216
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.12
+                }
+              }
+            },
+            {
+              "id" : "flake6",
+              "name" : "Flake 7",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.378
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.02
+                }
+              }
+            },
+            {
+              "id" : "flake7",
+              "name" : "Flake 8",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.54
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.15
+                }
+              }
+            },
+            {
+              "id" : "flake8",
+              "name" : "Flake 9",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.684
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.08
+                }
+              }
+            },
+            {
+              "id" : "flake9",
+              "name" : "Flake 10",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.18000000000000002
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.2
+                }
+              }
+            },
+            {
+              "id" : "flake10",
+              "name" : "Flake 11",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : 0.29700000000000004
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : -0.15
+                }
+              }
+            },
+            {
+              "id" : "flake11",
+              "name" : "Flake 12",
+              "shape" : "sphere",
+              "values" : {
+                "color" : {
+                  "type" : "color",
+                  "value" : {
+                    "alpha" : 1,
+                    "blue" : 1,
+                    "green" : 1,
+                    "red" : 1
+                  }
+                },
+                "roughness" : {
+                  "type" : "number",
+                  "value" : 0.65
+                },
+                "scale" : {
+                  "type" : "number",
+                  "value" : 0
+                },
+                "x" : {
+                  "type" : "number",
+                  "value" : -0.54
+                },
+                "y" : {
+                  "type" : "number",
+                  "value" : 6
+                },
+                "z" : {
+                  "type" : "number",
+                  "value" : 0.18
+                }
+              }
+            }
+          ],
+          "values" : {
+            "cameraDistance" : {
+              "type" : "number",
+              "value" : 4.2
+            },
+            "cameraPitch" : {
+              "type" : "number",
+              "value" : 6
+            },
+            "environment" : {
+              "type" : "text",
+              "value" : "Daylight"
+            },
+            "lightIntensity" : {
+              "type" : "number",
+              "value" : 3.2
+            },
+            "lightPitch" : {
+              "type" : "number",
+              "value" : 40
+            },
+            "lightYaw" : {
+              "type" : "number",
+              "value" : -35
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "E1EE9A01-552B-46F6-94DB-F2C20F121EC8",
+        "kind" : "view",
+        "name" : "Forecast",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 30
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 16,
+              "y" : 620
+            }
+          },
+          "shadowColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.12,
+              "blue" : 0,
+              "green" : 0,
+              "red" : 0
+            }
+          },
+          "shadowOffset" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 8
+            }
+          },
+          "shadowRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 160,
+              "width" : 370
+            }
+          }
+        },
+        "shader" : {
+          "inputs" : {
+            "radius" : {
+              "type" : "number",
+              "value" : 30
+            },
+            "tint" : {
+              "type" : "color",
+              "value" : {
+                "alpha" : 0.2,
+                "blue" : 0.24,
+                "green" : 0.12,
+                "red" : 0.06
+              }
+            }
+          },
+          "source" : "\/\/ Liquid Glass: what is behind the view, mostly blurred away under a light veil, a\n\/\/ little of it still sharp and more vivid than it was, and at the rim a lens that bends\n\/\/ it. Light catches the edge. The views inside are drawn over it.\n\/\/ Its numbers were fitted to iOS 26's own glass in the simulator (Reference\/run.sh).\nstruct Inputs {\n    float radius = 28;\n    float blur = 24;\n    float detail = 0.3;\n    float refraction = 25.0;\n    float rim = 19;\n    float4 tint = float4(1, 1, 1, 0.275);\n    float vibrancy = 2;\n    float shine = 0.03;\n};\n\n\/\/ How far a point is from the edge of the rounded shape: below zero inside it.\nfloat glass_edge(float2 p, float2 mid, float r) {\n    float2 q = abs(p) - mid + r;\n    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;\n}\n\n\/\/ Light adds up in linear terms, not in the numbers a picture stores.\nfloat3 glass_linear(float3 c) { return pow(max(c, 0.0), float3(2.2)); }\nfloat3 glass_stored(float3 c) { return pow(max(c, 0.0), float3(1.0 \/ 2.2)); }\n\nfloat4 shader(Frame frame, Inputs in) {\n    float2 mid = frame.size * 0.5;\n    float r = min(max(in.radius, 0.0), min(mid.x, mid.y));\n    float2 p = frame.position - mid;\n    float d = glass_edge(p, mid, r);\n    float2 slope = float2(\n        glass_edge(p + float2(1, 0), mid, r) - glass_edge(p - float2(1, 0), mid, r),\n        glass_edge(p + float2(0, 1), mid, r) - glass_edge(p - float2(0, 1), mid, r));\n    float2 outward = normalize(slope + 0.00001);\n\n    \/\/ The rim is a lens: near the edge it shows what is further in.\n    float depth = saturate(-d \/ max(in.rim, 1.0));\n    float bend = (1 - depth) * (1 - depth);\n    float2 seen = frame.position - outward * in.refraction * bend;\n\n    \/\/ Mostly blurred away: samples on a spiral, evenly over a wide disc. Past the edge\n    \/\/ of the screen there is nothing behind, and nothing is what those samples count for.\n    float4 sum = float4(0);\n    for (int i = 0; i < 128; i++) {\n        float turn = 2.39996323 * float(i);\n        float reach = in.blur * sqrt((float(i) + 0.5) \/ 128.0);\n        float4 found = behind(frame, seen + float2(cos(turn), sin(turn)) * reach);\n        sum += float4(glass_linear(found.rgb) * found.a, found.a);\n    }\n    float3 tint = glass_linear(in.tint.rgb);\n    float3 wide = sum.a > 0.001 ? sum.rgb \/ sum.a : tint;\n    \/\/ A little of it stays sharp.\n    float4 near = behind(frame, seen);\n    float3 sharp = near.a > 0.001 ? glass_linear(near.rgb) : wide;\n    float3 color = mix(wide, sharp, saturate(in.detail));\n\n    \/\/ The veil, and then more vivid than that, so color comes through it.\n    color = glass_stored(mix(color, tint, saturate(in.tint.a)));\n    float grey = dot(color, float3(0.2126, 0.7152, 0.0722));\n    color = saturate(mix(float3(grey), color, in.vibrancy));\n\n    \/\/ Light on the rim, brightest toward the top left and the bottom right.\n    float line = smoothstep(1.5, 0.0, abs(d + 0.9));\n    float facing = 0.25 + 0.75 * abs(dot(outward, float2(-0.7071, -0.7071)));\n    color += in.shine * (0.6 * line * facing + 0.07 * bend);\n\n    float4 inside = content(frame, frame.position);\n    color = mix(color, inside.rgb, inside.a);\n    return float4(color, saturate(0.5 - d));\n}"
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "EBB332BD-44A3-45F3-B4AD-61B01886AA44",
+        "kind" : "text",
+        "name" : "Heading",
+        "properties" : {
+          "fontSize" : {
+            "type" : "number",
+            "value" : 12
+          },
+          "fontWeight" : {
+            "type" : "number",
+            "value" : 700
+          },
+          "heightMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 636
+            }
+          },
+          "text" : {
+            "type" : "text",
+            "value" : "5-DAY FORECAST"
+          },
+          "textColor" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.7,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "widthMode" : {
+            "type" : "text",
+            "value" : "Auto"
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "4B4102A4-F923-4E7D-8318-4467DB0E66DF",
+        "kind" : "view",
+        "name" : "Rule",
+        "properties" : {
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.22,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 36,
+              "y" : 660
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 1,
+              "width" : 330
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+
+        ],
+        "id" : "CD9AA359-9D25-4DBD-9BBF-9B09D6A3A0CB",
+        "kind" : "view",
+        "name" : "Chosen",
+        "properties" : {
+          "cornerRadius" : {
+            "type" : "number",
+            "value" : 20
+          },
+          "fill" : {
+            "type" : "color",
+            "value" : {
+              "alpha" : 0.24,
+              "blue" : 1,
+              "green" : 1,
+              "red" : 1
+            }
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 670
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 70.8
+            }
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "AC853830-B81E-46CD-8821-DECE68DF82E8",
+            "kind" : "text",
+            "name" : "Today Name",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Today"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "14198FA1-94A9-494B-8F3D-D950944502C9",
+            "kind" : "symbol",
+            "name" : "Today Symbol",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 26,
+                  "width" : 26
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "cloud.sun.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "11A5461D-94E7-4619-BCB3-A882E11FDCE9",
+            "kind" : "text",
+            "name" : "Today High",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "76°"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "E10FDE29-3E46-44E5-AB75-673A6A1CBBB0",
+        "kind" : "view",
+        "name" : "Today",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 24,
+              "y" : 670
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 70.8
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "C5EA78EF-1B5E-4CD6-942A-D589F3B5F2A1",
+            "kind" : "text",
+            "name" : "Fri Name",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Fri"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "B36EE607-427F-40EB-BFDB-D5B62E4B917D",
+            "kind" : "symbol",
+            "name" : "Fri Symbol",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 26,
+                  "width" : 26
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "sun.max.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "5863E0E0-E5EE-4E7E-AA11-AEF6C8C79C3C",
+            "kind" : "text",
+            "name" : "Fri High",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "81°"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "C5744194-E355-4D69-A48A-89298350EDB6",
+        "kind" : "view",
+        "name" : "Fri",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 94.8,
+              "y" : 670
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 70.8
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "2FE4D542-129D-4A55-BB55-315026518652",
+            "kind" : "text",
+            "name" : "Sat Name",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Sat"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "B7035927-A921-44C8-9944-04E526497373",
+            "kind" : "symbol",
+            "name" : "Sat Symbol",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 26,
+                  "width" : 26
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "cloud.rain.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "87A248C8-A0E0-4209-8DBB-D5B68487DCE1",
+            "kind" : "text",
+            "name" : "Sat High",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "62°"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "C7BFD816-457C-4E29-B3A9-BFA079465861",
+        "kind" : "view",
+        "name" : "Sat",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 165.6,
+              "y" : 670
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 70.8
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "B1C322CB-3942-4405-A7FA-A820A0035A09",
+            "kind" : "text",
+            "name" : "Sun Name",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Sun"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "11EF0FEC-DB3F-487B-9C20-8BBC845C9C4B",
+            "kind" : "symbol",
+            "name" : "Sun Symbol",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 26,
+                  "width" : 26
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "cloud.bolt.rain.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "42E3D4D8-2932-4E8B-B1F5-A64608C143C5",
+            "kind" : "text",
+            "name" : "Sun High",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "66°"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "DAFC6D61-1BFF-4979-97EB-914FA91BFDA4",
+        "kind" : "view",
+        "name" : "Sun",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 236.39999999999998,
+              "y" : 670
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 70.8
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "id" : "EEA75C2F-4262-42BF-8B35-490D3D7D7DFE",
+            "kind" : "text",
+            "name" : "Mon Name",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 15
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "Mon"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "595F83D3-0894-4C30-A2BE-BA04E2400079",
+            "kind" : "symbol",
+            "name" : "Mon Symbol",
+            "properties" : {
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 26,
+                  "width" : 26
+                }
+              },
+              "symbol" : {
+                "type" : "text",
+                "value" : "cloud.snow.fill"
+              }
+            }
+          },
+          {
+            "children" : [
+
+            ],
+            "id" : "117C333F-BE3B-47FB-BED0-54E114F8374A",
+            "kind" : "text",
+            "name" : "Mon High",
+            "properties" : {
+              "fontSize" : {
+                "type" : "number",
+                "value" : 17
+              },
+              "fontWeight" : {
+                "type" : "number",
+                "value" : 600
+              },
+              "heightMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              },
+              "position" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 0
+                }
+              },
+              "text" : {
+                "type" : "text",
+                "value" : "34°"
+              },
+              "textColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 1,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "27FB9587-F1F4-415E-806B-293AC66F3007",
+        "kind" : "view",
+        "name" : "Mon",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Vertical"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 307.2,
+              "y" : 670
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 100,
+              "width" : 70.8
+            }
+          },
+          "spacing" : {
+            "type" : "number",
+            "value" : 8
+          }
+        }
+      },
+      {
+        "children" : [
+          {
+            "children" : [
+              {
+                "children" : [
+
+                ],
+                "id" : "5EC4B30C-0866-4A8F-A16E-E19EFBB5B7AA",
+                "kind" : "symbol",
+                "name" : "Glyph",
+                "properties" : {
+                  "fill" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "size" : {
+                    "type" : "size",
+                    "value" : {
+                      "height" : 15,
+                      "width" : 15
+                    }
+                  },
+                  "symbol" : {
+                    "type" : "text",
+                    "value" : "hand.tap.fill"
+                  }
+                }
+              },
+              {
+                "children" : [
+
+                ],
+                "id" : "0D98B466-A545-4CB8-A05E-001E5FBF0670",
+                "kind" : "text",
+                "name" : "Words",
+                "properties" : {
+                  "fontSize" : {
+                    "type" : "number",
+                    "value" : 14
+                  },
+                  "fontWeight" : {
+                    "type" : "number",
+                    "value" : 600
+                  },
+                  "heightMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  },
+                  "position" : {
+                    "type" : "point",
+                    "value" : {
+                      "x" : 0,
+                      "y" : 0
+                    }
+                  },
+                  "text" : {
+                    "type" : "text",
+                    "value" : "Tap a day · Drag the sky"
+                  },
+                  "textColor" : {
+                    "type" : "color",
+                    "value" : {
+                      "alpha" : 1,
+                      "blue" : 1,
+                      "green" : 1,
+                      "red" : 1
+                    }
+                  },
+                  "widthMode" : {
+                    "type" : "text",
+                    "value" : "Auto"
+                  }
+                }
+              }
+            ],
+            "id" : "FCF0D2DD-0113-4235-B27F-44F39148D253",
+            "kind" : "view",
+            "name" : "Pill",
+            "properties" : {
+              "alignment" : {
+                "type" : "text",
+                "value" : "Center"
+              },
+              "axis" : {
+                "type" : "text",
+                "value" : "Horizontal"
+              },
+              "cornerRadius" : {
+                "type" : "number",
+                "value" : 18
+              },
+              "fill" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.16,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "layout" : {
+                "type" : "text",
+                "value" : "Stack"
+              },
+              "paddingHorizontal" : {
+                "type" : "number",
+                "value" : 16
+              },
+              "paddingVertical" : {
+                "type" : "number",
+                "value" : 0
+              },
+              "shadowColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0,
+                  "blue" : 0,
+                  "green" : 0,
+                  "red" : 0
+                }
+              },
+              "shadowOffset" : {
+                "type" : "point",
+                "value" : {
+                  "x" : 0,
+                  "y" : 4
+                }
+              },
+              "shadowRadius" : {
+                "type" : "number",
+                "value" : 12
+              },
+              "size" : {
+                "type" : "size",
+                "value" : {
+                  "height" : 36,
+                  "width" : 100
+                }
+              },
+              "spacing" : {
+                "type" : "number",
+                "value" : 8
+              },
+              "strokeColor" : {
+                "type" : "color",
+                "value" : {
+                  "alpha" : 0.22,
+                  "blue" : 1,
+                  "green" : 1,
+                  "red" : 1
+                }
+              },
+              "strokeWidth" : {
+                "type" : "number",
+                "value" : 1
+              },
+              "widthMode" : {
+                "type" : "text",
+                "value" : "Auto"
+              }
+            }
+          }
+        ],
+        "id" : "202084EA-87B5-47E9-A993-155953D4DEC6",
+        "kind" : "view",
+        "name" : "Hint",
+        "properties" : {
+          "alignment" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "axis" : {
+            "type" : "text",
+            "value" : "Horizontal"
+          },
+          "distribution" : {
+            "type" : "text",
+            "value" : "Center"
+          },
+          "layout" : {
+            "type" : "text",
+            "value" : "Stack"
+          },
+          "position" : {
+            "type" : "point",
+            "value" : {
+              "x" : 0,
+              "y" : 792
+            }
+          },
+          "size" : {
+            "type" : "size",
+            "value" : {
+              "height" : 36,
+              "width" : 402
+            }
+          }
+        }
+      }
+    ],
+    "id" : "695E08F5-7136-483A-82FA-540B48C173D0",
+    "kind" : "screen",
+    "name" : "Screen",
+    "properties" : {
+      "fill" : {
+        "type" : "color",
+        "value" : {
+          "alpha" : 1,
+          "blue" : 0.8392156862745098,
+          "green" : 0.5254901960784314,
+          "red" : 0.22745098039215686
+        }
+      },
+      "size" : {
+        "type" : "size",
+        "value" : {
+          "height" : 874,
+          "width" : 402
+        }
+      }
+    }
+  },
+  "version" : 4
+}
