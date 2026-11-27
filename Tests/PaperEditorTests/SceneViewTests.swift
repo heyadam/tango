@@ -536,4 +536,14 @@ import simd
         let color = try Self.color(ViewerSnapshot.bitmap(of: document), at: SIMD3(0, 0, 0), in: document)
         #expect(color.count == 3 && color[0] > color[1] + 30, "\(color)")
     }
+
+    @Test func aCloudFadesWithItsOpacity() throws {
+        try #require(ShaderCompiler.shared != nil)
+        let whole = Self.cloud(), half = Self.cloud(["opacity": .number(0.4)])
+        let middle = SIMD3<Float>(0, 0, 0.3)
+        let full = Self.brightness(try Self.color(ViewerSnapshot.bitmap(of: whole), at: middle, in: whole))
+        let faded = Self.brightness(try Self.color(ViewerSnapshot.bitmap(of: half), at: middle, in: half))
+        // Less of the bright vapor, more of the dark sky behind it, but not none.
+        #expect(faded < full - 80 && faded > Self.brightness(Self.sky) + 40, "\(faded) against \(full)")
+    }
 }

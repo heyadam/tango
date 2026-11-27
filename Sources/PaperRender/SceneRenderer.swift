@@ -320,6 +320,11 @@ final class SceneRendering {
         var look: SIMD4<Float>
         /// Time, seed.
         var timing: SIMD4<Float>
+        /// From the particle's mesh to the particle (a model's fitting and its parts' own
+        /// places; nothing for a shape), and the same for its normals: applied before a
+        /// copy is sized, turned and placed, so the emitter's box is the object's alone.
+        var part = matrix_identity_float4x4
+        var partNormal = matrix_identity_float4x4
 
         init(_ object: SceneObject) {
             func number(_ input: String, _ low: Float, _ high: Float) -> Float { SceneRendering.clamp(object.number(input), low, high) }
@@ -432,6 +437,8 @@ final class SceneRendering {
         float4 velocity;
         float4 look;     // size, size range, stretch, sway
         float4 timing;   // time, seed
+        float4x4 part;        // the mesh to the particle
+        float4x4 partNormal;  // the same for normals
     };
 
     // A number from 0 to 1 for each copy and each use, the same every time.
@@ -479,9 +486,9 @@ final class SceneRendering {
         float3 side = normalize(cross(abs(up.y) < 0.99 ? float3(0.0, 1.0, 0.0) : float3(1.0, 0.0, 0.0), up));
         float3 depth = cross(side, up);
         float3 stretched = float3(size, size * particles.look.z, size);
-        float3 scaled = in.position * stretched;
+        float3 scaled = (particles.part * float4(in.position, 1.0)).xyz * stretched;
         float3 local = side * scaled.x + up * scaled.y + depth * scaled.z + place;
-        float3 n = in.normal / max(stretched, float3(1e-6));
+        float3 n = (particles.partNormal * float4(in.normal, 0.0)).xyz / max(stretched, float3(1e-6));
         float3 turned = side * n.x + up * n.y + depth * n.z;
         SceneVertex out;
         float4 world = object.model * float4(local, 1.0);
@@ -752,7 +759,8 @@ final class SceneRendering {
             through *= passing;
             if (through < 0.01) { through = 0.0; break; }
         }
-        return float4(light * scene.settings.x, 1.0 - through);
+        // How much of the cloud there is: its light and what it covers alike, so it fades.
+        return float4(light * scene.settings.x, 1.0 - through) * saturate(object.material.z);
     }
 
     // MARK: The noise clouds are worn by
@@ -1264,7 +1272,9 @@ final class SceneSurface {
                 made = rendering.geometry(for: object.shape).map { [ScenePart(geometry: $0, isOpen: object.shape == .plane)] } ?? []
             }
             for part in made {
-                let model = placement * part.transform
+                // An emitter's copies are placed in the object's own space: a model's fitting
+                // and its parts' places belong to each copy, not to the box they are spread in.
+                let model = object.shape == .particles ? placement : placement * part.transform
                 // What is set on the object wins over what a file says; a shape has only the object's.
                 let color = object.values["color"].map { SceneRendering.linear($0.colorValue) }
                     ?? part.color ?? SceneRendering.linear(object.value("color").colorValue)
@@ -1289,7 +1299,11 @@ final class SceneSurface {
                 var part = part
                 if object.values["color"] != nil { part.picture = nil }
                 if object.shape == .particles {
-                    if count > 0 { emitters.append((part, own, SceneRendering.ParticleUniforms(object), count)) }
+                    var copies = SceneRendering.ParticleUniforms(object)
+                    copies.part = part.transform
+                    copies.partNormal = part.transform.inverse.transpose
+                    let sound = (0..<4).allSatisfy { column in (0..<4).allSatisfy { copies.part[column][$0].isFinite && copies.partNormal[column][$0].isFinite } }
+                    if count > 0, sound { emitters.append((part, own, copies, count)) }
                 } else if object.shape == .cloud {
                     var own = own
                     own.surface.z = Float(object.number("seed").whole & 0xFFFF)
