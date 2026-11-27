@@ -27,6 +27,9 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         case box, roundedBox, sphere, cylinder, cone, capsule, torus, plane
         /// A model file among the document's assets, named by `SceneObject.model`.
         case model
+        /// An emitter: many copies of a shape (its `particle` input) or of a model file,
+        /// spread through a box and moving through it with time.
+        case particles
 
         public var displayName: String {
             switch self {
@@ -39,11 +42,14 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
             case .torus: "Torus"
             case .plane: "Plane"
             case .model: "Model"
+            case .particles: "Particles"
             }
         }
 
         /// The shapes made in code, which need no file.
         public static let builtIn: [Shape] = allCases.filter { $0 != .model }
+        /// What a particle can be: a shape made in code.
+        public static let particleShapes: [Shape] = builtIn.filter { $0 != .particles }
 
         public init?(named name: String) {
             let wanted = name.lowercased().filter { $0.isLetter }
@@ -103,7 +109,38 @@ public struct SceneObject: Codable, Hashable, Sendable, Identifiable {
         SceneInput("ior", "Index of Refraction", .number(1.45)),
         SceneInput("emission", "Emission", .number(0)),
         SceneInput("emissionColor", "Emission Color", .color(ColorValue(white: 0.8))),
+    ] + particleInputs
+
+    /// What only an emitter has. Each copy is placed by a hash of its number in a box
+    /// `spread` across (the object's own space, so x, y, z, its turn and scale move and size
+    /// the whole box), moves at `velocity` units a second, so that at `time` it is somewhere
+    /// else in the box, wrapping round, and shrinks away near where it enters and leaves.
+    /// The picture is a function of these alone: cable a Time patch into `time`.
+    public static let particleInputs: [SceneInput] = [
+        SceneInput("particle", "Particle", .text("Sphere"), options: Shape.particleShapes.map(\.displayName)),
+        SceneInput("count", "Count", .number(300)),
+        SceneInput("time", "Time", .number(0)),
+        SceneInput("spreadX", "Spread X", .number(2)),
+        SceneInput("spreadY", "Spread Y", .number(2)),
+        SceneInput("spreadZ", "Spread Z", .number(1)),
+        SceneInput("velocityX", "Velocity X", .number(0)),
+        SceneInput("velocityY", "Velocity Y", .number(-1)),
+        SceneInput("velocityZ", "Velocity Z", .number(0)),
+        SceneInput("size", "Size", .number(0.05)),
+        SceneInput("sizeRange", "Size Range", .number(0.5)),
+        SceneInput("stretch", "Stretch", .number(1)),
+        SceneInput("sway", "Sway", .number(0)),
+        SceneInput("seed", "Seed", .number(0)),
     ]
+
+    /// The most copies an emitter draws.
+    public static let mostParticles = 20_000
+
+    /// The inputs that mean something for an object of this shape: an emitter's own only
+    /// for an emitter.
+    public static func inputs(for shape: Shape) -> [SceneInput] {
+        shape == .particles ? inputs : inputs.filter { input in !particleInputs.contains { $0.id == input.id } }
+    }
 
     public static func input(_ id: String) -> SceneInput? { inputs.first { $0.id == id } }
 

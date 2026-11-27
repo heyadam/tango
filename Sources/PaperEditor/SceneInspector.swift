@@ -38,7 +38,7 @@ struct SceneSections: View {
                         }
                     }
                 }
-                ForEach(SceneObject.inputs) { input in
+                ForEach(SceneObject.inputs(for: object.shape)) { input in
                     SceneInputRow(
                         store: store, layer: layer, key: SceneUse.Key(object: object.id, input: input.id), input: input, name: input.name
                     )
@@ -47,7 +47,7 @@ struct SceneSections: View {
                     store.removeSceneObject(object.id, from: layer.id)
                 }
             } header: {
-                Label(object.name, systemImage: object.shape == .model ? "shippingbox" : "cube")
+                Label(object.name, systemImage: object.shape == .model ? "shippingbox" : object.shape == .particles ? "sparkles" : "cube")
             } footer: {
                 if object.shape == .model, let problem = SceneSections.problem(with: object, store: store) {
                     Label(problem, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)

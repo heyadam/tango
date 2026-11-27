@@ -372,4 +372,53 @@ import simd
         let light = try Self.color(ViewerSnapshot.bitmap(of: clear), at: under, in: clear)
         #expect(light[0] > dark[0] + 15, "\(light) against \(dark)")
     }
+
+    // MARK: Emitters
+
+    static func emitter(count: Double, time: Double, values: [String: Value] = [:]) -> PaperModel.Document {
+        let rain = SceneObject(id: "rain", name: "Rain", shape: .particles, values: [
+            "count": .number(count), "time": .number(time), "spreadX": .number(1.6), "spreadY": .number(1.6), "spreadZ": .number(0.4),
+            "velocityY": .number(-1), "size": .number(0.12), "sizeRange": .number(0), "color": .color(red),
+        ].merging(values) { _, new in new })
+        return document([rain], values: ["rayTracing": .bool(false)])
+    }
+
+    static func redPixels(_ bitmap: NSBitmapImageRep?) -> Int {
+        var count = 0
+        for x in stride(from: 20, to: 120, by: 2) {
+            for y in stride(from: 30, to: 150, by: 2) where isMostly(0, ShaderViewTests.color(bitmap, x, y)) { count += 1 }
+        }
+        return count
+    }
+
+    @Test func anEmitterScattersCopiesThroughItsBoxAsAFunctionOfTime() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // The first time a process draws a crowded scene, a few pixels where things overlap
+        // come out a level apart from every later picture of it (so it was before emitters,
+        // too): draw it once first.
+        _ = ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0))
+        let first = ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0))
+        Self.keep(first, "particles")
+        // Copies all over the box, not one lump.
+        #expect(Self.redPixels(first) > 300)
+        // The same time is the same picture; another time moves them.
+        let png = { (bitmap: NSBitmapImageRep?) in bitmap?.representation(using: .png, properties: [:]) }
+        #expect(png(first) == png(ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0))))
+        #expect(png(first) != png(ViewerSnapshot.bitmap(of: Self.emitter(count: 400, time: 0.3))))
+        // None draws nothing; a count past the limit is held to it.
+        #expect(Self.redPixels(ViewerSnapshot.bitmap(of: Self.emitter(count: 0, time: 0))) == 0)
+        #expect(Self.redPixels(ViewerSnapshot.bitmap(of: Self.emitter(count: 1e12, time: 0, values: ["size": .number(0.01)]))) >= 0)
+    }
+
+    @Test func anEmittersCopiesPointAlongTheirWayAndStretch() throws {
+        try #require(ShaderCompiler.shared != nil)
+        // One copy, stretched along its way: falling, it is tall and thin.
+        let one = Self.emitter(count: 1, time: 0, values: [
+            "spreadX": .number(0), "spreadY": .number(0.0001), "spreadZ": .number(0), "size": .number(0.2), "stretch": .number(5),
+        ])
+        let picture = ViewerSnapshot.bitmap(of: one)
+        Self.keep(picture, "streak")
+        #expect(Self.isMostly(0, try Self.color(picture, at: SIMD3(0, 0.35, 0.05), in: one)))
+        #expect(ShaderViewTests.near(try Self.color(picture, at: SIMD3(0.3, 0, 0), in: one), Self.white))
+    }
 }

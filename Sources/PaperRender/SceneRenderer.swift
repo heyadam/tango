@@ -35,6 +35,9 @@ final class SceneRendering {
     let tracedBlended: MTLRenderPipelineState?
     /// Depth is tested but not written for what is drawn over what is behind it.
     let depthKept: MTLDepthStencilState
+    /// Emitters: many copies in one draw, lit as other things are but without rays.
+    let particles: MTLRenderPipelineState
+    let particlesBlended: MTLRenderPipelineState
     /// The passes after a scene is drawn: the brightest light picked out at a quarter of the
     /// size, blurred along one direction, and everything toned into the picture shown.
     let bright: MTLRenderPipelineState
@@ -58,10 +61,12 @@ final class SceneRendering {
     private init?(compiler: ShaderCompiler) {
         self.compiler = compiler
         let device = compiler.device
-        func make(traced: Bool, blending: Bool = false) throws -> MTLRenderPipelineState {
-            let library = try device.makeLibrary(source: "#define TANGO_TRACED \(traced ? 1 : 0)\n" + SceneRendering.source, options: nil)
+        var libraries: [Bool: MTLLibrary] = [:]
+        func make(traced: Bool, blending: Bool = false, vertex: String = "scene_vertex") throws -> MTLRenderPipelineState {
+            let library = try libraries[traced] ?? device.makeLibrary(source: "#define TANGO_TRACED \(traced ? 1 : 0)\n" + SceneRendering.source, options: nil)
+            libraries[traced] = library
             let descriptor = MTLRenderPipelineDescriptor()
-            descriptor.vertexFunction = library.makeFunction(name: "scene_vertex")
+            descriptor.vertexFunction = library.makeFunction(name: vertex)
             descriptor.fragmentFunction = library.makeFunction(name: "scene_fragment")
             descriptor.colorAttachments[0].pixelFormat = SceneRendering.lightFormat
             if blending {
@@ -96,6 +101,8 @@ final class SceneRendering {
         do {
             pipeline = try make(traced: false)
             blended = try make(traced: false, blending: true)
+            particles = try make(traced: false, vertex: "particle_vertex")
+            particlesBlended = try make(traced: false, blending: true, vertex: "particle_vertex")
             let passes = try device.makeLibrary(source: SceneRendering.postSource, options: nil)
             bright = try post("post_bright", SceneRendering.lightFormat, in: passes)
             blur = try post("post_blur", SceneRendering.lightFormat, in: passes)
@@ -253,6 +260,31 @@ final class SceneRendering {
         }
     }
 
+    /// Must match `ParticleUniforms` in the source.
+    struct ParticleUniforms {
+        var spread: SIMD4<Float>
+        var velocity: SIMD4<Float>
+        /// Size, its range, stretch, sway.
+        var look: SIMD4<Float>
+        /// Time, seed.
+        var timing: SIMD4<Float>
+
+        init(_ object: SceneObject) {
+            func number(_ input: String, _ low: Float, _ high: Float) -> Float { SceneRendering.clamp(object.number(input), low, high) }
+            spread = SIMD4(number("spreadX", 0, 1e4), number("spreadY", 0, 1e4), number("spreadZ", 0, 1e4), 0)
+            velocity = SIMD4(number("velocityX", -1e4, 1e4), number("velocityY", -1e4, 1e4), number("velocityZ", -1e4, 1e4), 0)
+            look = SIMD4(number("size", 0, 1e3), number("sizeRange", 0, 1), number("stretch", 0, 1e3), number("sway", 0, 1e3))
+            // Time is kept to a range a float wraps well within; the seed is a whole number.
+            let time = object.number("time")
+            timing = SIMD4(Float(time.isFinite ? time.truncatingRemainder(dividingBy: 100_000) : 0), Float(object.number("seed").whole & 0xFFFF), 0, 0)
+        }
+
+        /// How many copies an emitter draws.
+        static func count(of object: SceneObject) -> Int {
+            min(max(object.number("count").whole, 0), SceneObject.mostParticles)
+        }
+    }
+
     /// Must match `ObjectUniforms` in the source.
     struct ObjectUniforms {
         var model: simd_float4x4
@@ -336,6 +368,68 @@ final class SceneRendering {
         out.position = scene.viewProjection * world;
         out.world = world.xyz;
         out.normal = (object.normal * float4(in.normal, 0.0)).xyz;
+        out.uv = in.uv;
+        return out;
+    }
+
+    struct ParticleUniforms {
+        float4 spread;
+        float4 velocity;
+        float4 look;     // size, size range, stretch, sway
+        float4 timing;   // time, seed
+    };
+
+    // A number from 0 to 1 for each copy and each use, the same every time.
+    static uint particle_hash(uint x) {
+        x ^= x >> 16; x *= 0x7feb352du; x ^= x >> 15; x *= 0x846ca68bu; x ^= x >> 16;
+        return x;
+    }
+
+    static float particle_random(uint key, uint salt) {
+        return float(particle_hash(key * 16u + salt) & 0xFFFFFFu) / 16777216.0;
+    }
+
+    // One copy of an emitter's particle: placed by chance in the box, moved by velocity times
+    // time and wrapped round inside it, shrunk near where it enters and leaves, turned to
+    // point along its way and stretched along it.
+    vertex SceneVertex particle_vertex(SceneVertexIn in [[stage_in]], uint id [[instance_id]],
+                                       constant SceneUniforms &scene [[buffer(1)]],
+                                       constant ObjectUniforms &object [[buffer(2)]],
+                                       constant ParticleUniforms &particles [[buffer(3)]]) {
+        uint key = id * 7919u + uint(particles.timing.y) * 104729u;
+        float3 start = float3(particle_random(key, 1u), particle_random(key, 2u), particle_random(key, 3u));
+        float3 box = max(particles.spread.xyz, float3(1e-4));
+        float time = particles.timing.x;
+        float3 at = fract(start + particles.velocity.xyz * time / box);
+        float fade = 1.0;
+        for (int axis = 0; axis < 3; axis++) {
+            if (abs(particles.velocity[axis]) > 1e-6 && particles.spread[axis] > 1e-4) {
+                fade = min(fade, smoothstep(0.0, 0.12, min(at[axis], 1.0 - at[axis])));
+            }
+        }
+        float3 place = (at - 0.5) * particles.spread.xyz;
+        if (particles.look.w > 0.0) {
+            float phase = particle_random(key, 4u) * 6.2831853;
+            float rate = 0.6 + 0.8 * particle_random(key, 5u);
+            place.x += particles.look.w * sin(time * rate + phase);
+            place.z += particles.look.w * cos(time * rate * 0.8 + phase);
+        }
+        float size = particles.look.x * (1.0 - particles.look.y * particle_random(key, 6u)) * fade;
+        float speed = length(particles.velocity.xyz);
+        float3 up = speed > 1e-6 ? particles.velocity.xyz / speed
+            : normalize(float3(particle_random(key, 7u), particle_random(key, 8u), particle_random(key, 9u)) - 0.5 + float3(0.0, 1e-3, 0.0));
+        float3 side = normalize(cross(abs(up.y) < 0.99 ? float3(0.0, 1.0, 0.0) : float3(1.0, 0.0, 0.0), up));
+        float3 depth = cross(side, up);
+        float3 stretched = float3(size, size * particles.look.z, size);
+        float3 scaled = in.position * stretched;
+        float3 local = side * scaled.x + up * scaled.y + depth * scaled.z + place;
+        float3 n = in.normal / max(stretched, float3(1e-6));
+        float3 turned = side * n.x + up * n.y + depth * n.z;
+        SceneVertex out;
+        float4 world = object.model * float4(local, 1.0);
+        out.position = scene.viewProjection * world;
+        out.world = world.xyz;
+        out.normal = (object.normal * float4(turned, 0.0)).xyz;
         out.uv = in.uv;
         return out;
     }
@@ -496,11 +590,13 @@ final class SceneRendering {
         // through, bent (transmission): glass, water.
         float opacity = saturate(object.material.z);
         float transmission = saturate(object.material.w);
+
         float3 through = float3(0.0);
         float throughCover = 0.0;
 
         float3 toLight = normalize(scene.lightDirection.xyz);
         float lit = saturate(dot(normal, toLight));
+
         // How much of the light arrives, and how much of its surroundings a surface sees.
         float shade = 1.0;
         float open = 1.0;
@@ -589,6 +685,7 @@ final class SceneRendering {
             directMatte = matte / M_PI_F * scene.lightColor.rgb * lit * shade;
             directShine = distribution * visible * fresnel * scene.lightColor.rgb * lit * shade;
         }
+
 
         // The surroundings: what a matte surface gathers, and what a shiny one mirrors,
         // weighed by how much such a surface reflects at this angle (Karis's fit).
@@ -836,14 +933,20 @@ final class SceneSurface {
         pass.depthAttachment.storeAction = .dontCare
         var uniforms = SceneRendering.SceneUniforms(scene, aspect: Float(size.width / max(size.height, 0.0001)))
         var draws: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms)] = []
+        // Emitters, drawn many times over and not seen by rays.
+        var emitters: [(part: ScenePart, uniforms: SceneRendering.ObjectUniforms, particles: SceneRendering.ParticleUniforms, count: Int)] = []
         var glows: [(place: SIMD3<Float>, size: Float, light: SIMD3<Float>)] = []
         for object in scene.objects where object.value("visible").boolValue {
             let placement = SceneMath.placement(of: object)
             let strength = SceneRendering.clamp(object.number("emission"), 0, 1000)
             let drawnBefore = draws.count
             let made: [ScenePart]
-            if object.shape == .model {
+            let count = object.shape == .particles ? SceneRendering.ParticleUniforms.count(of: object) : 0
+            if object.shape == .model || (object.shape == .particles && object.model != nil) {
                 made = parts(object)
+            } else if object.shape == .particles {
+                let shape = SceneObject.Shape(named: object.value("particle").textValue).flatMap { SceneObject.Shape.particleShapes.contains($0) ? $0 : nil } ?? .sphere
+                made = rendering.geometry(for: shape).map { [ScenePart(geometry: $0)] } ?? []
             } else {
                 made = rendering.geometry(for: object.shape).map { [ScenePart(geometry: $0)] } ?? []
             }
@@ -872,7 +975,11 @@ final class SceneSurface {
                 // A color set on the object replaces the file's, its picture included.
                 var part = part
                 if object.values["color"] != nil { part.picture = nil }
-                draws.append((part, own))
+                if object.shape == .particles {
+                    if count > 0 { emitters.append((part, own, SceneRendering.ParticleUniforms(object), count)) }
+                } else {
+                    draws.append((part, own))
+                }
             }
             // A glowing object lights the others, as a ball of light as large as it is.
             if strength > 0, draws.count > drawnBefore, let any = draws.last, any.uniforms.emission != .zero {
@@ -909,21 +1016,30 @@ final class SceneSurface {
         }
         // Solid things first, the nearest first; then clear and soft ones over them, the
         // furthest first, testing depth but not writing it.
-        let solid = draws.filter(\.uniforms.isSolid).sorted { distance($0) < distance($1) }
-        let clear = draws.filter { !$0.uniforms.isSolid }.sorted { distance($0) > distance($1) }
-        for (index, draw) in (solid + clear).enumerated() {
-            if index == solid.count {
+        typealias Item = (part: ScenePart, uniforms: SceneRendering.ObjectUniforms, particles: SceneRendering.ParticleUniforms?, count: Int)
+        let items: [Item] = draws.map { ($0.part, $0.uniforms, nil, 1) } + emitters.map { ($0.part, $0.uniforms, $0.particles, $0.count) }
+        func far(_ item: Item) -> Float { distance((item.part, item.uniforms)) }
+        let solid = items.filter(\.uniforms.isSolid).sorted { far($0) < far($1) }
+        let clear = items.filter { !$0.uniforms.isSolid }.sorted { far($0) > far($1) }
+        for (index, item) in (solid + clear).enumerated() {
+            let over = index >= solid.count
+            if index == solid.count { encoder.setDepthStencilState(rendering.depthKept) }
+            if var particles = item.particles {
+                encoder.setRenderPipelineState(over ? rendering.particlesBlended : rendering.particles)
+                encoder.setVertexBytes(&particles, length: MemoryLayout<SceneRendering.ParticleUniforms>.stride, index: 3)
+            } else if over {
                 encoder.setRenderPipelineState(rays == nil ? rendering.blended : rendering.tracedBlended ?? rendering.blended)
-                encoder.setDepthStencilState(rendering.depthKept)
+            } else {
+                encoder.setRenderPipelineState(rays?.pipeline ?? rendering.pipeline)
             }
-            var own = draw.uniforms
+            var own = item.uniforms
             encoder.setVertexBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
             encoder.setFragmentBytes(&own, length: MemoryLayout<SceneRendering.ObjectUniforms>.stride, index: 2)
-            encoder.setFragmentTexture(draw.part.picture ?? rendering.white, index: 0)
-            encoder.setVertexBuffer(draw.part.geometry.vertices, offset: 0, index: 0)
+            encoder.setFragmentTexture(item.part.picture ?? rendering.white, index: 0)
+            encoder.setVertexBuffer(item.part.geometry.vertices, offset: 0, index: 0)
             encoder.drawIndexedPrimitives(
-                type: .triangle, indexCount: draw.part.geometry.indexCount, indexType: .uint32,
-                indexBuffer: draw.part.geometry.indices, indexBufferOffset: 0
+                type: .triangle, indexCount: item.part.geometry.indexCount, indexType: .uint32,
+                indexBuffer: item.part.geometry.indices, indexBufferOffset: 0, instanceCount: item.count
             )
         }
         encoder.endEncoding()

@@ -487,6 +487,14 @@ public enum AssistantPrompt {
         - Clear things: `opacity` below 1 lets what is behind show; `transmission` 1 with a \
         low `roughness` is glass or water, which (with rays) bends and tints what is behind \
         it by `ior` and still mirrors its surroundings. Clear things cast lighter shadows.
+        - Many small things at once (rain, snow, sparks, bubbles, confetti): an object with \
+        shape `particles` draws `count` copies (up to 20,000) of the shape named by `particle` \
+        (or of its `model`) in a box `spreadX` by `spreadY` by `spreadZ` round where it stands. \
+        Each moves at `velocityX/Y/Z` units a second, so cable a `time` patch into its `time` \
+        to make them move; they wrap round inside the box and shrink away at its ends, so it \
+        never empties. `size` (and `sizeRange` for variety), `stretch` (long along their way: \
+        rain), `sway` (drifting: snow), `seed` for another scatter. Color, opacity, emission \
+        and the rest are the object's. Copies are lit but not seen by rays (no shadows).
         - Ray tracing is on unless `rayTracing` is false: things cast soft shadows on one \
         another, and shiny things mirror the others. A device whose GPU traces no rays draws \
         the scene without them, so do not make a design depend on a shadow.

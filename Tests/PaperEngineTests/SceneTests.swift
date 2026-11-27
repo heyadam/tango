@@ -139,7 +139,7 @@ import simd
     // MARK: Shapes and the camera
 
     @Test func everyShapeIsSoundAndFitsItsBox() throws {
-        for shape in SceneObject.Shape.builtIn {
+        for shape in SceneObject.Shape.particleShapes {
             let mesh = try #require(SceneMesh.shape(shape), "\(shape)")
             #expect(mesh.isSound, "\(shape)")
             #expect(mesh.triangleCount > 0 && mesh.triangleCount < 20_000, "\(shape)")
@@ -152,7 +152,7 @@ import simd
     }
 
     @Test func everyTriangleFacesTheWayItsNormalsDo() throws {
-        for shape in SceneObject.Shape.builtIn {
+        for shape in SceneObject.Shape.particleShapes {
             let mesh = try #require(SceneMesh.shape(shape))
             var wrong = 0, counted = 0
             for index in stride(from: 0, to: mesh.indices.count, by: 3) {
@@ -244,5 +244,21 @@ import simd
         let (document, view) = document(SceneUse(objects: [ball]))
         let node = try #require(document.graph.viewNode(layer: view.id))
         #expect(PatchRegistry.standard.ports(for: node).input("scene.ball.scaleZ")?.name == "Ball Scale Z")
+    }
+
+    @Test func anEmitterHasInputsOfItsOwnThatOtherThingsDoNot() throws {
+        let rain = SceneObject(id: "rain", name: "Rain", shape: .particles)
+        #expect(SceneObject.Shape(named: "Particles") == .particles)
+        #expect(SceneObject.Shape.builtIn.contains(.particles) && !SceneObject.Shape.particleShapes.contains(.particles))
+        let own = Set(SceneObject.inputs(for: .particles).map(\.id))
+        #expect(own.isSuperset(of: ["count", "time", "spreadX", "velocityY", "size", "stretch", "sway", "particle", "seed"]))
+        #expect(!SceneObject.inputs(for: .sphere).contains { $0.id == "count" })
+        #expect(rain.value("particle") == .text("Sphere") && rain.number("count") == 300)
+        // Its inputs are ports, so a Time patch can drive it.
+        let (document, view) = document(SceneUse(objects: [rain]))
+        let node = try #require(document.graph.viewNode(layer: view.id))
+        #expect(PatchRegistry.standard.ports(for: node).input("scene.rain.time")?.name == "Rain Time")
+        // It has no mesh of its own: it draws copies of another shape.
+        #expect(SceneMesh.shape(.particles) == nil)
     }
 }
